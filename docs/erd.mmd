@@ -1,0 +1,69 @@
+%% Precentor — Entity Relationship Diagram
+%%
+%% Notes:
+%% - SCORE <-> LITURGICAL_OCCASION is many-to-many ("suits"), implemented
+%%   as a Django through-table.
+%% - COMMENT relates to TERM, SERVICE, and ROLE_PIECE via a single
+%%   polymorphic relationship (Django GenericForeignKey / contenttypes),
+%%   shown here as three relationships since erDiagram syntax can't
+%%   express "one FK pointing at any of three tables" directly.
+%% - Role templates (default role slots per service type) are
+%%   intentionally NOT modelled as a database table for MVP — they are
+%%   seeded in code as a fixture/lookup, since template-editing is
+%%   out of scope. See README §3.2 and §8.
+%% - USER.role is shown as a simple field for readability; in Django
+%%   this will likely be the built-in User model plus a profile/role
+%%   field or group-based permissions.
+
+erDiagram
+  USER ||--o{ COMMENT : writes
+  TERM ||--o{ SERVICE : contains
+  LITURGICAL_OCCASION ||--o{ SERVICE : occurs_on
+  SERVICE ||--o{ SERVICE_ROLE : has
+  SERVICE_ROLE ||--o{ ROLE_PIECE : holds
+  SCORE ||--o{ ROLE_PIECE : referenced_by
+  SCORE }o--o{ LITURGICAL_OCCASION : suits
+  TERM ||--o{ COMMENT : about
+  SERVICE ||--o{ COMMENT : about
+  ROLE_PIECE ||--o{ COMMENT : about
+
+  USER {
+    string name
+    string role
+  }
+  TERM {
+    string name
+    date start_date
+    date end_date
+  }
+  SERVICE {
+    date date
+    string service_type
+    string status
+  }
+  SERVICE_ROLE {
+    string role_name
+    string status
+  }
+  ROLE_PIECE {
+    string status
+  }
+  SCORE {
+    string title
+    string composer
+    string voicing
+    string language
+    string lead_time_tag
+    int copies_owned
+    string filing_location
+  }
+  LITURGICAL_OCCASION {
+    string name
+    string tradition
+    string date_rule
+  }
+  COMMENT {
+    string author
+    string body
+    string status
+  }

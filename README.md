@@ -61,9 +61,9 @@ Both roles participate in a shared comment/query thread system (see §7).
 ### 3.1 Score
 
 A piece of music in the library. Fields include title, composer/arranger,
-voicing (SATB, SATTB, unison, etc.), language, publisher, filing
-location, number of copies owned, and an optional "rehearsal lead-time
-tag" (see §3.5). Scores can be tagged with liturgical seasons/occasions
+voicing (SATB, SATTB, unison, etc.), **language**, publisher, filing
+location, number of copies owned, and an optional **rehearsal lead-time
+tag** (see §3.5). Scores can be tagged with liturgical seasons/occasions
 they suit.
 
 ### 3.2 Term, Service, and Role Slots
@@ -188,7 +188,13 @@ conductor to discuss specific items without leaving the app:
 - **Targets**: a comment thread can attach to an individual piece, a
   whole service, or an entire term — since real queries arise at all
   three levels ("do we have enough copies of this?" vs. "is this
-  service's shape right?" vs. "how's this term looking overall?").
+  service's shape right?" vs. "how's this term looking overall?"). This
+  is implemented as a single polymorphic relationship (Django's
+  `GenericForeignKey`, via `contenttypes`) rather than three separate
+  optional foreign keys — a deliberate choice to keep the `Comment`
+  model itself clean, at the cost of losing database-level JOIN
+  optimisation, which is an acceptable trade-off for a "should have"
+  feature.
 - **Inbox** — simply every open comment, with no read-receipts or
   @mentions. In a close-knit two/three-person working relationship,
   attention-routing logic would be unnecessary complexity.
@@ -234,7 +240,18 @@ This remains a **"should have,"** not core to MVP.
 Each of these is noted here so that scope decisions read as deliberate
 choices, not oversights, when this document is read by an assessor.
 
-## 9. Why This Project
+## 9. Entity Relationship Diagram
+
+A first-pass ERD is maintained at [`docs/erd.mmd`](docs/erd.mmd) (Mermaid
+source, renders directly on GitHub). It covers Score, Term, Service,
+Service Role, Role Piece, Ordo (Liturgical Occasion), User, and Comment,
+along with notes on a couple of deliberate simplifications — notably
+that role templates are seeded in code rather than modelled as a table,
+and that Comment's polymorphic relationship is drawn as three edges here
+for readability, though it's implemented as a single Django
+`GenericForeignKey` relationship.
+
+## 10. Why This Project
 
 Precentor is grounded in real, lived experience as a church choral
 conductor, addressing a genuine and specific pain point (the manual,
@@ -246,5 +263,4 @@ rather than a generic "library system" template.
 
 ---
 
-_Next step: translate the concepts above into a formal ERD and Django
-data model._
+_Next step: translate the ERD into Django models and scaffold the project._
