@@ -240,16 +240,22 @@ This remains a **"should have,"** not core to MVP.
 Each of these is noted here so that scope decisions read as deliberate
 choices, not oversights, when this document is read by an assessor.
 
-## 9. Entity Relationship Diagram
+## 9. Supporting Documents
 
-A first-pass ERD is maintained at [`docs/erd.mmd`](docs/erd.mmd) (Mermaid
-source, renders directly on GitHub). It covers Score, Term, Service,
-Service Role, Role Piece, Ordo (Liturgical Occasion), User, and Comment,
-along with notes on a couple of deliberate simplifications — notably
-that role templates are seeded in code rather than modelled as a table,
-and that Comment's polymorphic relationship is drawn as three edges here
-for readability, though it's implemented as a single Django
-`GenericForeignKey` relationship.
+- [`docs/user_stories.md`](docs/user_stories.md) — formal user stories
+  for the conductor, librarian, and site owner (the church), used to
+  validate the finished application against its original intent.
+- [`docs/erd.mmd`](docs/erd.mmd) (Mermaid source, renders directly on
+  GitHub) — the entity relationship diagram covering Score, Term,
+  Service, Service Role, Role Piece, Ordo (Liturgical Occasion), User,
+  and Comment, along with notes on a couple of deliberate
+  simplifications — notably that role templates are seeded in code
+  rather than modelled as a table, and that Comment's polymorphic
+  relationship is drawn as three edges there for readability, though
+  it's implemented as a single Django `GenericForeignKey` relationship.
+- [`docs/models_plan.md`](docs/models_plan.md) — the Django app
+  breakdown and field-level model plan translating the ERD into code,
+  written ahead of scaffolding the project.
 
 ## 10. Why This Project
 
@@ -263,4 +269,5 @@ rather than a generic "library system" template.
 
 ---
 
-_Next step: translate the ERD into Django models and scaffold the project._
+_Next step: scaffold the Django project using the app breakdown and
+model plan in `docs/models_plan.md`._
