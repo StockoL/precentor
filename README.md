@@ -248,5 +248,3 @@ rather than a generic "library system" template.
 
 _Next step: translate the concepts above into a formal ERD and Django
 data model._
-#   p r e c e n t o r  
- 
