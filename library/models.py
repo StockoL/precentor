@@ -19,7 +19,7 @@ class Score(models.Model):
     duration_minutes = models.PositiveIntegerField(blank=True, null=True)
 
     class Meta:
-        ordering = ["title"]
+        ordering = ["title"]  # noqa (Django Meta, not a normal class — no shared-state risk)
 
     def __str__(self):
         return f"{self.title} ({self.composer})"
