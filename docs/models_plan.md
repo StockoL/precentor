@@ -28,16 +28,35 @@ class Score(models.Model):
     title = models.CharField(max_length=200)
     composer = models.CharField(max_length=200)
     arranger = models.CharField(max_length=200, blank=True)
-    voicing = models.CharField(max_length=20, choices=VOICING_CHOICES)
+    voicing = models.CharField(max_length=50)  # free text, e.g. "SATB", "SSATB", "SATB.SATB"
+    soprano_parts = models.PositiveSmallIntegerField(default=0)
+    alto_parts = models.PositiveSmallIntegerField(default=0)
+    tenor_parts = models.PositiveSmallIntegerField(default=0)
+    bass_parts = models.PositiveSmallIntegerField(default=0)
     language = models.CharField(max_length=50)
     lead_time_tag = models.CharField(max_length=50, blank=True)
     copies_owned = models.PositiveIntegerField(default=0)
     filing_location = models.CharField(max_length=100, blank=True)
     duration_minutes = models.PositiveIntegerField(blank=True, null=True)
-    suited_occasions = models.ManyToManyField(
-        "ordo.LiturgicalOccasion", blank=True, related_name="suited_scores"
-    )
+    suited_occasions = models.ManyToManyField("ordo.LiturgicalOccasion", blank=True, related_name="suited_scores")
 ```
+
+**Voicing design decision:** an earlier version of this plan used a fixed
+`choices` list for `voicing` (SATB, SATTB, unison, etc.). This was
+dropped because real voicing notation isn't a small closed set — it's a
+compact notation with combinatorial possibilities (SSATB, SATB.SATB for
+double choir, and so on), which a fixed dropdown can't represent
+faithfully. Instead, `voicing` is kept as free text for accurate
+human-readable display, while `soprano_parts` / `alto_parts` /
+`tenor_parts` / `bass_parts` hold the actual part _counts_, enabling
+reliable filtering (e.g. "needs a tenor at all" or "exactly SSATB")
+without parsing free text.
+
+**Deliberately out of scope:** precise double-choir modelling (e.g.
+distinguishing which parts belong to which of two choirs). The part
+counts describe a single choir's texture; double-choir pieces are
+recorded accurately in the free-text `voicing` field only. This is
+flagged in the README as a scope limit, not an oversight.
 
 ### `ordo.LiturgicalOccasion`
 

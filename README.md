@@ -61,9 +61,9 @@ Both roles participate in a shared comment/query thread system (see §7).
 ### 3.1 Score
 
 A piece of music in the library. Fields include title, composer/arranger,
-voicing (SATB, SATTB, unison, etc.), **language**, publisher, filing
-location, number of copies owned, and an optional **rehearsal lead-time
-tag** (see §3.5). Scores can be tagged with liturgical seasons/occasions
+voicing (SATB, SATTB, unison, etc.), language, publisher, filing
+location, number of copies owned, and an optional rehearsal lead-time
+tag (see §3.5). Scores can be tagged with liturgical seasons/occasions
 they suit.
 
 ### 3.2 Term, Service, and Role Slots
@@ -236,6 +236,9 @@ This remains a **"should have,"** not core to MVP.
 - Snapshot history/archive of past generated music lists
 - An "active term" flag (superseded by a simple chronological list)
 - Threaded (nested) comment replies
+- Precise double-choir voicing modelling (e.g. distinguishing which
+  parts belong to which of two choirs) — captured accurately in the
+  free-text voicing field only, not as structured, queryable data
 
 Each of these is noted here so that scope decisions read as deliberate
 choices, not oversights, when this document is read by an assessor.
