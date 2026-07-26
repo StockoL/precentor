@@ -31,4 +31,13 @@ urlpatterns = [
     path(
         "terms/<int:term_pk>/music-list/", views.term_music_list, name="term_music_list"
     ),
+    path(
+        "services/<int:service_pk>/roles/add/", views.add_role, name="add_role"
+    ),
+    path("roles/<int:role_pk>/pieces/add/", views.add_piece, name="add_piece"),
+    path(
+        "pieces/<int:piece_pk>/toggle-confirm/",
+        views.toggle_confirm,
+        name="toggle_confirm",
+    ),
 ]
