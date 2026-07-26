@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Terms — Precentor{% endblock %}
+{% block content %}
+<h1>Terms</h1>
+<a href="{% url 'planning:term_create' %}">Add a term</a>
+<ul>
+    {% for term in terms %}
+    <li><a href="{{ term.get_absolute_url }}">{{ term }}</a> — {{ term.start_date }} to {{ term.end_date }}</li>
+    {% empty %}
+    <li>No terms yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

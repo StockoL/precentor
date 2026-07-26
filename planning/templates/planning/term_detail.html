@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}{{ term }} — Precentor{% endblock %}
+{% block content %}
+<h1>{{ term }}</h1>
+<p>{{ term.start_date }} to {{ term.end_date }}</p>
+<a href="{% url 'planning:term_update' term.pk %}">Edit term</a>
+<a href="{% url 'planning:term_delete' term.pk %}">Delete term</a>
+
+<h2>Services</h2>
+<ul>
+    {% for service in services %}
+    <li>
+        {{ service.date }} — {{ service.service_type }}
+        — <strong>{{ service.status }}</strong>
+    </li>
+    {% empty %}
+    <li>No services yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
