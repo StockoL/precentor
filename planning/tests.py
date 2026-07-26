@@ -1,10 +1,13 @@
 from datetime import date
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from library.models import Score
 
 from .models import RolePiece, Service, ServiceRole, Term
+
+User = get_user_model()
 
 
 class ServiceStatusTests(TestCase):
@@ -80,3 +83,51 @@ class RolePieceWorkflowTests(TestCase):
     def test_get_request_rejected(self):
         response = self.client.get(f"/planning/services/{self.service.pk}/roles/add/")
         self.assertEqual(response.status_code, 405)
+
+
+class MusicListTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="conductor", password="testpass123"
+        )
+        self.client.login(username="conductor", password="testpass123")
+        self.term = Term.objects.create(
+            name="Test Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+        )
+        self.service = Service.objects.create(
+            term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
+        )
+        self.score = Score.objects.create(title="Test Anthem", composer="Test Composer")
+
+    def test_na_role_never_shown(self):
+        ServiceRole.objects.create(
+            service=self.service, role_name="Setting", is_not_applicable=True
+        )
+        response = self.client.get(f"/planning/terms/{self.term.pk}/music-list/")
+        self.assertNotContains(response, "Setting")
+
+    def test_unconfirmed_role_hidden_in_public_version(self):
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+        RolePiece.objects.create(
+            service_role=role, score=self.score, is_confirmed=False
+        )
+        response = self.client.get(f"/planning/terms/{self.term.pk}/music-list/")
+        self.assertNotContains(response, "Anthem")
+
+    def test_unconfirmed_role_shown_as_tbc_in_draft(self):
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+        RolePiece.objects.create(
+            service_role=role, score=self.score, is_confirmed=False
+        )
+        response = self.client.get(
+            f"/planning/terms/{self.term.pk}/music-list/?draft=1"
+        )
+        self.assertContains(response, "Anthem")
+        self.assertContains(response, "TBC")
+
+    def test_confirmed_piece_shown_in_public_version(self):
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+        RolePiece.objects.create(service_role=role, score=self.score, is_confirmed=True)
+        response = self.client.get(f"/planning/terms/{self.term.pk}/music-list/")
+        self.assertContains(response, "Anthem")
+        self.assertContains(response, "Test Anthem")
