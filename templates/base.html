@@ -37,6 +37,13 @@
         </nav>
     </header>
     <main class="wrapper">
+        {% if messages %}
+        <ul role="list" class="flow">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
         {% block content %}{% endblock %}
     </main>
 </body>

@@ -1,4 +1,6 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -8,7 +10,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from .models import Score
+from .models import ProtectedError, Score
 
 
 class ScoreListView(LoginRequiredMixin, ListView):
@@ -77,3 +79,17 @@ class ScoreUpdateView(LoginRequiredMixin, UpdateView):
 class ScoreDeleteView(LoginRequiredMixin, DeleteView):
     model = Score
     success_url = reverse_lazy("library:score_list")
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        try:
+            self.object.delete()
+        except ProtectedError:
+            messages.error(
+                request,
+                f'"{self.object}" can\'t be deleted — it has been proposed or '
+                "confirmed in at least one service, and that history is "
+                "preserved deliberately.",
+            )
+            return redirect(self.object.get_absolute_url())
+        return redirect(self.get_success_url())
