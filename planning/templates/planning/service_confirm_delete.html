@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Delete term — Precentor{% endblock %}
+{% block title %}Delete service — Precentor{% endblock %}
 {% block content %}
 <div class="flow">
-    <h1>Delete "{{ term }}"?</h1>
+    <h1>Delete "{{ service }}"?</h1>
     <form method="post">
         {% csrf_token %}
         <button class="text-danger" type="submit">Yes, delete</button>
     </form>
-    <a href="{{ term.get_absolute_url }}">Cancel</a>
+    <a href="{{ service.get_absolute_url }}">Cancel</a>
 </div>
 {% endblock %}
