@@ -1,41 +1,60 @@
 {% extends "base.html" %}
 {% block title %}{{ service }} — Precentor{% endblock %}
 {% block content %}
-<h1>{{ service }}</h1>
-<p>Term: <a href="{{ service.term.get_absolute_url }}">{{ service.term }}</a></p>
-<p>Status: <strong>{{ service.status }}</strong></p>
-<p>Occasion: {{ service.occasion|default:"—" }}</p>
-<a href="{% url 'planning:service_update' service.pk %}">Edit service</a>
-<a href="{% url 'planning:service_delete' service.pk %}">Delete service</a>
+<div class="flow">
+    <h1>{{ service }}</h1>
 
-<h2>Roles</h2>
-{% for role in roles %}
-    <h3>{{ role.role_name }}{% if role.is_not_applicable %} (N/A){% endif %}</h3>
-    <ul>
-        {% for piece in role.pieces.all %}
-        <li>{{ piece.score }} — {% if piece.is_confirmed %}Confirmed{% else %}Proposed{% endif %}
-            <form method="post" action="{% url 'planning:toggle_confirm' piece.pk %}">
+    <div class="flow" style="--flow-space: var(--spacing-3xs);">
+        <p>Term: <a href="{{ service.term.get_absolute_url }}">{{ service.term }}</a></p>
+        <p>Status: <strong>{{ service.status }}</strong></p>
+        <p>Occasion: {{ service.occasion|default:"—" }}</p>
+    </div>
+
+    <div class="cluster">
+        <a href="{% url 'planning:service_update' service.pk %}">Edit service</a>
+        <a href="{% url 'planning:service_delete' service.pk %}">Delete service</a>
+    </div>
+
+    <div class="flow">
+        <h2>Roles</h2>
+        {% for role in roles %}
+        <div class="flow" style="--flow-space: var(--spacing-xs);">
+            <h3>{{ role.role_name }}{% if role.is_not_applicable %} (N/A){% endif %}</h3>
+
+            <ul role="list" class="flow" style="--flow-space: var(--spacing-2xs);">
+                {% for piece in role.pieces.all %}
+                <li class="cluster" style="--cluster-justify: space-between;">
+                    <span>{{ piece.score }} — {% if piece.is_confirmed %}Confirmed{% else %}Proposed{% endif %}</span>
+                    <form method="post" action="{% url 'planning:toggle_confirm' piece.pk %}">
+                        {% csrf_token %}
+                        <button type="submit">{% if piece.is_confirmed %}Un-confirm{% else %}Confirm{% endif %}</button>
+                    </form>
+                </li>
+                {% empty %}
+                <li>No pieces proposed yet.</li>
+                {% endfor %}
+            </ul>
+
+            <form method="post" action="{% url 'planning:add_piece' role.pk %}" class="cluster">
                 {% csrf_token %}
-                <button type="submit">{% if piece.is_confirmed %}Un-confirm{% else %}Confirm{% endif %}</button>
+                {{ piece_form.as_p }}
+                <button type="submit">Propose piece</button>
             </form>
-        </li>
+        </div>
         {% empty %}
-        <li>No pieces proposed yet.</li>
+        <p>No roles yet.</p>
         {% endfor %}
-    </ul>
-    <form method="post" action="{% url 'planning:add_piece' role.pk %}">
-        {% csrf_token %}
-        {{ piece_form.as_p }}
-        <button type="submit">Propose piece</button>
-    </form>
-{% empty %}
-    <p>No roles yet.</p>
-{% endfor %}
-<h2>Add a role</h2>
-<form method="post" action="{% url 'planning:add_role' service.pk %}">
-    {% csrf_token %}
-    {{ role_form.as_p }}
-    <button type="submit">Add role</button>
-</form>
+    </div>
+
+    <div class="flow">
+        <h2>Add a role</h2>
+        <form method="post" action="{% url 'planning:add_role' service.pk %}" class="flow">
+            {% csrf_token %}
+            {{ role_form.as_p }}
+            <button type="submit">Add role</button>
+        </form>
+    </div>
+</div>
+
 {% include "comments/_thread.html" with object_id=service.pk %}
 {% endblock %}
