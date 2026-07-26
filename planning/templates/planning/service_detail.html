@@ -3,11 +3,19 @@
 {% block content %}
 <div class="flow">
     <h1>{{ service }}</h1>
+    <div class="accent-bar" {% if service.occasion and service.occasion.colour %}style="--accent: var(--colors-liturgical-{{ service.occasion.colour }});"{% endif %}></div>
 
     <div class="flow" style="--flow-space: var(--spacing-3xs);">
         <p>Term: <a href="{{ service.term.get_absolute_url }}">{{ service.term }}</a></p>
         <p>Status: <span class="badge badge--{{ service.status }}">{{ service.status }}</span></p>
-        <p>Occasion: {{ service.occasion|default:"—" }}</p>
+        <p>
+            Occasion:
+            {% if service.occasion %}
+                {% if service.occasion.colour %}<span class="occasion-dot" style="--accent: var(--colors-liturgical-{{ service.occasion.colour }});"></span>{% endif %}{{ service.occasion }}
+            {% else %}
+                —
+            {% endif %}
+        </p>
     </div>
 
     <div class="cluster">

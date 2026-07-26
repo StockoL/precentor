@@ -1,0 +1,35 @@
+/* ==========================================================================
+   BLOCK: LITURGICAL ACCENT
+   ========================================================================== */
+
+@layer blocks {
+  /*
+   * Contextual accent tied to whatever's in view (a Service's own
+   * occasion), not "today's date" globally — see the design decision
+   * to avoid modelling full season date-ranges in ordo. The colour
+   * name stored on LiturgicalOccasion.colour (violet/red/green/white/
+   * rose) is deliberately identical to the liturgical-* token suffix,
+   * so templates can build the variable name directly via string
+   * interpolation — no separate colour-mapping code needed anywhere.
+   *
+   * Both rules fall back to --colors-action-primary when no --accent
+   * is set inline (i.e. the page has no occasion in context), so
+   * nothing breaks or looks unstyled on pages without one.
+   */
+  .accent-bar {
+    height: 4px;
+    border-radius: 2px;
+    background-color: var(--accent, var(--colors-action-primary));
+    margin-block: var(--spacing-2xs);
+  }
+
+  .occasion-dot {
+    display: inline-block;
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 50%;
+    background-color: var(--accent, var(--colors-action-primary));
+    margin-inline-end: var(--spacing-3xs);
+    vertical-align: middle;
+  }
+}
