@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Log in — Precentor{% endblock %}
 {% block content %}
-<h1>Log in</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Log in</button>
-</form>
+<div class="cover">
+    <div class="center flow" data-intrinsic data-centered style="--center-max-width: 30ch;">
+        <h1>Log in</h1>
+        <form method="post" class="flow">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Log in</button>
+        </form>
+    </div>
+</div>
 {% endblock %}

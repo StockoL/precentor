@@ -1,0 +1,40 @@
+/* ==========================================================================
+   COMPOSITION: COVER
+   ========================================================================== */
+
+@layer compositions {
+  /*
+   * The Cover
+   * Vertically positions content within a full-height container: an
+   * optional first/last child (e.g. a header/footer) is pushed to the
+   * top/bottom, while the element marked [data-centered] takes the
+   * remaining space and centres itself vertically via auto margins.
+   *
+   * Solves a different axis to .center (see center.css), which only
+   * caps/centers content horizontally — the two are meant to be used
+   * together, not as alternatives: .cover for vertical placement on
+   * the page, .center (nested inside) for the horizontal width cap.
+   */
+  .cover {
+    display: flex;
+    flex-direction: column;
+    min-block-size: var(--cover-min-height, 100vh);
+    padding: var(--cover-gutters, var(--spacing-m, 1.5rem));
+  }
+
+  .cover > * {
+    margin-block: var(--cover-space, var(--spacing-m, 1.5rem));
+  }
+
+  .cover > :first-child {
+    margin-block-start: 0;
+  }
+
+  .cover > :last-child {
+    margin-block-end: 0;
+  }
+
+  .cover > [data-centered] {
+    margin-block: auto;
+  }
+}
