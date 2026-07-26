@@ -1,10 +1,28 @@
 {% extends "base.html" %}
 {% block title %}{{ score }} — Precentor{% endblock %}
 {% block content %}
-<h1>{{ score }}</h1>
-<p>Voicing: {{ score.voicing }}</p>
-<p>Language: {{ score.language }}</p>
-<p>Copies owned: {{ score.copies_owned }}</p>
-<a href="{% url 'library:score_update' score.pk %}">Edit</a>
-<a href="{% url 'library:score_delete' score.pk %}">Delete</a>
+<div class="flow">
+    <h1>{{ score }}</h1>
+
+    <div class="flow" style="--flow-space: var(--spacing-3xs);">
+        <h2>About this score</h2>
+        <p>Arranger: {{ score.arranger|default:"—" }}</p>
+        <p>Voicing: {{ score.voicing }}</p>
+        <p>Parts: S{{ score.soprano_parts }} A{{ score.alto_parts }} T{{ score.tenor_parts }} B{{ score.bass_parts }}</p>
+        <p>Language: {{ score.language }}</p>
+        <p>Duration: {% if score.duration_minutes %}{{ score.duration_minutes }} min{% else %}—{% endif %}</p>
+        <p>Rehearsal lead time: {{ score.lead_time_tag|default:"—" }}</p>
+    </div>
+
+    <div class="flow" style="--flow-space: var(--spacing-3xs);">
+        <h2>Library</h2>
+        <p>Copies owned: {{ score.copies_owned }}</p>
+        <p>Filing location: {{ score.filing_location|default:"—" }}</p>
+    </div>
+
+    <div class="cluster">
+        <a href="{% url 'library:score_update' score.pk %}">Edit</a>
+        <a href="{% url 'library:score_delete' score.pk %}">Delete</a>
+    </div>
+</div>
 {% endblock %}
