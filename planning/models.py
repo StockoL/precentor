@@ -99,3 +99,17 @@ class RolePiece(models.Model):
 
     def __str__(self):
         return f"{self.score} ({'confirmed' if self.is_confirmed else 'proposed'})"
+
+
+def completion_summary(self):
+    """
+    Aggregate service statuses for this term, for dashboard display.
+    Reuses Service.status rather than re-deriving anything.
+    """
+    statuses = [service.status for service in self.services.all()]
+    return {
+        "total": len(statuses),
+        "complete": statuses.count("complete"),
+        "in_progress": statuses.count("in_progress"),
+        "not_started": statuses.count("not_started"),
+    }

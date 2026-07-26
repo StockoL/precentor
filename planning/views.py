@@ -23,6 +23,12 @@ class TermListView(LoginRequiredMixin, ListView):
     model = Term
     context_object_name = "terms"
 
+    def get_queryset(self):
+        terms = list(super().get_queryset())
+        for term in terms:
+            term.summary = term.completion_summary()
+        return terms
+
 
 class TermDetailView(LoginRequiredMixin, DetailView):
     model = Term

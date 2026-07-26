@@ -1,13 +1,20 @@
 {% extends "base.html" %}
 {% block title %}Terms — Precentor{% endblock %}
 {% block content %}
-<h1>Terms</h1>
-<a href="{% url 'planning:term_create' %}">Add a term</a>
-<ul>
-    {% for term in terms %}
-    <li><a href="{{ term.get_absolute_url }}">{{ term }}</a> — {{ term.start_date|date:"d/m/Y" }} to {{ term.end_date|date:"d/m/Y" }}</li>
-    {% empty %}
-    <li>No terms yet.</li>
-    {% endfor %}
-</ul>
+<div class="flow">
+    <h1>Terms</h1>
+    <a href="{% url 'planning:term_create' %}">Add a term</a>
+
+    <div class="grid">
+        {% for term in terms %}
+        <div class="flow" style="--flow-space: var(--spacing-2xs);">
+            <h2><a href="{{ term.get_absolute_url }}">{{ term }}</a></h2>
+            <p>{{ term.start_date|date:"d/m/Y" }} to {{ term.end_date|date:"d/m/Y" }}</p>
+            <p>{{ term.summary.complete }} of {{ term.summary.total }} services complete</p>
+        </div>
+        {% empty %}
+        <p>No terms yet.</p>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}
