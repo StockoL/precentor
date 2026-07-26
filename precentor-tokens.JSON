@@ -1,0 +1,103 @@
+{
+  "_comment_colors": "PROCESS: neutral-* is the raw grayscale ramp. Semantic tokens (surface-*, text-*, border-*) alias into it via var(--colors-neutral-N). Status tokens (success/warning/danger/info) each ship a base + -bg/-border/-text trio for blocks like alert and badge. liturgical-* maps directly onto ordo.LiturgicalOccasion.colour's five choices (violet/red/green/white/rose) — the template sets a per-page --accent custom property to one of these five values when a Service/Occasion is in context; pages with no occasion in view fall back to action-primary.",
+  "colors": {
+    "neutral-0": "#ffffff",
+    "neutral-50": "#fafafa",
+    "neutral-100": "#f4f4f5",
+    "neutral-200": "#e4e4e7",
+    "neutral-300": "#d4d4d8",
+    "neutral-400": "#a1a1aa",
+    "neutral-500": "#71717a",
+    "neutral-600": "#52525b",
+    "neutral-700": "#3f3f46",
+    "neutral-800": "#27272a",
+    "neutral-900": "#18181b",
+    "neutral-950": "#09090b",
+
+    "action-primary": "#8b1a2b",
+
+    "surface-base": "var(--colors-neutral-0)",
+    "surface-sunken": "var(--colors-neutral-100)",
+    "text-base": "var(--colors-neutral-900)",
+    "text-muted": "var(--colors-neutral-500)",
+    "text-on-action": "var(--colors-neutral-0)",
+    "border-subtle": "var(--colors-neutral-200)",
+    "border-strong": "var(--colors-neutral-300)",
+
+    "success": "#16a34a",
+    "success-bg": "#f0fdf4",
+    "success-border": "#bbf7d0",
+    "success-text": "#166534",
+
+    "warning": "#d97706",
+    "warning-bg": "#fffbeb",
+    "warning-border": "#fde68a",
+    "warning-text": "#92400e",
+
+    "danger": "#dc2626",
+    "danger-bg": "#fef2f2",
+    "danger-border": "#fecaca",
+    "danger-text": "#991b1b",
+
+    "info": "#0284c7",
+    "info-bg": "#eff6ff",
+    "info-border": "#bfdbfe",
+    "info-text": "#1e3a8a",
+
+    "liturgical-violet": "#5b2a86",
+    "liturgical-red": "#8b1a2b",
+    "liturgical-green": "#2f6b3a",
+    "liturgical-white": "#b8962e",
+    "liturgical-rose": "#c26b8a"
+  },
+  "_comment_spacing": "Utopia space scale, including one-up pairs for fluid gutters between two named steps (used by Composition-level layout primitives — stack/cluster gaps, etc.).",
+  "spacing": {
+    "3xs": "clamp(0.25rem, 0.2244rem + 0.1136vw, 0.3125rem)",
+    "2xs": "clamp(0.5rem, 0.4489rem + 0.2273vw, 0.625rem)",
+    "xs": "clamp(0.75rem, 0.6733rem + 0.3409vw, 0.9375rem)",
+    "s": "clamp(1rem, 0.8977rem + 0.4545vw, 1.25rem)",
+    "m": "clamp(1.5rem, 1.3466rem + 0.6818vw, 1.875rem)",
+    "l": "clamp(2rem, 1.7955rem + 0.9091vw, 2.5rem)",
+    "xl": "clamp(3rem, 2.6932rem + 1.3636vw, 3.75rem)",
+    "2xl": "clamp(4rem, 3.5909rem + 1.8182vw, 5rem)",
+    "3xl": "clamp(6rem, 5.3864rem + 2.7273vw, 7.5rem)",
+
+    "3xs-2xs": "clamp(0.25rem, 0.0966rem + 0.6818vw, 0.625rem)",
+    "2xs-xs": "clamp(0.5rem, 0.321rem + 0.7955vw, 0.9375rem)",
+    "xs-s": "clamp(0.75rem, 0.5455rem + 0.9091vw, 1.25rem)",
+    "s-m": "clamp(1rem, 0.642rem + 1.5909vw, 1.875rem)",
+    "m-l": "clamp(1.5rem, 1.0909rem + 1.8182vw, 2.5rem)",
+    "l-xl": "clamp(2rem, 1.2841rem + 3.1818vw, 3.75rem)",
+    "xl-2xl": "clamp(3rem, 2.1818rem + 3.6364vw, 5rem)",
+    "2xl-3xl": "clamp(4rem, 2.5682rem + 6.3636vw, 7.5rem)",
+
+    "s-l": "clamp(1rem, 0.3864rem + 2.7273vw, 2.5rem)"
+  },
+  "_comment_typography": "Utopia type scale, step-0 as the body-text baseline. step--2/-1 cover fine print (comment timestamps, TBC labels); step-4/5 cover page-level headings.",
+  "typography": {
+    "step--2": "clamp(0.6944rem, 0.6513rem + 0.1919vw, 0.8rem)",
+    "step--1": "clamp(0.8333rem, 0.7652rem + 0.303vw, 1rem)",
+    "step-0": "clamp(1rem, 0.8977rem + 0.4545vw, 1.25rem)",
+    "step-1": "clamp(1.2rem, 1.0517rem + 0.6591vw, 1.5625rem)",
+    "step-2": "clamp(1.44rem, 1.2301rem + 0.933vw, 1.9531rem)",
+    "step-3": "clamp(1.728rem, 1.4362rem + 1.2971vw, 2.4414rem)",
+    "step-4": "clamp(2.0736rem, 1.6734rem + 1.7785vw, 3.0518rem)",
+    "step-5": "clamp(2.4883rem, 1.9457rem + 2.4116vw, 3.8147rem)"
+  },
+  "transitions": {
+    "spring-snappy": "cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+    "spring-smooth": "cubic-bezier(0.4, 0, 0.2, 1)",
+    "dur-fast": "150ms",
+    "dur-base": "250ms"
+  },
+  "_comment_layout": "'measure' caps prose/content width (used by .center and typographic elements). 'wrapper-max-width' caps macro page-section width (used by .wrapper).",
+  "layout": {
+    "measure": "60ch",
+    "wrapper-max-width": "80rem"
+  },
+  "_comment_fonts": "Brand-neutral placeholders for now — a typeface decision is a separate step from the token scaffolding itself.",
+  "fonts": {
+    "heading": "system-ui, sans-serif",
+    "body": "system-ui, sans-serif"
+  }
+}
