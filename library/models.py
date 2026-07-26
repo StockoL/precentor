@@ -18,6 +18,9 @@ class Score(models.Model):
     copies_owned = models.PositiveIntegerField(default=0)
     filing_location = models.CharField(max_length=100, blank=True)
     duration_minutes = models.PositiveIntegerField(blank=True, null=True)
+    suited_occasions = models.ManyToManyField(
+        "ordo.LiturgicalOccasion", blank=True, related_name="suited_scores"
+    )
 
     class Meta:
         ordering = ["title"]  # noqa (Django Meta, not a normal class — no shared-state risk)
