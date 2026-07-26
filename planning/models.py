@@ -66,14 +66,20 @@ class Service(models.Model):
             return "not_started"
 
         resolved_count = 0
+        has_any_piece = False
         for role in roles:
-            if role.is_not_applicable or role.pieces.filter(is_confirmed=True).exists():
+            if role.is_not_applicable:
+                resolved_count += 1
+                continue
+            if role.pieces.exists():
+                has_any_piece = True
+            if role.pieces.filter(is_confirmed=True).exists():
                 resolved_count += 1
 
-        if resolved_count == 0:
-            return "not_started"
         if resolved_count == roles.count():
             return "complete"
+        if resolved_count == 0 and not has_any_piece:
+            return "not_started"
         return "in_progress"
 
     def music_list_rows(self, draft=False):
