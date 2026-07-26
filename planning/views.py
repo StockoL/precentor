@@ -15,11 +15,6 @@ from .forms import RolePieceForm, ServiceRoleForm
 from .mixins import ConductorRequiredMixin
 from .models import RolePiece, Service, ServiceRole, Term
 
-
-def is_conductor(user):
-    return user.groups.filter(name="Conductor").exists()
-
-
 # --- Term views ---
 
 
@@ -96,7 +91,7 @@ class ServiceDeleteView(ConductorRequiredMixin, DeleteView):
 
 
 @login_required
-@user_passes_test(is_conductor)
+@user_passes_test(ConductorRequiredMixin.is_conductor)
 @require_POST
 def add_role(request, service_pk):
     service = get_object_or_404(Service, pk=service_pk)
@@ -109,7 +104,7 @@ def add_role(request, service_pk):
 
 
 @login_required
-@user_passes_test(is_conductor)
+@user_passes_test(ConductorRequiredMixin.is_conductor)
 @require_POST
 def add_piece(request, role_pk):
     role = get_object_or_404(ServiceRole, pk=role_pk)
@@ -122,7 +117,7 @@ def add_piece(request, role_pk):
 
 
 @login_required
-@user_passes_test(is_conductor)
+@user_passes_test(ConductorRequiredMixin.is_conductor)
 @require_POST
 def toggle_confirm(request, piece_pk):
     piece = get_object_or_404(RolePiece, pk=piece_pk)
