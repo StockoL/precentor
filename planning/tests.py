@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.test import TestCase
 
 from library.models import Score
@@ -54,6 +55,11 @@ class ServiceStatusTests(TestCase):
 
 class RolePieceWorkflowTests(TestCase):
     def setUp(self):
+        self.user = User.objects.create_user(
+            username="conductor", password="testpass123"
+        )
+        self.user.groups.add(Group.objects.get_or_create(name="Conductor")[0])
+        self.client.login(username="conductor", password="testpass123")
         self.term = Term.objects.create(
             name="Test Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
         )
@@ -64,24 +70,24 @@ class RolePieceWorkflowTests(TestCase):
 
     def test_add_role(self):
         self.client.post(
-            f"/planning/services/{self.service.pk}/roles/add/", {"role_name": "Anthem"}
+            f"/services/{self.service.pk}/roles/add/", {"role_name": "Anthem"}
         )
         self.assertEqual(self.service.roles.count(), 1)
 
     def test_add_piece_and_toggle_confirm(self):
         role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
         self.client.post(
-            f"/planning/roles/{role.pk}/pieces/add/", {"score": self.score.pk}
+            f"/roles/{role.pk}/pieces/add/", {"score": self.score.pk}
         )
         piece = role.pieces.first()
         self.assertFalse(piece.is_confirmed)
 
-        self.client.post(f"/planning/pieces/{piece.pk}/toggle-confirm/")
+        self.client.post(f"/pieces/{piece.pk}/toggle-confirm/")
         piece.refresh_from_db()
         self.assertTrue(piece.is_confirmed)
 
     def test_get_request_rejected(self):
-        response = self.client.get(f"/planning/services/{self.service.pk}/roles/add/")
+        response = self.client.get(f"/services/{self.service.pk}/roles/add/")
         self.assertEqual(response.status_code, 405)
 
 
@@ -103,7 +109,7 @@ class MusicListTests(TestCase):
         ServiceRole.objects.create(
             service=self.service, role_name="Setting", is_not_applicable=True
         )
-        response = self.client.get(f"/planning/terms/{self.term.pk}/music-list/")
+        response = self.client.get(f"/terms/{self.term.pk}/music-list/")
         self.assertNotContains(response, "Setting")
 
     def test_unconfirmed_role_hidden_in_public_version(self):
@@ -111,7 +117,7 @@ class MusicListTests(TestCase):
         RolePiece.objects.create(
             service_role=role, score=self.score, is_confirmed=False
         )
-        response = self.client.get(f"/planning/terms/{self.term.pk}/music-list/")
+        response = self.client.get(f"/terms/{self.term.pk}/music-list/")
         self.assertNotContains(response, "Anthem")
 
     def test_unconfirmed_role_shown_as_tbc_in_draft(self):
@@ -120,7 +126,7 @@ class MusicListTests(TestCase):
             service_role=role, score=self.score, is_confirmed=False
         )
         response = self.client.get(
-            f"/planning/terms/{self.term.pk}/music-list/?draft=1"
+            f"/terms/{self.term.pk}/music-list/?draft=1"
         )
         self.assertContains(response, "Anthem")
         self.assertContains(response, "TBC")
@@ -128,6 +134,6 @@ class MusicListTests(TestCase):
     def test_confirmed_piece_shown_in_public_version(self):
         role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
         RolePiece.objects.create(service_role=role, score=self.score, is_confirmed=True)
-        response = self.client.get(f"/planning/terms/{self.term.pk}/music-list/")
+        response = self.client.get(f"/terms/{self.term.pk}/music-list/")
         self.assertContains(response, "Anthem")
         self.assertContains(response, "Test Anthem")

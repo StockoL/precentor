@@ -1,10 +1,17 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from .models import Score
 
+User = get_user_model()
+
 
 class ScoreFilterTests(TestCase):
     def setUp(self):
+        self.user = User.objects.create_user(
+            username="conductor", password="testpass123"
+        )
+        self.client.login(username="conductor", password="testpass123")
         Score.objects.create(
             title="Ave Verum", composer="Byrd", language="Latin", tenor_parts=1
         )
