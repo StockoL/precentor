@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import ProtectedError
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import (
@@ -10,7 +11,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from .models import ProtectedError, Score
+from .models import Score
 
 
 class ScoreListView(LoginRequiredMixin, ListView):
