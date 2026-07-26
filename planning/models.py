@@ -51,6 +51,9 @@ class Service(models.Model):
     def __str__(self):
         return f"{self.service_type} — {self.date.strftime('%d/%m/%Y')}"
 
+    def get_absolute_url(self):
+        return reverse("planning:service_detail", kwargs={"pk": self.pk})
+
     @property
     def status(self):
         """

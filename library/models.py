@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class Score(models.Model):
@@ -23,3 +24,6 @@ class Score(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.composer})"
+
+    def get_absolute_url(self):
+        return reverse("library:score_detail", kwargs={"pk": self.pk})
