@@ -22,6 +22,7 @@ from .models import RolePiece, Service, ServiceRole, Term
 class TermListView(LoginRequiredMixin, ListView):
     model = Term
     context_object_name = "terms"
+    template_name = "planning/term_list.html"
 
     def get_queryset(self):
         terms = list(super().get_queryset())
