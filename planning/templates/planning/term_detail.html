@@ -1,23 +1,31 @@
 {% extends "base.html" %}
 {% block title %}{{ term }} — Precentor{% endblock %}
 {% block content %}
-<h1>{{ term }}</h1>
-<p>{{ term.start_date|date:"d/m/Y" }} to {{ term.end_date|date:"d/m/Y" }}</p>
-<a href="{% url 'planning:term_update' term.pk %}">Edit term</a>
-<a href="{% url 'planning:term_delete' term.pk %}">Delete term</a>
-<a href="{% url 'planning:service_create' term.pk %}">Add a service</a>
-<a href="{% url 'planning:term_music_list' term.pk %}">View music list</a>
+<div class="flow">
+    <h1>{{ term }}</h1>
+    <p>{{ term.start_date|date:"d/m/Y" }} to {{ term.end_date|date:"d/m/Y" }}</p>
 
-<h2>Services</h2>
-<ul>
-    {% for service in services %}
-    <li>
-        {{ service.date|date:"d/m/Y" }} — {{ service.service_type }}
-        — <strong>{{ service.status }}</strong>
-    </li>
-    {% empty %}
-    <li>No services yet.</li>
-    {% endfor %}
-</ul>
+    <div class="cluster">
+        <a href="{% url 'planning:term_update' term.pk %}">Edit term</a>
+        <a href="{% url 'planning:term_delete' term.pk %}">Delete term</a>
+        <a href="{% url 'planning:service_create' term.pk %}">Add a service</a>
+        <a href="{% url 'planning:term_music_list' term.pk %}">View music list</a>
+    </div>
+
+    <div class="flow">
+        <h2>Services</h2>
+        <ul role="list" class="flow">
+            {% for service in services %}
+            <li>
+                {{ service.date|date:"d/m/Y" }} — {{ service.service_type }}
+                — <strong>{{ service.status }}</strong>
+            </li>
+            {% empty %}
+            <li>No services yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
 {% include "comments/_thread.html" with object_id=term.pk %}
 {% endblock %}
