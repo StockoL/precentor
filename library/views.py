@@ -14,6 +14,36 @@ class ScoreListView(ListView):
     model = Score
     context_object_name = "scores"
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        language = self.request.GET.get("language")
+        voice_part = self.request.GET.get("voice_part")
+
+        if language:
+            queryset = queryset.filter(language__iexact=language)
+
+        voice_part_lookup = {
+            "soprano": "soprano_parts__gt",
+            "alto": "alto_parts__gt",
+            "tenor": "tenor_parts__gt",
+            "bass": "bass_parts__gt",
+        }
+        if voice_part in voice_part_lookup:
+            queryset = queryset.filter(**{voice_part_lookup[voice_part]: 0})
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["languages"] = (
+            Score.objects.values_list("language", flat=True)
+            .distinct()
+            .order_by("language")
+        )
+        context["selected_language"] = self.request.GET.get("language", "")
+        context["selected_voice_part"] = self.request.GET.get("voice_part", "")
+        return context
+
 
 class ScoreDetailView(DetailView):
     model = Score
