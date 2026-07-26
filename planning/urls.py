@@ -28,4 +28,7 @@ urlpatterns = [
         views.ServiceDeleteView.as_view(),
         name="service_delete",
     ),
+    path(
+        "terms/<int:term_pk>/music-list/", views.term_music_list, name="term_music_list"
+    ),
 ]
