@@ -1,0 +1,81 @@
+/* ==========================================================================
+   BLOCK: MUSIC LIST DOCUMENT
+   ========================================================================== */
+
+@layer blocks {
+  .music-list {
+    font-family: var(--fonts-heading);
+  }
+
+  .music-list h2 {
+    border-block-end: 1px solid var(--colors-border-subtle);
+    padding-block-end: var(--spacing-3xs);
+    margin-block-end: var(--spacing-2xs);
+  }
+
+  .music-list dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--spacing-2xs) var(--spacing-m);
+    margin: 0;
+  }
+
+  .music-list dt {
+    font-weight: 600;
+    color: var(--colors-text-muted);
+  }
+
+  .music-list dd {
+    margin: 0;
+  }
+
+  .music-list .tbc {
+    font-style: italic;
+    color: var(--colors-text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .music-list .draft-banner {
+    display: inline-block;
+    padding-inline: var(--spacing-s);
+    padding-block: var(--spacing-2xs);
+    background-color: var(--colors-warning-bg);
+    color: var(--colors-warning-text);
+    border: 1px solid var(--colors-warning-border);
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .music-list-controls {
+    margin-block-start: var(--spacing-l);
+    padding-block-start: var(--spacing-m);
+    border-block-start: 1px solid var(--colors-border-subtle);
+  }
+}
+
+/*
+ * Deliberately OUTSIDE @layer — unlayered CSS always wins over any
+ * layered rule in the cascade, regardless of layer order or selector
+ * specificity. That guarantee matters specifically here: at the
+ * moment of printing, these overrides must win unconditionally over
+ * .site-nav (nav.css) and .music-list (above), with no risk of a
+ * layer-ordering mistake ever silently letting nav/controls print.
+ * No !important needed — cascade layers already provide the
+ * guarantee !important is usually reached for.
+ */
+@media print {
+  .site-nav,
+  .music-list-controls {
+    display: none;
+  }
+
+  .music-list {
+    font-family: serif;
+    color: black;
+    background: white;
+  }
+}
+
+@page {
+  margin: 2cm;
+}
