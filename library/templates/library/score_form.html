@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Score form — Precentor{% endblock %}
+{% block content %}
+<h1>{{ form.instance.pk|yesno:"Edit,Add" }} score</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+{% endblock %}
