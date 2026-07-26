@@ -37,4 +37,5 @@
     {{ role_form.as_p }}
     <button type="submit">Add role</button>
 </form>
+{% include "comments/_thread.html" with object_id=service.pk %}
 {% endblock %}

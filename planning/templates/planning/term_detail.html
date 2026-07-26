@@ -18,4 +18,5 @@
     <li>No services yet.</li>
     {% endfor %}
 </ul>
+{% include "comments/_thread.html" with object_id=term.pk %}
 {% endblock %}

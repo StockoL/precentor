@@ -1,0 +1,32 @@
+<div class="comment-thread">
+    <h2>Comments</h2>
+    {% for comment in comments %}
+    <div class="comment comment--{{ comment.state }}">
+        <p><strong>{{ comment.author }}</strong> ({{ comment.created_at|date:"d/m/Y H:i" }}): {{ comment.body }}</p>
+        <form method="post" action="{% url 'comments:toggle_close' comment.pk %}">
+            {% csrf_token %}
+            <button type="submit">{% if comment.is_open %}Close{% else %}Re-open{% endif %}</button>
+        </form>
+        <ul>
+            {% for reply in comment.replies.all %}
+            <li><strong>{{ reply.author }}</strong>: {{ reply.body }}</li>
+            {% endfor %}
+        </ul>
+        <form method="post" action="{% url 'comments:add_comment' content_type_id object_id %}">
+            {% csrf_token %}
+            <input type="hidden" name="parent_id" value="{{ comment.pk }}">
+            <input type="text" name="body" placeholder="Reply...">
+            <button type="submit">Reply</button>
+        </form>
+    </div>
+    {% empty %}
+    <p>No comments yet.</p>
+    {% endfor %}
+
+    <h3>New comment</h3>
+    <form method="post" action="{% url 'comments:add_comment' content_type_id object_id %}">
+        {% csrf_token %}
+        <input type="text" name="body" placeholder="Add a comment...">
+        <button type="submit">Add comment</button>
+    </form>
+</div>
