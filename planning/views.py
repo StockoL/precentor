@@ -1,5 +1,6 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -8,7 +9,8 @@ from django.views.generic import (
     UpdateView,
 )
 
-from .models import Service, Term
+from .forms import RolePieceForm, ServiceRoleForm
+from .models import RolePiece, Service, ServiceRole, Term
 
 
 class TermListView(ListView):
@@ -60,6 +62,8 @@ class ServiceDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["roles"] = self.object.roles.prefetch_related("pieces__score")
+        context["role_form"] = ServiceRoleForm()
+        context["piece_form"] = RolePieceForm()
         return context
 
 
@@ -73,3 +77,33 @@ class ServiceDeleteView(DeleteView):
 
     def get_success_url(self):
         return self.object.term.get_absolute_url()
+
+
+@require_POST
+def add_role(request, service_pk):
+    service = get_object_or_404(Service, pk=service_pk)
+    form = ServiceRoleForm(request.POST)
+    if form.is_valid():
+        role = form.save(commit=False)
+        role.service = service
+        role.save()
+    return redirect(service.get_absolute_url())
+
+
+@require_POST
+def add_piece(request, role_pk):
+    role = get_object_or_404(ServiceRole, pk=role_pk)
+    form = RolePieceForm(request.POST)
+    if form.is_valid():
+        piece = form.save(commit=False)
+        piece.service_role = role
+        piece.save()
+    return redirect(role.service.get_absolute_url())
+
+
+@require_POST
+def toggle_confirm(request, piece_pk):
+    piece = get_object_or_404(RolePiece, pk=piece_pk)
+    piece.is_confirmed = not piece.is_confirmed
+    piece.save()
+    return redirect(piece.service_role.service.get_absolute_url())
