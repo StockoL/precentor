@@ -3,6 +3,28 @@
 {% block content %}
 <h1>Scores</h1>
 <a href="{% url 'library:score_create' %}">Add a score</a>
+
+<form method="get">
+    <label for="language">Language</label>
+    <select name="language" id="language">
+        <option value="">All</option>
+        {% for lang in languages %}
+        <option value="{{ lang }}" {% if lang == selected_language %}selected{% endif %}>{{ lang }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="voice_part">Voice part</label>
+    <select name="voice_part" id="voice_part">
+        <option value="">Any</option>
+        <option value="soprano" {% if selected_voice_part == "soprano" %}selected{% endif %}>Soprano</option>
+        <option value="alto" {% if selected_voice_part == "alto" %}selected{% endif %}>Alto</option>
+        <option value="tenor" {% if selected_voice_part == "tenor" %}selected{% endif %}>Tenor</option>
+        <option value="bass" {% if selected_voice_part == "bass" %}selected{% endif %}>Bass</option>
+    </select>
+
+    <button type="submit">Filter</button>
+</form>
+
 <ul>
     {% for score in scores %}
     <li><a href="{{ score.get_absolute_url }}">{{ score }}</a></li>
