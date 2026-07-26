@@ -1,3 +1,4 @@
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
 
@@ -6,6 +7,7 @@ class Term(models.Model):
     name = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField()
+    comments = GenericRelation("comments.Comment")
 
     class Meta:
         ordering = ["start_date"]  # noqa
@@ -28,6 +30,7 @@ class Service(models.Model):
         blank=True,
         related_name="services",
     )
+    comments = GenericRelation("comments.Comment")
 
     class Meta:
         ordering = ["date"]  # noqa
@@ -78,6 +81,7 @@ class RolePiece(models.Model):
         "library.Score", on_delete=models.PROTECT, related_name="role_pieces"
     )
     is_confirmed = models.BooleanField(default=False)
+    comments = GenericRelation("comments.Comment")
 
     class Meta:
         ordering = ["id"]  # noqa
