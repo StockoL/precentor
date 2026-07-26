@@ -1,0 +1,19 @@
+/* ==========================================================================
+   LAYER ORDER
+   ========================================================================== */
+
+/*
+ * Declares cascade-layer precedence, lowest to highest priority.
+ * This must be the first stylesheet linked in base.html — everything
+ * else declares which of these layers it belongs to, but this file is
+ * what establishes that reset always loses to global, which always
+ * loses to compositions, which always loses to blocks, then utilities, etc.
+ *
+ * Deliberately no @import here (or anywhere in this project) — @import
+ * chains are sequential, render-blocking network requests. Every file
+ * is linked individually as a plain <link> in base.html instead, which
+ * the browser can request in parallel; @layer alone (not load order)
+ * determines cascade priority, so link order no longer matters for
+ * correctness, only for readability.
+ */
+@layer reset, global, compositions, blocks, utilities;

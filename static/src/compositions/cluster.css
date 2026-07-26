@@ -1,0 +1,17 @@
+/* ==========================================================================
+   COMPOSITION: CLUSTER
+   ========================================================================== */
+
+@layer compositions {
+  /*
+   * The Cluster
+   * Groups elements together with horizontal and vertical spacing.
+   */
+  .cluster {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gutter, 1rem);
+    justify-content: var(--cluster-justify, flex-start);
+    align-items: var(--cluster-align, center);
+  }
+}

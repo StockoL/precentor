@@ -1,0 +1,53 @@
+/* ==========================================================================
+   GLOBAL STYLES & BASE TYPOGRAPHY
+   ========================================================================== */
+
+@layer global {
+  html,
+  body {
+    min-height: 100%;
+    font-family: var(--fonts-body);
+    line-height: 1.5;
+    color: var(--colors-text-base);
+    background-color: var(--colors-surface-base);
+    overflow-wrap: break-word;
+  }
+
+  /*
+   * Typographic Measure
+   * Restricts the line length of text elements to an optimal reading width.
+   */
+  p,
+  li,
+  dl,
+  figcaption,
+  blockquote {
+    max-width: var(--layout-measure);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--fonts-heading);
+    max-width: var(--layout-measure);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  /* Map heading tags to the fluid scale */
+  h1 {
+    font-size: var(--typography-step-4);
+  }
+  h2 {
+    font-size: var(--typography-step-3);
+  }
+  h3 {
+    font-size: var(--typography-step-2);
+  }
+  h4 {
+    font-size: var(--typography-step-1);
+  }
+}

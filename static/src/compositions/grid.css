@@ -1,0 +1,18 @@
+/* ==========================================================================
+   COMPOSITION: GRID
+   ========================================================================== */
+
+@layer compositions {
+  /*
+   * The Grid
+   * An intrinsic grid layout that creates equal-width columns without media queries.
+   */
+  .grid {
+    display: grid;
+    gap: var(--gutter, 1rem);
+    grid-template-columns: repeat(
+      var(--grid-placement, auto-fit),
+      minmax(min(var(--grid-min-item-size, 15rem), 100%), 1fr)
+    );
+  }
+}

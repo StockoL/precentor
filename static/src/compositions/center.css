@@ -1,0 +1,35 @@
+/* ==========================================================================
+   COMPOSITION: CENTER
+   ========================================================================== */
+
+@layer compositions {
+  /*
+   * The Center
+   * A content primitive: caps a box to the typographic reading measure
+   * (--layout-measure) and centers it, with content-box sizing so that
+   * padding is guaranteed extra gutter space rather than eating into the
+   * measure cap. Also offers intrinsic centering exceptions for its children.
+   *
+   * Not to be confused with .wrapper (see wrapper.css), which caps a much
+   * wider macro page-section width and has no content-box trick or exceptions.
+   * Use .center around prose/hero content that needs a reading-width cap;
+   * use .wrapper around a whole section that needs a site-wide edge margin.
+   */
+  .center {
+    box-sizing: content-box;
+    display: block;
+    max-inline-size: var(--center-max-width, var(--layout-measure, 60ch));
+    margin-inline: auto;
+    padding-inline: var(--center-gutters, var(--spacing-m, 1.5rem));
+  }
+
+  .center[data-and-text] {
+    text-align: center;
+  }
+
+  .center[data-intrinsic] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}

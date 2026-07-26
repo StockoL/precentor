@@ -1,0 +1,30 @@
+/* ==========================================================================
+   COMPOSITION: WRAPPER
+   ========================================================================== */
+
+@layer compositions {
+  /*
+   * The Wrapper
+   * A macro, page-section container: caps the width of a full-bleed section
+   * (header, footer, page region) to a site-wide max and centers it, with a
+   * plain border-box (padding counts toward the cap, same as the reset default).
+   *
+   * This is deliberately NOT the same job as .center (see center.css):
+   * - Wrapper caps to a wide site max-width (--layout-wrapper-max-width),
+   *   not the narrower typographic reading measure.
+   * - Wrapper has no content-box gutter trick and no alignment exceptions —
+   *   it is a single-purpose outer shell, applied once per section.
+   * - Its gutter var is namespaced (--wrapper-gutters) rather than the shared
+   *   --gutter used by compositions like .cluster/.grid, because --gutter
+   *   inherits down the DOM: a .grid setting --gutter locally would otherwise
+   *   leak into any .wrapper nested inside it and silently change its padding.
+   */
+  .wrapper {
+    max-inline-size: var(
+      --wrapper-max-width,
+      var(--layout-wrapper-max-width, 80rem)
+    );
+    margin-inline: auto;
+    padding-inline: var(--wrapper-gutters, var(--spacing-m, 1.5rem));
+  }
+}

@@ -1,0 +1,20 @@
+/* ==========================================================================
+   COMPOSITION: SWITCHER
+   ========================================================================== */
+
+@layer compositions {
+  /*
+   * The Switcher
+   * Switches directly from a horizontal row to a vertical stack based on a container threshold.
+   */
+  .switcher {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gutter, 1rem);
+  }
+
+  .switcher > * {
+    flex-grow: 1;
+    flex-basis: calc((var(--switcher-threshold, 40rem) - 100%) * 999);
+  }
+}

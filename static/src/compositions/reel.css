@@ -1,0 +1,23 @@
+/* ==========================================================================
+   COMPOSITION: REEL
+   ========================================================================== */
+
+@layer compositions {
+  /*
+   * The Reel
+   * Creates a horizontally scrollable container that snaps elements into place.
+   */
+  .reel {
+    display: flex;
+    gap: var(--gutter, 1rem);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    padding-block-end: 1rem;
+  }
+
+  .reel > * {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
+}

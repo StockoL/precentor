@@ -1,0 +1,14 @@
+/* ==========================================================================
+   COMPOSITION: FLOW
+   ========================================================================== */
+
+@layer compositions {
+  /*
+   * The Flow
+   * Manages vertical rhythm between direct siblings using the owl selector.
+   * Notice the absence of flexbox — this relies purely on native block flow.
+   */
+  .flow > * + * {
+    margin-block-start: var(--flow-space, 1em);
+  }
+}

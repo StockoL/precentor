@@ -1,0 +1,27 @@
+/* ==========================================================================
+   COMPOSITION: SIDEBAR
+   ========================================================================== */
+
+@layer compositions {
+  /*
+   * The Sidebar
+   * An asymmetric layout where a sidebar holds its width, and the main
+   * content stretches to fill the rest, stacking when space runs out.
+   */
+  .sidebar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sidebar-space, var(--gutter, 1rem));
+  }
+
+  .sidebar > :first-child {
+    flex-basis: var(--sidebar-target-width, 15rem);
+    flex-grow: 1;
+  }
+
+  .sidebar > :last-child {
+    flex-basis: 0;
+    flex-grow: 999;
+    min-inline-size: var(--sidebar-content-min-width, 50%);
+  }
+}
