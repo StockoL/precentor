@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -10,7 +11,7 @@ from django.views.generic import (
 from .models import Score
 
 
-class ScoreListView(ListView):
+class ScoreListView(LoginRequiredMixin, ListView):
     model = Score
     context_object_name = "scores"
 
@@ -45,11 +46,11 @@ class ScoreListView(ListView):
         return context
 
 
-class ScoreDetailView(DetailView):
+class ScoreDetailView(LoginRequiredMixin, DetailView):
     model = Score
 
 
-class ScoreCreateView(CreateView):
+class ScoreCreateView(LoginRequiredMixin, CreateView):
     model = Score
     fields = [  # noqa
         "title",
@@ -68,11 +69,11 @@ class ScoreCreateView(CreateView):
     ]
 
 
-class ScoreUpdateView(UpdateView):
+class ScoreUpdateView(LoginRequiredMixin, UpdateView):
     model = Score
     fields = ScoreCreateView.fields
 
 
-class ScoreDeleteView(DeleteView):
+class ScoreDeleteView(LoginRequiredMixin, DeleteView):
     model = Score
     success_url = reverse_lazy("library:score_list")

@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
@@ -10,15 +12,23 @@ from django.views.generic import (
 )
 
 from .forms import RolePieceForm, ServiceRoleForm
+from .mixins import ConductorRequiredMixin
 from .models import RolePiece, Service, ServiceRole, Term
 
 
-class TermListView(ListView):
+def is_conductor(user):
+    return user.groups.filter(name="Conductor").exists()
+
+
+# --- Term views ---
+
+
+class TermListView(LoginRequiredMixin, ListView):
     model = Term
     context_object_name = "terms"
 
 
-class TermDetailView(DetailView):
+class TermDetailView(LoginRequiredMixin, DetailView):
     model = Term
 
     def get_context_data(self, **kwargs):
@@ -27,24 +37,27 @@ class TermDetailView(DetailView):
         return context
 
 
-class TermCreateView(CreateView):
+class TermCreateView(ConductorRequiredMixin, CreateView):
     model = Term
-    fields = ["name", "start_date", "end_date"]  # noqa
+    fields = ["name", "start_date", "end_date"]
 
 
-class TermUpdateView(UpdateView):
+class TermUpdateView(ConductorRequiredMixin, UpdateView):
     model = Term
     fields = TermCreateView.fields
 
 
-class TermDeleteView(DeleteView):
+class TermDeleteView(ConductorRequiredMixin, DeleteView):
     model = Term
     success_url = reverse_lazy("planning:term_list")
 
 
-class ServiceCreateView(CreateView):
+# --- Service views ---
+
+
+class ServiceCreateView(ConductorRequiredMixin, CreateView):
     model = Service
-    fields = ["date", "service_type", "occasion"]  # noqa
+    fields = ["date", "service_type", "occasion"]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -56,7 +69,7 @@ class ServiceCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ServiceDetailView(DetailView):
+class ServiceDetailView(LoginRequiredMixin, DetailView):
     model = Service
 
     def get_context_data(self, **kwargs):
@@ -67,18 +80,23 @@ class ServiceDetailView(DetailView):
         return context
 
 
-class ServiceUpdateView(UpdateView):
+class ServiceUpdateView(ConductorRequiredMixin, UpdateView):
     model = Service
     fields = ServiceCreateView.fields
 
 
-class ServiceDeleteView(DeleteView):
+class ServiceDeleteView(ConductorRequiredMixin, DeleteView):
     model = Service
 
     def get_success_url(self):
         return self.object.term.get_absolute_url()
 
 
+# --- Role / Piece action views ---
+
+
+@login_required
+@user_passes_test(is_conductor)
 @require_POST
 def add_role(request, service_pk):
     service = get_object_or_404(Service, pk=service_pk)
@@ -90,6 +108,8 @@ def add_role(request, service_pk):
     return redirect(service.get_absolute_url())
 
 
+@login_required
+@user_passes_test(is_conductor)
 @require_POST
 def add_piece(request, role_pk):
     role = get_object_or_404(ServiceRole, pk=role_pk)
@@ -101,6 +121,8 @@ def add_piece(request, role_pk):
     return redirect(role.service.get_absolute_url())
 
 
+@login_required
+@user_passes_test(is_conductor)
 @require_POST
 def toggle_confirm(request, piece_pk):
     piece = get_object_or_404(RolePiece, pk=piece_pk)
