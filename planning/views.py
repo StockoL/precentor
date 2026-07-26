@@ -34,7 +34,7 @@ class TermDetailView(LoginRequiredMixin, DetailView):
 
 class TermCreateView(ConductorRequiredMixin, CreateView):
     model = Term
-    fields = ["name", "start_date", "end_date"]
+    fields = ["name", "start_date", "end_date"]  # noqa
 
 
 class TermUpdateView(ConductorRequiredMixin, UpdateView):
@@ -52,7 +52,7 @@ class TermDeleteView(ConductorRequiredMixin, DeleteView):
 
 class ServiceCreateView(ConductorRequiredMixin, CreateView):
     model = Service
-    fields = ["date", "service_type", "occasion"]
+    fields = ["date", "service_type", "occasion"]  # noqa
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
