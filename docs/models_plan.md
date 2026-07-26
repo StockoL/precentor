@@ -141,6 +141,15 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 ```
 
+## Template organisation
+
+Templates are kept **per-app** (e.g. `library/templates/library/`) rather
+than centralised under one project-level `templates/` folder, so each
+app remains self-contained — its templates travel with it, consistent
+with the one-way dependency structure above. The single exception is
+`templates/base.html` at the project root, which is intentionally
+shared across every app rather than owned by any one of them.
+
 ## Decisions worth remembering when writing the real code
 
 - `RolePiece.score` uses `on_delete=models.PROTECT` — a Score can't be
