@@ -121,3 +121,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
+
+# Login and logout redirects
+
+LOGIN_REDIRECT_URL = "planning:term_list"
+LOGOUT_REDIRECT_URL = "planning:term_list"
