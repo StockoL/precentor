@@ -1,4 +1,3 @@
-<!-- planning/templates/planning/term_detail.html -->
 {% extends "base.html" %}
 {% block title %}{{ term }} — Precentor{% endblock %}
 {% block content %}
@@ -17,9 +16,9 @@
         <h2>Services</h2>
         <ul role="list" class="flow">
             {% for service in services %}
-            <li>
-                {{ service.date|date:"d/m/Y" }} — {{ service.service_type }}
-                — <strong>{{ service.status }}</strong>
+            <li class="cluster" style="--cluster-justify: space-between;">
+                <span>{{ service.date|date:"d/m/Y" }} — {{ service.service_type }}</span>
+                <span class="badge badge--{{ service.status }}">{{ service.status }}</span>
             </li>
             {% empty %}
             <li>No services yet.</li>
