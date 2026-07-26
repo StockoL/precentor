@@ -60,6 +60,17 @@ class Service(models.Model):
             return "complete"
         return "in_progress"
 
+    def music_list_rows(self, draft=False):
+        rows = []
+        for role in self.roles.all():
+            if role.is_not_applicable:
+                continue
+            confirmed = [p.score for p in role.pieces.all() if p.is_confirmed]
+            if not confirmed and not draft:
+                continue
+            rows.append({"role_name": role.role_name, "pieces": confirmed})
+        return rows
+
 
 class ServiceRole(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="roles")
