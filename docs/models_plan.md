@@ -61,15 +61,35 @@ flagged in the README as a scope limit, not an oversight.
 ### `ordo.LiturgicalOccasion`
 
 ```python
+COLOUR_CHOICES = [
+    ("violet", "Violet"),
+    ("red", "Red"),
+    ("green", "Green"),
+    ("white", "White/Gold"),
+    ("rose", "Rose"),
+]
+
 class LiturgicalOccasion(models.Model):
     TRADITION_CHOICES = [("catholic", "Catholic"), ("cofe", "Church of England")]
     name = models.CharField(max_length=100)
     tradition = models.CharField(max_length=20, choices=TRADITION_CHOICES)
     is_moveable = models.BooleanField(default=False)
-    fixed_date = models.DateField(blank=True, null=True)       # if not moveable
-    easter_offset_days = models.IntegerField(blank=True, null=True)  # if moveable
-    colour = models.CharField(max_length=20, blank=True)
+    fixed_month = models.PositiveSmallIntegerField(blank=True, null=True)
+    fixed_day = models.PositiveSmallIntegerField(blank=True, null=True)
+    easter_offset_days = models.IntegerField(blank=True, null=True)
+    colour = models.CharField(max_length=20, choices=COLOUR_CHOICES, blank=True)
+
+    def date_for_year(self, year):
+        """Resolves either a fixed or moveable occasion to an actual
+        date for a given calendar year, via calculate_easter_sunday()."""
+        ...
 ```
+
+**Fixed-date design decision:** the original plan used a single `fixed_date = DateField()` for non-moveable occasions. This was wrong — a `DateField` stores one specific year's date, but Christmas Day recurs on the same month/day every year. Replaced with `fixed_month`/`fixed_day`, mirroring how moveable occasions already work via `easter_offset_days` — both resolve to an actual date only when `date_for_year(year)` is called, never stored as a fixed year.
+
+**Colour design decision — the mirror image of the voicing decision above:** liturgical colour is a genuinely small, fixed, real-world vocabulary (violet/red/green/white/rose) — unlike voicing's combinatorial notation problem, there's no equivalent of "SATB.SATB" here needing free text. `choices` was added specifically so every stored value maps predictably onto a CSS design token name (see `docs/design_system.md`), rather than risking a typo like `"Purple"` vs `"violet"` silently breaking that mapping.
+
+**Deliberately out of scope:** Ordo is strictly a naming/dating/colour-tagging engine for repertoire filtering and service labelling — it does not model readings, psalms, propers, or rubrical detail (e.g. whether the Gloria is said), regardless of how many calendar traditions it eventually covers. See the README's out-of-scope list.
 
 ### `planning.Term`
 
@@ -78,9 +98,18 @@ class Term(models.Model):
     name = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField()
+    comments = GenericRelation("comments.Comment")
 
     class Meta:
         ordering = ["start_date"]
+
+    def get_absolute_url(self):
+        ...
+
+    def completion_summary(self):
+        """Aggregates Service.status counts across this term's services,
+        for the dashboard/landing view. See README §3.3."""
+        ...
 ```
 
 ### `planning.Service`
@@ -91,8 +120,10 @@ class Service(models.Model):
     date = models.DateField()
     service_type = models.CharField(max_length=50)  # e.g. "sung_eucharist"
     occasion = models.ForeignKey(
-        "ordo.LiturgicalOccasion", on_delete=models.SET_NULL, null=True, blank=True
+        "ordo.LiturgicalOccasion", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="services",
     )
+    comments = GenericRelation("comments.Comment")
 
     class Meta:
         ordering = ["date"]
@@ -101,7 +132,15 @@ class Service(models.Model):
     def status(self):
         """Derived, not stored: not_started / in_progress / complete."""
         ...
+
+    def music_list_rows(self, draft=False):
+        """Rows for music list rendering — N/A roles always skipped;
+        unconfirmed roles skipped in the public version, shown as TBC
+        in draft mode. See README §4."""
+        ...
 ```
+
+**`GenericRelation` on the commentable models:** `Term`, `Service`, and `RolePiece` each carry a `comments = GenericRelation("comments.Comment")` field. This adds no database column and needs no migration — it's a query-time convenience (enabling `term.comments.all()`) that also makes Django cascade-delete a target's comments if the target itself is deleted, completing the `GenericForeignKey` relationship properly per Django's own recommended pattern. This technically means `planning` now references `comments`, a justified exception to the one-way dependency rule above, since `comments.models.Comment` still has zero knowledge of `planning`'s models in return.
 
 ### `planning.ServiceRole`
 
@@ -119,6 +158,7 @@ class RolePiece(models.Model):
     service_role = models.ForeignKey(ServiceRole, on_delete=models.CASCADE, related_name="pieces")
     score = models.ForeignKey("library.Score", on_delete=models.PROTECT, related_name="role_pieces")
     is_confirmed = models.BooleanField(default=False)
+    comments = GenericRelation("comments.Comment")
 ```
 
 ### `comments.Comment`
@@ -144,7 +184,7 @@ class Comment(models.Model):
 ## Template organisation
 
 Templates are kept **per-app** (e.g. `library/templates/library/`) rather
-than centralised under one project-level `templates/` folder, so each
+than centralized under one project-level `templates/` folder, so each
 app remains self-contained — its templates travel with it, consistent
 with the one-way dependency structure above. The single exception is
 `templates/base.html` at the project root, which is intentionally
@@ -161,3 +201,11 @@ shared across every app rather than owned by any one of them.
 - `ServiceRole.is_not_applicable` being `True` counts as an active,
   deliberate decision (equivalent to confirmation) for the purposes of
   `Service.status` — not an absence of data.
+- `ScoreDeleteView` catches `ProtectedError` (raised by `RolePiece.score`'s
+  `on_delete=PROTECT`) and shows a friendly message rather than an
+  unhandled 500 — discovered as a real gap during the visual design
+  pass, not anticipated up front.
+- `Term.deletion` is intentionally _not_ given the same protection —
+  `Service.term` uses `on_delete=CASCADE`, so deleting a term correctly
+  takes its whole planning history with it, a deliberately different
+  choice from `RolePiece.score`.

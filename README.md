@@ -4,9 +4,20 @@ _A repertoire and service-planning tool for church musicians._
 
 _Milestone 3 Project — Code Institute_
 
-> **Status:** Concept document. This README captures the reasoning behind
-> the project before any modelling or coding has begun, so that every
-> design decision made later can be traced back to a real need.
+> **Status:** The full application is built: all four Django apps
+> (`library`, `ordo`, `planning`, `comments`) are modelled, migrated,
+> tested, and admin-registered; every view/template described below is
+> implemented and permission-gated; and the visual design system
+> (tokens, CUBE CSS Compositions/Blocks, self-hosted typography, the
+> liturgical accent) is complete — see
+> [`docs/design_system.md`](docs/design_system.md). This document
+> retains its original concept/rationale framing throughout, since the
+> reasoning below is what the implementation actually followed — where
+> reality diverged from an early plan (e.g. `LiturgicalOccasion`'s
+> `fixed_date` becoming `fixed_month`/`fixed_day`), that's called out
+> explicitly in [`docs/models_plan.md`](docs/models_plan.md) rather
+> than silently edited away. Remaining work: deployment and final
+> documentation wrap-up (screenshots, install instructions).
 
 A **precentor** is the traditional title for the person responsible for
 directing a church's music — the role this tool is built around. Its
@@ -61,9 +72,9 @@ Both roles participate in a shared comment/query thread system (see §7).
 ### 3.1 Score
 
 A piece of music in the library. Fields include title, composer/arranger,
-voicing (SATB, SATTB, unison, etc.), language, publisher, filing
-location, number of copies owned, and an optional rehearsal lead-time
-tag (see §3.5). Scores can be tagged with liturgical seasons/occasions
+voicing (SATB, SATTB, unison, etc.), **language**, publisher, filing
+location, number of copies owned, and an optional **rehearsal lead-time
+tag** (see §3.5). Scores can be tagged with liturgical seasons/occasions
 they suit.
 
 ### 3.2 Term, Service, and Role Slots
@@ -239,6 +250,25 @@ This remains a **"should have,"** not core to MVP.
 - Precise double-choir voicing modelling (e.g. distinguishing which
   parts belong to which of two choirs) — captured accurately in the
   free-text voicing field only, not as structured, queryable data
+- Per-role-type permissions (e.g. a distinct user, such as a parish
+  secretary, who can edit only the "Hymns" role slot while the
+  conductor controls Anthem/Setting). In some real churches, hymn
+  selection genuinely sits outside the conductor's remit — but
+  modelling that would mean permission checks keyed to individual
+  role names rather than a fixed Conductor/Librarian split, a
+  meaningfully bigger structural change than MVP calls for. The
+  current two-role split (Conductor: full access; Librarian: full
+  access to the Score library, read-only on repertoire planning)
+  covers the common case.
+- Ordo as a liturgical reference tool. Ordo's job is strictly to
+  name, date, and colour-tag occasions, for repertoire filtering and
+  service labelling — it deliberately does not model readings,
+  psalms, propers, or rubrical detail (e.g. whether the Gloria is
+  said), regardless of how many calendar traditions it eventually
+  covers. That's a separate, mature application domain with
+  existing, authoritative tools already serving it well; duplicating
+  it would mean building an entirely different application inside
+  Precentor, not extending its actual purpose.
 
 Each of these is noted here so that scope decisions read as deliberate
 choices, not oversights, when this document is read by an assessor.
@@ -258,7 +288,16 @@ choices, not oversights, when this document is read by an assessor.
   it's implemented as a single Django `GenericForeignKey` relationship.
 - [`docs/models_plan.md`](docs/models_plan.md) — the Django app
   breakdown and field-level model plan translating the ERD into code,
-  written ahead of scaffolding the project.
+  written ahead of scaffolding the project, and updated as
+  implementation revealed corrections (e.g. the fixed-date fix, the
+  colour `choices` decision).
+- [`docs/design_system.md`](docs/design_system.md) — the visual design
+  system: CUBE CSS methodology, cascade layers (not `@import`), design
+  tokens, self-hosted typography, and the liturgical accent system.
+- [`docs/blocks_backlog.md`](docs/blocks_backlog.md) — the running log
+  of Blocks identified during the Compositions sweep across every
+  page, deliberately built only after real repetition was observed
+  rather than guessed at up front.
 
 ## 10. Why This Project
 
@@ -272,5 +311,7 @@ rather than a generic "library system" template.
 
 ---
 
-_Next step: scaffold the Django project using the app breakdown and
-model plan in `docs/models_plan.md`._
+_Remaining: deployment (Heroku/Postgres, environment variables,
+`collectstatic`) and final documentation wrap-up (screenshots of the
+finished, styled application; install/run instructions; reconciling
+the finished app against `docs/user_stories.md`)._
