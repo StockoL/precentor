@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from django.views.generic import (
@@ -133,3 +133,25 @@ def toggle_confirm(request, piece_pk):
     piece.is_confirmed = not piece.is_confirmed
     piece.save()
     return redirect(piece.service_role.service.get_absolute_url())
+
+
+@login_required
+def term_music_list(request, term_pk):
+    term = get_object_or_404(Term, pk=term_pk)
+    draft = request.GET.get("draft") == "1"
+    services = term.services.prefetch_related("roles__pieces__score").order_by("date")
+
+    service_rows = [
+        {"service": service, "rows": service.music_list_rows(draft=draft)}
+        for service in services
+    ]
+
+    return render(
+        request,
+        "planning/music_list.html",
+        {
+            "term": term,
+            "service_rows": service_rows,
+            "draft": draft,
+        },
+    )
