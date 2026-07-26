@@ -82,8 +82,8 @@
   --layout-wrapper-max-width: 80rem;
 
   /* -- FONTS --------------------------------------------------------------- */
-  --fonts-heading: system-ui, sans-serif;
-  --fonts-body: system-ui, sans-serif;
+  --fonts-heading: 'EB Garamond', 'EB Garamond Fallback', Georgia, serif;
+  --fonts-body: 'Inter', 'Inter Fallback', system-ui, sans-serif;
 
   /* -- TRANSITIONS --------------------------------------------------------- */
   --transitions-spring-snappy: cubic-bezier(0.175, 0.885, 0.32, 1.275);

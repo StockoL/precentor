@@ -1,0 +1,36 @@
+/* ==========================================================================
+   SELF-HOSTED FONTS
+   ========================================================================== */
+
+/*
+ * EB Garamond and Inter, self-hosted as variable woff2 files (latin
+ * subset). Each file embeds a continuous weight axis, so one @font-face
+ * rule per style with a weight *range* covers every weight in that
+ * range from a single download — no separate 400/600/700 files needed.
+ * font-display: swap avoids invisible text while the fonts load.
+ */
+@layer global {
+  @font-face {
+    font-family: "EB Garamond";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("fonts/eb-garamond/eb-garamond-variable.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: "EB Garamond";
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url("fonts/eb-garamond/eb-garamond-italic.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("fonts/inter/inter-variable.woff2") format("woff2");
+  }
+}
