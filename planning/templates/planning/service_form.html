@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Service form — Precentor{% endblock %}
+{% block content %}
+<h1>{{ form.instance.pk|yesno:"Edit,Add" }} service{% if term %} to {{ term }}{% endif %}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+{% endblock %}

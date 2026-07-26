@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ service }} — Precentor{% endblock %}
+{% block content %}
+<h1>{{ service }}</h1>
+<p>Term: <a href="{{ service.term.get_absolute_url }}">{{ service.term }}</a></p>
+<p>Status: <strong>{{ service.status }}</strong></p>
+<p>Occasion: {{ service.occasion|default:"—" }}</p>
+<a href="{% url 'planning:service_update' service.pk %}">Edit service</a>
+<a href="{% url 'planning:service_delete' service.pk %}">Delete service</a>
+
+<h2>Roles</h2>
+{% for role in roles %}
+    <h3>{{ role.role_name }}{% if role.is_not_applicable %} (N/A){% endif %}</h3>
+    <ul>
+        {% for piece in role.pieces.all %}
+        <li>{{ piece.score }} — {% if piece.is_confirmed %}Confirmed{% else %}Proposed{% endif %}</li>
+        {% empty %}
+        <li>No pieces proposed yet.</li>
+        {% endfor %}
+    </ul>
+{% empty %}
+    <p>No roles yet.</p>
+{% endfor %}
+{% endblock %}
