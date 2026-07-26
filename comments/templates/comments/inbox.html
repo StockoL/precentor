@@ -1,15 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Inbox — Precentor{% endblock %}
 {% block content %}
-<h1>Open comments</h1>
-<ul>
-    {% for comment in comments %}
-    <li>
-        <strong>{{ comment.author }}</strong> on {{ comment.target }}: {{ comment.body }}
-        ({{ comment.created_at|date:"d/m/Y H:i" }})
-    </li>
-    {% empty %}
-    <li>Nothing needs your attention.</li>
-    {% endfor %}
-</ul>
+<div class="flow">
+    <h1>Open comments</h1>
+    <ul role="list" class="flow" style="--flow-space: var(--spacing-xs);">
+        {% for comment in comments %}
+        <li class="flow" style="--flow-space: var(--spacing-3xs);">
+            <p><strong>{{ comment.author }}</strong> on {{ comment.target }}</p>
+            <p>{{ comment.body }}</p>
+            <p>{{ comment.created_at|date:"d/m/Y H:i" }}</p>
+        </li>
+        {% empty %}
+        <li>Nothing needs your attention.</li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}
