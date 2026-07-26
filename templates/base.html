@@ -3,6 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Precentor{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'src/global/layers.css' %}">
+    <link rel="stylesheet" href="{% static 'src/global/variables.css' %}">
+    <link rel="stylesheet" href="{% static 'src/global/reset.css' %}">
+    <link rel="stylesheet" href="{% static 'src/global/global-styles.css' %}">
+    <link rel="stylesheet" href="{% static 'src/compositions/center.css' %}">
+    <link rel="stylesheet" href="{% static 'src/compositions/cluster.css' %}">
+    <link rel="stylesheet" href="{% static 'src/compositions/flow.css' %}">
+    <link rel="stylesheet" href="{% static 'src/compositions/grid.css' %}">
+    <link rel="stylesheet" href="{% static 'src/compositions/reel.css' %}">
+    <link rel="stylesheet" href="{% static 'src/compositions/sidebar.css' %}">
+    <link rel="stylesheet" href="{% static 'src/compositions/switcher.css' %}">
+    <link rel="stylesheet" href="{% static 'src/compositions/wrapper.css' %}">
 </head>
 <body>
     <main>
