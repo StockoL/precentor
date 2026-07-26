@@ -1,0 +1,45 @@
+/* ==========================================================================
+   BLOCK: FORM
+   ========================================================================== */
+
+@layer blocks {
+  /*
+   * Styles Django's default {{ form.as_p }} output (label/input/select/
+   * textarea/errorlist) consistently, since every create/edit page in
+   * the project (Score, Term, Service, add-role, add-piece) uses this
+   * same rendering. One definition here applies everywhere, rather
+   * than styling each page's form individually.
+   */
+  form label {
+    display: block;
+    font-weight: 600;
+    margin-block-end: var(--spacing-3xs);
+  }
+
+  form :is(input, select, textarea) {
+    display: block;
+    width: 100%;
+    max-width: var(--layout-measure, 60ch);
+    padding-block: var(--spacing-2xs);
+    padding-inline: var(--spacing-xs);
+    border: 1px solid var(--colors-border-strong);
+    border-radius: 4px;
+    background-color: var(--colors-surface-base);
+    color: var(--colors-text-base);
+    font-size: var(--typography-step-0);
+  }
+
+  form :is(input, select, textarea):focus-visible {
+    outline: 2px solid var(--colors-action-primary);
+    outline-offset: 2px;
+  }
+
+  form ul.errorlist {
+    list-style: none;
+    padding: 0;
+    margin-block: 0 var(--spacing-3xs);
+    color: var(--colors-danger-text);
+    font-size: var(--typography-step--1);
+    font-weight: 600;
+  }
+}

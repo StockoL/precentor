@@ -1,0 +1,22 @@
+/* ==========================================================================
+   BLOCK: TERM SUMMARY
+   ========================================================================== */
+
+@layer blocks {
+  /*
+   * "X of Y services complete", shown on the term dashboard.
+   * data-all-complete is set in the template only when every service
+   * in the term is complete — reuses the success colour token rather
+   * than inventing a new one, keeping it visually related to (though
+   * not identical to) the badge system.
+   */
+  .term-summary {
+    font-size: var(--typography-step--1);
+    color: var(--colors-text-muted);
+  }
+
+  .term-summary[data-all-complete] {
+    color: var(--colors-success-text);
+    font-weight: 600;
+  }
+}

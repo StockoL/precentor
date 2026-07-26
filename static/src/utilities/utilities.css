@@ -1,0 +1,28 @@
+/* ==========================================================================
+   UTILITIES
+   ========================================================================== */
+
+@layer utilities {
+  /*
+   * Single-purpose overrides. No !important needed anywhere here —
+   * cascade layer order (declared in layers.css) already guarantees
+   * the utilities layer beats blocks/compositions/global/reset
+   * regardless of selector specificity, which is one of the real
+   * practical benefits of @layer over the old specificity wars.
+   */
+  .text-danger {
+    color: var(--colors-danger-text);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}

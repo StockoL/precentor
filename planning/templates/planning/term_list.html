@@ -10,7 +10,9 @@
         <div class="flow" style="--flow-space: var(--spacing-2xs);">
             <h2><a href="{{ term.get_absolute_url }}">{{ term }}</a></h2>
             <p>{{ term.start_date|date:"d/m/Y" }} to {{ term.end_date|date:"d/m/Y" }}</p>
-            <p>{{ term.summary.complete }} of {{ term.summary.total }} services complete</p>
+            <p class="term-summary" {% if term.summary.total > 0 and term.summary.complete == term.summary.total %}data-all-complete{% endif %}>
+                {{ term.summary.complete }} of {{ term.summary.total }} services complete
+            </p>
         </div>
         {% empty %}
         <p>No terms yet.</p>

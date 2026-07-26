@@ -8,7 +8,7 @@
 
     <div class="cluster">
         <a href="{% url 'planning:term_update' term.pk %}">Edit term</a>
-        <a href="{% url 'planning:term_delete' term.pk %}">Delete term</a>
+        <a class="text-danger" href="{% url 'planning:term_delete' term.pk %}">Delete term</a>
         <a href="{% url 'planning:service_create' term.pk %}">Add a service</a>
         <a href="{% url 'planning:term_music_list' term.pk %}">View music list</a>
     </div>

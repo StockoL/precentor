@@ -1,0 +1,35 @@
+/* ==========================================================================
+   BLOCK: COMMENT CARD
+   ========================================================================== */
+
+@layer blocks {
+  /*
+   * Styles the .comment / .comment--{state} classes already present
+   * in comments/_thread.html (comment.state is open / open_with_replies
+   * / closed). Card-level accent (left border + background tint)
+   * rather than a small chip — see badge.css for why the two state
+   * systems share a colour vocabulary but not a visual treatment.
+   */
+  .comment {
+    padding: var(--spacing-s);
+    border-radius: 4px;
+    border-inline-start: 4px solid var(--colors-border-strong);
+    background-color: var(--colors-surface-sunken);
+  }
+
+  .comment--open {
+    border-inline-start-color: var(--colors-warning);
+    background-color: var(--colors-warning-bg);
+  }
+
+  .comment--open_with_replies {
+    border-inline-start-color: var(--colors-info);
+    background-color: var(--colors-info-bg);
+  }
+
+  .comment--closed {
+    border-inline-start-color: var(--colors-neutral-300);
+    background-color: var(--colors-surface-sunken);
+    opacity: 0.8;
+  }
+}

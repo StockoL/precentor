@@ -22,7 +22,7 @@
 
     <div class="cluster">
         <a href="{% url 'library:score_update' score.pk %}">Edit</a>
-        <a href="{% url 'library:score_delete' score.pk %}">Delete</a>
+        <a class="text-danger" href="{% url 'library:score_delete' score.pk %}">Delete</a>
     </div>
 </div>
 {% endblock %}

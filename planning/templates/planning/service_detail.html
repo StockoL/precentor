@@ -6,25 +6,30 @@
 
     <div class="flow" style="--flow-space: var(--spacing-3xs);">
         <p>Term: <a href="{{ service.term.get_absolute_url }}">{{ service.term }}</a></p>
-        <p>Status: <strong>{{ service.status }}</strong></p>
+        <p>Status: <span class="badge badge--{{ service.status }}">{{ service.status }}</span></p>
         <p>Occasion: {{ service.occasion|default:"—" }}</p>
     </div>
 
     <div class="cluster">
         <a href="{% url 'planning:service_update' service.pk %}">Edit service</a>
-        <a href="{% url 'planning:service_delete' service.pk %}">Delete service</a>
+        <a class="text-danger" href="{% url 'planning:service_delete' service.pk %}">Delete service</a>
     </div>
 
     <div class="flow">
         <h2>Roles</h2>
         {% for role in roles %}
-        <div class="flow" style="--flow-space: var(--spacing-xs);">
+        <div class="role-block flow" style="--flow-space: var(--spacing-xs);">
             <h3>{{ role.role_name }}{% if role.is_not_applicable %} (N/A){% endif %}</h3>
 
             <ul role="list" class="flow" style="--flow-space: var(--spacing-2xs);">
                 {% for piece in role.pieces.all %}
                 <li class="cluster" style="--cluster-justify: space-between;">
-                    <span>{{ piece.score }} — {% if piece.is_confirmed %}Confirmed{% else %}Proposed{% endif %}</span>
+                    <span>
+                        {{ piece.score }}
+                        <span class="badge badge--{% if piece.is_confirmed %}confirmed{% else %}proposed{% endif %}">
+                            {% if piece.is_confirmed %}Confirmed{% else %}Proposed{% endif %}
+                        </span>
+                    </span>
                     <form method="post" action="{% url 'planning:toggle_confirm' piece.pk %}">
                         {% csrf_token %}
                         <button type="submit">{% if piece.is_confirmed %}Un-confirm{% else %}Confirm{% endif %}</button>

@@ -1,0 +1,17 @@
+/* ==========================================================================
+   BLOCK: ROLE BLOCK
+   ========================================================================== */
+
+@layer blocks {
+  /*
+   * Visually separates one Service role (Setting, Anthem, etc.) from
+   * the next on service_detail.html — previously distinguished only
+   * by vertical spacing between two nested .flow groups.
+   */
+  .role-block {
+    padding: var(--spacing-s);
+    border: 1px solid var(--colors-border-subtle);
+    border-radius: 4px;
+    background-color: var(--colors-surface-base);
+  }
+}

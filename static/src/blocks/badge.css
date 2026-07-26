@@ -1,0 +1,56 @@
+/* ==========================================================================
+   BLOCK: BADGE
+   ========================================================================== */
+
+@layer blocks {
+  /*
+   * A small, inline, coloured state chip. Used for Service.status
+   * (not_started/in_progress/complete) and RolePiece confirmation
+   * (proposed/confirmed). Deliberately distinct from .comment's
+   * card-level state treatment (see comment-card.css) — comments are
+   * a bigger unit of content, so their state reads as a background/
+   * border accent rather than a small chip, even though both draw
+   * from the same colour tokens.
+   */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-3xs);
+    padding-inline: var(--spacing-xs);
+    padding-block: var(--spacing-3xs);
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: var(--typography-step--1);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  /* Service.status */
+  .badge--not_started {
+    background-color: var(--colors-neutral-100);
+    color: var(--colors-neutral-600);
+    border-color: var(--colors-neutral-300);
+  }
+  .badge--in_progress {
+    background-color: var(--colors-warning-bg);
+    color: var(--colors-warning-text);
+    border-color: var(--colors-warning-border);
+  }
+  .badge--complete {
+    background-color: var(--colors-success-bg);
+    color: var(--colors-success-text);
+    border-color: var(--colors-success-border);
+  }
+
+  /* RolePiece confirmation state */
+  .badge--proposed {
+    background-color: var(--colors-info-bg);
+    color: var(--colors-info-text);
+    border-color: var(--colors-info-border);
+  }
+  .badge--confirmed {
+    background-color: var(--colors-success-bg);
+    color: var(--colors-success-text);
+    border-color: var(--colors-success-border);
+  }
+}

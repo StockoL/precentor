@@ -17,10 +17,18 @@
     <link rel="stylesheet" href="{% static 'src/compositions/switcher.css' %}">
     <link rel="stylesheet" href="{% static 'src/compositions/wrapper.css' %}">
     <link rel="stylesheet" href="{% static 'src/compositions/cover.css' %}">
+    <link rel="stylesheet" href="{% static 'src/blocks/badge.css' %}">
+    <link rel="stylesheet" href="{% static 'src/blocks/comment-card.css' %}">
+    <link rel="stylesheet" href="{% static 'src/blocks/form.css' %}">
+    <link rel="stylesheet" href="{% static 'src/blocks/button.css' %}">
+    <link rel="stylesheet" href="{% static 'src/blocks/nav.css' %}">
+    <link rel="stylesheet" href="{% static 'src/blocks/role-block.css' %}">
+    <link rel="stylesheet" href="{% static 'src/blocks/term-summary.css' %}">
+    <link rel="stylesheet" href="{% static 'src/utilities/utilities.css' %}">
 </head>
 <body>
     <header class="wrapper">
-        <nav class="cluster" style="--cluster-justify: space-between;">
+        <nav class="site-nav cluster" style="--cluster-justify: space-between;">
             <a href="{% url 'planning:term_list' %}">Precentor</a>
             <div class="cluster" style="--gutter: var(--spacing-s);">
                 <a href="{% url 'planning:term_list' %}">Terms</a>

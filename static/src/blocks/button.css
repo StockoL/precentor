@@ -1,0 +1,31 @@
+/* ==========================================================================
+   BLOCK: BUTTON
+   ========================================================================== */
+
+@layer blocks {
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-3xs);
+    padding-block: var(--spacing-2xs);
+    padding-inline: var(--spacing-s);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: var(--colors-action-primary);
+    color: var(--colors-text-on-action);
+    font-weight: 600;
+    font-size: var(--typography-step-0);
+    cursor: pointer;
+    transition: background-color var(--transitions-dur-fast)
+      var(--transitions-spring-smooth);
+  }
+
+  button:hover {
+    background-color: var(--colors-neutral-800);
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--colors-action-primary);
+    outline-offset: 2px;
+  }
+}

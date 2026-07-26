@@ -6,16 +6,23 @@ reflects real, observed repetition rather than guessed-at components).
 Each entry notes where it was spotted and why it's a Block rather than
 a one-off.
 
-| Block             | First spotted on      | Notes                                                                                                                                                                                                                                               |
-| ----------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Nav               | `base.html`           | Currently bare `.cluster` classes only. Needs its own spacing/active-page-highlight treatment once more pages exist to see it against.                                                                                                              |
-| Term summary card | `term_list.html`      | "X of Y services complete." Natural candidate to share colour logic with the eventual status badge.                                                                                                                                                 |
-| Status label      | `term_detail.html`    | `{{ service.status }}` shown as bare text — needs the status-badge colour treatment discussed early in the design pass.                                                                                                                             |
-| Form              | `term_form.html`      | `{{ form.as_p }}`'s internal label/input/error markup is untouched by any Composition — genuinely a component concern, not a layout one. Will recur on every create/edit page across every app.                                                     |
-| Action link group | `term_detail.html`    | The Edit/Delete/View-music-list `.cluster` — likely wants a more deliberate visual treatment (e.g. distinguishing a "safe" action from a destructive one) than bare links.                                                                          |
-| Filter bar        | `score_list.html`     | Label+select pairs, currently nested `.cluster`s only. A real Block would style the `<select>`s consistently and probably add a "clear filters" affordance.                                                                                         |
-| Piece row         | `service_detail.html` | Score description + confirm/un-confirm button, currently a bare `.cluster` with `space-between`. Strong candidate to share visual language with the status label (confirmed/proposed as a small state indicator, similar to the status badge).      |
-| Role block        | `service_detail.html` | Heading + pieces list + propose-form, currently a nested `.flow` only. Might benefit from a subtle container (border/background) to visually separate one role from the next, since right now two adjacent roles are distinguished only by spacing. |
+## Built
 
-Further entries added as the Compositions sweep continues across
-`library`, the rest of `planning`, and `comments`.
+| Block/Utility                       | File                      | Notes                                                                                                                                                                                                |
+| ----------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Badge                               | `blocks/badge.css`        | Service status + piece confirmation state. Shares colour vocabulary with the comment card, but as an inline chip rather than a card-level accent.                                                    |
+| Comment card                        | `blocks/comment-card.css` | Styles the pre-existing `comment`/`comment--{state}` hooks.                                                                                                                                          |
+| Form                                | `blocks/form.css`         | Styles Django's default `{{ form.as_p }}` output once, applies everywhere.                                                                                                                           |
+| Button                              | `blocks/button.css`       |                                                                                                                                                                                                      |
+| Site nav                            | `blocks/nav.css`          | Active-page highlighting still not implemented — needs `request.resolver_match`, a template-logic addition, not pure CSS.                                                                            |
+| Role block                          | `blocks/role-block.css`   |                                                                                                                                                                                                      |
+| Term summary                        | `blocks/term-summary.css` |                                                                                                                                                                                                      |
+| `.text-danger` / `.visually-hidden` | `utilities/utilities.css` | "Action link group" (originally logged as a Block) turned out to be a Utility concern — grouping was already handled by `.cluster`; only the Delete link's colour needed a single-property override. |
+
+## Not built as separate Blocks (covered by existing work)
+
+- **Filter bar** — `form.css`'s general `input`/`select` styling already covers the filter form's controls; no dedicated Block needed.
+
+## Outstanding
+
+- Nav active-page highlighting (template logic, not CSS)

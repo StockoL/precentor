@@ -6,7 +6,7 @@
     <div class="cluster">
         <form method="post">
             {% csrf_token %}
-            <button type="submit">Yes, delete</button>
+            <button class="text-danger" type="submit">Yes, delete</button>
         </form>
         <a href="{{ term.get_absolute_url }}">Cancel</a>
     </div>
