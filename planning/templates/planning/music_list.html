@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Music List — {{ term }} — Precentor{% endblock %}
+{% block content %}
+<h1>{{ term }}</h1>
+{% if draft %}
+<p><strong>DRAFT — for internal use only</strong></p>
+{% endif %}
+
+{% for entry in service_rows %}
+<h2>{{ entry.service.date|date:"l jS F Y" }} — {{ entry.service.service_type }}</h2>
+{% if entry.rows %}
+<dl>
+    {% for row in entry.rows %}
+    <dt>{{ row.role_name }}</dt>
+    <dd>
+        {% if row.pieces %}
+            {% for score in row.pieces %}{{ score }}{% if not forloop.last %}, {% endif %}{% endfor %}
+        {% else %}
+            <span class="tbc">TBC</span>
+        {% endif %}
+    </dd>
+    {% endfor %}
+</dl>
+{% else %}
+<p><em>Nothing to display{% if not draft %} yet{% endif %}.</em></p>
+{% endif %}
+{% endfor %}
+
+<p>
+    <a href="?draft=1">View draft (internal)</a> |
+    <a href="?">View public version</a> |
+    <button onclick="window.print()">Print</button>
+</p>
+{% endblock %}
