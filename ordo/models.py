@@ -4,6 +4,14 @@ from django.db import models
 
 from .utils import calculate_easter_sunday
 
+COLOUR_CHOICES = [
+    ("violet", "Violet"),
+    ("red", "Red"),
+    ("green", "Green"),
+    ("white", "White/Gold"),
+    ("rose", "Rose"),
+]
+
 
 class LiturgicalOccasion(models.Model):
     TRADITION_CHOICES = [  # noqa
@@ -16,7 +24,7 @@ class LiturgicalOccasion(models.Model):
     fixed_month = models.PositiveSmallIntegerField(blank=True, null=True)
     fixed_day = models.PositiveSmallIntegerField(blank=True, null=True)
     easter_offset_days = models.IntegerField(blank=True, null=True)
-    colour = models.CharField(max_length=20, blank=True)
+    colour = models.CharField(max_length=20, choices=COLOUR_CHOICES, blank=True)
 
     class Meta:
         ordering = ["tradition", "name"]  # noqa
@@ -30,6 +38,3 @@ class LiturgicalOccasion(models.Model):
             easter = calculate_easter_sunday(year)
             return easter + timedelta(days=self.easter_offset_days)
         return date(year, self.fixed_month, self.fixed_day)
-
-
-# Create your models here.
