@@ -11,7 +11,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from .forms import RolePieceForm, ServiceRoleForm
+from .forms import RolePieceForm, ServiceForm, ServiceRoleForm, TermForm
 from .mixins import ConductorRequiredMixin
 from .models import RolePiece, Service, ServiceRole, Term
 
@@ -34,12 +34,12 @@ class TermDetailView(LoginRequiredMixin, DetailView):
 
 class TermCreateView(ConductorRequiredMixin, CreateView):
     model = Term
-    fields = ["name", "start_date", "end_date"]  # noqa
+    form_class = TermForm
 
 
 class TermUpdateView(ConductorRequiredMixin, UpdateView):
     model = Term
-    fields = TermCreateView.fields
+    form_class = TermForm
 
 
 class TermDeleteView(ConductorRequiredMixin, DeleteView):
@@ -52,7 +52,7 @@ class TermDeleteView(ConductorRequiredMixin, DeleteView):
 
 class ServiceCreateView(ConductorRequiredMixin, CreateView):
     model = Service
-    fields = ["date", "service_type", "occasion"]  # noqa
+    form_class = ServiceForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -77,7 +77,7 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
 
 class ServiceUpdateView(ConductorRequiredMixin, UpdateView):
     model = Service
-    fields = ServiceCreateView.fields
+    form_class = ServiceForm
 
 
 class ServiceDeleteView(ConductorRequiredMixin, DeleteView):
