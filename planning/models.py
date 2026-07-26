@@ -33,7 +33,7 @@ class Service(models.Model):
         ordering = ["date"]  # noqa
 
     def __str__(self):
-        return f"{self.service_type} — {self.date}"
+        return f"{self.service_type} — {self.date.strftime('%d/%m/%Y')}"
 
     @property
     def status(self):
