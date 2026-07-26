@@ -5,6 +5,7 @@
 <p>{{ term.start_date }} to {{ term.end_date }}</p>
 <a href="{% url 'planning:term_update' term.pk %}">Edit term</a>
 <a href="{% url 'planning:term_delete' term.pk %}">Delete term</a>
+<a href="{% url 'planning:service_create' term.pk %}">Add a service</a>
 
 <h2>Services</h2>
 <ul>
