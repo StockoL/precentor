@@ -5,7 +5,7 @@
 <a href="{% url 'planning:term_create' %}">Add a term</a>
 <ul>
     {% for term in terms %}
-    <li><a href="{{ term.get_absolute_url }}">{{ term }}</a> — {{ term.start_date }} to {{ term.end_date }}</li>
+    <li><a href="{{ term.get_absolute_url }}">{{ term }}</a> — {{ term.start_date|date:"d/m/Y" }} to {{ term.end_date|date:"d/m/Y" }}</li>
     {% empty %}
     <li>No terms yet.</li>
     {% endfor %}

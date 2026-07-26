@@ -2,7 +2,7 @@
 {% block title %}{{ term }} — Precentor{% endblock %}
 {% block content %}
 <h1>{{ term }}</h1>
-<p>{{ term.start_date }} to {{ term.end_date }}</p>
+<p>{{ term.start_date|date:"d/m/Y" }} to {{ term.end_date|date:"d/m/Y" }}</p>
 <a href="{% url 'planning:term_update' term.pk %}">Edit term</a>
 <a href="{% url 'planning:term_delete' term.pk %}">Delete term</a>
 <a href="{% url 'planning:service_create' term.pk %}">Add a service</a>
@@ -11,7 +11,7 @@
 <ul>
     {% for service in services %}
     <li>
-        {{ service.date }} — {{ service.service_type }}
+        {{ service.date|date:"d/m/Y" }} — {{ service.service_type }}
         — <strong>{{ service.status }}</strong>
     </li>
     {% empty %}
