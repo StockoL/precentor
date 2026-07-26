@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
@@ -29,6 +30,10 @@ class TermDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["services"] = self.object.services.all()
+        context["content_type_id"] = ContentType.objects.get_for_model(Term).id
+        context["comments"] = self.object.comments.filter(parent__isnull=True).order_by(
+            "created_at"
+        )
         return context
 
 
@@ -72,6 +77,10 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
         context["roles"] = self.object.roles.prefetch_related("pieces__score")
         context["role_form"] = ServiceRoleForm()
         context["piece_form"] = RolePieceForm()
+        context["content_type_id"] = ContentType.objects.get_for_model(Service).id
+        context["comments"] = self.object.comments.filter(parent__isnull=True).order_by(
+            "created_at"
+        )
         return context
 
 
