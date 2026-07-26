@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class Term(models.Model):
@@ -11,6 +12,9 @@ class Term(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("planning:term_detail", kwargs={"pk": self.pk})
 
 
 class Service(models.Model):
