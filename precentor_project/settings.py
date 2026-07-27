@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 
 import dj_database_url
+from django.contrib.messages import constants as message_constants
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -142,3 +143,10 @@ STORAGES = {
 
 LOGIN_REDIRECT_URL = "planning:term_list"
 LOGOUT_REDIRECT_URL = "planning:term_list"
+
+# Django's default "error" tag is renamed to "danger" to match this
+# project's existing naming convention (.btn-danger, --colors-danger-*)
+# rather than introducing a second, parallel vocabulary in CSS/JS.
+MESSAGE_TAGS = {
+    message_constants.ERROR: "danger",
+}

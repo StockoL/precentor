@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="{% static 'src/blocks/badge.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/card.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/comment-card.css' %}">
+    <link rel="stylesheet" href="{% static 'src/blocks/toast.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/form.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/button.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/nav.css' %}">
@@ -42,6 +43,7 @@
     <link rel="stylesheet" href="{% static 'src/blocks/music-list.css' %}">
     <link rel="stylesheet" href="{% static 'src/utilities/utilities.css' %}">
     <script src="{% static 'src/js/theme-toggle.js' %}" defer></script>
+    <script type="module" src="{% static 'src/js/toast.js' %}"></script>
 </head>
 <body>
     <header class="wrapper">
@@ -63,11 +65,12 @@
             </div>
         </nav>
     </header>
+    <div id="toast-region" class="toast-region" aria-live="polite"></div>
     <main class="wrapper">
         {% if messages %}
-        <ul role="list" class="flow">
+        <ul id="server-messages" role="list" class="flow">
             {% for message in messages %}
-            <li>{{ message }}</li>
+            <li data-tag="{{ message.tags }}">{{ message }}</li>
             {% endfor %}
         </ul>
         {% endif %}

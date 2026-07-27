@@ -1,0 +1,75 @@
+/* ==========================================================================
+   BLOCK: TOAST
+   ========================================================================== */
+
+@layer blocks {
+  .toast-region {
+    position: fixed;
+    inset-block-end: var(--spacing-m);
+    inset-inline-end: var(--spacing-m);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2xs);
+    max-width: min(90vw, 32ch);
+  }
+
+  .toast {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-xs);
+    padding-block: var(--spacing-2xs);
+    padding-inline: var(--spacing-s);
+    border-radius: 10px;
+    border: 1px solid var(--colors-border-subtle);
+    background-color: var(--colors-surface-base);
+    box-shadow: 0 4px 12px rgba(24, 24, 27, 0.12);
+    font-size: var(--typography-step--1);
+    animation: toast-in var(--transitions-dur-base) var(--transitions-spring-smooth);
+  }
+
+  .toast--success {
+    border-inline-start: 4px solid var(--colors-success);
+    background-color: var(--colors-success-bg);
+    color: var(--colors-success-text);
+  }
+
+  .toast--warning {
+    border-inline-start: 4px solid var(--colors-warning);
+    background-color: var(--colors-warning-bg);
+    color: var(--colors-warning-text);
+  }
+
+  .toast--danger {
+    border-inline-start: 4px solid var(--colors-danger);
+    background-color: var(--colors-danger-bg);
+    color: var(--colors-danger-text);
+  }
+
+  .toast--info {
+    border-inline-start: 4px solid var(--colors-info);
+    background-color: var(--colors-info-bg);
+    color: var(--colors-info-text);
+  }
+
+  .toast-dismiss {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: inherit;
+    font-weight: 700;
+  }
+
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
