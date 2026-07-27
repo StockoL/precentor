@@ -1,5 +1,7 @@
 <form id="add-piece-form-{{ role.pk }}" method="post" action="{% url 'planning:add_piece' role.pk %}" class="cluster ajax-propose-piece" data-role-pk="{{ role.pk }}">
     {% csrf_token %}
-    {{ form.as_p }}
+    <div class="score-combobox" data-target="{{ form.score.id_for_label }}">
+        {{ form.as_p }}
+    </div>
     <button type="submit">Propose piece</button>
 </form>

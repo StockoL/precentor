@@ -1,5 +1,6 @@
 import { postForm, applyFragments, fragmentToElement, AjaxError } from "./ajax.js";
 import { showToast } from "./toast.js";
+import { initScorePickers } from "./score-picker.js";
 
 function initServiceDetail() {
   const main = document.querySelector("main");
@@ -37,8 +38,15 @@ function initServiceDetail() {
         form.reset();
         showToast("Piece proposed.", "success");
       } catch (err) {
-        if (err instanceof AjaxError) applyFragments(err.data.fragments);
-        else showToast("Couldn't add that piece — try again.", "danger");
+        if (err instanceof AjaxError) {
+          // The swapped-in form fragment carries a brand-new .score-combobox
+          // wrapper (previously enhanced one was just destroyed by the
+          // outerHTML swap) — re-init scoped to just this form.
+          applyFragments(err.data.fragments);
+          initScorePickers(document.getElementById(`add-piece-form-${rolePk}`));
+        } else {
+          showToast("Couldn't add that piece — try again.", "danger");
+        }
       }
       return;
     }
@@ -53,6 +61,10 @@ function initServiceDetail() {
           document.getElementById("roles-list-empty")?.remove();
           list.appendChild(fragmentToElement(html));
         });
+        // The newly appended role block carries its own fresh score
+        // <select> — .dataset.enhanced guards against double-wrapping
+        // the role blocks that were already there.
+        initScorePickers(list);
         form.reset();
         showToast("Role added.", "success");
       } catch (err) {
