@@ -2,6 +2,16 @@
 <html lang="en-GB">
 <head>
     <meta charset="UTF-8">
+    <meta name="color-scheme" content="light dark">
+    <script>
+      // Blocking, NOT deferred — must run before first paint to avoid a
+      // flash of the wrong theme. Only restores a saved choice; the
+      // toggle's click handling lives in theme-toggle.js (deferred).
+      (function () {
+        var saved = localStorage.getItem("precentor-theme");
+        if (saved) document.documentElement.setAttribute("data-theme", saved);
+      })();
+    </script>
     <title>{% block title %}Precentor{% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'src/global/layers.css' %}">
@@ -29,6 +39,7 @@
     <link rel="stylesheet" href="{% static 'src/blocks/liturgical-accent.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/music-list.css' %}">
     <link rel="stylesheet" href="{% static 'src/utilities/utilities.css' %}">
+    <script src="{% static 'src/js/theme-toggle.js' %}" defer></script>
 </head>
 <body>
     <header class="wrapper">
@@ -46,6 +57,7 @@
                 {% else %}
                 <a href="{% url 'login' %}">Log in</a>
                 {% endif %}
+                <button id="theme-toggle" type="button">Dark mode</button>
             </div>
         </nav>
     </header>
