@@ -4,14 +4,12 @@
 
 @layer blocks {
   /*
-   * Visually separates one Service role (Setting, Anthem, etc.) from
-   * the next on service_detail.html — previously distinguished only
-   * by vertical spacing between two nested .flow groups.
+   * Separates one Service role (Setting, Anthem, etc.) from the next
+   * on service_detail.html. Composes with .card (card.css), which
+   * supplies the shared border/radius/shadow/background — this file
+   * only holds what's specific to a role block.
    */
   .role-block {
     padding: var(--spacing-s);
-    border: 1px solid var(--colors-border-subtle);
-    border-radius: 4px;
-    background-color: var(--colors-surface-base);
   }
 }

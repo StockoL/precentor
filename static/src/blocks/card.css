@@ -1,0 +1,22 @@
+/* ==========================================================================
+   BLOCK: CARD
+   ========================================================================== */
+
+@layer blocks {
+  /*
+   * Shared visual identity only (border, radius, shadow, background) —
+   * composes with more specific blocks (.role-block, .term-card) that
+   * add their own padding/behaviour, rather than duplicating this look
+   * per component.
+   */
+  .card {
+    border: 1px solid var(--colors-border-subtle);
+    border-radius: 14px;
+    background-color: var(--colors-surface-base);
+    box-shadow: 0 1px 2px rgba(24, 24, 27, 0.04);
+  }
+
+  .term-card {
+    padding: var(--spacing-s);
+  }
+}
