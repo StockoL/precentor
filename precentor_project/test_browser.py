@@ -1,8 +1,17 @@
+import os
 import unittest
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+
+# Playwright's sync API runs its own event loop on a background thread,
+# which makes Django misdetect the live server's request-handling thread
+# as an async context and refuse ORM access there (SynchronousOnlyOperation).
+# This project has no async views, so it's safe to disable that check for
+# this test-only module rather than require everyone who runs these tests
+# to know to set the env var themselves first.
+os.environ.setdefault("DJANGO_ALLOW_ASYNC_UNSAFE", "true")
 
 try:
     from playwright.sync_api import sync_playwright
