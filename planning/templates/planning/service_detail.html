@@ -36,7 +36,7 @@
 
             <ul role="list" class="flow" style="--flow-space: var(--spacing-2xs);">
                 {% for piece in role.pieces.all %}
-                <li class="cluster" style="--cluster-justify: space-between;">
+                <li class="list-row">
                     <span>
                         {{ piece.score }}
                         <span class="badge badge--{% if piece.is_confirmed %}confirmed{% else %}proposed{% endif %}">

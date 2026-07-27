@@ -16,7 +16,7 @@
         <h2>Services</h2>
         <ul role="list" class="flow">
             {% for service in services %}
-            <li class="cluster" style="--cluster-justify: space-between;">
+            <li class="list-row">
                 <span>{{ service.date|date:"d/m/Y" }} — {{ service.service_type }}</span>
                 <span class="badge badge--{{ service.status }}">{{ service.status }}</span>
             </li>

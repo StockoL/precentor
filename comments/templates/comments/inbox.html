@@ -5,10 +5,12 @@
     <h1>Open comments</h1>
     <ul role="list" class="flow" style="--flow-space: var(--spacing-xs);">
         {% for comment in comments %}
-        <li class="flow" style="--flow-space: var(--spacing-3xs);">
-            <p><strong>{{ comment.author }}</strong> on {{ comment.target }}</p>
-            <p>{{ comment.body }}</p>
-            <p>{{ comment.created_at|date:"d/m/Y H:i" }}</p>
+        <li class="list-row">
+            <div class="flow" style="--flow-space: var(--spacing-3xs);">
+                <p><strong>{{ comment.author }}</strong> on {{ comment.target }}</p>
+                <p>{{ comment.body }}</p>
+            </div>
+            <span>{{ comment.created_at|date:"d/m/Y H:i" }}</span>
         </li>
         {% empty %}
         <li>Nothing needs your attention.</li>

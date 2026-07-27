@@ -1,0 +1,22 @@
+/* ==========================================================================
+   BLOCK: LIST ROW
+   ========================================================================== */
+
+@layer blocks {
+  /*
+   * Simple row-per-item lists (term's service list, score list, comment
+   * inbox) — a border-top separator between rows, with the first row's
+   * border removed so the list doesn't double up against its container.
+   */
+  .list-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: var(--spacing-2xs);
+    border-top: 1px solid var(--colors-border-subtle);
+  }
+
+  .list-row:first-of-type {
+    border-top: none;
+  }
+}
