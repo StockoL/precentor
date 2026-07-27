@@ -1,0 +1,17 @@
+<div id="comment-{{ comment.pk }}" class="comment comment--{{ comment.state }} flow" style="--flow-space: var(--spacing-2xs);">
+    <p><strong>{{ comment.author }}</strong> ({{ comment.created_at|date:"d/m/Y H:i" }})</p>
+    <p>{{ comment.body }}</p>
+
+    <form method="post" action="{% url 'comments:toggle_close' comment.pk %}" class="ajax-toggle-close">
+        {% csrf_token %}
+        <button type="submit">{% if comment.is_open %}Close{% else %}Re-open{% endif %}</button>
+    </form>
+
+    <ul role="list" class="flow" style="--flow-space: var(--spacing-3xs); margin-inline-start: var(--spacing-m);">
+        {% for reply in comment.replies.all %}
+        {% include "comments/_reply_row.html" %}
+        {% endfor %}
+    </ul>
+
+    {% include "comments/_comment_form.html" with form=comment_form parent_id=comment.pk %}
+</div>

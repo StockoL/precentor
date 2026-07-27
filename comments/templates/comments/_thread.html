@@ -1,26 +1,12 @@
 <div class="comment-thread flow">
     <h2>Comments</h2>
-    {% for comment in comments %}
-    <div class="comment comment--{{ comment.state }} flow" style="--flow-space: var(--spacing-2xs);">
-        <p><strong>{{ comment.author }}</strong> ({{ comment.created_at|date:"d/m/Y H:i" }})</p>
-        <p>{{ comment.body }}</p>
-
-        <form method="post" action="{% url 'comments:toggle_close' comment.pk %}">
-            {% csrf_token %}
-            <button type="submit">{% if comment.is_open %}Close{% else %}Re-open{% endif %}</button>
-        </form>
-
-        <ul role="list" class="flow" style="--flow-space: var(--spacing-3xs); margin-inline-start: var(--spacing-m);">
-            {% for reply in comment.replies.all %}
-            <li><strong>{{ reply.author }}</strong>: {{ reply.body }}</li>
-            {% endfor %}
-        </ul>
-
-        {% include "comments/_comment_form.html" with form=comment_form parent_id=comment.pk %}
+    <div id="comment-list" class="flow">
+        {% for comment in comments %}
+        {% include "comments/_comment_card.html" %}
+        {% empty %}
+        <p id="comment-list-empty">No comments yet.</p>
+        {% endfor %}
     </div>
-    {% empty %}
-    <p>No comments yet.</p>
-    {% endfor %}
 
     <div class="flow">
         <h3>New comment</h3>

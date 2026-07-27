@@ -111,3 +111,94 @@ class AddCommentViewTests(TestCase):
         response = self.client.get("/comments/inbox/")
         self.assertContains(response, "Open one")
         self.assertNotContains(response, "Closed one")
+
+    def test_add_comment_ajax_top_level_returns_new_comment_fragment(self):
+        response = self.client.post(
+            f"/comments/add/{self.content_type_id}/{self.term.pk}/",
+            {"body": "A query"},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        comment = Comment.objects.get()
+        fragments = response.json()["fragments"]
+        self.assertEqual(list(fragments.keys()), [f"comment-{comment.pk}"])
+        self.assertIn("A query", fragments[f"comment-{comment.pk}"])
+
+    def test_add_comment_ajax_reply_returns_parent_card_fragment(self):
+        comment = Comment.objects.create(
+            author=self.user, body="A query", target=self.term
+        )
+
+        response = self.client.post(
+            f"/comments/add/{self.content_type_id}/{self.term.pk}/",
+            {"body": "A reply", "parent_id": comment.pk},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        fragments = response.json()["fragments"]
+        self.assertEqual(list(fragments.keys()), [f"comment-{comment.pk}"])
+        self.assertIn("comment--open_with_replies", fragments[f"comment-{comment.pk}"])
+        self.assertIn("A reply", fragments[f"comment-{comment.pk}"])
+
+    def test_add_comment_ajax_nested_reply_returns_400_with_form_errors(self):
+        comment = Comment.objects.create(
+            author=self.user, body="A query", target=self.term
+        )
+        reply = Comment.objects.create(
+            author=self.user, body="A reply", target=self.term, parent=comment
+        )
+
+        response = self.client.post(
+            f"/comments/add/{self.content_type_id}/{self.term.pk}/",
+            {"body": "A nested reply", "parent_id": reply.pk},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Comment.objects.count(), 2)
+        fragments = response.json()["fragments"]
+        self.assertIn(f"reply-form-{reply.pk}", fragments)
+        self.assertIn("errorlist", fragments[f"reply-form-{reply.pk}"])
+
+    def test_add_comment_ajax_invalid_returns_400_with_form_fragment(self):
+        response = self.client.post(
+            f"/comments/add/{self.content_type_id}/{self.term.pk}/",
+            {"body": ""},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(Comment.objects.count(), 0)
+        fragments = response.json()["fragments"]
+        self.assertIn("add-comment-form", fragments)
+        self.assertIn("errorlist", fragments["add-comment-form"])
+
+    def test_add_comment_non_ajax_invalid_sets_error_message(self):
+        response = self.client.post(
+            f"/comments/add/{self.content_type_id}/{self.term.pk}/",
+            {"body": ""},
+            follow=True,
+        )
+
+        self.assertEqual(Comment.objects.count(), 0)
+        messages = list(response.context["messages"])
+        self.assertEqual(len(messages), 1)
+        self.assertIn("Couldn't add that comment", str(messages[0]))
+
+    def test_toggle_close_ajax_returns_updated_card(self):
+        comment = Comment.objects.create(
+            author=self.user, body="A query", target=self.term
+        )
+
+        response = self.client.post(
+            f"/comments/{comment.pk}/toggle-close/",
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        fragments = response.json()["fragments"]
+        self.assertEqual(list(fragments.keys()), [f"comment-{comment.pk}"])
+        self.assertIn("comment--closed", fragments[f"comment-{comment.pk}"])
+        self.assertIn("Re-open", fragments[f"comment-{comment.pk}"])
