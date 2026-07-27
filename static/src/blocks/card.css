@@ -17,6 +17,9 @@
   }
 
   .term-card {
+    display: block;
     padding: var(--spacing-s);
+    color: inherit;
+    text-decoration: none;
   }
 }
