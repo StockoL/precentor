@@ -12,4 +12,23 @@
   .role-block {
     padding: var(--spacing-s);
   }
+
+  .role-block summary {
+    list-style: none;
+    cursor: pointer;
+    font-size: var(--typography-step-1);
+    font-weight: 700;
+  }
+
+  .role-block summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .role-block summary::marker {
+    display: none;
+  }
+
+  .role-block[open] summary {
+    margin-block-end: var(--spacing-xs);
+  }
 }
