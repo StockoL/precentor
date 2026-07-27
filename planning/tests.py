@@ -189,6 +189,24 @@ class RolePieceWorkflowTests(TestCase):
         self.assertIn("Couldn't add that role", str(messages[0]))
 
 
+class TermDetailViewTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="conductor", password="testpass123"
+        )
+        self.client.login(username="conductor", password="testpass123")
+        self.term = Term.objects.create(
+            name="Test Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+        )
+
+    def test_service_list_links_to_service_detail(self):
+        service = Service.objects.create(
+            term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
+        )
+        response = self.client.get(self.term.get_absolute_url())
+        self.assertContains(response, service.get_absolute_url())
+
+
 class MusicListTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(

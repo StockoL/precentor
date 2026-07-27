@@ -17,7 +17,7 @@
         <ul role="list" class="flow">
             {% for service in services %}
             <li class="list-row">
-                <span>{{ service.date|date:"d/m/Y" }} — {{ service.service_type }}</span>
+                <a href="{{ service.get_absolute_url }}">{{ service.date|date:"d/m/Y" }} — {{ service.service_type }}</a>
                 <span class="badge badge--{{ service.status }}">{{ service.status }}</span>
             </li>
             {% empty %}
