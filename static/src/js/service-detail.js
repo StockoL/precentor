@@ -3,7 +3,9 @@ import { showToast } from "./toast.js";
 
 function initServiceDetail() {
   const main = document.querySelector("main");
-  if (!main.querySelector(".role-block")) return;
+  // #roles-list is always rendered on service_detail.html, even with zero
+  // roles yet — unlike .role-block, which only exists once a role does.
+  if (!document.getElementById("roles-list")) return;
 
   main.addEventListener("submit", async (event) => {
     const form = event.target;
