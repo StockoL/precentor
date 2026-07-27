@@ -1,0 +1,7 @@
+<ul id="role-{{ role.pk }}-pieces" role="list" class="flow" style="--flow-space: var(--spacing-2xs);">
+    {% for piece in role.pieces.all %}
+    {% include "planning/_piece_row.html" %}
+    {% empty %}
+    <li id="role-{{ role.pk }}-pieces-empty">No pieces proposed yet.</li>
+    {% endfor %}
+</ul>

@@ -105,6 +105,48 @@ class RolePieceWorkflowTests(TestCase):
         self.assertIn("service-status-badge", fragments)
         self.assertIn("Un-confirm", fragments[f"piece-row-{piece.pk}"])
 
+    def test_add_piece_ajax_success_returns_new_piece_fragment(self):
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+
+        response = self.client.post(
+            f"/roles/{role.pk}/pieces/add/",
+            {"score": self.score.pk},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        piece = role.pieces.get()
+        fragments = response.json()["fragments"]
+        self.assertEqual(list(fragments.keys()), [f"piece-row-{piece.pk}"])
+        self.assertIn("Test Anthem", fragments[f"piece-row-{piece.pk}"])
+
+    def test_add_piece_ajax_invalid_returns_400_with_form_fragment(self):
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+
+        response = self.client.post(
+            f"/roles/{role.pk}/pieces/add/",
+            {"score": ""},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(role.pieces.count(), 0)
+        fragments = response.json()["fragments"]
+        self.assertIn(f"add-piece-form-{role.pk}", fragments)
+        self.assertIn("errorlist", fragments[f"add-piece-form-{role.pk}"])
+
+    def test_add_piece_non_ajax_invalid_sets_error_message(self):
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+
+        response = self.client.post(
+            f"/roles/{role.pk}/pieces/add/", {"score": ""}, follow=True
+        )
+
+        self.assertEqual(role.pieces.count(), 0)
+        messages = list(response.context["messages"])
+        self.assertEqual(len(messages), 1)
+        self.assertIn("Couldn't add that piece", str(messages[0]))
+
 
 class MusicListTests(TestCase):
     def setUp(self):

@@ -84,9 +84,15 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["roles"] = self.object.roles.prefetch_related("pieces__score")
+        roles = list(self.object.roles.prefetch_related("pieces__score"))
+        for role in roles:
+            # Each role renders its own propose-piece form on the same page,
+            # so each needs a distinct auto_id — Django's default auto_id
+            # ("id_score") would otherwise be duplicated once per role,
+            # which is invalid HTML and breaks getElementById-based lookups.
+            role.piece_form = RolePieceForm(auto_id=f"id_role_{role.pk}_%s")
+        context["roles"] = roles
         context["role_form"] = ServiceRoleForm()
-        context["piece_form"] = RolePieceForm()
         context["content_type_id"] = ContentType.objects.get_for_model(Service).id
         context["comments"] = self.object.comments.filter(parent__isnull=True).order_by(
             "created_at"
@@ -127,12 +133,28 @@ def add_role(request, service_pk):
 @require_POST
 def add_piece(request, role_pk):
     role = get_object_or_404(ServiceRole, pk=role_pk)
-    form = RolePieceForm(request.POST)
+    form = RolePieceForm(request.POST, auto_id=f"id_role_{role.pk}_%s")
+
     if form.is_valid():
         piece = form.save(commit=False)
         piece.service_role = role
         piece.save()
-    return redirect(role.service.get_absolute_url())
+        fragments = {
+            f"piece-row-{piece.pk}": render_to_string(
+                "planning/_piece_row.html", {"piece": piece}, request=request
+            ),
+        }
+        return ajax_or_redirect(request, fragments, role.service.get_absolute_url())
+
+    fragments = {
+        f"add-piece-form-{role.pk}": render_to_string(
+            "planning/_add_piece_form.html", {"role": role, "form": form}, request=request
+        ),
+    }
+    return ajax_or_redirect(
+        request, fragments, role.service.get_absolute_url(),
+        error_message="Couldn't add that piece — please check the form.", status=400,
+    )
 
 
 @login_required
