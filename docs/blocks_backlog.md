@@ -17,7 +17,7 @@ a one-off.
 | Site nav                            | `blocks/nav.css`          | Active-page highlighting still not implemented — needs `request.resolver_match`, a template-logic addition, not pure CSS.                                                                            |
 | Role block                          | `blocks/role-block.css`   |                                                                                                                                                                                                      |
 | Term summary                        | `blocks/term-summary.css` |                                                                                                                                                                                                      |
-| `.text-danger` / `.visually-hidden` | `utilities/utilities.css` | "Action link group" (originally logged as a Block) turned out to be a Utility concern — grouping was already handled by `.cluster`; only the Delete link's colour needed a single-property override. |
+| `.visually-hidden`                  | `utilities/utilities.css` | The rest of the original "action link group" utility (`.text-danger`) was superseded by the `.btn-confirm`/`.btn-ghost`/`.btn-danger` variants in `blocks/button.css` — a deliberate button choice reads better than a recoloured link. |
 
 ## Not built as separate Blocks (covered by existing work)
 

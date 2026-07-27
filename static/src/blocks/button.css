@@ -3,29 +3,78 @@
    ========================================================================== */
 
 @layer blocks {
-  button {
+  button,
+  .btn-confirm,
+  .btn-ghost,
+  .btn-danger {
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-3xs);
     padding-block: var(--spacing-2xs);
     padding-inline: var(--spacing-s);
-    border: 1px solid transparent;
     border-radius: 4px;
-    background-color: var(--colors-action-primary);
-    color: var(--colors-text-on-action);
     font-weight: 600;
     font-size: var(--typography-step-0);
     cursor: pointer;
-    transition: background-color var(--transitions-dur-fast)
-      var(--transitions-spring-smooth);
+    text-decoration: none;
+    transition: background-color var(--transitions-dur-fast) var(--transitions-spring-smooth),
+      transform var(--transitions-dur-fast) var(--transitions-spring-smooth),
+      box-shadow var(--transitions-dur-fast) var(--transitions-spring-smooth);
   }
 
-  button:hover {
+  button,
+  .btn-confirm {
+    border: 1px solid transparent;
+    background-color: var(--colors-action-primary);
+    color: var(--colors-text-on-action);
+  }
+
+  button:hover,
+  .btn-confirm:hover {
     background-color: var(--colors-neutral-800);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 26, 43, 0.24);
   }
 
-  button:focus-visible {
+  button:focus-visible,
+  .btn-confirm:focus-visible {
     outline: 2px solid var(--colors-action-primary);
+    outline-offset: 2px;
+  }
+
+  .btn-ghost {
+    border: 1px solid var(--colors-border-strong);
+    background-color: transparent;
+    color: var(--colors-text-base);
+  }
+
+  .btn-ghost:hover {
+    background-color: var(--colors-surface-sunken);
+  }
+
+  .btn-ghost:focus-visible {
+    outline: 2px solid var(--colors-action-primary);
+    outline-offset: 2px;
+  }
+
+  /*
+   * "No border" per the redesign brief, achieved with a transparent
+   * 1px border rather than omitting the property — keeps box size
+   * identical to the other variants so a ghost+danger pair (Edit/
+   * Delete, Cancel/Yes-delete) lines up without a size jump.
+   */
+  .btn-danger {
+    border: 1px solid transparent;
+    background-color: transparent;
+    color: var(--colors-danger-text);
+  }
+
+  .btn-danger:hover {
+    background-color: var(--colors-danger-bg);
+  }
+
+  .btn-danger:focus-visible {
+    outline: 2px solid var(--colors-danger-text);
     outline-offset: 2px;
   }
 }

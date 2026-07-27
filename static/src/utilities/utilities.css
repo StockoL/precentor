@@ -10,10 +10,6 @@
    * regardless of selector specificity, which is one of the real
    * practical benefits of @layer over the old specificity wars.
    */
-  .text-danger {
-    color: var(--colors-danger-text);
-  }
-
   .visually-hidden {
     position: absolute;
     width: 1px;
