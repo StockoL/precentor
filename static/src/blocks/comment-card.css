@@ -12,7 +12,7 @@
    */
   .comment {
     padding: var(--spacing-s);
-    border-radius: 4px;
+    border-radius: 10px;
     border-inline-start: 4px solid var(--colors-border-strong);
     background-color: var(--colors-surface-sunken);
   }
