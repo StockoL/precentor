@@ -1,0 +1,7 @@
+<div id="role-block-{{ role.pk }}" class="role-block card flow" style="--flow-space: var(--spacing-xs);">
+    <h3>{{ role.role_name }}{% if role.is_not_applicable %} (N/A){% endif %}</h3>
+
+    {% include "planning/_role_pieces.html" %}
+
+    {% include "planning/_add_piece_form.html" with form=role.piece_form %}
+</div>

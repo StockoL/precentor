@@ -1,0 +1,5 @@
+<form id="add-role-form" method="post" action="{% url 'planning:add_role' service.pk %}" class="flow ajax-add-role">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add role</button>
+</form>

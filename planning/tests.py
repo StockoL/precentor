@@ -147,6 +147,47 @@ class RolePieceWorkflowTests(TestCase):
         self.assertEqual(len(messages), 1)
         self.assertIn("Couldn't add that piece", str(messages[0]))
 
+    def test_add_role_ajax_success_returns_role_block_and_status_badge(self):
+        response = self.client.post(
+            f"/services/{self.service.pk}/roles/add/",
+            {"role_name": "Anthem"},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        role = self.service.roles.get()
+        fragments = response.json()["fragments"]
+        self.assertEqual(
+            set(fragments.keys()), {f"role-block-{role.pk}", "service-status-badge"}
+        )
+        self.assertIn("Anthem", fragments[f"role-block-{role.pk}"])
+        # A brand-new role has no pieces yet, so status stays not_started
+        # (matches Service.status: resolved_count == 0 and not has_any_piece).
+        self.assertIn("not_started", fragments["service-status-badge"])
+
+    def test_add_role_ajax_invalid_returns_400_with_form_fragment(self):
+        response = self.client.post(
+            f"/services/{self.service.pk}/roles/add/",
+            {"role_name": ""},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(self.service.roles.count(), 0)
+        fragments = response.json()["fragments"]
+        self.assertIn("add-role-form", fragments)
+        self.assertIn("errorlist", fragments["add-role-form"])
+
+    def test_add_role_non_ajax_invalid_sets_error_message(self):
+        response = self.client.post(
+            f"/services/{self.service.pk}/roles/add/", {"role_name": ""}, follow=True
+        )
+
+        self.assertEqual(self.service.roles.count(), 0)
+        messages = list(response.context["messages"])
+        self.assertEqual(len(messages), 1)
+        self.assertIn("Couldn't add that role", str(messages[0]))
+
 
 class MusicListTests(TestCase):
     def setUp(self):

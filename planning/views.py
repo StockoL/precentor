@@ -121,11 +121,31 @@ class ServiceDeleteView(ConductorRequiredMixin, DeleteView):
 def add_role(request, service_pk):
     service = get_object_or_404(Service, pk=service_pk)
     form = ServiceRoleForm(request.POST)
+
     if form.is_valid():
         role = form.save(commit=False)
         role.service = service
         role.save()
-    return redirect(service.get_absolute_url())
+        role.piece_form = RolePieceForm(auto_id=f"id_role_{role.pk}_%s")
+        fragments = {
+            f"role-block-{role.pk}": render_to_string(
+                "planning/_role_block.html", {"role": role}, request=request
+            ),
+            "service-status-badge": render_to_string(
+                "planning/_service_status_badge.html", {"service": service}, request=request
+            ),
+        }
+        return ajax_or_redirect(request, fragments, service.get_absolute_url())
+
+    fragments = {
+        "add-role-form": render_to_string(
+            "planning/_add_role_form.html", {"service": service, "form": form}, request=request
+        ),
+    }
+    return ajax_or_redirect(
+        request, fragments, service.get_absolute_url(),
+        error_message="Couldn't add that role — please check the form.", status=400,
+    )
 
 
 @login_required

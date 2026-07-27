@@ -38,6 +38,25 @@ function initServiceDetail() {
         if (err instanceof AjaxError) applyFragments(err.data.fragments);
         else showToast("Couldn't add that piece — try again.", "danger");
       }
+      return;
+    }
+
+    if (form.matches(".ajax-add-role")) {
+      event.preventDefault();
+      try {
+        const data = await postForm(form.action, new FormData(form));
+        const unmatched = applyFragments(data.fragments);
+        const list = document.getElementById("roles-list");
+        Object.values(unmatched).forEach((html) => {
+          document.getElementById("roles-list-empty")?.remove();
+          list.appendChild(fragmentToElement(html));
+        });
+        form.reset();
+        showToast("Role added.", "success");
+      } catch (err) {
+        if (err instanceof AjaxError) applyFragments(err.data.fragments);
+        else showToast("Couldn't add that role — try again.", "danger");
+      }
     }
   });
 }
