@@ -26,6 +26,11 @@ class ServiceRoleForm(forms.ModelForm):
     class Meta:
         model = ServiceRole
         fields = ["role_name", "is_not_applicable"]  # noqa
+        widgets = {  # noqa
+            "role_name": forms.TextInput(
+                attrs={"placeholder": "e.g. Setting, Anthem, Canticles, Responses…"}
+            ),
+        }
 
 
 class RolePieceForm(forms.ModelForm):
