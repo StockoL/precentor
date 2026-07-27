@@ -75,12 +75,19 @@ function buildCombobox(container) {
     openList();
   });
 
-  input.addEventListener("focus", () => {
+  function showAllOptions() {
     filtered = options;
     activeIndex = -1;
     renderOptions();
     openList();
-  });
+  }
+
+  // Both "focus" and "click" are needed: focus doesn't re-fire on a
+  // second click while the input is already focused (e.g. right after
+  // choosing a result), so a click-only handler is required too for
+  // the list to reliably reopen every time a user clicks the input.
+  input.addEventListener("focus", showAllOptions);
+  input.addEventListener("click", showAllOptions);
 
   input.addEventListener("keydown", (event) => {
     if (event.key === "ArrowDown") {
