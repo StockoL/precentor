@@ -12,7 +12,7 @@
 
     <div class="flow" style="--flow-space: var(--spacing-3xs);">
         <p>Term: <a href="{{ service.term.get_absolute_url }}">{{ service.term }}</a></p>
-        <p>Status: <span class="badge badge--{{ service.status }}">{{ service.status }}</span></p>
+        <p>Status: {% include "planning/_service_status_badge.html" %}</p>
         <p>
             Occasion:
             {% if service.occasion %}
@@ -36,18 +36,7 @@
 
             <ul role="list" class="flow" style="--flow-space: var(--spacing-2xs);">
                 {% for piece in role.pieces.all %}
-                <li class="list-row">
-                    <span>
-                        {{ piece.score }}
-                        <span class="badge badge--{% if piece.is_confirmed %}confirmed{% else %}proposed{% endif %}">
-                            {% if piece.is_confirmed %}Confirmed{% else %}Proposed{% endif %}
-                        </span>
-                    </span>
-                    <form method="post" action="{% url 'planning:toggle_confirm' piece.pk %}">
-                        {% csrf_token %}
-                        <button type="submit">{% if piece.is_confirmed %}Un-confirm{% else %}Confirm{% endif %}</button>
-                    </form>
-                </li>
+                {% include "planning/_piece_row.html" %}
                 {% empty %}
                 <li>No pieces proposed yet.</li>
                 {% endfor %}

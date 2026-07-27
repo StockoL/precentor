@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
 from django.views.generic import (
@@ -11,6 +12,8 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+
+from precentor_project.utils import ajax_or_redirect
 
 from .forms import RolePieceForm, ServiceForm, ServiceRoleForm, TermForm
 from .mixins import ConductorRequiredMixin
@@ -139,7 +142,17 @@ def toggle_confirm(request, piece_pk):
     piece = get_object_or_404(RolePiece, pk=piece_pk)
     piece.is_confirmed = not piece.is_confirmed
     piece.save()
-    return redirect(piece.service_role.service.get_absolute_url())
+
+    service = piece.service_role.service
+    fragments = {
+        f"piece-row-{piece.pk}": render_to_string(
+            "planning/_piece_row.html", {"piece": piece}, request=request
+        ),
+        "service-status-badge": render_to_string(
+            "planning/_service_status_badge.html", {"service": service}, request=request
+        ),
+    }
+    return ajax_or_redirect(request, fragments, service.get_absolute_url())
 
 
 @login_required

@@ -90,6 +90,21 @@ class RolePieceWorkflowTests(TestCase):
         response = self.client.get(f"/services/{self.service.pk}/roles/add/")
         self.assertEqual(response.status_code, 405)
 
+    def test_toggle_confirm_ajax_returns_fragments(self):
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+        piece = RolePiece.objects.create(service_role=role, score=self.score)
+
+        response = self.client.post(
+            f"/pieces/{piece.pk}/toggle-confirm/",
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        fragments = response.json()["fragments"]
+        self.assertIn(f"piece-row-{piece.pk}", fragments)
+        self.assertIn("service-status-badge", fragments)
+        self.assertIn("Un-confirm", fragments[f"piece-row-{piece.pk}"])
+
 
 class MusicListTests(TestCase):
     def setUp(self):
