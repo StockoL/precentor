@@ -135,3 +135,74 @@ class AddRoleBrowserTest(PlaywrightTestCase):
 
         self.page.wait_for_selector(".toast--success")
         assert "Role added" in self.page.inner_text(".toast--success")
+
+
+class ScoreComboboxBrowserTest(PlaywrightTestCase):
+    def setUp(self):
+        super().setUp()
+        self.login_as_conductor()
+        term = Term.objects.create(
+            name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+        )
+        self.service = Service.objects.create(
+            term=term, date=date(2026, 1, 11), service_type="Sung Eucharist"
+        )
+        self.score_a = Score.objects.create(title="Ave Verum", composer="Byrd")
+        self.score_b = Score.objects.create(title="Locus Iste", composer="Bruckner")
+        self.role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+
+    def test_combobox_filters_and_supports_keyboard_selection(self):
+        form = f"#add-piece-form-{self.role.pk}"
+        input_sel = f"{form} .score-combobox__input"
+        listbox_sel = f"{form} .score-combobox__listbox"
+        select_sel = f"#id_role_{self.role.pk}_score"
+        count_js = f"document.querySelectorAll('{listbox_sel} li').length"
+        open_js = f"!document.querySelector('{listbox_sel}').hidden"
+
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.wait_for_selector(input_sel)
+
+        # The native <select> is hidden behind the combobox once enhanced —
+        # it's still in the DOM (the fallback if JS had failed), just not
+        # what a sighted user interacts with.
+        assert not self.page.is_visible(select_sel)
+
+        # Typing filters down to only the matching result. Polled via a
+        # plain JS predicate (wait_for_function) rather than a selector-
+        # based wait — the listbox rebuilds its <li>s from scratch on every
+        # keystroke (innerHTML = "" then re-append), and Playwright's
+        # node-identity-based selector waits are flaky against that kind of
+        # rapid wholesale replacement even though the DOM state itself,
+        # confirmed via screenshot and manual polling, is correct throughout.
+        self.page.fill(input_sel, "Locus")
+        self.page.wait_for_function(f"{count_js} === 1")
+        items = self.page.eval_on_selector_all(
+            f"{listbox_sel} li", "els => els.map(el => el.textContent)"
+        )
+        assert "Locus Iste" in items[0]
+
+        # Clear back to the full list, then choose the second result with
+        # the keyboard alone — never clicking a result directly.
+        self.page.fill(input_sel, "")
+        self.page.click(input_sel)
+        self.page.wait_for_function(f"{count_js} === 2")
+        self.page.keyboard.press("ArrowDown")
+        self.page.keyboard.press("ArrowDown")
+        self.page.keyboard.press("Enter")
+
+        assert self.page.input_value(input_sel) == f"{self.score_b.title} ({self.score_b.composer})"
+        assert self.page.eval_on_selector(select_sel, "el => el.value") == str(self.score_b.pk)
+        self.page.wait_for_function(f"!({open_js})")
+
+        # Escape closes the list without altering the selection.
+        self.page.click(input_sel)
+        self.page.wait_for_function(f"{open_js} && {count_js} === 2")
+        self.page.keyboard.press("Escape")
+        self.page.wait_for_function(f"!({open_js})")
+        assert self.page.eval_on_selector(select_sel, "el => el.value") == str(self.score_b.pk)
+
+        # Clicking outside the combobox also closes it.
+        self.page.click(input_sel)
+        self.page.wait_for_function(f"{open_js} && {count_js} === 2")
+        self.page.click("h1")
+        self.page.wait_for_function(f"!({open_js})")
