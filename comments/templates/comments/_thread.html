@@ -16,12 +16,7 @@
             {% endfor %}
         </ul>
 
-        <form method="post" action="{% url 'comments:add_comment' content_type_id object_id %}" class="cluster">
-            {% csrf_token %}
-            <input type="hidden" name="parent_id" value="{{ comment.pk }}">
-            <input type="text" name="body" placeholder="Reply...">
-            <button type="submit">Reply</button>
-        </form>
+        {% include "comments/_comment_form.html" with form=comment_form parent_id=comment.pk %}
     </div>
     {% empty %}
     <p>No comments yet.</p>
@@ -29,10 +24,6 @@
 
     <div class="flow">
         <h3>New comment</h3>
-        <form method="post" action="{% url 'comments:add_comment' content_type_id object_id %}" class="cluster">
-            {% csrf_token %}
-            <input type="text" name="body" placeholder="Add a comment...">
-            <button type="submit">Add comment</button>
-        </form>
+        {% include "comments/_comment_form.html" with form=comment_form parent_id=None %}
     </div>
 </div>

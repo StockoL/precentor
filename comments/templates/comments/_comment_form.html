@@ -1,0 +1,8 @@
+<form id="{% if parent_id %}reply-form-{{ parent_id }}{% else %}add-comment-form{% endif %}"
+      method="post" action="{% url 'comments:add_comment' content_type_id object_id %}"
+      class="cluster ajax-add-comment">
+    {% csrf_token %}
+    {% if parent_id %}<input type="hidden" name="parent_id" value="{{ parent_id }}">{% endif %}
+    {{ form.as_p }}
+    <button type="submit">{% if parent_id %}Reply{% else %}Add comment{% endif %}</button>
+</form>

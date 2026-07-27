@@ -13,6 +13,7 @@ from django.views.generic import (
     UpdateView,
 )
 
+from comments.forms import CommentForm
 from precentor_project.utils import ajax_or_redirect
 
 from .forms import RolePieceForm, ServiceForm, ServiceRoleForm, TermForm
@@ -44,6 +45,7 @@ class TermDetailView(LoginRequiredMixin, DetailView):
         context["comments"] = self.object.comments.filter(parent__isnull=True).order_by(
             "created_at"
         )
+        context["comment_form"] = CommentForm()
         return context
 
 
@@ -97,6 +99,7 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
         context["comments"] = self.object.comments.filter(parent__isnull=True).order_by(
             "created_at"
         )
+        context["comment_form"] = CommentForm()
         return context
 
 
