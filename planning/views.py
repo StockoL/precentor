@@ -14,6 +14,7 @@ from django.views.generic import (
 )
 
 from comments.forms import CommentForm
+from comments.utils import attach_reply_forms
 from precentor_project.utils import ajax_or_redirect
 
 from .forms import RolePieceForm, ServiceForm, ServiceRoleForm, TermForm
@@ -42,8 +43,8 @@ class TermDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context["services"] = self.object.services.all()
         context["content_type_id"] = ContentType.objects.get_for_model(Term).id
-        context["comments"] = self.object.comments.filter(parent__isnull=True).order_by(
-            "created_at"
+        context["comments"] = attach_reply_forms(
+            self.object.comments.filter(parent__isnull=True).order_by("created_at")
         )
         context["comment_form"] = CommentForm()
         return context
@@ -96,8 +97,8 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
         context["roles"] = roles
         context["role_form"] = ServiceRoleForm()
         context["content_type_id"] = ContentType.objects.get_for_model(Service).id
-        context["comments"] = self.object.comments.filter(parent__isnull=True).order_by(
-            "created_at"
+        context["comments"] = attach_reply_forms(
+            self.object.comments.filter(parent__isnull=True).order_by("created_at")
         )
         context["comment_form"] = CommentForm()
         return context

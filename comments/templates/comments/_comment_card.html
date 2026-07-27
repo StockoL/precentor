@@ -13,5 +13,5 @@
         {% endfor %}
     </ul>
 
-    {% include "comments/_comment_form.html" with form=comment_form parent_id=comment.pk %}
+    {% include "comments/_comment_form.html" with form=comment.comment_form parent_id=comment.pk %}
 </div>

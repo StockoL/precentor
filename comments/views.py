@@ -11,6 +11,7 @@ from precentor_project.utils import ajax_or_redirect
 
 from .forms import CommentForm
 from .models import Comment
+from .utils import attach_reply_form
 
 
 def _comment_form_id(parent_id):
@@ -60,22 +61,20 @@ def add_comment(request, content_type_id, object_id):
             )
 
         # Card context shared by both success branches below.
-        ctx = {
-            "content_type_id": content_type_id,
-            "object_id": object_id,
-            "comment_form": CommentForm(),
-        }
+        ctx = {"content_type_id": content_type_id, "object_id": object_id}
         if parent_id:
             # Re-render the whole parent card — comment--{{ state }} is a
             # class on its outer <div>, so only a full swap can flip it
             # (open -> open_with_replies). This already contains the new
             # reply, so no separate reply fragment is needed or returned.
+            parent = attach_reply_form(comment.parent)
             fragments = {
                 f"comment-{parent_id}": render_to_string(
-                    "comments/_comment_card.html", {"comment": comment.parent, **ctx}, request=request
+                    "comments/_comment_card.html", {"comment": parent, **ctx}, request=request
                 ),
             }
         else:
+            comment = attach_reply_form(comment)
             fragments = {
                 f"comment-{comment.pk}": render_to_string(
                     "comments/_comment_card.html", {"comment": comment, **ctx}, request=request
@@ -100,6 +99,7 @@ def toggle_close(request, comment_pk):
     comment = get_object_or_404(Comment, pk=comment_pk)
     comment.is_open = not comment.is_open
     comment.save()
+    comment = attach_reply_form(comment)
 
     # content_type_id/object_id are already stored fields on Comment — no
     # need for ContentType.objects.get_for_model(), a redundant query.
@@ -110,7 +110,6 @@ def toggle_close(request, comment_pk):
                 "comment": comment,
                 "content_type_id": comment.content_type_id,
                 "object_id": comment.object_id,
-                "comment_form": CommentForm(),
             },
             request=request,
         ),
