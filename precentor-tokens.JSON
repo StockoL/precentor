@@ -50,6 +50,37 @@
     "liturgical-white": "#b8962e",
     "liturgical-rose": "#c26b8a"
   },
+  "_comment_colorsDark": "Dark-mode overrides for the tokens above that actually need to change — same key names as 'colors' (surface-base, text-base, etc.), different values only. build-tokens.js emits these into two places: a @media(prefers-color-scheme:dark) block scoped to :root:not([data-theme]) (automatic, only when no manual choice has been made) and an explicit :root[data-theme=\"dark\"] block (wins regardless of OS setting, set by the theme toggle and remembered in localStorage). action-primary/text-on-action are deliberately NOT overridden — button backgrounds are self-contained and don't rely on page-background contrast, so they stay identical in both modes. surface-sunken is intentionally LIGHTER than surface-base in dark mode (the reverse of their light-mode relationship, where sunken is slightly darker than base) — this follows the standard dark-UI convention that elevation reads as lighter, not darker, once the base surface is already dark.",
+  "colorsDark": {
+    "surface-base": "#1c1b1f",
+    "surface-sunken": "#242226",
+    "text-base": "#f4f4f5",
+    "text-muted": "#a1a1aa",
+    "border-subtle": "#2f2d31",
+    "border-strong": "#3f3d42",
+
+    "success-bg": "rgba(22, 163, 74, 0.16)",
+    "success-text": "#4ade80",
+    "success-border": "rgba(22, 163, 74, 0.4)",
+
+    "warning-bg": "rgba(217, 119, 6, 0.16)",
+    "warning-text": "#fbbf24",
+    "warning-border": "rgba(217, 119, 6, 0.4)",
+
+    "danger-bg": "rgba(220, 38, 38, 0.16)",
+    "danger-text": "#f87171",
+    "danger-border": "rgba(220, 38, 38, 0.4)",
+
+    "info-bg": "rgba(2, 132, 199, 0.16)",
+    "info-text": "#7dd3fc",
+    "info-border": "rgba(2, 132, 199, 0.4)",
+
+    "liturgical-violet": "#b794f4",
+    "liturgical-red": "#f87171",
+    "liturgical-green": "#4ade80",
+    "liturgical-white": "#fbbf24",
+    "liturgical-rose": "#f0abfc"
+  },
   "_comment_spacing": "Utopia space scale, including one-up pairs for fluid gutters between two named steps (used by Composition-level layout primitives — stack/cluster gaps, etc.).",
   "spacing": {
     "3xs": "clamp(0.25rem, 0.2244rem + 0.1136vw, 0.3125rem)",

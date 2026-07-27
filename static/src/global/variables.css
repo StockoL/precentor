@@ -91,3 +91,59 @@
   --transitions-dur-fast: 150ms;
   --transitions-dur-base: 250ms;
 }
+
+/* Automatic dark mode — only when no manual theme choice has been made */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+  --colors-surface-base: #1c1b1f;
+  --colors-surface-sunken: #242226;
+  --colors-text-base: #f4f4f5;
+  --colors-text-muted: #a1a1aa;
+  --colors-border-subtle: #2f2d31;
+  --colors-border-strong: #3f3d42;
+  --colors-success-bg: rgba(22, 163, 74, 0.16);
+  --colors-success-text: #4ade80;
+  --colors-success-border: rgba(22, 163, 74, 0.4);
+  --colors-warning-bg: rgba(217, 119, 6, 0.16);
+  --colors-warning-text: #fbbf24;
+  --colors-warning-border: rgba(217, 119, 6, 0.4);
+  --colors-danger-bg: rgba(220, 38, 38, 0.16);
+  --colors-danger-text: #f87171;
+  --colors-danger-border: rgba(220, 38, 38, 0.4);
+  --colors-info-bg: rgba(2, 132, 199, 0.16);
+  --colors-info-text: #7dd3fc;
+  --colors-info-border: rgba(2, 132, 199, 0.4);
+  --colors-liturgical-violet: #b794f4;
+  --colors-liturgical-red: #f87171;
+  --colors-liturgical-green: #4ade80;
+  --colors-liturgical-white: #fbbf24;
+  --colors-liturgical-rose: #f0abfc;
+  }
+}
+
+/* Explicit manual override — set by the theme toggle, wins regardless of OS setting */
+:root[data-theme="dark"] {
+  --colors-surface-base: #1c1b1f;
+  --colors-surface-sunken: #242226;
+  --colors-text-base: #f4f4f5;
+  --colors-text-muted: #a1a1aa;
+  --colors-border-subtle: #2f2d31;
+  --colors-border-strong: #3f3d42;
+  --colors-success-bg: rgba(22, 163, 74, 0.16);
+  --colors-success-text: #4ade80;
+  --colors-success-border: rgba(22, 163, 74, 0.4);
+  --colors-warning-bg: rgba(217, 119, 6, 0.16);
+  --colors-warning-text: #fbbf24;
+  --colors-warning-border: rgba(217, 119, 6, 0.4);
+  --colors-danger-bg: rgba(220, 38, 38, 0.16);
+  --colors-danger-text: #f87171;
+  --colors-danger-border: rgba(220, 38, 38, 0.4);
+  --colors-info-bg: rgba(2, 132, 199, 0.16);
+  --colors-info-text: #7dd3fc;
+  --colors-info-border: rgba(2, 132, 199, 0.4);
+  --colors-liturgical-violet: #b794f4;
+  --colors-liturgical-red: #f87171;
+  --colors-liturgical-green: #4ade80;
+  --colors-liturgical-white: #fbbf24;
+  --colors-liturgical-rose: #f0abfc;
+}
