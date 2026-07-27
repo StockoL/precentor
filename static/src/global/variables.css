@@ -44,8 +44,8 @@
   --colors-liturgical-violet: #5b2a86;
   --colors-liturgical-red: #8b1a2b;
   --colors-liturgical-green: #2f6b3a;
-  --colors-liturgical-white: #b8962e;
-  --colors-liturgical-rose: #c26b8a;
+  --colors-liturgical-white: #836a21;
+  --colors-liturgical-rose: #a34365;
 
   /* -- TYPOGRAPHY ---------------------------------------------------------- */
   --typography-step--2: clamp(0.6944rem, 0.6513rem + 0.1919vw, 0.8rem);

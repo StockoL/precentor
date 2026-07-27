@@ -12,15 +12,37 @@
    * so templates can build the variable name directly via string
    * interpolation — no separate colour-mapping code needed anywhere.
    *
-   * Both rules fall back to --colors-action-primary when no --accent
+   * All rules fall back to --colors-action-primary when no --accent
    * is set inline (i.e. the page has no occasion in context), so
    * nothing breaks or looks unstyled on pages without one.
    */
-  .accent-bar {
-    height: 4px;
+  .occasion-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2xs);
+    font-size: var(--typography-step--1);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent, var(--colors-action-primary));
+    margin-bottom: var(--spacing-2xs);
+  }
+
+  .occasion-eyebrow::before {
+    content: "";
+    width: 0.6em;
+    height: 0.6em;
+    border-radius: 50%;
+    background: var(--accent, var(--colors-action-primary));
+    display: inline-block;
+  }
+
+  .accent-rule {
+    height: 3px;
+    width: 4.5rem;
+    background: var(--accent, var(--colors-action-primary));
     border-radius: 2px;
-    background-color: var(--accent, var(--colors-action-primary));
-    margin-block: var(--spacing-2xs);
+    margin: var(--spacing-2xs) 0 var(--spacing-l);
   }
 
   .occasion-dot {

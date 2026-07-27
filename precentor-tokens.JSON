@@ -47,8 +47,8 @@
     "liturgical-violet": "#5b2a86",
     "liturgical-red": "#8b1a2b",
     "liturgical-green": "#2f6b3a",
-    "liturgical-white": "#b8962e",
-    "liturgical-rose": "#c26b8a"
+    "liturgical-white": "#836a21",
+    "liturgical-rose": "#a34365"
   },
   "_comment_colorsDark": "Dark-mode overrides for the tokens above that actually need to change — same key names as 'colors' (surface-base, text-base, etc.), different values only. build-tokens.js emits these into two places: a @media(prefers-color-scheme:dark) block scoped to :root:not([data-theme]) (automatic, only when no manual choice has been made) and an explicit :root[data-theme=\"dark\"] block (wins regardless of OS setting, set by the theme toggle and remembered in localStorage). action-primary/text-on-action are deliberately NOT overridden — button backgrounds are self-contained and don't rely on page-background contrast, so they stay identical in both modes. surface-sunken is intentionally LIGHTER than surface-base in dark mode (the reverse of their light-mode relationship, where sunken is slightly darker than base) — this follows the standard dark-UI convention that elevation reads as lighter, not darker, once the base surface is already dark.",
   "colorsDark": {

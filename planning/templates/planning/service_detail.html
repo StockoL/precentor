@@ -2,8 +2,13 @@
 {% block title %}{{ service }} — Precentor{% endblock %}
 {% block content %}
 <div class="flow">
+    {% if service.occasion and service.occasion.colour %}
+    <div class="occasion-eyebrow" style="--accent: var(--colors-liturgical-{{ service.occasion.colour }});">{{ service.occasion }}</div>
+    {% endif %}
     <h1>{{ service }}</h1>
-    <div class="accent-bar" {% if service.occasion and service.occasion.colour %}style="--accent: var(--colors-liturgical-{{ service.occasion.colour }});"{% endif %}></div>
+    {% if service.occasion and service.occasion.colour %}
+    <div class="accent-rule" style="--accent: var(--colors-liturgical-{{ service.occasion.colour }});"></div>
+    {% endif %}
 
     <div class="flow" style="--flow-space: var(--spacing-3xs);">
         <p>Term: <a href="{{ service.term.get_absolute_url }}">{{ service.term }}</a></p>
