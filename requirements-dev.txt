@@ -1,0 +1,6 @@
+-r requirements.txt
+
+# Browser-driven tests (StaticLiveServerTestCase + Playwright) — dev/test
+# only, never installed in production alongside requirements.txt. After
+# installing, also run: playwright install chromium
+playwright==1.61.0
