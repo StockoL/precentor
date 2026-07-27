@@ -1,0 +1,46 @@
+/* ==========================================================================
+   BLOCK: SCORE COMBOBOX
+   ========================================================================== */
+
+@layer blocks {
+  .score-combobox {
+    position: relative;
+  }
+
+  .score-combobox__native-select--hidden {
+    display: none;
+  }
+
+  .score-combobox__input {
+    width: 100%;
+  }
+
+  .score-combobox__listbox {
+    position: absolute;
+    inset-inline: 0;
+    z-index: 10;
+    margin-block-start: var(--spacing-3xs);
+    margin-inline: 0;
+    max-height: 16rem;
+    overflow-y: auto;
+    list-style: none;
+    padding: var(--spacing-3xs);
+    border: 1px solid var(--colors-border-subtle);
+    border-radius: 10px;
+    background-color: var(--colors-surface-base);
+    box-shadow: 0 4px 12px rgba(24, 24, 27, 0.12);
+  }
+
+  .score-combobox__listbox li {
+    padding-block: var(--spacing-3xs);
+    padding-inline: var(--spacing-xs);
+    border-radius: 6px;
+    font-size: var(--typography-step-0);
+    cursor: pointer;
+  }
+
+  .score-combobox__listbox li[aria-selected="true"],
+  .score-combobox__listbox li:hover {
+    background-color: var(--colors-surface-sunken);
+  }
+}

@@ -73,14 +73,18 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
 
     def test_propose_piece_appends_row_without_reload(self):
         empty_state = f"#role-{self.role.pk}-pieces-empty"
+        form = f"#add-piece-form-{self.role.pk}"
 
         self.page.goto(f"/services/{self.service.pk}/")
         self.page.wait_for_selector(empty_state)
 
         self.page.evaluate("window.__browser_test_marker = true")
 
-        self.page.select_option(f"#id_role_{self.role.pk}_score", str(self.score.pk))
-        self.page.click(f"#add-piece-form-{self.role.pk} button[type=submit]")
+        # The native <select> is now hidden behind the score-picker
+        # combobox — drive the real, visible control a user would.
+        self.page.fill(f"{form} .score-combobox__input", "Browser Anthem")
+        self.page.click(f"{form} .score-combobox__listbox li")
+        self.page.click(f"{form} button[type=submit]")
 
         self.page.wait_for_selector(f"#role-{self.role.pk}-pieces li.list-row")
 
