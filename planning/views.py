@@ -13,13 +13,13 @@ from django.views.generic import (
     UpdateView,
 )
 
+from accounts.mixins import ConductorRequiredMixin
 from comments.forms import CommentForm
 from comments.utils import attach_reply_forms
 from library.models import Score
 from precentor_project.utils import ajax_or_redirect
 
 from .forms import RolePieceForm, ServiceForm, ServiceRoleForm, TermForm
-from .mixins import ConductorRequiredMixin
 from .models import RolePiece, Service, ServiceRole, Term
 
 # --- Term views ---
