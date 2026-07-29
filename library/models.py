@@ -1,5 +1,35 @@
 from django.db import models
+from django.db.models import BooleanField, Case, When
 from django.urls import reverse
+
+
+class ScoreQuerySet(models.QuerySet):
+    def ranked_by_suitability(self, occasion=None, season=None, use_type=None):
+        """
+        Ranking, not filtering — every score stays in the results;
+        scores matching any of the three suitability tiers (occasion,
+        season, use-type) for the given context are bubbled to the top.
+        Untagged scores are never hidden, since they might still be
+        relevant and the tool shouldn't claim to know otherwise.
+        """
+        if not (occasion or season or use_type):
+            return self.order_by("title")
+
+        conditions = []
+        if occasion is not None:
+            conditions.append(When(suited_occasions=occasion, then=True))
+        if season is not None:
+            conditions.append(When(suited_seasons=season, then=True))
+        if use_type is not None:
+            conditions.append(When(suited_use_types=use_type, then=True))
+
+        return (
+            self.annotate(
+                is_suited=Case(*conditions, default=False, output_field=BooleanField())
+            )
+            .order_by("-is_suited", "title")
+            .distinct()
+        )
 
 
 class Score(models.Model):
@@ -18,9 +48,17 @@ class Score(models.Model):
     copies_owned = models.PositiveIntegerField(default=0)
     filing_location = models.CharField(max_length=100, blank=True)
     duration_minutes = models.PositiveIntegerField(blank=True, null=True)
+    suited_use_types = models.ManyToManyField(
+        "ordo.UseType", blank=True, related_name="suited_scores"
+    )
+    suited_seasons = models.ManyToManyField(
+        "ordo.LiturgicalSeason", blank=True, related_name="suited_scores"
+    )
     suited_occasions = models.ManyToManyField(
         "ordo.LiturgicalOccasion", blank=True, related_name="suited_scores"
     )
+
+    objects = ScoreQuerySet.as_manager()
 
     class Meta:
         ordering = ["title"]  # noqa (Django Meta, not a normal class — no shared-state risk)

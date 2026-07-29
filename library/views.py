@@ -11,6 +11,8 @@ from django.views.generic import (
     UpdateView,
 )
 
+from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
+
 from .models import Score
 
 
@@ -35,7 +37,29 @@ class ScoreListView(LoginRequiredMixin, ListView):
         if voice_part in voice_part_lookup:
             queryset = queryset.filter(**{voice_part_lookup[voice_part]: 0})
 
-        return queryset
+        occasion_pk = self.request.GET.get("suited_occasion")
+        season_pk = self.request.GET.get("suited_season")
+        use_type_pk = self.request.GET.get("suited_use_type")
+
+        occasion = (
+            LiturgicalOccasion.objects.filter(pk=occasion_pk).first()
+            if occasion_pk and occasion_pk.isdigit()
+            else None
+        )
+        season = (
+            LiturgicalSeason.objects.filter(pk=season_pk).first()
+            if season_pk and season_pk.isdigit()
+            else None
+        )
+        use_type = (
+            UseType.objects.filter(pk=use_type_pk).first()
+            if use_type_pk and use_type_pk.isdigit()
+            else None
+        )
+
+        return queryset.ranked_by_suitability(
+            occasion=occasion, season=season, use_type=use_type
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -68,6 +92,9 @@ class ScoreCreateView(LoginRequiredMixin, CreateView):
         "lead_time_tag",
         "copies_owned",
         "filing_location",
+        "suited_use_types",
+        "suited_seasons",
+        "suited_occasions",
         "duration_minutes",
     ]
 
