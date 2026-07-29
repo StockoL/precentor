@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Site settings — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Site settings</h1>
+    <form method="post" enctype="multipart/form-data" class="flow">
+        {% csrf_token %}
+        <p>{{ form.church_name.label_tag }} {{ form.church_name }} {{ form.church_name.errors }}</p>
+
+        <div class="crest-crop" data-target="{{ form.crest_image.id_for_label }}"
+             data-target-width="1600" data-target-height="400">
+            {{ form.crest_image.label_tag }}
+            {% if site_config.crest_image %}
+            <img class="crest-crop__current" src="{{ site_config.crest_image.url }}" alt="Current crest">
+            {% endif %}
+            {{ form.crest_image }}
+            {{ form.crest_image.errors }}
+        </div>
+
+        <p>{{ form.house_accent_colour.label_tag }} {{ form.house_accent_colour }} {{ form.house_accent_colour.errors }}</p>
+        <p>{{ form.layout_style.label_tag }} {{ form.layout_style }} {{ form.layout_style.errors }}</p>
+        <p>{{ form.show_hymns_psalm }} {{ form.show_hymns_psalm.label_tag }}</p>
+        <button type="submit">Save</button>
+    </form>
+</div>
+{% endblock %}

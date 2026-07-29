@@ -25,6 +25,7 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("library/", include("library.urls")),
     path("ordo/", include("ordo.urls")),
+    path("settings/", include("core.urls")),
     path("", include("planning.urls")),
     path("comments/", include("comments.urls")),
 ]
