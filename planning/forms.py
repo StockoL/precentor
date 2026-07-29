@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import RolePiece, Service, ServiceRole, Term
+from .models import RolePiece, Service, ServiceRole, Term, TermMarker
 
 
 class TermForm(forms.ModelForm):
@@ -26,6 +26,15 @@ class ServiceForm(forms.ModelForm):
             "hymns",
             "psalm",
         ]
+        widgets = {  # noqa
+            "date": forms.DateInput(attrs={"type": "date"}),
+        }
+
+
+class TermMarkerForm(forms.ModelForm):
+    class Meta:
+        model = TermMarker
+        fields = ["date", "text"]  # noqa
         widgets = {  # noqa
             "date": forms.DateInput(attrs={"type": "date"}),
         }

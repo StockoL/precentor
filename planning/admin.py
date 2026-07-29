@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import RolePiece, Service, ServiceRole, Term
+from .models import RolePiece, Service, ServiceRole, Term, TermMarker
 
 
 class ServiceRoleInline(admin.TabularInline):
@@ -35,3 +35,9 @@ class ServiceAdmin(admin.ModelAdmin):
 class ServiceRoleAdmin(admin.ModelAdmin):
     list_display = ["role_name", "service", "is_not_applicable"]  # noqa
     inlines = [RolePieceInline]  # noqa
+
+
+@admin.register(TermMarker)
+class TermMarkerAdmin(admin.ModelAdmin):
+    list_display = ["text", "date", "term"]  # noqa
+    list_filter = ["term"]  # noqa

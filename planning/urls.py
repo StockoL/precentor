@@ -32,6 +32,21 @@ urlpatterns = [
         "terms/<int:term_pk>/music-list/", views.term_music_list, name="term_music_list"
     ),
     path(
+        "terms/<int:term_pk>/markers/add/",
+        views.TermMarkerCreateView.as_view(),
+        name="marker_create",
+    ),
+    path(
+        "markers/<int:pk>/edit/",
+        views.TermMarkerUpdateView.as_view(),
+        name="marker_update",
+    ),
+    path(
+        "markers/<int:pk>/delete/",
+        views.TermMarkerDeleteView.as_view(),
+        name="marker_delete",
+    ),
+    path(
         "services/<int:service_pk>/roles/add/", views.add_role, name="add_role"
     ),
     path("roles/<int:role_pk>/pieces/add/", views.add_piece, name="add_piece"),

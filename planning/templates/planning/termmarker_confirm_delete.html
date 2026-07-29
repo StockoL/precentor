@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Delete marker — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Delete "{{ termmarker }}"?</h1>
+    <div class="cluster">
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn-danger" type="submit">Yes, delete</button>
+        </form>
+        <a class="btn-ghost" href="{{ termmarker.term.get_absolute_url }}">Cancel</a>
+    </div>
+</div>
+{% endblock %}

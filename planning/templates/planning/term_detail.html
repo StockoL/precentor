@@ -9,6 +9,7 @@
         <a class="btn-ghost" href="{% url 'planning:term_update' term.pk %}">Edit term</a>
         <a class="btn-danger" href="{% url 'planning:term_delete' term.pk %}">Delete term</a>
         <a href="{% url 'planning:service_create' term.pk %}">Add a service</a>
+        <a href="{% url 'planning:marker_create' term.pk %}">Add a marker</a>
         <a href="{% url 'planning:term_music_list' term.pk %}">View music list</a>
     </div>
 
@@ -22,6 +23,23 @@
             </li>
             {% empty %}
             <li>No services yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="flow">
+        <h2>Markers</h2>
+        <ul role="list" class="flow">
+            {% for marker in markers %}
+            <li class="list-row">
+                {{ marker.date|date:"d/m/Y" }} — {{ marker.text }}
+                <span class="cluster">
+                    <a class="btn-ghost" href="{% url 'planning:marker_update' marker.pk %}">Edit</a>
+                    <a class="btn-danger" href="{% url 'planning:marker_delete' marker.pk %}">Delete</a>
+                </span>
+            </li>
+            {% empty %}
+            <li>No markers yet.</li>
             {% endfor %}
         </ul>
     </div>

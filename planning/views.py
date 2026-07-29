@@ -19,8 +19,14 @@ from comments.utils import attach_reply_forms
 from library.models import Score
 from precentor_project.utils import ajax_or_redirect
 
-from .forms import RolePieceForm, ServiceForm, ServiceRoleForm, TermForm
-from .models import RolePiece, Service, ServiceRole, Term
+from .forms import (
+    RolePieceForm,
+    ServiceForm,
+    ServiceRoleForm,
+    TermForm,
+    TermMarkerForm,
+)
+from .models import RolePiece, Service, ServiceRole, Term, TermMarker
 
 # --- Term views ---
 
@@ -43,6 +49,7 @@ class TermDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["services"] = self.object.services.all()
+        context["markers"] = self.object.markers.all()
         context["content_type_id"] = ContentType.objects.get_for_model(Term).id
         context["comments"] = attach_reply_forms(
             self.object.comments.filter(parent__isnull=True).order_by("created_at")
@@ -236,3 +243,43 @@ def term_music_list(request, term_pk):
             "draft": draft,
         },
     )
+
+
+# --- TermMarker views ---
+
+
+class TermMarkerCreateView(ConductorRequiredMixin, CreateView):
+    model = TermMarker
+    form_class = TermMarkerForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["term"] = get_object_or_404(Term, pk=self.kwargs["term_pk"])
+        return context
+
+    def form_valid(self, form):
+        form.instance.term = get_object_or_404(Term, pk=self.kwargs["term_pk"])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return self.object.term.get_absolute_url()
+
+
+class TermMarkerUpdateView(ConductorRequiredMixin, UpdateView):
+    model = TermMarker
+    form_class = TermMarkerForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["term"] = self.object.term
+        return context
+
+    def get_success_url(self):
+        return self.object.term.get_absolute_url()
+
+
+class TermMarkerDeleteView(ConductorRequiredMixin, DeleteView):
+    model = TermMarker
+
+    def get_success_url(self):
+        return self.object.term.get_absolute_url()
