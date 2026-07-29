@@ -1,0 +1,56 @@
+/* ==========================================================================
+   BLOCK: CREST CROP
+   ========================================================================== */
+
+@layer blocks {
+  .crest-crop__frame {
+    position: relative;
+    aspect-ratio: 4 / 1;
+    max-width: 32rem;
+    overflow: hidden;
+    border: 1px solid var(--colors-border-strong);
+    border-radius: 4px;
+    background: var(--colors-surface-sunken);
+    touch-action: none;
+    margin-block-end: var(--spacing-2xs);
+  }
+
+  .crest-crop__image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-width: none;
+    transform-origin: 0 0;
+    cursor: grab;
+    user-select: none;
+  }
+
+  .crest-crop__image:active {
+    cursor: grabbing;
+  }
+
+  .crest-crop__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s);
+    max-width: 32rem;
+    margin-block-end: var(--spacing-s);
+  }
+
+  .crest-crop__zoom {
+    flex: 1;
+  }
+
+  .crest-crop__warning {
+    color: var(--colors-warning-text);
+    font-size: var(--typography-step--1);
+  }
+
+  .crest-crop__preview,
+  .crest-crop__current {
+    display: block;
+    max-height: 4rem;
+    width: auto;
+    margin-block-end: var(--spacing-2xs);
+  }
+}
