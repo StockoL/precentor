@@ -11,7 +11,11 @@ class ConfirmToggleBrowserTest(PlaywrightTestCase):
         super().setUp()
         self.login_as_conductor()
         term = Term.objects.create(
-            name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+            name="Browser Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
         )
         self.service = Service.objects.create(
             term=term, date=date(2026, 1, 11), service_type="Sung Eucharist"
@@ -63,7 +67,11 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
         super().setUp()
         self.login_as_conductor()
         term = Term.objects.create(
-            name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+            name="Browser Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
         )
         self.service = Service.objects.create(
             term=term, date=date(2026, 1, 11), service_type="Sung Eucharist"
@@ -105,7 +113,11 @@ class AddRoleBrowserTest(PlaywrightTestCase):
         super().setUp()
         self.login_as_conductor()
         term = Term.objects.create(
-            name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+            name="Browser Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
         )
         self.service = Service.objects.create(
             term=term, date=date(2026, 1, 11), service_type="Sung Eucharist"
@@ -142,7 +154,11 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
         super().setUp()
         self.login_as_conductor()
         term = Term.objects.create(
-            name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+            name="Browser Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
         )
         self.service = Service.objects.create(
             term=term, date=date(2026, 1, 11), service_type="Sung Eucharist"

@@ -11,7 +11,11 @@ class CommentThreadBrowserTest(PlaywrightTestCase):
         super().setUp()
         self.login_as_conductor()
         self.term = Term.objects.create(
-            name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+            name="Browser Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
         )
 
     def test_add_comment_reply_and_toggle_close_without_reload(self):

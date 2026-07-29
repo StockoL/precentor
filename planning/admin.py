@@ -15,13 +15,14 @@ class RolePieceInline(admin.TabularInline):
 
 @admin.register(Term)
 class TermAdmin(admin.ModelAdmin):
-    list_display = ["name", "start_date", "end_date"]  # noqa
+    list_display = ["name", "start_date", "end_date", "tradition", "calendar_use"]  # noqa
 
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ["service_type", "date", "term", "occasion", "display_status"]  # noqa
     list_filter = ["term", "service_type"]  # noqa
+    filter_horizontal = ["additional_occasions"]  # noqa
     inlines = [ServiceRoleInline]  # noqa
 
     def display_status(self, obj):

@@ -2,11 +2,15 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
 
+from ordo.models import CALENDAR_USE_CHOICES, TRADITION_CHOICES
+
 
 class Term(models.Model):
     name = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField()
+    tradition = models.CharField(max_length=20, choices=TRADITION_CHOICES)
+    calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES)
     comments = GenericRelation("comments.Comment")
 
     def completion_summary(self):
@@ -43,6 +47,15 @@ class Service(models.Model):
         blank=True,
         related_name="services",
     )
+    additional_occasions = models.ManyToManyField(
+        "ordo.LiturgicalOccasion", blank=True, related_name="also_relevant_services"
+    )
+    tradition = models.CharField(
+        max_length=20, choices=TRADITION_CHOICES, null=True, blank=True
+    )
+    calendar_use = models.CharField(
+        max_length=20, choices=CALENDAR_USE_CHOICES, null=True, blank=True
+    )
     comments = GenericRelation("comments.Comment")
 
     class Meta:
@@ -53,6 +66,12 @@ class Service(models.Model):
 
     def get_absolute_url(self):
         return reverse("planning:service_detail", kwargs={"pk": self.pk})
+
+    def effective_tradition(self):
+        return self.tradition or self.term.tradition
+
+    def effective_calendar_use(self):
+        return self.calendar_use or self.term.calendar_use
 
     @property
     def status(self):

@@ -18,7 +18,11 @@ class CommentTests(TestCase):
             username="conductor", password="testpass123"
         )
         self.term = Term.objects.create(
-            name="Test Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
         )
 
     def test_comment_links_to_arbitrary_target(self):
@@ -68,7 +72,11 @@ class AddCommentViewTests(TestCase):
             username="conductor", password="testpass123"
         )
         self.term = Term.objects.create(
-            name="Test Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
         )
         self.client.login(username="conductor", password="testpass123")
         self.content_type_id = ContentType.objects.get_for_model(Term).id

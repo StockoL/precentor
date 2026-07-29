@@ -128,6 +128,8 @@ class Term(models.Model):
     name = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField()
+    tradition = models.CharField(max_length=20, choices=TRADITION_CHOICES)
+    calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES)
     comments = GenericRelation("comments.Comment")
 
     class Meta:
@@ -153,10 +155,21 @@ class Service(models.Model):
         "ordo.LiturgicalOccasion", on_delete=models.SET_NULL, null=True, blank=True,
         related_name="services",
     )
+    additional_occasions = models.ManyToManyField(
+        "ordo.LiturgicalOccasion", blank=True, related_name="also_relevant_services",
+    )
+    tradition = models.CharField(max_length=20, choices=TRADITION_CHOICES, null=True, blank=True)
+    calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES, null=True, blank=True)
     comments = GenericRelation("comments.Comment")
 
     class Meta:
         ordering = ["date"]
+
+    def effective_tradition(self):
+        return self.tradition or self.term.tradition
+
+    def effective_calendar_use(self):
+        return self.calendar_use or self.term.calendar_use
 
     @property
     def status(self):
@@ -239,3 +252,15 @@ shared across every app rather than owned by any one of them.
   `Service.term` uses `on_delete=CASCADE`, so deleting a term correctly
   takes its whole planning history with it, a deliberately different
   choice from `RolePiece.score`.
+- `Term.tradition`/`calendar_use` are required (the common single-tradition
+  case); `Service.tradition`/`calendar_use` are optional overrides, resolved
+  by `effective_tradition()`/`effective_calendar_use()`. This supports
+  churches that run more than one calendar within the same term (e.g.
+  Catholic oratories running both EF and NO Masses) without forcing every
+  church to set an override.
+- `Service.occasion` stays a single FK — driving the accent bar/badge/dot
+  exactly as before. `Service.additional_occasions` is a separate,
+  purely additive M2M for the case where more than one occasion
+  genuinely matches a date; this was chosen over converting `occasion`
+  itself to a many-to-many, which would have required re-testing every
+  already-built piece that reads `service.occasion` as a single value.

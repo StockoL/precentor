@@ -14,7 +14,11 @@ User = get_user_model()
 class ServiceStatusTests(TestCase):
     def setUp(self):
         self.term = Term.objects.create(
-            name="Test Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
         )
         self.service = Service.objects.create(
             term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
@@ -53,6 +57,35 @@ class ServiceStatusTests(TestCase):
         self.assertEqual(self.service.status, "in_progress")
 
 
+class ServiceEffectiveTraditionTests(TestCase):
+    def setUp(self):
+        self.term = Term.objects.create(
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
+        )
+
+    def test_falls_back_to_term_when_unset(self):
+        service = Service.objects.create(
+            term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
+        )
+        self.assertEqual(service.effective_tradition(), "cofe")
+        self.assertEqual(service.effective_calendar_use(), "current")
+
+    def test_uses_own_value_when_set(self):
+        service = Service.objects.create(
+            term=self.term,
+            date=date(2026, 1, 11),
+            service_type="Sung Eucharist",
+            tradition="catholic",
+            calendar_use="historic",
+        )
+        self.assertEqual(service.effective_tradition(), "catholic")
+        self.assertEqual(service.effective_calendar_use(), "historic")
+
+
 class RolePieceWorkflowTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
@@ -61,7 +94,11 @@ class RolePieceWorkflowTests(TestCase):
         self.user.groups.add(Group.objects.get_or_create(name="Conductor")[0])
         self.client.login(username="conductor", password="testpass123")
         self.term = Term.objects.create(
-            name="Test Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
         )
         self.service = Service.objects.create(
             term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
@@ -196,7 +233,11 @@ class TermDetailViewTests(TestCase):
         )
         self.client.login(username="conductor", password="testpass123")
         self.term = Term.objects.create(
-            name="Test Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
         )
 
     def test_service_list_links_to_service_detail(self):
@@ -214,7 +255,11 @@ class MusicListTests(TestCase):
         )
         self.client.login(username="conductor", password="testpass123")
         self.term = Term.objects.create(
-            name="Test Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31)
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
         )
         self.service = Service.objects.create(
             term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
