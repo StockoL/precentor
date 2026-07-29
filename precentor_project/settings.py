@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "accounts",
     "comments",
+    "core",
     "library",
     "ordo",
     "planning",
