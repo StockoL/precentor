@@ -130,7 +130,9 @@ both reading a `--accent` custom property with a fallback to
 inline, directly from `service.occasion.colour` — this works with no
 separate colour-mapping code at all, because `LiturgicalOccasion`'s
 `COLOUR_CHOICES` values were deliberately chosen to match the
-`liturgical-*` token names exactly.
+`liturgical-*` token names exactly. The public music list's per-entry
+left border (`.music-list-entry--accent`, in `music-list.css`) reuses
+this exact mechanism rather than a new one — see "`music_list.html`" below.
 
 **This is a contextual accent, not a global "today's date" theme** — a
 deliberate, scoped-down version of an earlier, bigger idea. The full
@@ -163,6 +165,7 @@ static/
 │   │   ├── badge.css / comment-card.css / form.css / button.css
 │   │   ├── nav.css / role-block.css / term-summary.css
 │   │   ├── music-list.css / liturgical-accent.css
+│   │   ├── score-combobox.css / crest-crop.css
 │   └── utilities/
 │       └── utilities.css
 └── fonts/
@@ -191,10 +194,45 @@ Block styling wholesale:
   needed anywhere in the project — cascade layer order already
   provides the guarantee `!important` is usually reached for.
 - On-screen, `.music-list` gives the page a document-like look (heading
-  rules, a two-column `dl` grid for role→pieces, a warning-styled
-  draft banner) distinct from the rest of the UI, so it reads as a
-  real document even before printing.
+  rules, a warning-styled draft banner) distinct from the rest of the
+  UI, so it reads as a real document even before printing.
+- The public layout is genuine newspaper columns —
+  `.music-list-columns { columns: 18rem; }` — rather than a hand-built
+  grid simulation. It's `column-width`-driven (via the `columns`
+  shorthand) rather than a fixed `column-count`, so the browser decides
+  how many columns fit; a short half-term list doesn't end up sparsely
+  stretched across four columns it doesn't need. `break-inside: avoid`
+  on each entry is essential, not optional — without it the browser
+  will happily slice a service or marker in half at a column boundary.
+  The unlayered print rules above needed no change to make this work:
+  they only ever touched the nav/controls and body colour, never the
+  column layout, so the printed sheet stays columnar automatically.
+  Draft mode always renders the older single-column `dl` grid
+  (role→pieces) instead, regardless of this layout — draft is for
+  quickly scanning what's still TBC, not previewing the final shape.
+- Each entry's left border reuses `--accent` — the same custom
+  property `service_detail.html`'s `.occasion-eyebrow`/`.accent-rule`
+  already set from `service.occasion.colour` (see "Liturgical accent"
+  below) — via a new `.music-list-entry--accent` class, rather than
+  inventing a second colour mechanism for the same underlying fact.
 - The page uses plain `.center` (not `.center[data-intrinsic]`, unlike
   `login.html`) — a document should stay left-aligned internally, only
   centred as a whole block on the page, unlike a small centred form
   where every child should align to the middle.
+
+## `crest-crop.js` — a hand-rolled image crop tool
+
+Progressive enhancement over a plain `crest_image` file input, in the
+same spirit as `score-picker.js`'s combobox and `theme-toggle.js`: a
+real, working control underneath (the file input still submits
+normally), enhanced with genuine JS engineering rather than a
+third-party cropping library, since hand-building this kind of widget
+is exactly the sort of thing this project's brief is assessing. On
+file selection it builds a fixed-aspect-ratio frame, lets the image be
+panned/zoomed, then renders the chosen crop onto an off-screen
+`<canvas>` and swaps the result onto the real file input via the
+`DataTransfer` API — so nothing about the surrounding form or its
+Django view needs to know cropping happened at all. `core/imaging.py`
+re-validates and re-normalises whatever actually arrives server-side
+regardless, the same "never trust the client alone" principle applied
+elsewhere in the project.

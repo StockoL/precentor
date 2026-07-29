@@ -9,15 +9,20 @@ domain concept.
 
 | App        | Owns                                                                      | Rationale                                                                                    |
 | ---------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `accounts` | User profile/role (conductor vs. librarian)                               | Keeps auth/permissions separate from domain logic                                            |
+| `accounts` | User profile/role (conductor vs. librarian), `ConductorRequiredMixin`     | Keeps auth/permissions separate from domain logic; the mixin lives here so any app can gate a view by role without depending on `planning` |
 | `library`  | `Score`, plus copies/filing fields                                        | The reusable "what do we own" side, independent of any term                                  |
 | `ordo`     | `LiturgicalOccasion` (season/tradition logic, moveable feast calculation) | Self-contained calendar engine; conceivably reusable elsewhere                               |
-| `planning` | `Term`, `Service`, `ServiceRole`, `RolePiece`                             | The core planning workflow — the spine of the MVP                                            |
+| `planning` | `Term`, `Service`, `TermMarker`, `ServiceRole`, `RolePiece`               | The core planning workflow — the spine of the MVP                                            |
 | `comments` | `Comment` (generic relation via `contenttypes`)                           | Cuts across `planning`, so it's cleanest as its own app rather than living inside `planning` |
+| `core`     | `SiteConfig` (church name, crest, house colour, layout toggles)           | Site-wide branding/print-layout preferences, not owned by any one term — doesn't belong inside `planning` |
 
 Dependency direction is deliberately one-way: `planning` imports from
-`library` and `ordo`, never the reverse. This avoids circular imports
-and keeps the "spine" app easy to reason about and test in isolation.
+`accounts`, `library`, `ordo`, and `core`, never the reverse. This
+avoids circular imports and keeps the "spine" app easy to reason about
+and test in isolation. `core` also imports `ConductorRequiredMixin`
+from `accounts` — it needed the same conductor-only gate as `planning`
+for its settings page, which is exactly why the mixin was moved out of
+`planning` and into `accounts` rather than duplicated.
 
 ## Model field plan
 
@@ -170,6 +175,8 @@ class Service(models.Model):
     )
     tradition = models.CharField(max_length=20, choices=TRADITION_CHOICES, null=True, blank=True)
     calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES, null=True, blank=True)
+    hymns = models.CharField(max_length=200, blank=True)
+    psalm = models.CharField(max_length=100, blank=True)
     comments = GenericRelation("comments.Comment")
 
     class Meta:
@@ -193,7 +200,34 @@ class Service(models.Model):
         ...
 ```
 
+**`hymns`/`psalm` as plain fields, not roles:** these were always
+intended as simple text/reference fields, separate from the
+Score-driven roles (`ServiceRole`/`RolePiece`) that model
+Setting/Anthem-type slots — a hymn number or psalm reference doesn't
+need a shortlist, a confirmation step, or a link to `library.Score`.
+
 **`GenericRelation` on the commentable models:** `Term`, `Service`, and `RolePiece` each carry a `comments = GenericRelation("comments.Comment")` field. This adds no database column and needs no migration — it's a query-time convenience (enabling `term.comments.all()`) that also makes Django cascade-delete a target's comments if the target itself is deleted, completing the `GenericForeignKey` relationship properly per Django's own recommended pattern. This technically means `planning` now references `comments`, a justified exception to the one-way dependency rule above, since `comments.models.Comment` still has zero knowledge of `planning`'s models in return.
+
+### `planning.TermMarker`
+
+```python
+class TermMarker(models.Model):
+    term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name="markers")
+    date = models.DateField()
+    text = models.CharField(max_length=200)
+
+    class Meta:
+        ordering = ["date"]
+```
+
+Lets a conductor drop a one-off free-text note at a specific date in a
+term's timeline — half-term, a retreat, anything that isn't itself a
+Service — for the public music list (see README §4). The music list
+view merges `Term.services` and `Term.markers` into a single
+date-ordered sequence, tagging each item with its type so the template
+can branch on how to render it; there was no existing precedent in the
+codebase for merging two querysets like this, so it's built fresh
+rather than reusing another feature's merge logic.
 
 ### `planning.ServiceRole`
 
@@ -233,6 +267,55 @@ class Comment(models.Model):
     target = GenericForeignKey("content_type", "object_id")
     created_at = models.DateTimeField(auto_now_add=True)
 ```
+
+### `core.SiteConfig`
+
+```python
+LAYOUT_STYLE_CHOICES = [
+    ("columns", "Newspaper columns"),
+    ("simple", "Simple single column"),
+]
+
+class SiteConfig(models.Model):
+    church_name = models.CharField(max_length=200, blank=True)
+    crest_image = models.ImageField(upload_to="site_config/", blank=True)
+    house_accent_colour = models.CharField(max_length=7, default="#8b1a2b")
+    layout_style = models.CharField(max_length=20, choices=LAYOUT_STYLE_CHOICES, default="columns")
+    show_hymns_psalm = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        self.pk = 1  # enforce singleton regardless of how it's constructed
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass  # singleton row is never deleted
+
+    @classmethod
+    def get_solo(cls):
+        obj, _ = cls.objects.get_or_create(pk=1)
+        return obj
+```
+
+**Hand-rolled singleton, no new dependency:** a site only ever has one
+of these, so `pk` is pinned to `1` on every save and `get_solo()` is
+the one accessor every view uses — the same effect as a package like
+`django-solo` would give, without adding a dependency for something
+this small.
+
+**`crest_image` is the project's first uploaded file.** Nothing else
+in the app stores user-uploaded media, so this needed genuinely new
+infrastructure that no other model could reuse: `Pillow` as a
+dependency, `MEDIA_ROOT`/`MEDIA_URL` in settings, and dev-time media
+serving in the project urlconf. Uploads are validated and normalised
+server-side (format/resolution checks, then a centre-crop/resize to a
+fixed 4:1 banner slot) by a small `core/imaging.py` helper, called from
+`SiteConfigForm.clean_crest_image` rather than from `Model.save()`, so
+a bad upload surfaces as an ordinary form error. A hand-rolled
+in-browser crop tool (`crest-crop.js`) sits in front of this as
+progressive enhancement — pan/zoom onto a canvas, then hand the
+cropped result to the same server-side validation — but the server-side
+step is what actually guarantees a consistent result, since it also
+has to cope with the plain, uncropped upload a no-JS visitor submits.
 
 ## Template organisation
 
@@ -279,3 +362,15 @@ shared across every app rather than owned by any one of them.
   genuinely matches a date; this was chosen over converting `occasion`
   itself to a many-to-many, which would have required re-testing every
   already-built piece that reads `service.occasion` as a single value.
+  The public music list now also renders it — a second occasion is
+  shown as a stacked secondary label alongside the primary one, rather
+  than replacing it.
+- `ConductorRequiredMixin` lives in `accounts`, not `planning` — it
+  checks user/group membership, nothing term- or service-specific, and
+  `core`'s settings page needed the same conductor-only gate. Moving it
+  once avoided either duplicating the check or making `core` depend on
+  `planning` for something that was never really `planning`'s to own.
+- `SiteConfig.layout_style` only changes the **public** music list.
+  Draft mode always renders the plain single-column list regardless of
+  that setting, since draft is for a conductor to quickly scan what's
+  still TBC, not to preview the final printed shape.

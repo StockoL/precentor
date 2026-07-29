@@ -4,12 +4,12 @@ _A repertoire and service-planning tool for church musicians._
 
 _Milestone 3 Project — Code Institute_
 
-> **Status:** The full application is built: all four Django apps
-> (`library`, `ordo`, `planning`, `comments`) are modelled, migrated,
-> tested, and admin-registered; every view/template described below is
-> implemented and permission-gated; and the visual design system
-> (tokens, CUBE CSS Compositions/Blocks, self-hosted typography, the
-> liturgical accent) is complete — see
+> **Status:** The full application is built: all five Django apps
+> (`library`, `ordo`, `planning`, `comments`, `core`) are modelled,
+> migrated, tested, and admin-registered; every view/template described
+> below is implemented and permission-gated; and the visual design
+> system (tokens, CUBE CSS Compositions/Blocks, self-hosted typography,
+> the liturgical accent) is complete — see
 > [`docs/design_system.md`](docs/design_system.md). This document
 > retains its original concept/rationale framing throughout, since the
 > reasoning below is what the implementation actually followed — where
@@ -88,7 +88,11 @@ of an explicit "active term" flag was deliberately dropped — it would
 have duplicated information the date already provides.)
 
 A **Service** belongs to a Term, has a date, a type (Sung Eucharist,
-Choral Evensong, etc.), and a liturgical occasion (see §3.4).
+Choral Evensong, etc.), and a liturgical occasion (see §3.4). It also
+carries optional free-text **hymns** and **psalm** fields — genuinely
+simple reference fields, deliberately kept outside the propose/confirm
+workflow that governs Setting/Anthem-type roles, since hymn numbers
+and a psalm reference don't need a shortlist or a confirmation step.
 
 Each service type has a **default template** of musical **role slots** —
 e.g. Sung Eucharist typically needs a _Setting_ and an _Anthem_; Choral
@@ -176,6 +180,34 @@ current state:
   (N/A) or simply not yet decided. This distinction matters: a public
   document should never accidentally expose an undecided tentative
   choice as if it were settled.
+- **Newspaper-column layout by default** — modelled directly on the
+  same real example, the public list flows its entries down one column
+  and continues at the top of the next (CSS `columns`, not a
+  hand-built grid), with each service's occasion, hymns, and psalm set
+  alongside it rather than stacked below. A per-site layout toggle (see
+  below) can switch this to a plain single-column list instead; the
+  internal draft view always uses the simple layout regardless of that
+  setting, since draft mode is for quickly spotting what's still TBC,
+  not for final presentation.
+- **One-off notes alongside services** — a **Term Marker** lets a
+  conductor drop free text at a specific date (e.g. "Choir resumes
+  services on 22nd February") into the same timeline as services, for
+  the odd occasion — half-term, a retreat — that isn't itself a
+  service needing its own role slots.
+- **Site-wide branding, set once** — a single site-configuration record
+  (church name, crest image, house accent colour, plus the layout and
+  hymns/psalm-visibility toggles above) is set once via a
+  conductor-only settings page and applied to every music list, rather
+  than requiring the same details to be re-entered per term. The crest
+  can be cropped to a fixed banner shape in the browser before upload;
+  anyone without JavaScript can still upload the raw image, which the
+  server centre-crops to the same shape instead of rejecting it.
+- **The existing liturgical accent, reapplied** — each entry's
+  left-hand colour stripe reuses `Service.occasion.colour` exactly as
+  `service_detail.html` already does (see §3.4, §5 of
+  [`docs/design_system.md`](docs/design_system.md)), falling back to
+  the site's house accent colour when a service carries no occasion of
+  its own.
 
 ## 5. Roles and Permissions, Revisited
 
