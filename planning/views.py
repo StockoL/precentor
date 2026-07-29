@@ -16,6 +16,7 @@ from django.views.generic import (
 from accounts.mixins import ConductorRequiredMixin
 from comments.forms import CommentForm
 from comments.utils import attach_reply_forms
+from core.models import SiteConfig
 from library.models import Score
 from precentor_project.utils import ajax_or_redirect
 
@@ -227,20 +228,39 @@ def toggle_confirm(request, piece_pk):
 def term_music_list(request, term_pk):
     term = get_object_or_404(Term, pk=term_pk)
     draft = request.GET.get("draft") == "1"
-    services = term.services.prefetch_related("roles__pieces__score").order_by("date")
+    site_config = SiteConfig.get_solo()
 
-    service_rows = [
-        {"service": service, "rows": service.music_list_rows(draft=draft)}
+    services = (
+        term.services.select_related("occasion")
+        .prefetch_related("roles__pieces__score", "additional_occasions")
+        .order_by("date")
+    )
+    markers = term.markers.order_by("date")
+
+    entries = [
+        {
+            "type": "service",
+            "date": service.date,
+            "service": service,
+            "rows": service.music_list_rows(draft=draft),
+        }
         for service in services
+    ] + [
+        {"type": "marker", "date": marker.date, "marker": marker}
+        for marker in markers
     ]
+    # Stable secondary key so same-day ties are deterministic: a service
+    # sharing a date with a marker always renders service-then-marker.
+    entries.sort(key=lambda entry: (entry["date"], 0 if entry["type"] == "service" else 1))
 
     return render(
         request,
         "planning/music_list.html",
         {
             "term": term,
-            "service_rows": service_rows,
+            "entries": entries,
             "draft": draft,
+            "site_config": site_config,
         },
     )
 

@@ -1,0 +1,41 @@
+<!-- planning/templates/planning/_music_list_service_entry.html -->
+<article class="service-entry music-list-entry--accent"
+    {% if entry.service.occasion.colour %}style="--accent: var(--colors-liturgical-{{ entry.service.occasion.colour }});"{% endif %}>
+    <div class="service-entry-grid">
+        <div class="service-entry-main">
+            <h2>{{ entry.service.date|date:"l jS F Y" }} — {{ entry.service.service_type }}</h2>
+            {% if entry.rows %}
+            <dl>
+                {% for row in entry.rows %}
+                <dt>{{ row.role_name }}</dt>
+                <dd>
+                    {% if row.pieces %}
+                        {% for score in row.pieces %}{{ score }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                    {% else %}
+                        <span class="tbc">TBC</span>
+                    {% endif %}
+                </dd>
+                {% endfor %}
+            </dl>
+            {% else %}
+            <p><em>Nothing to display{% if not draft %} yet{% endif %}.</em></p>
+            {% endif %}
+        </div>
+        <div class="service-entry-aside">
+            {% if entry.service.occasion %}
+                {% if entry.service.occasion.colour %}
+                <p class="occasion-eyebrow" style="--accent: var(--colors-liturgical-{{ entry.service.occasion.colour }});">{{ entry.service.occasion }}</p>
+                {% else %}
+                <p class="occasion-eyebrow">{{ entry.service.occasion }}</p>
+                {% endif %}
+                {% for extra in entry.service.additional_occasions.all %}
+                <p class="occasion-secondary">{{ extra }}</p>
+                {% endfor %}
+            {% endif %}
+            {% if site_config.show_hymns_psalm %}
+                {% if entry.service.hymns %}<p><strong>Hymns:</strong> {{ entry.service.hymns }}</p>{% endif %}
+                {% if entry.service.psalm %}<p><strong>Psalm:</strong> {{ entry.service.psalm }}</p>{% endif %}
+            {% endif %}
+        </div>
+    </div>
+</article>

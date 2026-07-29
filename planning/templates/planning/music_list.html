@@ -2,33 +2,32 @@
 {% extends "base.html" %}
 {% block title %}Music List — {{ term }} — Precentor{% endblock %}
 {% block content %}
-<div class="music-list center flow" style="--center-max-width: 65ch;">
-    <h1>{{ term }}</h1>
+<div class="music-list center flow"
+     style="--center-max-width: {% if draft %}65ch{% else %}60rem{% endif %}; --accent: {{ site_config.house_accent_colour }};">
+
+    <div class="music-list-header flow">
+        {% if site_config.crest_image %}
+        <img class="music-list-crest" src="{{ site_config.crest_image.url }}" alt="{{ site_config.church_name }}">
+        {% endif %}
+        {% if site_config.church_name %}
+        <p class="music-list-church-name">{{ site_config.church_name }}</p>
+        {% endif %}
+        <h1>{{ term }}</h1>
+    </div>
+
     {% if draft %}
     <p class="draft-banner">DRAFT — for internal use only</p>
     {% endif %}
 
-    {% for entry in service_rows %}
-    <div class="flow" style="--flow-space: var(--spacing-2xs);">
-        <h2>{{ entry.service.date|date:"l jS F Y" }} — {{ entry.service.service_type }}</h2>
-        {% if entry.rows %}
-        <dl>
-            {% for row in entry.rows %}
-            <dt>{{ row.role_name }}</dt>
-            <dd>
-                {% if row.pieces %}
-                    {% for score in row.pieces %}{{ score }}{% if not forloop.last %}, {% endif %}{% endfor %}
-                {% else %}
-                    <span class="tbc">TBC</span>
-                {% endif %}
-            </dd>
-            {% endfor %}
-        </dl>
-        {% else %}
-        <p><em>Nothing to display{% if not draft %} yet{% endif %}.</em></p>
-        {% endif %}
+    <div class="{% if draft %}music-list-simple{% else %}music-list-{{ site_config.layout_style }}{% endif %} flow">
+        {% for entry in entries %}
+            {% if entry.type == "service" %}
+                {% include "planning/_music_list_service_entry.html" %}
+            {% else %}
+                {% include "planning/_music_list_marker_entry.html" %}
+            {% endif %}
+        {% endfor %}
     </div>
-    {% endfor %}
 
     <div class="music-list-controls cluster">
         <a href="?draft=1">View draft (internal)</a>
