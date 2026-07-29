@@ -7,6 +7,63 @@
     font-family: var(--fonts-heading);
   }
 
+  .music-list-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-m);
+    margin-block-end: var(--spacing-l);
+  }
+
+  .music-list-crest {
+    max-height: 4rem;
+    width: auto;
+  }
+
+  .music-list-church-name {
+    font-weight: 600;
+    color: var(--colors-text-muted);
+    margin: 0;
+  }
+
+  /* column-*width*-driven (via the shorthand), not a fixed column-count —
+     lets the browser decide how many columns fit, avoiding a sparse look
+     for a short list, e.g. half a term. */
+  .music-list-columns {
+    columns: 18rem;
+    column-gap: var(--spacing-l);
+  }
+
+  .service-entry {
+    break-inside: avoid;
+    margin-block-end: var(--spacing-m);
+    padding-inline-start: var(--spacing-s);
+  }
+
+  .music-list-entry--accent {
+    border-inline-start: 3px solid var(--accent, var(--colors-action-primary));
+  }
+
+  .service-entry-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-s);
+  }
+
+  .occasion-secondary {
+    font-size: var(--typography-step--1);
+    color: var(--colors-text-muted);
+    margin: 0;
+  }
+
+  .music-list-marker {
+    break-inside: avoid;
+    margin-block: var(--spacing-s);
+    padding-block: var(--spacing-2xs);
+    border-block: 1px dashed var(--colors-border-subtle);
+    font-style: italic;
+    text-align: center;
+  }
+
   .music-list h2 {
     border-block-end: 1px solid var(--colors-border-subtle);
     padding-block-end: var(--spacing-3xs);
