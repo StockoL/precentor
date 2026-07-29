@@ -5,6 +5,7 @@ from django.contrib.auth.models import Group
 from django.test import TestCase
 
 from library.models import Score
+from ordo.models import LiturgicalOccasion
 
 from .models import RolePiece, Service, ServiceRole, Term
 
@@ -224,6 +225,41 @@ class RolePieceWorkflowTests(TestCase):
         messages = list(response.context["messages"])
         self.assertEqual(len(messages), 1)
         self.assertIn("Couldn't add that role", str(messages[0]))
+
+
+class ServiceDetailProposePieceRankingTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="conductor", password="testpass123"
+        )
+        self.client.login(username="conductor", password="testpass123")
+        self.term = Term.objects.create(
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
+        )
+        self.occasion = LiturgicalOccasion.objects.create(
+            name="Advent Sunday 4", tradition="cofe"
+        )
+        self.service = Service.objects.create(
+            term=self.term,
+            date=date(2026, 1, 11),
+            service_type="Sung Eucharist",
+            occasion=self.occasion,
+        )
+        ServiceRole.objects.create(service=self.service, role_name="Anthem")
+        self.untagged = Score.objects.create(title="Zzz Untagged", composer="Nobody")
+        self.matching = Score.objects.create(title="Aaa Matching", composer="Somebody")
+        self.matching.suited_occasions.add(self.occasion)
+
+    def test_score_options_ordered_with_suited_score_first(self):
+        response = self.client.get(self.service.get_absolute_url())
+        role = self.service.roles.get()
+        queryset = list(response.context["roles"][0].piece_form.fields["score"].queryset)
+        self.assertEqual(queryset[0], self.matching)
+        self.assertIn(self.untagged, queryset)
 
 
 class TermDetailViewTests(TestCase):

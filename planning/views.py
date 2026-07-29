@@ -15,6 +15,7 @@ from django.views.generic import (
 
 from comments.forms import CommentForm
 from comments.utils import attach_reply_forms
+from library.models import Score
 from precentor_project.utils import ajax_or_redirect
 
 from .forms import RolePieceForm, ServiceForm, ServiceRoleForm, TermForm
@@ -87,6 +88,12 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        occasion = self.object.occasion
+        season = occasion.season if occasion else None
+        ranked_scores = Score.objects.ranked_by_suitability(
+            occasion=occasion, season=season
+        )
+
         roles = list(self.object.roles.prefetch_related("pieces__score"))
         for role in roles:
             # Each role renders its own propose-piece form on the same page,
@@ -94,6 +101,9 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
             # ("id_score") would otherwise be duplicated once per role,
             # which is invalid HTML and breaks getElementById-based lookups.
             role.piece_form = RolePieceForm(auto_id=f"id_role_{role.pk}_%s")
+            # Suited-first ordering is felt here, not just stored — the
+            # combobox's option order comes straight from this queryset.
+            role.piece_form.fields["score"].queryset = ranked_scores
         context["roles"] = roles
         context["role_form"] = ServiceRoleForm()
         context["content_type_id"] = ContentType.objects.get_for_model(Service).id
