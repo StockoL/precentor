@@ -269,6 +269,14 @@ This remains a **"should have,"** not core to MVP.
   existing, authoritative tools already serving it well; duplicating
   it would mean building an entirely different application inside
   Precentor, not extending its actual purpose.
+- Fully customisable music list layouts (drag-and-drop design,
+  arbitrary field ordering or typography). Precentor ships one
+  well-designed default layout plus a small, deliberately bounded set
+  of genuinely high-value toggles (column style, house accent colour,
+  crest/banner, hymns/psalm visibility) — not an open-ended design
+  surface. A church whose house style diverges further still has full
+  access to their underlying planned data; the constraint is on the
+  built-in print output only, never on the data itself.
 
 Each of these is noted here so that scope decisions read as deliberate
 choices, not oversights, when this document is read by an assessor.
