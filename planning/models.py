@@ -56,6 +56,8 @@ class Service(models.Model):
     calendar_use = models.CharField(
         max_length=20, choices=CALENDAR_USE_CHOICES, null=True, blank=True
     )
+    hymns = models.CharField(max_length=200, blank=True)
+    psalm = models.CharField(max_length=100, blank=True)
     comments = GenericRelation("comments.Comment")
 
     class Meta:

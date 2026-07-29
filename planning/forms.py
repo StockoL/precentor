@@ -23,6 +23,8 @@ class ServiceForm(forms.ModelForm):
             "additional_occasions",
             "tradition",
             "calendar_use",
+            "hymns",
+            "psalm",
         ]
         widgets = {  # noqa
             "date": forms.DateInput(attrs={"type": "date"}),
