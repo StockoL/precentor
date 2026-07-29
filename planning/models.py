@@ -115,6 +115,18 @@ class Service(models.Model):
         return rows
 
 
+class TermMarker(models.Model):
+    term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name="markers")
+    date = models.DateField()
+    text = models.CharField(max_length=200)
+
+    class Meta:
+        ordering = ["date"]  # noqa
+
+    def __str__(self):
+        return f"{self.text} ({self.date.strftime('%d/%m/%Y')})"
+
+
 class ServiceRole(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="roles")
     role_name = models.CharField(max_length=50)
