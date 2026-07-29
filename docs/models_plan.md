@@ -69,20 +69,44 @@ COLOUR_CHOICES = [
     ("rose", "Rose"),
 ]
 
+CALENDAR_USE_CHOICES = [
+    ("current", "Current (Common Worship / Novus Ordo)"),
+    ("historic", "Historic (Book of Common Prayer / Extraordinary Form)"),
+]
+
+TRADITION_CHOICES = [("catholic", "Catholic"), ("cofe", "Church of England")]
+
+class LiturgicalSeason(models.Model):
+    name = models.CharField(max_length=50)
+    tradition = models.CharField(max_length=20, choices=TRADITION_CHOICES)
+
+class UseType(models.Model):
+    name = models.CharField(max_length=50)
+
 class LiturgicalOccasion(models.Model):
-    TRADITION_CHOICES = [("catholic", "Catholic"), ("cofe", "Church of England")]
+    TRADITION_CHOICES = TRADITION_CHOICES
     name = models.CharField(max_length=100)
     tradition = models.CharField(max_length=20, choices=TRADITION_CHOICES)
+    calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES, default="current")
     is_moveable = models.BooleanField(default=False)
     fixed_month = models.PositiveSmallIntegerField(blank=True, null=True)
     fixed_day = models.PositiveSmallIntegerField(blank=True, null=True)
     easter_offset_days = models.IntegerField(blank=True, null=True)
     colour = models.CharField(max_length=20, choices=COLOUR_CHOICES, blank=True)
+    season = models.ForeignKey(LiturgicalSeason, null=True, blank=True, on_delete=models.SET_NULL, related_name="occasions")
 
     def date_for_year(self, year):
         """Resolves either a fixed or moveable occasion to an actual
         date for a given calendar year, via calculate_easter_sunday()."""
         ...
+
+
+def occasion_for_date(target_date, tradition, calendar_use):
+    """Reverse lookup: which LiturgicalOccasion(s) fall on target_date.
+    Scopes candidates by tradition/calendar_use, then evaluates
+    date_for_year() in Python since it isn't a database column. Returns
+    a list — zero, one, or more occasions can share a date."""
+    ...
 ```
 
 **Fixed-date design decision:** the original plan used a single `fixed_date = DateField()` for non-moveable occasions. This was wrong — a `DateField` stores one specific year's date, but Christmas Day recurs on the same month/day every year. Replaced with `fixed_month`/`fixed_day`, mirroring how moveable occasions already work via `easter_offset_days` — both resolve to an actual date only when `date_for_year(year)` is called, never stored as a fixed year.
@@ -90,6 +114,8 @@ class LiturgicalOccasion(models.Model):
 **Colour design decision — the mirror image of the voicing decision above:** liturgical colour is a genuinely small, fixed, real-world vocabulary (violet/red/green/white/rose) — unlike voicing's combinatorial notation problem, there's no equivalent of "SATB.SATB" here needing free text. `choices` was added specifically so every stored value maps predictably onto a CSS design token name (see `docs/design_system.md`), rather than risking a typo like `"Purple"` vs `"violet"` silently breaking that mapping.
 
 **Deliberately out of scope:** Ordo is strictly a naming/dating/colour-tagging engine for repertoire filtering and service labelling — it does not model readings, psalms, propers, or rubrical detail (e.g. whether the Gloria is said), regardless of how many calendar traditions it eventually covers. See the README's out-of-scope list.
+
+**Tradition vs. calendar-use, and the reverse lookup:** `calendar_use` is a second, independent axis from `tradition` — some traditions (e.g. Catholic oratories) run both a `current` and a `historic` calendar side by side. `LiturgicalSeason` and `UseType` exist to support three-tier `Score` suitability tagging (see below); `LiturgicalOccasion.season` is the link that lets a season-level tag (e.g. "Advent") and a day-level tag (e.g. "Advent Sunday 4") match each other. `occasion_for_date()` is the reverse of `date_for_year()` — given a date, which occasion(s) is it — used to auto-suggest a `Service`'s occasion from its date.
 
 ### `planning.Term`
 
