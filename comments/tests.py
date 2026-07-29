@@ -210,3 +210,44 @@ class AddCommentViewTests(TestCase):
         self.assertEqual(list(fragments.keys()), [f"comment-{comment.pk}"])
         self.assertIn("comment--closed", fragments[f"comment-{comment.pk}"])
         self.assertIn("Re-open", fragments[f"comment-{comment.pk}"])
+
+    def test_delete_closed_comment(self):
+        comment = Comment.objects.create(
+            author=self.user, body="A query", target=self.term, is_open=False
+        )
+        self.client.post(f"/comments/{comment.pk}/delete/")
+        self.assertFalse(Comment.objects.filter(pk=comment.pk).exists())
+
+    def test_delete_open_comment_rejected(self):
+        comment = Comment.objects.create(
+            author=self.user, body="A query", target=self.term
+        )
+        self.client.post(f"/comments/{comment.pk}/delete/")
+        self.assertTrue(Comment.objects.filter(pk=comment.pk).exists())
+
+    def test_delete_comment_ajax_returns_removal_fragment(self):
+        comment = Comment.objects.create(
+            author=self.user, body="A query", target=self.term, is_open=False
+        )
+
+        response = self.client.post(
+            f"/comments/{comment.pk}/delete/",
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        fragments = response.json()["fragments"]
+        self.assertEqual(fragments, {f"comment-{comment.pk}": ""})
+
+    def test_delete_open_comment_ajax_returns_400(self):
+        comment = Comment.objects.create(
+            author=self.user, body="A query", target=self.term
+        )
+
+        response = self.client.post(
+            f"/comments/{comment.pk}/delete/",
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertTrue(Comment.objects.filter(pk=comment.pk).exists())

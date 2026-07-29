@@ -2,10 +2,18 @@
     <p><strong>{{ comment.author }}</strong> ({{ comment.created_at|date:"d/m/Y H:i" }})</p>
     <p>{{ comment.body }}</p>
 
-    <form method="post" action="{% url 'comments:toggle_close' comment.pk %}" class="ajax-toggle-close">
-        {% csrf_token %}
-        <button type="submit">{% if comment.is_open %}Close{% else %}Re-open{% endif %}</button>
-    </form>
+    <div class="cluster">
+        <form method="post" action="{% url 'comments:toggle_close' comment.pk %}" class="ajax-toggle-close">
+            {% csrf_token %}
+            <button type="submit">{% if comment.is_open %}Close{% else %}Re-open{% endif %}</button>
+        </form>
+        {% if not comment.is_open %}
+        <form method="post" action="{% url 'comments:delete_comment' comment.pk %}" class="ajax-delete-comment">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger" aria-label="Delete comment">×</button>
+        </form>
+        {% endif %}
+    </div>
 
     <ul role="list" class="flow" style="--flow-space: var(--spacing-3xs); margin-inline-start: var(--spacing-m);">
         {% for reply in comment.replies.all %}

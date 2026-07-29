@@ -26,7 +26,8 @@ and keeps the "spine" app easy to reason about and test in isolation.
 ```python
 class Score(models.Model):
     title = models.CharField(max_length=200)
-    composer = models.CharField(max_length=200)
+    composer_surname = models.CharField(max_length=100)
+    composer_other_names = models.CharField(max_length=100, blank=True)
     arranger = models.CharField(max_length=200, blank=True)
     voicing = models.CharField(max_length=50)  # free text, e.g. "SATB", "SSATB", "SATB.SATB"
     soprano_parts = models.PositiveSmallIntegerField(default=0)
@@ -34,16 +35,25 @@ class Score(models.Model):
     tenor_parts = models.PositiveSmallIntegerField(default=0)
     bass_parts = models.PositiveSmallIntegerField(default=0)
     language = models.CharField(max_length=50)
-    lead_time_tag = models.CharField(max_length=50, blank=True)
     copies_owned = models.PositiveIntegerField(default=0)
     filing_location = models.CharField(max_length=100, blank=True)
     duration_minutes = models.PositiveIntegerField(blank=True, null=True)
     suited_use_types = models.ManyToManyField("ordo.UseType", blank=True, related_name="suited_scores")
     suited_seasons = models.ManyToManyField("ordo.LiturgicalSeason", blank=True, related_name="suited_scores")
     suited_occasions = models.ManyToManyField("ordo.LiturgicalOccasion", blank=True, related_name="suited_scores")
+
+    @property
+    def composer(self):
+        """"{other_names} {surname}", or just the surname if no other
+        names were given — the display form used everywhere else."""
+        ...
 ```
 
-**Three-tier suitability tagging, ranking not filtering:** `suited_use_types` / `suited_seasons` / `suited_occasions` are three genuinely distinct kinds of fact (a service's structural type, a broad calendar season, a specific named day), not one generic tag concept. `Score.objects` uses a custom `ScoreQuerySet.ranked_by_suitability(occasion=, season=, use_type=)` that annotates an `is_suited` flag and sorts matching scores to the top — it never filters, since an untagged score might still be the right choice and the tool shouldn't claim to know otherwise.
+**Composer split, surname required:** `composer` was originally one free-text field; it's now `composer_surname` (required) and `composer_other_names` (optional), so cataloguing/searching by surname alone always works even when a full name isn't known. `composer` lives on as a read-only property for display and `__str__`, not a database column — admin `search_fields` and any filtering must target the two real fields instead.
+
+**`lead_time_tag` removed:** dropped as unnecessary micromanagement — the field added a rehearsal-scheduling axis nothing else in the app used or surfaced.
+
+**Three-tier suitability tagging, ranking not filtering:** `suited_use_types` / `suited_seasons` / `suited_occasions` are three genuinely distinct kinds of fact (a service's structural type, a broad calendar season, a specific named day), not one generic tag concept. `Score.objects` uses a custom `ScoreQuerySet.ranked_by_suitability(occasion=, season=, use_type=)` that annotates an `is_suited` flag and sorts matching scores to the top — it never filters, since an untagged score might still be the right choice and the tool shouldn't claim to know otherwise. Each field carries `help_text` with examples (e.g. "Eucharist, General use, Evening, Harvest") since the underlying `UseType`/`LiturgicalSeason` vocab is otherwise invisible until populated — `ordo`'s `0004_seed_use_types_and_seasons` data migration seeds a starter set of both (real `LiturgicalOccasion` data remains the separate, larger content task noted below).
 
 **Voicing design decision:** an earlier version of this plan used a fixed
 `choices` list for `voicing` (SATB, SATTB, unison, etc.). This was
@@ -252,6 +262,11 @@ shared across every app rather than owned by any one of them.
   `Service.term` uses `on_delete=CASCADE`, so deleting a term correctly
   takes its whole planning history with it, a deliberately different
   choice from `RolePiece.score`.
+- `Comment` deletion is only permitted while `is_open` is `False` —
+  enforced server-side in `comments.views.delete_comment`, not just by
+  hiding the button — so a comment can't be silently discarded while
+  still an open query. Deleting a parent cascades to its replies via
+  the existing `on_delete=CASCADE` on `Comment.parent`.
 - `Term.tradition`/`calendar_use` are required (the common single-tradition
   case); `Service.tradition`/`calendar_use` are optional overrides, resolved
   by `effective_tradition()`/`effective_calendar_use()`. This supports

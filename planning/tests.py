@@ -24,7 +24,7 @@ class ServiceStatusTests(TestCase):
         self.service = Service.objects.create(
             term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
         )
-        self.score = Score.objects.create(title="Test Anthem", composer="Test Composer")
+        self.score = Score.objects.create(title="Test Anthem", composer_surname="Test Composer")
 
     def test_no_roles_is_not_started(self):
         self.assertEqual(self.service.status, "not_started")
@@ -104,7 +104,7 @@ class RolePieceWorkflowTests(TestCase):
         self.service = Service.objects.create(
             term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
         )
-        self.score = Score.objects.create(title="Test Anthem", composer="Test Composer")
+        self.score = Score.objects.create(title="Test Anthem", composer_surname="Test Composer")
 
     def test_add_role(self):
         self.client.post(
@@ -250,8 +250,8 @@ class ServiceDetailProposePieceRankingTests(TestCase):
             occasion=self.occasion,
         )
         ServiceRole.objects.create(service=self.service, role_name="Anthem")
-        self.untagged = Score.objects.create(title="Zzz Untagged", composer="Nobody")
-        self.matching = Score.objects.create(title="Aaa Matching", composer="Somebody")
+        self.untagged = Score.objects.create(title="Zzz Untagged", composer_surname="Nobody")
+        self.matching = Score.objects.create(title="Aaa Matching", composer_surname="Somebody")
         self.matching.suited_occasions.add(self.occasion)
 
     def test_score_options_ordered_with_suited_score_first(self):
@@ -300,7 +300,7 @@ class MusicListTests(TestCase):
         self.service = Service.objects.create(
             term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
         )
-        self.score = Score.objects.create(title="Test Anthem", composer="Test Composer")
+        self.score = Score.objects.create(title="Test Anthem", composer_surname="Test Composer")
 
     def test_na_role_never_shown(self):
         ServiceRole.objects.create(

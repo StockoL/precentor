@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from ordo.models import LiturgicalOccasion
@@ -8,6 +9,40 @@ from .models import Score
 User = get_user_model()
 
 
+class ScoreComposerTests(TestCase):
+    def test_surname_only_displays_as_surname(self):
+        score = Score.objects.create(title="Ave Verum", composer_surname="Byrd")
+        self.assertEqual(score.composer, "Byrd")
+
+    def test_surname_and_other_names_displays_combined(self):
+        score = Score.objects.create(
+            title="O Taste and See",
+            composer_surname="Vaughan Williams",
+            composer_other_names="Ralph",
+        )
+        self.assertEqual(score.composer, "Ralph Vaughan Williams")
+
+    def test_surname_is_required(self):
+        score = Score(
+            title="Untitled Anthem",
+            composer_surname="",
+            voicing="SATB",
+            language="English",
+        )
+        with self.assertRaises(ValidationError) as cm:
+            score.full_clean()
+        self.assertIn("composer_surname", cm.exception.message_dict)
+
+    def test_other_names_is_optional(self):
+        score = Score(
+            title="Untitled Anthem",
+            composer_surname="Byrd",
+            voicing="SATB",
+            language="English",
+        )
+        score.full_clean()  # should not raise
+
+
 class ScoreFilterTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
@@ -15,11 +50,11 @@ class ScoreFilterTests(TestCase):
         )
         self.client.login(username="conductor", password="testpass123")
         Score.objects.create(
-            title="Ave Verum", composer="Byrd", language="Latin", tenor_parts=1
+            title="Ave Verum", composer_surname="Byrd", language="Latin", tenor_parts=1
         )
         Score.objects.create(
             title="O Taste and See",
-            composer="Vaughan Williams",
+            composer_surname="Vaughan Williams",
             language="English",
             tenor_parts=0,
         )
@@ -48,14 +83,14 @@ class ScoreSuitabilityRankingTests(TestCase):
             name="Trinity 7", tradition="cofe"
         )
         self.untagged = Score.objects.create(
-            title="Untagged Anthem", composer="Nobody"
+            title="Untagged Anthem", composer_surname="Nobody"
         )
         self.matching = Score.objects.create(
-            title="Zzz Matching Anthem", composer="Somebody"
+            title="Zzz Matching Anthem", composer_surname="Somebody"
         )
         self.matching.suited_occasions.add(self.occasion)
         self.non_matching = Score.objects.create(
-            title="Aaa Non-Matching Anthem", composer="Someone Else"
+            title="Aaa Non-Matching Anthem", composer_surname="Someone Else"
         )
         self.non_matching.suited_occasions.add(self.other_occasion)
 

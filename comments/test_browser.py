@@ -61,3 +61,39 @@ class CommentThreadBrowserTest(PlaywrightTestCase):
         comment.refresh_from_db()
         assert comment.is_open is False
         assert comment.replies.count() == 1
+
+
+class CommentDeleteBrowserTest(PlaywrightTestCase):
+    def setUp(self):
+        super().setUp()
+        self.user = self.login_as_conductor()
+        self.term = Term.objects.create(
+            name="Browser Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
+        )
+
+    def test_delete_button_only_offered_once_closed_and_removes_card(self):
+        comment = Comment.objects.create(
+            author=self.user, body="A query", target=self.term
+        )
+        card = f"#comment-{comment.pk}"
+
+        self.page.goto(f"/terms/{self.term.pk}/")
+        self.page.wait_for_selector(card)
+        assert not self.page.is_visible(f"{card} .ajax-delete-comment")
+
+        self.page.click(f"{card} button:has-text('Close')")
+        self.page.wait_for_function(
+            f"document.querySelector('{card}')?.className.includes('comment--closed')"
+        )
+        self.page.wait_for_selector(f"{card} .ajax-delete-comment")
+
+        self.page.once("dialog", lambda dialog: dialog.accept())
+        self.page.click(f"{card} .ajax-delete-comment button")
+
+        self.page.wait_for_selector(card, state="detached")
+        self.page.wait_for_selector("#comment-list-empty")
+        assert not Comment.objects.filter(pk=comment.pk).exists()

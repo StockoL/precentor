@@ -21,7 +21,7 @@ class ConfirmToggleBrowserTest(PlaywrightTestCase):
         self.service = Service.objects.create(
             term=term, date=date(2026, 1, 11), service_type="Sung Eucharist"
         )
-        score = Score.objects.create(title="Browser Anthem", composer="Browser Composer")
+        score = Score.objects.create(title="Browser Anthem", composer_surname="Browser Composer")
         role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
         self.piece = RolePiece.objects.create(service_role=role, score=score)
 
@@ -77,7 +77,7 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
         self.service = Service.objects.create(
             term=term, date=date(2026, 1, 11), service_type="Sung Eucharist"
         )
-        self.score = Score.objects.create(title="Browser Anthem", composer="Browser Composer")
+        self.score = Score.objects.create(title="Browser Anthem", composer_surname="Browser Composer")
         self.role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
 
     def test_propose_piece_appends_row_without_reload(self):
@@ -164,8 +164,8 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
         self.service = Service.objects.create(
             term=term, date=date(2026, 1, 11), service_type="Sung Eucharist"
         )
-        self.score_a = Score.objects.create(title="Ave Verum", composer="Byrd")
-        self.score_b = Score.objects.create(title="Locus Iste", composer="Bruckner")
+        self.score_a = Score.objects.create(title="Ave Verum", composer_surname="Byrd")
+        self.score_b = Score.objects.create(title="Locus Iste", composer_surname="Bruckner")
         self.role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
 
     def test_combobox_filters_and_supports_keyboard_selection(self):

@@ -34,7 +34,8 @@ class ScoreQuerySet(models.QuerySet):
 
 class Score(models.Model):
     title = models.CharField(max_length=200)
-    composer = models.CharField(max_length=200)
+    composer_surname = models.CharField(max_length=100)
+    composer_other_names = models.CharField(max_length=100, blank=True)
     arranger = models.CharField(max_length=200, blank=True)
     voicing = models.CharField(
         max_length=50
@@ -44,18 +45,26 @@ class Score(models.Model):
     tenor_parts = models.PositiveSmallIntegerField(default=0)
     bass_parts = models.PositiveSmallIntegerField(default=0)
     language = models.CharField(max_length=50)
-    lead_time_tag = models.CharField(max_length=50, blank=True)
     copies_owned = models.PositiveIntegerField(default=0)
     filing_location = models.CharField(max_length=100, blank=True)
     duration_minutes = models.PositiveIntegerField(blank=True, null=True)
     suited_use_types = models.ManyToManyField(
-        "ordo.UseType", blank=True, related_name="suited_scores"
+        "ordo.UseType",
+        blank=True,
+        related_name="suited_scores",
+        help_text="e.g. Eucharist, General use, Evening, Harvest",
     )
     suited_seasons = models.ManyToManyField(
-        "ordo.LiturgicalSeason", blank=True, related_name="suited_scores"
+        "ordo.LiturgicalSeason",
+        blank=True,
+        related_name="suited_scores",
+        help_text="e.g. Advent, Christmas, Lent, Easter, Trinity",
     )
     suited_occasions = models.ManyToManyField(
-        "ordo.LiturgicalOccasion", blank=True, related_name="suited_scores"
+        "ordo.LiturgicalOccasion",
+        blank=True,
+        related_name="suited_scores",
+        help_text="Specific named days, e.g. Advent Sunday 4, Trinity 7",
     )
 
     objects = ScoreQuerySet.as_manager()
@@ -65,6 +74,12 @@ class Score(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.composer})"
+
+    @property
+    def composer(self):
+        if self.composer_other_names:
+            return f"{self.composer_other_names} {self.composer_surname}"
+        return self.composer_surname
 
     def get_absolute_url(self):
         return reverse("library:score_detail", kwargs={"pk": self.pk})

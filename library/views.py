@@ -81,7 +81,8 @@ class ScoreCreateView(LoginRequiredMixin, CreateView):
     model = Score
     fields = [  # noqa
         "title",
-        "composer",
+        "composer_surname",
+        "composer_other_names",
         "arranger",
         "voicing",
         "soprano_parts",
@@ -89,7 +90,6 @@ class ScoreCreateView(LoginRequiredMixin, CreateView):
         "tenor_parts",
         "bass_parts",
         "language",
-        "lead_time_tag",
         "copies_owned",
         "filing_location",
         "suited_use_types",

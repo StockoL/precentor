@@ -117,6 +117,31 @@ def toggle_close(request, comment_pk):
     return ajax_or_redirect(request, fragments, request.META.get("HTTP_REFERER", "/"))
 
 
+@login_required
+@require_POST
+def delete_comment(request, comment_pk):
+    comment = get_object_or_404(Comment, pk=comment_pk)
+    redirect_url = request.META.get("HTTP_REFERER", "/")
+
+    # Only closed comments can be deleted — the conductor has already
+    # marked the discussion resolved, so this is a tidy-up action, not
+    # a way to silently discard an open query. Enforced server-side,
+    # not just by hiding the button when open.
+    if comment.is_open:
+        return ajax_or_redirect(
+            request, {}, redirect_url,
+            error_message="Only closed comments can be deleted.", status=400,
+        )
+
+    comment_id = f"comment-{comment.pk}"
+    comment.delete()
+
+    # Empty string as the fragment content: applyFragments() sets this
+    # element's outerHTML to "", which removes it from the DOM — reuses
+    # the existing fragment-swap mechanism rather than adding a new one.
+    return ajax_or_redirect(request, {comment_id: ""}, redirect_url)
+
+
 class CommentInboxView(LoginRequiredMixin, ListView):
     model = Comment
     context_object_name = "comments"

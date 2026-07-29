@@ -39,6 +39,25 @@ function initComments() {
       } catch (err) {
         showToast("Couldn't update that comment — try again.", "danger");
       }
+      return;
+    }
+
+    if (form.matches(".ajax-delete-comment")) {
+      event.preventDefault();
+      if (!window.confirm("Delete this comment? This can't be undone.")) return;
+      try {
+        const data = await postForm(form.action, new FormData(form));
+        applyFragments(data.fragments);
+        if (!document.querySelector("#comment-list .comment")) {
+          const empty = document.createElement("p");
+          empty.id = "comment-list-empty";
+          empty.textContent = "No comments yet.";
+          document.getElementById("comment-list")?.appendChild(empty);
+        }
+        showToast("Comment deleted.", "success");
+      } catch (err) {
+        showToast("Couldn't delete that comment — try again.", "danger");
+      }
     }
   });
 }
