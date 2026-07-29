@@ -6,6 +6,14 @@
     <form method="post" class="flow">
         {% csrf_token %}
         {{ form.as_p }}
+        <div
+            id="occasion-suggestions"
+            class="flow"
+            style="--flow-space: var(--spacing-3xs);"
+            data-term-tradition="{{ term.tradition }}"
+            data-term-calendar-use="{{ term.calendar_use }}"
+            hidden
+        ></div>
         <button type="submit">Save</button>
     </form>
 </div>

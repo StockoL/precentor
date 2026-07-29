@@ -1,6 +1,7 @@
 from datetime import date
 
 from library.models import Score
+from ordo.models import LiturgicalOccasion
 from precentor_project.test_browser import PlaywrightTestCase
 
 from .models import RolePiece, Service, ServiceRole, Term
@@ -222,3 +223,50 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
         self.page.wait_for_function(f"{open_js} && {count_js} === 2")
         self.page.click("h1")
         self.page.wait_for_function(f"!({open_js})")
+
+
+class OccasionAutoSuggestBrowserTest(PlaywrightTestCase):
+    def setUp(self):
+        super().setUp()
+        self.login_as_conductor()
+        self.term = Term.objects.create(
+            name="Browser Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            tradition="cofe",
+            calendar_use="current",
+        )
+        self.christmas = LiturgicalOccasion.objects.create(
+            name="Christmas Day",
+            tradition="cofe",
+            calendar_use="current",
+            fixed_month=12,
+            fixed_day=25,
+        )
+
+    def test_matching_date_offers_suggestion_and_sets_occasion_on_click(self):
+        self.page.goto(f"/terms/{self.term.pk}/services/add/")
+        self.page.wait_for_selector("#id_date")
+
+        self.page.fill("#id_date", "2026-12-25")
+        self.page.dispatch_event("#id_date", "change")
+
+        self.page.wait_for_selector("#occasion-suggestions button")
+        assert "Christmas Day" in self.page.inner_text("#occasion-suggestions")
+        assert self.page.eval_on_selector("#id_occasion", "el => el.value") == ""
+
+        self.page.click("#occasion-suggestions button")
+        assert self.page.eval_on_selector("#id_occasion", "el => el.value") == str(
+            self.christmas.pk
+        )
+
+    def test_non_matching_date_shows_no_suggestion(self):
+        self.page.goto(f"/terms/{self.term.pk}/services/add/")
+        self.page.wait_for_selector("#id_date")
+
+        self.page.fill("#id_date", "2026-06-01")
+        self.page.dispatch_event("#id_date", "change")
+
+        # Give the fetch a moment to (not) resolve, then confirm nothing appeared.
+        self.page.wait_for_timeout(300)
+        assert not self.page.is_visible("#occasion-suggestions")

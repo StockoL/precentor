@@ -108,6 +108,11 @@ class ServiceUpdateView(ConductorRequiredMixin, UpdateView):
     model = Service
     form_class = ServiceForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["term"] = self.object.term
+        return context
+
 
 class ServiceDeleteView(ConductorRequiredMixin, DeleteView):
     model = Service

@@ -1,9 +1,12 @@
 from datetime import date
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from .models import LiturgicalOccasion, occasion_for_date
 from .utils import calculate_easter_sunday
+
+User = get_user_model()
 
 
 class CalculateEasterSundayTests(TestCase):
@@ -76,3 +79,58 @@ class OccasionForDateTests(TestCase):
         matches = occasion_for_date(date(2026, 12, 25), "cofe", "current")
         self.assertEqual(set(matches), {self.christmas, also_christmas})
         self.assertEqual(len(matches), 2)
+
+
+class OccasionLookupViewTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="conductor", password="testpass123"
+        )
+        self.client.login(username="conductor", password="testpass123")
+        self.christmas = LiturgicalOccasion.objects.create(
+            name="Christmas Day",
+            tradition="cofe",
+            calendar_use="current",
+            fixed_month=12,
+            fixed_day=25,
+        )
+
+    def test_matching_date_returns_occasion(self):
+        response = self.client.get(
+            "/ordo/occasion-lookup/",
+            {"date": "2026-12-25", "tradition": "cofe", "calendar_use": "current"},
+        )
+        self.assertEqual(response.status_code, 200)
+        occasions = response.json()["occasions"]
+        self.assertEqual(len(occasions), 1)
+        self.assertEqual(occasions[0]["name"], "Christmas Day")
+
+    def test_non_matching_date_returns_empty_list(self):
+        response = self.client.get(
+            "/ordo/occasion-lookup/",
+            {"date": "2026-06-01", "tradition": "cofe", "calendar_use": "current"},
+        )
+        self.assertEqual(response.json()["occasions"], [])
+
+    def test_invalid_date_returns_empty_list(self):
+        response = self.client.get(
+            "/ordo/occasion-lookup/",
+            {"date": "not-a-date", "tradition": "cofe", "calendar_use": "current"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["occasions"], [])
+
+    def test_invalid_tradition_returns_empty_list(self):
+        response = self.client.get(
+            "/ordo/occasion-lookup/",
+            {"date": "2026-12-25", "tradition": "bogus", "calendar_use": "current"},
+        )
+        self.assertEqual(response.json()["occasions"], [])
+
+    def test_requires_login(self):
+        self.client.logout()
+        response = self.client.get(
+            "/ordo/occasion-lookup/",
+            {"date": "2026-12-25", "tradition": "cofe", "calendar_use": "current"},
+        )
+        self.assertEqual(response.status_code, 302)
