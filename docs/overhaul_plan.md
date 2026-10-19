@@ -167,7 +167,7 @@ Steps:
 3. [x] Rewrite the tests to match. The "wrong tradition excluded" test goes; the "invalid tradition" test becomes an "invalid calendar use" test; the other `calendar_use` tests stay.
 4. [x] Relabel `calendar_use` as the Catholic choice it now is: "Ordinary Form (Novus Ordo)" and "Extraordinary Form (1962)". It stays, because a choir that sings both rites needs it. The stored values `current` and `historic` are unchanged; only the labels move, so the migrations (`ordo/0007`, `planning/0006`) are SQL no-ops.
 5. [x] Revise the seeded seasons to the Catholic set (Advent, Christmas, Ordinary Time, Lent, Easter Triduum, Easter; Pentecost is a feast, not a season) and drop "Harvest" from the use types. `ordo/0008` renames Holy Week to Easter Triduum (keeping existing score tags) and removes Pentecost; `ordo/0009` removes Harvest, and the score form's help text no longer suggests it. Both are reversible.
-6. [ ] Docs: README scope and out-of-scope list (the dual-tradition Ordo moves to "future work", with the reasoning kept), `ordo_plan.md`, `models_plan.md`.
+6. [x] Docs: README scope and out-of-scope list (the dual-tradition Ordo moves to "future work", with the reasoning kept), `ordo_plan.md`, `models_plan.md`, and the ERD's occasion attributes.
 
 Steps 1 to 3 go in one commit, because the migrations, models and tests only pass together.
 
@@ -309,3 +309,4 @@ The table now carries the metadata, so this page holds what doesn't fit in a row
 One line per phase as it completes, with the commit range.
 
 - Step 0 (19 Oct 2026): baseline tagged `pre-overhaul` at `94a7781`; branch `overhaul`.
+- Phase 0 (19 Oct 2026): `13548ef` to `ad6fb3e`. Beyond the six planned steps, it also renamed the use types to Mass and Vespers, switched test fixtures and the add-role placeholder to Catholic service and slot names, and corrected the README and ERD, which claimed role templates were seeded (none exist). 73 tests pass.
