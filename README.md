@@ -4,20 +4,22 @@ _A repertoire and service-planning tool for church musicians._
 
 _Milestone 3 Project — Code Institute_
 
-> **Status:** The full application is built: all five Django apps
-> (`library`, `ordo`, `planning`, `comments`, `core`) are modelled,
-> migrated, tested, and admin-registered; every view/template described
-> below is implemented and permission-gated; and the visual design
-> system (tokens, CUBE CSS Compositions/Blocks, self-hosted typography,
-> the liturgical accent) is complete — see
-> [`docs/design_system.md`](docs/design_system.md). This document
-> retains its original concept/rationale framing throughout, since the
-> reasoning below is what the implementation actually followed — where
-> reality diverged from an early plan (e.g. `LiturgicalOccasion`'s
-> `fixed_date` becoming `fixed_month`/`fixed_day`), that's called out
-> explicitly in [`docs/models_plan.md`](docs/models_plan.md) rather
-> than silently edited away. Remaining work: deployment and final
-> documentation wrap-up (screenshots, install instructions).
+> **Status:** All five Django apps (`library`, `ordo`, `planning`,
+> `comments`, `core`) are built, tested and permission-gated. Before
+> deploying, I'm working through an overhaul, tracked phase by phase in
+> [`docs/overhaul_plan.md`](docs/overhaul_plan.md). So far I've narrowed
+> the calendar to the Catholic one, rebuilt the type and spacing scales,
+> fixed the gaps in dark mode and keyboard access, and settled the
+> wording the app uses. Still to come are the components and page
+> layouts, performance work, the liturgical calendar data, deployment
+> and the final documentation.
+>
+> The rest of this document keeps its original concept-and-reasoning
+> framing, because that reasoning is what the build followed. Where the
+> build departed from an early plan (`LiturgicalOccasion`'s `fixed_date`
+> becoming `fixed_month`/`fixed_day`, for example),
+> [`docs/models_plan.md`](docs/models_plan.md) says so instead of
+> editing the history away.
 
 A **precentor** is the traditional title for the person responsible for
 directing a church's music — the role this tool is built around. Its
@@ -378,7 +380,9 @@ rather than a generic "library system" template.
 
 ---
 
-_Remaining: deployment (Heroku/Postgres, environment variables,
-`collectstatic`) and final documentation wrap-up (screenshots of the
-finished, styled application; install/run instructions; reconciling
-the finished app against `docs/user_stories.md`)._
+_Remaining work is listed phase by phase in
+[`docs/overhaul_plan.md`](docs/overhaul_plan.md). The last phases cover
+deployment (Heroku, Postgres, environment variables, `collectstatic`)
+and the final documentation: screenshots, install and run
+instructions, and checking the finished app against
+`docs/user_stories.md`._
