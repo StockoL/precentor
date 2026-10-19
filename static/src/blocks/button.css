@@ -14,7 +14,7 @@
     padding-inline: var(--spacing-s);
     border-radius: 4px;
     font-weight: 600;
-    font-size: var(--typography-step-0);
+    font-size: var(--typography-step--1);
     cursor: pointer;
     text-decoration: none;
     transition: background-color var(--transitions-dur-fast) var(--transitions-spring-smooth),

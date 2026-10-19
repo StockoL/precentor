@@ -26,7 +26,9 @@
     border-radius: 4px;
     background-color: var(--colors-surface-base);
     color: var(--colors-text-base);
-    font-size: var(--typography-step-0);
+    /* A step below body text, like buttons, but never under 16px:
+       iOS zooms the page into any form control with smaller text. */
+    font-size: max(1rem, var(--typography-step--1));
   }
 
   form :is(input, select, textarea):focus-visible {

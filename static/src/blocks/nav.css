@@ -5,6 +5,7 @@
 @layer blocks {
   .site-nav {
     padding-block: var(--spacing-s);
+    font-size: var(--typography-step--1);
     border-block-end: 1px solid var(--colors-border-subtle);
   }
 
