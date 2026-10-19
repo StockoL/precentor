@@ -36,6 +36,15 @@
     outline-offset: 2px;
   }
 
+  /* Django renders a field's help_text as <span class="helptext">,
+     linked to its input by aria-describedby. */
+  form .helptext {
+    display: block;
+    margin-block-start: var(--spacing-3xs);
+    color: var(--colors-text-muted);
+    font-size: var(--typography-step--2);
+  }
+
   form ul.errorlist {
     list-style: none;
     padding: 0;

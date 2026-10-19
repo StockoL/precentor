@@ -20,7 +20,7 @@
     padding-block: var(--spacing-3xs);
     border-radius: 999px;
     border: 1px solid transparent;
-    font-size: var(--typography-step--1);
+    font-size: var(--typography-step--2);
     font-weight: 600;
     line-height: 1;
   }
