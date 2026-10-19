@@ -45,7 +45,10 @@ class ServiceRoleForm(forms.ModelForm):
         fields = ["role_name", "is_not_applicable"]  # noqa
         widgets = {  # noqa
             "role_name": forms.TextInput(
-                attrs={"placeholder": "e.g. Setting, Anthem, Canticles, Responses…"}
+                attrs={
+                    "placeholder": "e.g. Mass setting, Introit, Offertory motet, "
+                    "Communion hymn, Magnificat…"
+                }
             ),
         }
 
