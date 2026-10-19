@@ -28,7 +28,7 @@
   }
 
   .comment--closed {
-    border-inline-start-color: var(--colors-neutral-300);
+    border-inline-start-color: var(--colors-inactive-border);
     background-color: var(--colors-surface-sunken);
     opacity: 0.8;
   }
