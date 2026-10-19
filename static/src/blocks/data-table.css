@@ -27,7 +27,12 @@
   }
 
   .data-table {
-    inline-size: 100%;
+    /* Never narrower than 64rem: below that the columns would squeeze
+       titles onto several lines, so the table keeps its width and
+       .table-scroll scrolls it instead. The minimum is folded into the
+       width because min-width on a table is undefined in CSS and
+       browsers ignore it. */
+    inline-size: max(100%, 64rem);
     border-collapse: collapse;
     font-size: var(--typography-step--1);
     font-variant-numeric: tabular-nums;
@@ -72,11 +77,17 @@
     content: " ▼" / "";
   }
 
+  .data-table th[aria-sort] a::after {
+    font-size: 0.7em;
+  }
+
   .data-table tbody tr:hover {
     background-color: var(--colors-surface-sunken);
   }
 
-  .data-table__number {
+  /* Numbers line up on the right, headings included. Two classes, so it
+     outranks the .data-table :is(th, td) rule above. */
+  .data-table .data-table__number {
     text-align: end;
   }
 

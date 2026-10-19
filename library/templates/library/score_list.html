@@ -48,7 +48,7 @@
             <thead>
                 <tr>
                     {% for column in columns %}
-                    <th scope="col"{% if column.aria_sort %} aria-sort="{{ column.aria_sort }}"{% endif %}>
+                    <th scope="col"{% if column.numeric %} class="data-table__number"{% endif %}{% if column.aria_sort %} aria-sort="{{ column.aria_sort }}"{% endif %}>
                         <a href="{% querystring sort=column.key dir=column.next_dir page=None %}">{{ column.label }}</a>
                     </th>
                     {% endfor %}

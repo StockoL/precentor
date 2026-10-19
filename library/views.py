@@ -36,6 +36,8 @@ class ScoreListView(LoginRequiredMixin, ListView):
         ("last_sung", "Last sung", ["last_sung", "composer_surname", "title"]),
     ]
     DEFAULT_SORT = "composer"
+    # Right-aligned, so their figures line up.
+    NUMERIC_COLUMNS = ("duration", "copies")
 
     def sort(self):
         """The chosen column and direction, falling back to the default
@@ -137,6 +139,7 @@ class ScoreListView(LoginRequiredMixin, ListView):
                 if key == sort
                 else None,
                 "next_dir": "desc" if key == sort and direction == "asc" else "asc",
+                "numeric": key in self.NUMERIC_COLUMNS,
             }
             for key, label, _ in self.COLUMNS
         ]

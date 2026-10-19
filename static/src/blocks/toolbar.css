@@ -21,9 +21,10 @@
     width: auto;
   }
 
-  /* The search box takes whatever room is left, but not less than this. */
+  /* The search box is the widest control but doesn't stretch across the
+     whole row, which left a gap before the controls after it. */
   .toolbar__search {
-    flex: 1 1 16rem;
+    flex: 0 1 22rem;
   }
 
   .toolbar__search input {
