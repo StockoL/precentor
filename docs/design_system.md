@@ -127,10 +127,36 @@ natural size.
   `text-*`, `border-*`) aliasing into it.
 - A status trio system (`success`/`warning`/`danger`/`info`), each
   shipping a base + `-bg`/`-border`/`-text` variant, used by `badge.css`
-  and `comment-card.css`.
+  and `comment-card.css`. An `inactive` trio follows the same pattern
+  for things with nothing active on them: a service not started, a
+  closed comment.
 - A `liturgical-*` set (`violet`/`red`/`green`/`white`/`rose`),
   matching `ordo.LiturgicalOccasion.colour`'s `choices` exactly — see
   "Liturgical accent" below.
+
+### Dark mode
+
+`colorsDark` in the token file holds only the tokens whose value
+changes. `build-tokens.js` writes them twice: inside
+`@media (prefers-color-scheme: dark)` for `:root:not([data-theme])`,
+which follows the operating system, and under `:root[data-theme="dark"]`,
+which the theme toggle sets and which wins whatever the system says.
+
+Blocks use semantic tokens, never the raw `neutral-*` ramp, because
+only semantic tokens carry dark values. Three blocks broke that rule,
+and in October 2026 each one showed up as a light patch on the dark
+page: the "Not started" badge, the primary button's hover, and a
+closed comment's border. They now use `inactive-*` and
+`action-primary-hover`.
+
+`action-primary` has a dark value too. Besides button backgrounds it
+colours nav hover text, focus rings and the accent fallback directly
+on the page, and the light value, `#8b1a2b`, is only 1.86:1 against
+the dark surface. WCAG asks for 4.5:1 for text and 3:1 for focus
+indicators. The dark value, `#e8798a`, is 6.14:1. Because it's light,
+`text-on-action` switches to the dark surface colour in dark mode, at
+the same ratio, so button text stays readable. I checked each pair
+with the WCAG contrast formula rather than by eye.
 
 ## Fonts
 
@@ -161,8 +187,10 @@ invisible text."
 
 `badge.css` implements this project's status-indicator system:
 `Service.status` and `RolePiece` confirmation state share the same
-colour vocabulary (`success`/`warning`/`info`), applied as small inline
-chips. `comment-card.css` uses the same tokens for `Comment.state`, but
+colour vocabulary (`success`/`warning`/`info`, and `inactive` for a
+service not started), applied as small inline chips. The chip shows
+the readable label ("Not started"); the raw value only names the
+CSS class. `comment-card.css` uses the same tokens for `Comment.state`, but
 as a card-level border/background accent rather than a chip — a
 deliberate distinction, since a comment is a bigger unit of content
 than a one-word status, even though both draw from the same palette.
