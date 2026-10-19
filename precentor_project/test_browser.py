@@ -152,6 +152,52 @@ class UserMenuBrowserTest(PlaywrightTestCase):
         )
 
 
+class PageTransitionBrowserTest(PlaywrightTestCase):
+    """
+    Checks how page transitions are configured, read from the parsed CSS.
+    The crossfade itself was checked by hand in Chrome: the automated
+    browser abandons some cross-document transitions after a few seconds,
+    so a test that waits for one to run isn't reliable.
+    """
+
+    # Every @view-transition rule on the page, with the media condition
+    # it sits in (null if none), in cascade order.
+    VIEW_TRANSITION_RULES = """() => {
+        const found = [];
+        const walk = (rules, condition) => {
+            for (const rule of rules) {
+                if (rule instanceof CSSViewTransitionRule) {
+                    found.push([condition, rule.navigation]);
+                } else if (rule instanceof CSSMediaRule) {
+                    walk(rule.cssRules, rule.conditionText);
+                }
+            }
+        };
+        for (const sheet of document.styleSheets) walk(sheet.cssRules, null);
+        return found;
+    }"""
+
+    def test_site_opts_in_except_under_reduced_motion(self):
+        self.login_as_conductor()
+        self.page.goto("/")
+        rules = self.page.evaluate(self.VIEW_TRANSITION_RULES)
+        assert rules == [["(prefers-reduced-motion: no-preference)", "auto"]], rules
+
+    def test_nav_has_its_own_transition_name_so_it_stays_put(self):
+        self.login_as_conductor()
+        self.page.goto("/")
+        name = self.page.evaluate(
+            "getComputedStyle(document.querySelector('.site-nav')).viewTransitionName"
+        )
+        assert name == "site-nav", name
+
+    def test_login_page_opts_out(self):
+        self.page.goto("/accounts/login/")
+        rules = self.page.evaluate(self.VIEW_TRANSITION_RULES)
+        # The page's own rule comes last, so it wins.
+        assert rules[-1] == [None, "none"], rules
+
+
 class SkipLinkBrowserTest(PlaywrightTestCase):
     def test_first_tab_reveals_skip_link_and_enter_jumps_to_main(self):
         # Not the login page: Django's login form autofocuses the

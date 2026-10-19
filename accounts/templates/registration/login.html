@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Log in — Precentor{% endblock %}
+{% block extra_head %}
+{# No page transition out of the login page. In automated testing, Chromium held the page after login frozen for about four seconds before giving up on the transition. A transition needs both pages to opt in, so opting out here makes login a plain page load. #}
+<style>
+  @view-transition {
+    navigation: none;
+  }
+</style>
+{% endblock %}
 {% block content %}
 <div class="cover">
     <div class="center flow" data-intrinsic data-centered style="--center-max-width: 30ch;">

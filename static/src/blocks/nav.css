@@ -6,6 +6,9 @@
   .site-nav {
     padding-block: var(--spacing-s);
     font-size: var(--typography-step--1);
+    /* Its own name in page transitions, so it stays put while the rest
+       of the page crossfades (see global-styles.css). */
+    view-transition-name: site-nav;
     border-block-end: 1px solid var(--colors-border-subtle);
   }
 
