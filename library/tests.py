@@ -9,6 +9,24 @@ from .models import Score
 User = get_user_model()
 
 
+class ScoreFormLabelTests(TestCase):
+    """Labels come from explicit verbose_name, not field names."""
+
+    def test_score_form_labels_read_naturally(self):
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="testpass123")
+        )
+        response = self.client.get("/library/add/")
+        for label in ("Composer&#x27;s other names", "Sopranos", "Basses",
+                      "Duration (minutes)", "Suitable uses", "Suitable seasons",
+                      "Suitable occasions"):
+            with self.subTest(label=label):
+                self.assertContains(response, f"{label}:</label>")
+        for old in ("Soprano parts", "Duration minutes", "Suited use types"):
+            with self.subTest(old=old):
+                self.assertNotContains(response, old)
+
+
 class ScoreComposerTests(TestCase):
     def test_surname_only_displays_as_surname(self):
         score = Score.objects.create(title="Ave Verum", composer_surname="Byrd")
