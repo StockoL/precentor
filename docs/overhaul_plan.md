@@ -194,12 +194,12 @@ Done when no underscore or raw choice value is visible anywhere in the UI.
 
 ### Phase 3: components (about a day)
 
-1. Button hierarchy: neutral default, `.btn-primary`, `.btn-ghost`, `.btn-danger`, and an anchor style that matches.
-2. A `.page-header` block (title and actions) used by every page.
-3. Nav: current-page state, auth gating, user menu with Appearance, open-comment count.
-4. Detail pages as `<dl>` blocks; the score list as a table with composer, voicing and language.
-5. Empty states and cascade-aware delete confirmations.
-6. Form layout: grouped fields, help text, visible error styling.
+1. [x] Button hierarchy: neutral default, `.btn-primary`, `.btn-ghost`, `.btn-danger`, and an anchor style that matches. `.btn-confirm`, which nothing used, became `.btn-primary`; a test keeps each page to one primary action.
+2. [x] A `.page-header` block (title and actions), used on the list and detail pages. Form pages have only a title and their own Save, so they don't need it.
+3. [x] Nav: current-page state, auth gating, user menu with Appearance, open-comment count. Plus cross-document view transitions (see the Phase 3 log entry).
+4. [x] Detail pages as `<dl>` blocks. The score list as a table moves to Phase 4, where the Library page spec covers it in full.
+5. [x] Empty states and cascade-aware delete confirmations.
+6. [x] Form layout: grouped fields, help text, visible error styling. The service form is grouped; the score form's fieldsets are part of Phase 4.
 
 ### Phase 4: page-by-page pass (about half a day)
 
@@ -314,3 +314,4 @@ One line per phase as it completes, with the commit range.
 - Phase 0 (19 Oct 2026): `13548ef` to `ad6fb3e`. Beyond the six planned steps, it also renamed the use types to Mass and Vespers, switched test fixtures and the add-role placeholder to Catholic service and slot names, and corrected the README and ERD, which claimed role templates were seeded (none exist). 73 tests pass.
 - Phase 1 (19 Oct 2026): `031c217` to `54e3a7d`. Browser tests now cover the skip link, the root font size, the shared control height and list row width. A screenshot pass of eleven pages in light and dark at 360px and 1280px found no overflow and no light patches; it also caught Anglican examples left in the score form's help text, fixed in `54e3a7d`. Left for later phases: music list headings too large for their columns (Phase 4), every nav button styled as primary (Phase 3), the "Is not applicable" checkbox stretched to full width (Phase 3 form layout). 81 tests pass.
 - Phase 2 (19 Oct 2026): `bc395b1` to `e683bdd`. A scan of the visible text of fifteen pages found no underscores, raw values or retired words, except the crest's storage path ("Currently: site_config/crest.png") from Django's file widget on Settings; that widget goes when the crest moves into the database (Phase 7). Also found: the `core` app had no tests at all; `core/tests.py` now exists, but the settings singleton, crest processing and conductor-only access still need tests (Phase 5). The term page now calls `Service.status` three times per row; Phase 5's prefetching rewrite should make that cheap. 99 tests pass.
+- Phase 3 (19 Oct 2026): `d1e8d42` to `785ab63`. The view transitions needed care. In Playwright's Chromium, some navigations froze for three to four seconds before the browser abandoned the transition, so the work waited on a branch until I'd checked it by hand in Chrome, where page-to-page transitions run smoothly. The login page opts out, and the browser tests check the configuration from the parsed CSS rather than waiting for a transition. The screenshot pass also caught two problems my own earlier changes had caused: the toast's x button had grown to the 40px control height, and bulletless lists kept a 40px indent. Both are fixed. 121 tests pass.
