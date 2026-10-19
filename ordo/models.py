@@ -13,8 +13,8 @@ COLOUR_CHOICES = [
 ]
 
 CALENDAR_USE_CHOICES = [
-    ("current", "Current (Common Worship / Novus Ordo)"),
-    ("historic", "Historic (Book of Common Prayer / Extraordinary Form)"),
+    ("current", "Ordinary Form (Novus Ordo)"),
+    ("historic", "Extraordinary Form (1962)"),
 ]
 
 

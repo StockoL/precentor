@@ -29,6 +29,19 @@ class CalculateEasterSundayTests(TestCase):
                 self.assertEqual(calculate_easter_sunday(year), expected)
 
 
+class CalendarUseLabelTests(TestCase):
+    def test_labels_name_the_two_roman_rite_forms(self):
+        occasion = LiturgicalOccasion(name="Christmas Day")
+        occasion.calendar_use = "current"
+        self.assertEqual(
+            occasion.get_calendar_use_display(), "Ordinary Form (Novus Ordo)"
+        )
+        occasion.calendar_use = "historic"
+        self.assertEqual(
+            occasion.get_calendar_use_display(), "Extraordinary Form (1962)"
+        )
+
+
 class OccasionForDateTests(TestCase):
     def setUp(self):
         self.christmas = LiturgicalOccasion.objects.create(
