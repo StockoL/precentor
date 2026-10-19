@@ -95,18 +95,20 @@ simple reference fields, deliberately kept outside the propose/confirm
 workflow that governs Setting/Anthem-type roles, since hymn numbers
 and a psalm reference don't need a shortlist or a confirmation step.
 
-Each service type has a **default template** of musical **role slots** —
-e.g. Sung Eucharist typically needs a _Setting_ and an _Anthem_; Choral
-Evensong typically needs _Canticles_, _Responses_, and an _Anthem_. When
-a service is created, it starts with a copy of its template's roles —
-but from that point on, roles belong to the _instance_, not the
-template. Roles can be added, removed, or marked **N/A** on a
-service-by-service basis (a special day might need an extra anthem, or
-have no setting at all, as on Good Friday).
+Each service is made up of musical **role slots**, added per service:
+a Sung Mass might have a _Mass setting_, an _Introit_, an _Offertory
+motet_ and a _Communion_; Vespers might have a _Magnificat_ and a motet.
+Slot names are free text, because practice varies from church to
+church. One choir sings the Propers, another sings a hymn in place of
+some of them, and another adds a motet at the Offertory, or sings one
+in place of the Responsorial Psalm when the text is the same. Slots can
+be added, removed, or marked **N/A** on a service-by-service basis (a
+special day might need an extra motet, or have no setting at all, as on
+Good Friday).
 
-Template editing itself is **out of scope for MVP** — a small, sensible
-set of templates is seeded directly, and all flexibility lives at the
-instance level. This is flagged as a natural "future development."
+Templates per service type, so that a new Sung Mass starts with its
+usual slots, are **not built**: slots are added by hand on each
+service. They're a natural "future development".
 
 ### 3.3 Proposing and Confirming
 
@@ -287,7 +289,7 @@ This remains a **"should have,"** not core to MVP.
   data and a second set of tests without helping any real user. A
   second tradition remains possible future work, most simply as a
   site-wide setting, not a per-term choice.
-- Template-editing UI (templates are seeded, not user-editable, for MVP)
+- Service-type templates (slots are added per service, see §3.2)
 - Snapshot history/archive of past generated music lists
 - An "active term" flag (superseded by a simple chronological list)
 - Threaded (nested) comment replies
@@ -334,8 +336,8 @@ choices, not oversights, when this document is read by an assessor.
   GitHub) — the entity relationship diagram covering Score, Term,
   Service, Service Role, Role Piece, Ordo (Liturgical Occasion), User,
   and Comment, along with notes on a couple of deliberate
-  simplifications — notably that role templates are seeded in code
-  rather than modelled as a table, and that Comment's polymorphic
+  simplifications — notably that role slots are added per service
+  with no template table, and that Comment's polymorphic
   relationship is drawn as three edges there for readability, though
   it's implemented as a single Django `GenericForeignKey` relationship.
 - [`docs/models_plan.md`](docs/models_plan.md) — the Django app

@@ -4,7 +4,7 @@ erDiagram
   %% - COMMENT's link to TERM/SERVICE/ROLE_PIECE is one polymorphic
   %%   GenericForeignKey in Django, shown here as three edges since
   %%   erDiagram syntax can't express "one FK, any of three tables"
-  %% - Role templates are seeded in code, not modelled as a table
+  %% - Role slots are added per service; there are no role templates
   USER ||--o{ COMMENT : writes
   TERM ||--o{ SERVICE : contains
   LITURGICAL_OCCASION ||--o{ SERVICE : occurs_on
