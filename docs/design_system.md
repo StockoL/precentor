@@ -326,7 +326,7 @@ Block styling wholesale:
 ## `crest-crop.js` — a hand-rolled image crop tool
 
 Progressive enhancement over a plain `crest_image` file input, in the
-same spirit as `score-picker.js`'s combobox and `theme-toggle.js`: a
+same spirit as `score-picker.js`'s combobox: a
 real, working control underneath (the file input still submits
 normally), enhanced with genuine JS engineering rather than a
 third-party cropping library, since hand-building this kind of widget

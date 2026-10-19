@@ -209,6 +209,21 @@ class NavCurrentSectionTests(TestCase):
         )
 
 
+class UserMenuTests(TestCase):
+    def test_menu_holds_appearance_settings_and_log_out(self):
+        self.client.force_login(
+            User.objects.create_superuser(username="louis", password="pw")
+        )
+        html = self.client.get("/").content.decode()
+        menu = html.split('<details class="user-menu">', 1)[1].split("</details>", 1)[0]
+        self.assertIn("<summary>louis</summary>", menu)
+        # Hidden in the HTML: the script reveals it, since it needs JS.
+        self.assertIn('<fieldset id="theme-choice" class="theme-choice" hidden>', menu)
+        self.assertIn('href="/settings/"', menu)
+        self.assertIn(">Log out</button>", menu)
+        self.assertNotIn('id="theme-toggle"', html)
+
+
 class NavSettingsLinkTests(TestCase):
     """Settings is conductor-only, so the link shows only to conductors."""
 

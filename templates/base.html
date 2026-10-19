@@ -7,7 +7,7 @@
     <script>
       // Blocking, NOT deferred — must run before first paint to avoid a
       // flash of the wrong theme. Only restores a saved choice; the
-      // toggle's click handling lives in theme-toggle.js (deferred).
+      // Appearance radios in the user menu live in theme-choice.js.
       (function () {
         var saved = localStorage.getItem("precentor-theme");
         if (saved) document.documentElement.setAttribute("data-theme", saved);
@@ -39,6 +39,7 @@
     <link rel="stylesheet" href="{% static 'src/blocks/nav.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/skip-link.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/page-header.css' %}">
+    <link rel="stylesheet" href="{% static 'src/blocks/user-menu.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/role-block.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/list-row.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/term-summary.css' %}">
@@ -47,7 +48,8 @@
     <link rel="stylesheet" href="{% static 'src/blocks/score-combobox.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/crest-crop.css' %}">
     <link rel="stylesheet" href="{% static 'src/utilities/utilities.css' %}">
-    <script src="{% static 'src/js/theme-toggle.js' %}" defer></script>
+    <script type="module" src="{% static 'src/js/theme-choice.js' %}"></script>
+    <script type="module" src="{% static 'src/js/user-menu.js' %}"></script>
     <script type="module" src="{% static 'src/js/toast.js' %}"></script>
     <script type="module" src="{% static 'src/js/service-detail.js' %}"></script>
     <script type="module" src="{% static 'src/js/comments.js' %}"></script>
@@ -65,17 +67,28 @@
                 <a href="{% url 'planning:term_list' %}"{% if nav_current.terms %} aria-current="{{ nav_current.terms }}"{% endif %}>Terms</a>
                 <a href="{% url 'library:score_list' %}"{% if nav_current.library %} aria-current="{{ nav_current.library }}"{% endif %}>Library</a>
                 <a href="{% url 'comments:inbox' %}"{% if nav_current.inbox %} aria-current="{{ nav_current.inbox }}"{% endif %}>Inbox{% if open_comment_count %} <span class="nav-count">{{ open_comment_count }}<span class="visually-hidden"> open</span></span>{% endif %}</a>
-                {% if is_conductor %}
-                <a href="{% url 'core:site_config_update' %}"{% if nav_current.settings %} aria-current="{{ nav_current.settings }}"{% endif %}>Settings</a>
-                {% endif %}
-                <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit">Log out</button>
-                </form>
+                <details class="user-menu">
+                    <summary>{{ user.get_full_name|default:user.get_username }}</summary>
+                    <div class="user-menu__panel">
+                        {# Hidden until theme-choice.js runs: the choice is stored in the browser, so it needs JavaScript. #}
+                        <fieldset id="theme-choice" class="theme-choice" hidden>
+                            <legend>Appearance</legend>
+                            <label><input type="radio" name="theme" value="system"> System</label>
+                            <label><input type="radio" name="theme" value="light"> Light</label>
+                            <label><input type="radio" name="theme" value="dark"> Dark</label>
+                        </fieldset>
+                        {% if is_conductor %}
+                        <a href="{% url 'core:site_config_update' %}"{% if nav_current.settings %} aria-current="{{ nav_current.settings }}"{% endif %}>Settings</a>
+                        {% endif %}
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit">Log out</button>
+                        </form>
+                    </div>
+                </details>
                 {% else %}
                 <a href="{% url 'login' %}">Log in</a>
                 {% endif %}
-                <button id="theme-toggle" type="button">Dark mode</button>
             </div>
         </nav>
     </header>

@@ -1,0 +1,79 @@
+/* ==========================================================================
+   BLOCK: USER MENU
+   A <details> disclosure at the end of the nav holding Appearance,
+   Settings (conductor only) and Log out. The panel drops below the
+   toggle, aligned to its right edge so it stays on screen.
+   ========================================================================== */
+
+@layer blocks {
+  .user-menu {
+    position: relative;
+  }
+
+  .user-menu > summary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-3xs);
+    min-block-size: var(--layout-control-height);
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none; /* hides the default disclosure triangle */
+  }
+
+  .user-menu > summary::-webkit-details-marker {
+    display: none; /* the same, for Safari */
+  }
+
+  .user-menu > summary::after {
+    content: "▾";
+    font-size: var(--typography-step--2);
+  }
+
+  .user-menu > summary:focus-visible {
+    outline: 2px solid var(--colors-action-primary);
+    outline-offset: 2px;
+  }
+
+  .user-menu__panel {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-start: calc(100% + var(--spacing-3xs));
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    min-inline-size: 13rem;
+    padding: var(--spacing-s);
+    border: 1px solid var(--colors-border-subtle);
+    border-radius: 10px;
+    background-color: var(--colors-surface-base);
+    box-shadow: 0 4px 12px rgba(24, 24, 27, 0.12);
+  }
+
+  .theme-choice {
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .theme-choice legend {
+    padding: 0;
+    margin-block-end: var(--spacing-3xs);
+    color: var(--colors-text-muted);
+    font-size: var(--typography-step--2);
+    font-weight: 600;
+  }
+
+  .theme-choice label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2xs);
+    padding-block: var(--spacing-3xs);
+    cursor: pointer;
+  }
+
+  /* Native radios in the app's colour, in both themes. */
+  .theme-choice input {
+    accent-color: var(--colors-action-primary);
+  }
+}

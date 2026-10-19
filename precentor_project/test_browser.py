@@ -120,6 +120,38 @@ class ListRowWidthBrowserTest(PlaywrightTestCase):
         assert abs(row_width - list_content_width) < 1, (row_width, list_content_width)
 
 
+class UserMenuBrowserTest(PlaywrightTestCase):
+    def test_appearance_choice_applies_persists_and_resets(self):
+        self.login_as_conductor()
+        self.page.goto("/")
+        theme = "document.documentElement.getAttribute('data-theme')"
+
+        self.page.click(".user-menu summary")
+        assert self.page.is_visible("#theme-choice")  # revealed by the script
+        self.page.check("input[name=theme][value=dark]")
+        assert self.page.evaluate(theme) == "dark"
+
+        self.page.reload()
+        assert self.page.evaluate(theme) == "dark"
+        assert self.page.is_checked("input[name=theme][value=dark]")
+
+        self.page.click(".user-menu summary")
+        self.page.check("input[name=theme][value=system]")
+        assert self.page.evaluate(theme) is None
+        assert self.page.evaluate("localStorage.getItem('precentor-theme')") is None
+
+    def test_escape_closes_the_menu_and_returns_focus(self):
+        self.login_as_conductor()
+        self.page.goto("/")
+        self.page.click(".user-menu summary")
+        assert self.page.evaluate("document.querySelector('.user-menu').open")
+        self.page.keyboard.press("Escape")
+        assert not self.page.evaluate("document.querySelector('.user-menu').open")
+        assert self.page.evaluate(
+            "document.activeElement === document.querySelector('.user-menu summary')"
+        )
+
+
 class SkipLinkBrowserTest(PlaywrightTestCase):
     def test_first_tab_reveals_skip_link_and_enter_jumps_to_main(self):
         # Not the login page: Django's login form autofocuses the
