@@ -115,7 +115,8 @@ class NewAndEditWordingTests(TestCase):
             with self.subTest(url=url):
                 response = self.client.get(url)
                 self.assertContains(response, link)
-                self.assertNotContains(response, ">Add a ")
+                for retired in (">Add a term<", ">Add a service<", ">Add a score<"):
+                    self.assertNotContains(response, retired)
 
 
 class PrimaryActionTests(TestCase):

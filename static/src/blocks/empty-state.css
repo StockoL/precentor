@@ -1,0 +1,16 @@
+/* ==========================================================================
+   BLOCK: EMPTY STATE
+   Shown where a list has nothing in it yet. It says what belongs there
+   and offers the action that adds the first one, inside a dashed
+   outline that reads as a space waiting to be filled.
+   ========================================================================== */
+
+@layer blocks {
+  .empty-state {
+    max-width: none;
+    padding: var(--spacing-s);
+    border: 1px dashed var(--colors-border-strong);
+    border-radius: 10px;
+    color: var(--colors-text-muted);
+  }
+}

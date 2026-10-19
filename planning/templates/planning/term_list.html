@@ -19,7 +19,10 @@
             </p>
         </a>
         {% empty %}
-        <p>No terms yet.</p>
+        <div class="empty-state flow">
+            <p>No terms yet. A term holds a run of services and their music, such as Michaelmas 2026.</p>
+            <a class="btn" href="{% url 'planning:term_create' %}">Create the first term</a>
+        </div>
         {% endfor %}
     </div>
 </div>

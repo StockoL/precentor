@@ -440,6 +440,13 @@ class TermDetailViewTests(TestCase):
             self.client.get(self.term.get_absolute_url()), "Sun 11 Jan 2026 — Sung Mass"
         )
 
+    def test_empty_term_explains_services_and_notices(self):
+        response = self.client.get(self.term.get_absolute_url())
+        self.assertContains(response, "No services yet.")
+        self.assertContains(response, ">Add the first service</a>")
+        self.assertContains(response, "No notices.")
+        self.assertContains(response, ">Add a notice</a>")
+
     def test_service_list_links_to_service_detail(self):
         service = Service.objects.create(
             term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"

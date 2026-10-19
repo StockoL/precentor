@@ -38,7 +38,17 @@
         {% for score in scores %}
         <li class="list-row"><a href="{{ score.get_absolute_url }}">{{ score }}</a></li>
         {% empty %}
-        <li>No scores yet.</li>
+        {% if selected_language or selected_voice_part %}
+        <li class="empty-state flow">
+            <p>No scores match these filters.</p>
+            <a class="btn" href="{% url 'library:score_list' %}">Clear filters</a>
+        </li>
+        {% else %}
+        <li class="empty-state flow">
+            <p>The library is empty. Add the scores you own, and you can propose them for services.</p>
+            <a class="btn" href="{% url 'library:score_create' %}">Add the first score</a>
+        </li>
+        {% endif %}
         {% endfor %}
     </ul>
 </div>

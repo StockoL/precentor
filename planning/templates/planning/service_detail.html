@@ -45,7 +45,7 @@
             {% for role in roles %}
             {% include "planning/_role_block.html" %}
             {% empty %}
-            <p id="roles-list-empty">No slots yet.</p>
+            <p id="roles-list-empty" class="empty-state">No slots yet. Add one below for each place in the service that needs music, such as the Mass setting or an Offertory motet.</p>
             {% endfor %}
         </div>
     </div>

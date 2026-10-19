@@ -13,7 +13,7 @@
             <span>{{ comment.created_at|date:"DATETIME_FORMAT" }}</span>
         </li>
         {% empty %}
-        <li>Nothing needs your attention.</li>
+        <li class="empty-state">Nothing needs your attention. Open comments on terms, services and pieces will appear here.</li>
         {% endfor %}
     </ul>
 </div>

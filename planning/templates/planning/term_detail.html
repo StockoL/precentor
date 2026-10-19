@@ -23,7 +23,10 @@
                 <span class="badge badge--{{ service.status }}">{{ service.status_label }}</span>
             </li>
             {% empty %}
-            <li>No services yet.</li>
+            <li class="empty-state flow">
+                <p>No services yet. Add each service in this term, and its music, to build the music list.</p>
+                <a class="btn" href="{% url 'planning:service_create' term.pk %}">Add the first service</a>
+            </li>
             {% endfor %}
         </ul>
     </div>
@@ -40,7 +43,10 @@
                 </span>
             </li>
             {% empty %}
-            <li>No notices yet.</li>
+            <li class="empty-state flow">
+                <p>No notices. A notice puts a dated line on the music list, such as half term or a change of time.</p>
+                <a class="btn" href="{% url 'planning:marker_create' term.pk %}">Add a notice</a>
+            </li>
             {% endfor %}
         </ul>
     </div>

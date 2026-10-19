@@ -42,6 +42,25 @@ class ScoreDetailListTests(TestCase):
         self.assertNotContains(response, "<p>Voicing:")
 
 
+class LibraryEmptyStateTests(TestCase):
+    def setUp(self):
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="testpass123")
+        )
+
+    def test_empty_library_offers_the_first_score(self):
+        response = self.client.get("/library/")
+        self.assertContains(response, "The library is empty.")
+        self.assertContains(response, ">Add the first score</a>")
+
+    def test_filters_with_no_matches_offer_to_clear_them(self):
+        Score.objects.create(title="Ave verum", composer_surname="Byrd", language="Latin")
+        response = self.client.get("/library/?language=German")
+        self.assertContains(response, "No scores match these filters.")
+        self.assertContains(response, ">Clear filters</a>")
+        self.assertNotContains(response, "The library is empty.")
+
+
 class ScoreComposerTests(TestCase):
     def test_surname_only_displays_as_surname(self):
         score = Score.objects.create(title="Ave Verum", composer_surname="Byrd")
