@@ -19,6 +19,16 @@
     color: var(--colors-action-primary);
   }
 
+  /* The section being viewed: marked in the HTML with aria-current, so
+     screen readers announce it, and shown here with the same colour as
+     hover plus an underline, so it doesn't rely on colour alone. */
+  .site-nav a[aria-current] {
+    color: var(--colors-action-primary);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.3em;
+  }
+
   /* Open-comment count beside Inbox. */
   .nav-count {
     display: inline-block;

@@ -56,7 +56,9 @@ class NavWordingTests(TestCase):
         for url, word in pages.items():
             with self.subTest(url=url):
                 response = self.client.get(url)
-                self.assertContains(response, f'<a href="{url}">{word}</a>', html=True)
+                self.assertContains(
+                    response, f'<a href="{url}" aria-current="page">{word}</a>', html=True
+                )
                 self.assertContains(response, f"<h1>{word}</h1>", html=True)
                 self.assertContains(response, f"<title>{word} — Precentor</title>", html=True)
 
@@ -187,6 +189,24 @@ class NavInboxCountTests(TestCase):
 
     def test_no_count_when_nothing_is_open(self):
         self.assertNotContains(self.client.get("/library/"), "nav-count")
+
+
+class NavCurrentSectionTests(TestCase):
+    setUp = NewAndEditWordingTests.setUp
+
+    def test_landing_page_link_is_the_current_page(self):
+        response = self.client.get("/")
+        self.assertContains(response, '<a href="/" aria-current="page">Terms</a>', html=True)
+        self.assertContains(response, '<a href="/library/">Library</a>', html=True)
+
+    def test_page_inside_a_section_marks_that_section(self):
+        # A service page belongs to Terms without being the Terms page.
+        response = self.client.get(self.service.get_absolute_url())
+        self.assertContains(response, '<a href="/" aria-current="true">Terms</a>', html=True)
+        response = self.client.get(self.score.get_absolute_url())
+        self.assertContains(
+            response, '<a href="/library/" aria-current="true">Library</a>', html=True
+        )
 
 
 class NavSettingsLinkTests(TestCase):
