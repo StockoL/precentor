@@ -171,12 +171,21 @@ than just descriptive.
 
 ### 3.6 "Last Sung"
 
-Derived from service history (the most recent service a Score was
-confirmed for), shown at a glance as a single date. Clicking through
-reveals the **complete history** of every occasion the piece has been
-sung — useful for a librarian or conductor checking how often something
-has been repeated over time. The same piece can fill several slots,
-or repeat across different services and terms.
+Derived from service history: the most recent service, on or before
+today, in which the piece was confirmed. A piece confirmed for a
+future service is scheduled, not sung, so it doesn't count yet. Like a
+service's status, it's worked out when the page loads and never
+stored, so it can't fall out of step with the planning data.
+
+A choir's history starts long before it begins using Precentor, so
+each score can also carry a manual "last sung" date for older records;
+the library shows whichever date is later. The library table shows it
+as a date with a rough interval ("Sun 4 Oct 2026, 3 weeks ago"), or
+"Never". Clicking through reveals the **complete history** of every
+occasion the piece has been sung — useful for a librarian or conductor
+checking how often something has been repeated over time. The same
+piece can fill several slots, or repeat across different services and
+terms.
 
 ## 4. The Public Music List
 
