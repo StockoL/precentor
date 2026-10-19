@@ -5,7 +5,57 @@
     <h1>{% if form.instance.pk %}Edit score{% else %}New score{% endif %}</h1>
     <form method="post" class="flow">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form.non_field_errors }}
+        {# Each field sits in a <div>; see "Forms" in docs/design_system.md. #}
+
+        <fieldset class="flow">
+            <legend>Identity</legend>
+            <div>{{ form.title.as_field_group }}</div>
+            <div>{{ form.composer_surname.as_field_group }}</div>
+            <div>{{ form.composer_other_names.as_field_group }}</div>
+            <div>{{ form.arranger.as_field_group }}</div>
+            <div>{{ form.editor.as_field_group }}</div>
+        </fieldset>
+
+        <fieldset class="flow">
+            <legend>Forces</legend>
+            <div>{{ form.voicing.as_field_group }}</div>
+            <div class="grid" style="--grid-min-item-size: 6rem;">
+                <div>{{ form.soprano_parts.as_field_group }}</div>
+                <div>{{ form.alto_parts.as_field_group }}</div>
+                <div>{{ form.tenor_parts.as_field_group }}</div>
+                <div>{{ form.bass_parts.as_field_group }}</div>
+            </div>
+            <div class="grid" style="--grid-min-item-size: 9rem;">
+                <div>{{ form.range_soprano.as_field_group }}</div>
+                <div>{{ form.range_alto.as_field_group }}</div>
+                <div>{{ form.range_tenor.as_field_group }}</div>
+                <div>{{ form.range_bass.as_field_group }}</div>
+            </div>
+        </fieldset>
+
+        <fieldset class="flow">
+            <legend>Library</legend>
+            <div>{{ form.language.as_field_group }}</div>
+            <div>{{ form.copies_owned.as_field_group }}</div>
+            <div>{{ form.filing_location.as_field_group }}</div>
+            <div>{{ form.duration_minutes.as_field_group }}</div>
+            <div>{{ form.last_sung_manual.as_field_group }}</div>
+        </fieldset>
+
+        <fieldset class="flow">
+            <legend>Liturgical use</legend>
+            <div>{{ form.suited_use_types.as_field_group }}</div>
+            <div>{{ form.suited_seasons.as_field_group }}</div>
+            <div>{{ form.suited_occasions.as_field_group }}</div>
+        </fieldset>
+
+        <fieldset class="flow">
+            <legend>Notes</legend>
+            <div>{{ form.background.as_field_group }}</div>
+            <div>{{ form.notes.as_field_group }}</div>
+        </fieldset>
+
         <button class="btn-primary" type="submit">Save</button>
     </form>
 </div>

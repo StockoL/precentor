@@ -28,6 +28,23 @@ class ScoreFormLabelTests(TestCase):
                 self.assertNotContains(response, old)
 
 
+class ScoreFormLayoutTests(TestCase):
+    def test_fields_are_grouped_and_none_are_missing(self):
+        from .forms import ScoreForm
+
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="testpass123")
+        )
+        response = self.client.get("/library/add/")
+        for legend in ("Identity", "Forces", "Library", "Liturgical use", "Notes"):
+            with self.subTest(legend=legend):
+                self.assertContains(response, f"<legend>{legend}</legend>", html=True)
+        # Every field in the form class appears in the hand-written layout.
+        for field in ScoreForm.Meta.fields:
+            with self.subTest(field=field):
+                self.assertContains(response, f'name="{field}"')
+
+
 class ScoreEditorTests(TestCase):
     def test_editor_can_be_recorded_from_the_form(self):
         self.client.force_login(

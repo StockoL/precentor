@@ -23,6 +23,18 @@
     margin-block-start: var(--spacing-l);
   }
 
+  /*
+   * A row of small fields side by side (the score's part counts and
+   * ranges). It stops at the same measure as single fields, so the form
+   * keeps one right-hand edge, and its fields line up along the bottom,
+   * so a field whose help text wraps doesn't push its input lower than
+   * its neighbours'.
+   */
+  form .grid {
+    max-width: var(--layout-measure);
+    align-items: end;
+  }
+
   form legend {
     padding: 0;
     margin-block-end: var(--spacing-2xs);
