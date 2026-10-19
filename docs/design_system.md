@@ -174,6 +174,11 @@ Garamond's 16th-century type, genuinely contemporary with the
 Reformation and early Anglican liturgy — a meaningful historical
 resonance rather than a fashion-of-the-moment choice.
 
+I chose it while Precentor still supported the Church of England
+calendar. Now that it's Catholic only, I've kept it: Garamond's type is
+just as much a contemporary of Palestrina and the Council of Trent, and
+it still suits a tool built around the liturgical year.
+
 `build-font-fallback.js` generates a metric-matched fallback
 `@font-face`, inserted between the real font and the generic system
 fallback in the font stack (e.g. `"EB Garamond", "EB Garamond
