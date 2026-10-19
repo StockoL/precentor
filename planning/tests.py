@@ -437,6 +437,26 @@ class PlanningFormLabelTests(TestCase):
         self.assertNotIn("Calendar use", term_form + service_form)
 
 
+class ServiceFormLayoutTests(TestCase):
+    def test_fields_are_grouped_in_fieldsets(self):
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="testpass123")
+        )
+        term = Term.objects.create(
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+        response = self.client.get(reverse("planning:service_create", args=[term.pk]))
+        for legend in ("When", "Liturgy", "Music list"):
+            with self.subTest(legend=legend):
+                self.assertContains(response, f"<legend>{legend}</legend>", html=True)
+        for field in ServiceForm.Meta.fields:
+            with self.subTest(field=field):
+                self.assertContains(response, f'name="{field}"')
+
+
 class DateInputValueTests(TestCase):
     """<input type="date"> only accepts an ISO value (YYYY-MM-DD).
     Django otherwise renders a date in the locale's first input format,

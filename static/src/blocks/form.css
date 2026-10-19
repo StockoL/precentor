@@ -10,6 +10,27 @@
    * same rendering. One definition here applies everywhere, rather
    * than styling each page's form individually.
    */
+  /* A group of related fields, titled by its legend. */
+  form fieldset {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  /* More room after a group than between the fields inside it, so the
+     groups read as separate. */
+  form > fieldset + * {
+    margin-block-start: var(--spacing-l);
+  }
+
+  form legend {
+    padding: 0;
+    margin-block-end: var(--spacing-2xs);
+    font-family: var(--fonts-heading);
+    font-size: var(--typography-step-1);
+    font-weight: 600;
+  }
+
   form label {
     display: block;
     font-weight: 600;

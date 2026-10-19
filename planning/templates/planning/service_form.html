@@ -5,14 +5,35 @@
     <h1>{% if form.instance.pk %}Edit service{% else %}New service{% if term %} in {{ term }}{% endif %}{% endif %}</h1>
     <form method="post" class="flow">
         {% csrf_token %}
-        {{ form.as_p }}
-        <div
-            id="occasion-suggestions"
-            class="flow"
-            style="--flow-space: var(--spacing-3xs);"
-            data-term-calendar-use="{{ term.calendar_use }}"
-            hidden
-        ></div>
+        {{ form.non_field_errors }}
+
+        <fieldset class="flow">
+            <legend>When</legend>
+            <div>{{ form.date.as_field_group }}</div>
+            <div>{{ form.service_type.as_field_group }}</div>
+        </fieldset>
+
+        <fieldset class="flow">
+            <legend>Liturgy</legend>
+            {# Filled by occasion-suggest.js when the date changes, so it sits just below the date. #}
+            <div
+                id="occasion-suggestions"
+                class="flow"
+                style="--flow-space: var(--spacing-3xs);"
+                data-term-calendar-use="{{ term.calendar_use }}"
+                hidden
+            ></div>
+            <div>{{ form.occasion.as_field_group }}</div>
+            <div>{{ form.additional_occasions.as_field_group }}</div>
+            <div>{{ form.calendar_use.as_field_group }}</div>
+        </fieldset>
+
+        <fieldset class="flow">
+            <legend>Music list</legend>
+            <div>{{ form.hymns.as_field_group }}</div>
+            <div>{{ form.psalm.as_field_group }}</div>
+        </fieldset>
+
         <button class="btn-primary" type="submit">Save</button>
     </form>
 </div>
