@@ -42,6 +42,18 @@ class ScoreEditorTests(TestCase):
         self.assertEqual(Score.objects.get().editor, "Stockton")
 
 
+class LastSungManualFieldTests(TestCase):
+    def test_form_offers_a_native_date_picker(self):
+        from datetime import date
+
+        from .forms import ScoreForm
+
+        score = Score(title="Ave verum", composer_surname="Byrd", last_sung_manual=date(2019, 6, 2))
+        field = str(ScoreForm(instance=score)["last_sung_manual"])
+        self.assertIn('type="date"', field)
+        self.assertIn('value="2019-06-02"', field)
+
+
 class ScoreDetailListTests(TestCase):
     def test_facts_are_a_description_list(self):
         self.client.force_login(

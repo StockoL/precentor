@@ -1,5 +1,7 @@
 from django import forms
 
+from precentor_project.widgets import NativeDateInput
+
 from .models import Score
 
 
@@ -24,4 +26,8 @@ class ScoreForm(forms.ModelForm):
             "suited_seasons",
             "suited_occasions",
             "duration_minutes",
+            "last_sung_manual",
         ]
+        widgets = {  # noqa
+            "last_sung_manual": NativeDateInput(),
+        }

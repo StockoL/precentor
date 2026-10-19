@@ -75,6 +75,15 @@ class Score(models.Model):
     duration_minutes = models.PositiveIntegerField(
         "duration (minutes)", blank=True, null=True
     )
+    # "Last sung" is derived from confirmed pieces in past services (see
+    # ScoreQuerySet.with_last_sung). This is only for history from before
+    # Precentor; the library shows whichever date is later.
+    last_sung_manual = models.DateField(
+        "last sung (before Precentor)",
+        blank=True,
+        null=True,
+        help_text="Only for history before Precentor. Later services are recorded automatically.",
+    )
     suited_use_types = models.ManyToManyField(
         "ordo.UseType",
         verbose_name="suitable uses",
