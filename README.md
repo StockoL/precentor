@@ -63,12 +63,25 @@ Two user roles, reflecting a genuine division of labour:
 
 | Role                        | Owns                                                                         | Can see                                               |
 | --------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------- |
-| **Conductor**               | Repertoire planning: proposing, confirming, un-confirming, marking roles N/A | Everything                                            |
+| **Conductor**               | Repertoire planning: proposing, confirming, unconfirming, marking slots N/A | Everything                                            |
 | **Librarian / Music Admin** | Physical library data: copies owned, filing location, condition              | Repertoire (read-only), physical library (read/write) |
 
 Both roles participate in a shared comment/query thread system (see §7).
 
 ## 3. Core Domain Concepts
+
+The interface uses the words a choir uses, and two of them differ from
+the model names in the code:
+
+| In the interface | In the code   | What it is                                      |
+| ---------------- | ------------- | ----------------------------------------------- |
+| Slot             | `ServiceRole` | A place in a service for music, e.g. Introit    |
+| Notice           | `TermMarker`  | A dated line on the music list, e.g. Half term  |
+
+I kept the model names, because renaming them would rename database
+tables without changing anything for the people using the app. Each
+field's label is set once on the model with `verbose_name`, so the
+forms and the admin both show the interface word.
 
 ### 3.1 Score
 
@@ -78,7 +91,7 @@ location, number of copies owned, and an optional **rehearsal lead-time
 tag** (see §3.5). Scores can be tagged with liturgical seasons/occasions
 they suit.
 
-### 3.2 Term, Service, and Role Slots
+### 3.2 Term, Service, and Slots
 
 A **Term** is simply a named container with a date range (e.g. "Lent
 2027"). Any number of terms can be open at once — the app makes no
@@ -92,10 +105,10 @@ A **Service** belongs to a Term, has a date, a type (Sung Mass,
 Vespers, etc.), and a liturgical occasion (see §3.4). It also
 carries optional free-text **hymns** and **psalm** fields — genuinely
 simple reference fields, deliberately kept outside the propose/confirm
-workflow that governs Setting/Anthem-type roles, since hymn numbers
+workflow that governs slots such as the Mass setting, since hymn numbers
 and a psalm reference don't need a shortlist or a confirmation step.
 
-Each service is made up of musical **role slots**, added per service:
+Each service is made up of musical **slots**, added per service:
 a Sung Mass might have a _Mass setting_, an _Introit_, an _Offertory
 motet_ and a _Communion_; Vespers might have a _Magnificat_ and a motet.
 Slot names are free text, because practice varies from church to
@@ -112,21 +125,21 @@ service. They're a natural "future development".
 
 ### 3.3 Proposing and Confirming
 
-Each role slot holds a **shortlist of proposed pieces** (e.g. two anthem
-options still being weighed up). Confirmation happens **per piece**, not
-per role or per service — this allows realistic cases like two anthems
-in one service, or a mixed setting. A confirmed piece can always be
-**un-confirmed** again; nothing is a one-way door.
+Each slot holds a **shortlist of proposed pieces** (e.g. two motets
+still being weighed up). Confirmation happens **per piece**, not per
+slot or per service — this allows realistic cases like two motets in
+one service, or a mixed setting. A confirmed piece can always be
+**unconfirmed** again; nothing is a one-way door.
 
-Marking a role **N/A** is itself treated as an active planning decision,
+Marking a slot **N/A** is itself treated as an active planning decision,
 equivalent to confirming — it means "I've considered this and there's
 deliberately nothing here," not "nothing has happened yet."
 
 A service's overall status is **derived**, not stored directly:
 
 - **Not started** — no candidates anywhere
-- **In progress** — some roles still only have proposed (unconfirmed) pieces
-- **Complete** — every role is either confirmed or marked N/A
+- **In progress** — some slots still only have proposed (unconfirmed) pieces
+- **Complete** — every slot is either confirmed or marked N/A
 
 This derived status is what powers the term-level "at a glance" view,
 letting a conductor scan a term and instantly see which services still
@@ -160,8 +173,8 @@ Derived from service history (the most recent service a Score was
 confirmed for), shown at a glance as a single date. Clicking through
 reveals the **complete history** of every occasion the piece has been
 sung — useful for a librarian or conductor checking how often something
-has been repeated over time. The same piece can validly serve multiple
-roles or repeat across different services and terms.
+has been repeated over time. The same piece can fill several slots,
+or repeat across different services and terms.
 
 ## 4. The Public Music List
 
@@ -178,7 +191,7 @@ current state:
   generation. Once a list has been shared or printed, its lifecycle
   belongs to whoever received it; the app is only concerned with "now."
 - **Partial generation is allowed** — a still-in-progress term can still
-  produce a useful internal document. Unconfirmed/proposed roles render
+  produce a useful internal document. Unconfirmed/proposed slots render
   as a visible **blank**, clearly marked with a **"TBC" watermark**,
   removing any ambiguity about whether something is deliberately absent
   (N/A) or simply not yet decided. This distinction matters: a public
@@ -193,11 +206,11 @@ current state:
   internal draft view always uses the simple layout regardless of that
   setting, since draft mode is for quickly spotting what's still TBC,
   not for final presentation.
-- **One-off notes alongside services** — a **Term Marker** lets a
+- **One-off notices alongside services** — a **notice** lets a
   conductor drop free text at a specific date (e.g. "Choir resumes
   services on 22nd February") into the same timeline as services, for
   the odd occasion — half-term, a retreat — that isn't itself a
-  service needing its own role slots.
+  service needing its own slots.
 - **Site-wide branding, set once** — a single site-configuration record
   (church name, crest image, house accent colour, plus the layout and
   hymns/psalm-visibility toggles above) is set once via a
@@ -219,7 +232,7 @@ The conductor/librarian split isn't just about visibility — it mirrors
 a real division of labour: **the conductor decides, the librarian
 fulfils.** The librarian has genuine ownership of the physical library
 side (which the conductor generally doesn't touch), while repertoire
-decisions (propose/confirm/un-confirm/N/A) remain the conductor's alone,
+decisions (propose/confirm/unconfirm/N/A) remain the conductor's alone,
 with the librarian able to see everything but change none of it.
 
 ## 6. Comment/Query Threads
@@ -256,7 +269,7 @@ This remains a **"should have,"** not core to MVP.
 **Must have (the spine)**
 
 - Score CRUD (title, composer/arranger, voicing, language, difficulty/lead-time, duration)
-- Term → Service structure, with role slots per service
+- Term → Service structure, with slots per service
 - Filter scores by voicing
 - "Last sung" derived from service history
 - Basic liturgical season tagging and filtering
@@ -296,12 +309,12 @@ This remains a **"should have,"** not core to MVP.
 - Precise double-choir voicing modelling (e.g. distinguishing which
   parts belong to which of two choirs) — captured accurately in the
   free-text voicing field only, not as structured, queryable data
-- Per-role-type permissions (e.g. a distinct user, such as a parish
-  secretary, who can edit only the "Hymns" role slot while the
-  conductor controls Anthem/Setting). In some real churches, hymn
+- Per-slot permissions (e.g. a distinct user, such as a parish
+  secretary, who can edit only a "Hymns" slot while the conductor
+  controls the Mass setting and motets). In some real churches, hymn
   selection genuinely sits outside the conductor's remit — but
   modelling that would mean permission checks keyed to individual
-  role names rather than a fixed Conductor/Librarian split, a
+  slot names rather than a fixed Conductor/Librarian split, a
   meaningfully bigger structural change than MVP calls for. The
   current two-role split (Conductor: full access; Librarian: full
   access to the Score library, read-only on repertoire planning)
@@ -336,7 +349,7 @@ choices, not oversights, when this document is read by an assessor.
   GitHub) — the entity relationship diagram covering Score, Term,
   Service, Service Role, Role Piece, Ordo (Liturgical Occasion), User,
   and Comment, along with notes on a couple of deliberate
-  simplifications — notably that role slots are added per service
+  simplifications — notably that slots are added per service
   with no template table, and that Comment's polymorphic
   relationship is drawn as three edges there for readability, though
   it's implemented as a single Django `GenericForeignKey` relationship.
