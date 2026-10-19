@@ -1,11 +1,21 @@
 from django import forms
 
+from ordo.models import UseType
 from precentor_project.widgets import NativeDateInput
 
 from .models import Score
 
 
 class ScoreForm(forms.ModelForm):
+    # Use types are plain labels, so new ones can be typed in and are
+    # created on save. Seasons and occasions are pick-only: an occasion
+    # carries a date rule, so a made-up one would have no date.
+    new_use_types = forms.CharField(
+        label="Other uses",
+        required=False,
+        help_text="Not in the list? Type new ones, separated by commas.",
+    )
+
     class Meta:
         model = Score
         fields = [  # noqa
@@ -40,3 +50,38 @@ class ScoreForm(forms.ModelForm):
             # score_form.html), so SATB and S.A.T.B. don't split in two.
             "voicing": forms.TextInput(attrs={"list": "voicing-options"}),
         }
+
+    def clean_new_use_types(self):
+        """The typed names, trimmed, blanks dropped, each once whatever
+        its case."""
+        names = []
+        for name in self.cleaned_data["new_use_types"].split(","):
+            name = " ".join(name.split())
+            if name and name.lower() not in (n.lower() for n in names):
+                names.append(name)
+        return names
+
+    def add_new_use_types(self, score):
+        """Tag the score with each typed use type, reusing an existing one
+        whose name matches in any case ("mass" finds "Mass")."""
+        for name in self.cleaned_data.get("new_use_types", []):
+            use_type = UseType.objects.filter(name__iexact=name).first()
+            if use_type is None:
+                use_type = UseType.objects.create(name=name)
+            score.suited_use_types.add(use_type)
+
+    def save(self, commit=True):
+        score = super().save(commit=commit)
+        if commit:
+            self.add_new_use_types(score)
+        else:
+            # With commit=False, Django saves many-to-many links later in
+            # save_m2m(), so the new use types are added then too.
+            save_m2m = self.save_m2m
+
+            def save_m2m_and_new_use_types():
+                save_m2m()
+                self.add_new_use_types(score)
+
+            self.save_m2m = save_m2m_and_new_use_types
+        return score

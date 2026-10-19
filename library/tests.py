@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from ordo.models import LiturgicalOccasion
+from ordo.models import LiturgicalOccasion, UseType
 
 from .models import Score
 
@@ -57,6 +57,56 @@ class VoicingSuggestionTests(TestCase):
         self.assertContains(response, '<option value="SATB"></option>', count=1, html=True)
         self.assertContains(response, '<option value="SSA"></option>', count=1, html=True)
         self.assertNotContains(response, '<option value=""></option>', html=True)
+
+
+class NewUseTypeTests(TestCase):
+    """Use types can be typed in on the score form and are created on save."""
+
+    BASE = {
+        "title": "Ave verum", "composer_surname": "Byrd", "voicing": "SATB",
+        "language": "Latin", "soprano_parts": 1, "alto_parts": 1, "tenor_parts": 1,
+        "bass_parts": 1, "copies_owned": 0,
+    }
+
+    def save(self, new_use_types, **extra):
+        from .forms import ScoreForm
+
+        form = ScoreForm(data={**self.BASE, "new_use_types": new_use_types, **extra})
+        self.assertTrue(form.is_valid(), form.errors)
+        return form.save()
+
+    def names(self, score):
+        return sorted(score.suited_use_types.values_list("name", flat=True))
+
+    def test_new_names_are_created_and_tagged(self):
+        score = self.save("Benediction, Funeral")
+        self.assertEqual(self.names(score), ["Benediction", "Funeral"])
+        self.assertTrue(UseType.objects.filter(name="Benediction").exists())
+
+    def test_an_existing_name_is_reused_whatever_its_case(self):
+        before = UseType.objects.count()
+        score = self.save("mass,  VESPERS ")
+        self.assertEqual(self.names(score), ["Mass", "Vespers"])  # the seeded rows
+        self.assertEqual(UseType.objects.count(), before)
+
+    def test_blanks_and_repeats_are_ignored_and_spaces_tidied(self):
+        score = self.save(" ,  Wedding   Mass , wedding mass,, ")
+        self.assertEqual(self.names(score), ["Wedding Mass"])
+
+    def test_works_alongside_picked_use_types(self):
+        general = UseType.objects.get(name="General use")
+        score = self.save("Benediction", suited_use_types=[general.pk])
+        self.assertEqual(self.names(score), ["Benediction", "General use"])
+
+    def test_commit_false_adds_them_with_save_m2m(self):
+        from .forms import ScoreForm
+
+        form = ScoreForm(data={**self.BASE, "new_use_types": "Benediction"})
+        self.assertTrue(form.is_valid())
+        score = form.save(commit=False)
+        score.save()
+        form.save_m2m()
+        self.assertEqual(self.names(score), ["Benediction"])
 
 
 class ScoreEditorTests(TestCase):
