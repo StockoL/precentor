@@ -7,13 +7,30 @@ LAYOUT_STYLE_CHOICES = [
 
 
 class SiteConfig(models.Model):
-    church_name = models.CharField(max_length=200, blank=True)
-    crest_image = models.ImageField(upload_to="site_config/", blank=True)
-    house_accent_colour = models.CharField(max_length=7, default="#8b1a2b")
-    layout_style = models.CharField(
-        max_length=20, choices=LAYOUT_STYLE_CHOICES, default="columns"
+    church_name = models.CharField(
+        max_length=200, blank=True, help_text="Shown at the top of the music list."
     )
-    show_hymns_psalm = models.BooleanField(default=True)
+    crest_image = models.ImageField(
+        "crest",
+        upload_to="site_config/",
+        blank=True,
+        help_text="Shown at the top of the music list, cropped to a banner shape.",
+    )
+    house_accent_colour = models.CharField(
+        "accent colour",
+        max_length=7,
+        default="#8b1a2b",
+        help_text="Used for services without an occasion colour.",
+    )
+    layout_style = models.CharField(
+        "music list layout",
+        max_length=20,
+        choices=LAYOUT_STYLE_CHOICES,
+        default="columns",
+    )
+    show_hymns_psalm = models.BooleanField(
+        "show hymns and psalm on the music list", default=True
+    )
 
     def save(self, *args, **kwargs):
         # Enforce singleton regardless of how this is constructed.
