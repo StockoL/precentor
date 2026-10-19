@@ -66,10 +66,10 @@ function initServiceDetail() {
         // the role blocks that were already there.
         initScorePickers(list);
         form.reset();
-        showToast("Role added.", "success");
+        showToast("Slot added.", "success");
       } catch (err) {
         if (err instanceof AjaxError) applyFragments(err.data.fragments);
-        else showToast("Couldn't add that role — try again.", "danger");
+        else showToast("Couldn't add that slot — try again.", "danger");
       }
     }
   });

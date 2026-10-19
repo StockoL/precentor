@@ -29,18 +29,18 @@
     </div>
 
     <div class="flow">
-        <h2>Roles</h2>
+        <h2>Slots</h2>
         <div id="roles-list" class="flow">
             {% for role in roles %}
             {% include "planning/_role_block.html" %}
             {% empty %}
-            <p id="roles-list-empty">No roles yet.</p>
+            <p id="roles-list-empty">No slots yet.</p>
             {% endfor %}
         </div>
     </div>
 
     <div class="flow">
-        <h2>Add a role</h2>
+        <h2>Add a slot</h2>
         {% include "planning/_add_role_form.html" with form=role_form %}
     </div>
 </div>

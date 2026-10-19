@@ -144,7 +144,7 @@ class AddRoleBrowserTest(PlaywrightTestCase):
         assert "Anthem" in self.page.inner_text(f"#role-block-{role.pk}")
 
         self.page.wait_for_selector(".toast--success")
-        assert "Role added" in self.page.inner_text(".toast--success")
+        assert "Slot added" in self.page.inner_text(".toast--success")
 
 
 class ScoreComboboxBrowserTest(PlaywrightTestCase):

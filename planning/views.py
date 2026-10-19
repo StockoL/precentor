@@ -171,7 +171,7 @@ def add_role(request, service_pk):
     }
     return ajax_or_redirect(
         request, fragments, service.get_absolute_url(),
-        error_message="Couldn't add that role — please check the form.", status=400,
+        error_message="Couldn't add that slot — please check the form.", status=400,
     )
 
 

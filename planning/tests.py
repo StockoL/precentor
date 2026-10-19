@@ -238,7 +238,7 @@ class RolePieceWorkflowTests(TestCase):
         self.assertEqual(self.service.roles.count(), 0)
         messages = list(response.context["messages"])
         self.assertEqual(len(messages), 1)
-        self.assertIn("Couldn't add that role", str(messages[0]))
+        self.assertIn("Couldn't add that slot", str(messages[0]))
 
 
 class ServiceDetailProposePieceRankingTests(TestCase):
@@ -273,6 +273,32 @@ class ServiceDetailProposePieceRankingTests(TestCase):
         queryset = list(response.context["roles"][0].piece_form.fields["score"].queryset)
         self.assertEqual(queryset[0], self.matching)
         self.assertIn(self.untagged, queryset)
+
+
+class SlotWordingTests(TestCase):
+    """A ServiceRole is called a slot in the UI; the model keeps its name."""
+
+    def test_service_page_says_slot_not_role(self):
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="testpass123")
+        )
+        term = Term.objects.create(
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+        service = Service.objects.create(
+            term=term, date=date(2026, 1, 11), service_type="Sung Mass"
+        )
+        response = self.client.get(service.get_absolute_url())
+        for text in ("<h2>Slots</h2>", "<h2>Add a slot</h2>", ">Add slot</button>",
+                     ">Slot:</label>", ">Not needed (N/A):</label>"):
+            with self.subTest(text=text):
+                self.assertContains(response, text)
+        for text in ("<h2>Roles</h2>", "Add a role", ">Add role<", "Role name"):
+            with self.subTest(text=text):
+                self.assertNotContains(response, text)
 
 
 class DateInputValueTests(TestCase):
