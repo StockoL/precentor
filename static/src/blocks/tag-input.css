@@ -1,0 +1,72 @@
+/* ==========================================================================
+   BLOCK: TAG INPUT
+   Chips for the chosen items, a search box, and a list of matches
+   below it (tag-input.js, over the score form's "suitable for" selects).
+   ========================================================================== */
+
+@layer blocks {
+  .tag-input {
+    position: relative;
+    max-width: var(--layout-measure);
+  }
+
+  .tag-input__chips {
+    --gutter: var(--spacing-3xs);
+    margin: 0 0 var(--spacing-2xs);
+    padding: 0;
+  }
+
+  /*
+   * Each chip is a button that removes it. It overrides the button
+   * block's control height and padding to stay a small chip, and gets
+   * its own :hover because button:hover outranks this class.
+   */
+  .tag-input__chip {
+    min-block-size: auto;
+    padding-block: var(--spacing-3xs);
+    padding-inline: var(--spacing-2xs);
+    border: 1px solid var(--colors-border-strong);
+    border-radius: 999px;
+    background-color: var(--colors-surface-sunken);
+    color: var(--colors-text-base);
+    font-size: var(--typography-step--2);
+  }
+
+  .tag-input__chip::after {
+    content: " ×";
+    content: " ×" / "";
+  }
+
+  .tag-input__chip:hover {
+    border-color: var(--colors-danger-text);
+    background-color: var(--colors-danger-bg);
+  }
+
+  .tag-input__listbox {
+    position: absolute;
+    inset-inline: 0;
+    z-index: 10;
+    margin: var(--spacing-3xs) 0 0;
+    max-height: 14rem;
+    overflow-y: auto;
+    list-style: none;
+    padding: var(--spacing-3xs);
+    border: 1px solid var(--colors-border-subtle);
+    border-radius: 10px;
+    background-color: var(--colors-surface-base);
+    box-shadow: 0 4px 12px rgba(24, 24, 27, 0.12);
+  }
+
+  .tag-input__listbox li {
+    max-width: none;
+    padding-block: var(--spacing-3xs);
+    padding-inline: var(--spacing-xs);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .tag-input__listbox li[aria-selected="true"],
+  .tag-input__listbox li:hover {
+    background-color: var(--colors-surface-sunken);
+  }
+}

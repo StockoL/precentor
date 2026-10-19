@@ -50,10 +50,11 @@
 
         <fieldset class="flow">
             <legend>Liturgical use</legend>
-            <div>{{ form.suited_use_types.as_field_group }}</div>
-            <div>{{ form.new_use_types.as_field_group }}</div>
-            <div>{{ form.suited_seasons.as_field_group }}</div>
-            <div>{{ form.suited_occasions.as_field_group }}</div>
+            {# tag-input.js turns each data-tag-input select into chips. Uses also accept new names, written into the Other uses field, which the script hides; without JavaScript both stay as they are. #}
+            <div data-tag-input data-new-into="{{ form.new_use_types.id_for_label }}">{{ form.suited_use_types.as_field_group }}</div>
+            <div data-new-field>{{ form.new_use_types.as_field_group }}</div>
+            <div data-tag-input>{{ form.suited_seasons.as_field_group }}</div>
+            <div data-tag-input>{{ form.suited_occasions.as_field_group }}</div>
         </fieldset>
 
         <fieldset class="flow">
