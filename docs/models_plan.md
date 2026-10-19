@@ -53,6 +53,7 @@ class Score(models.Model):
     composer_surname = models.CharField(max_length=100)
     composer_other_names = models.CharField(max_length=100, blank=True)
     arranger = models.CharField(max_length=200, blank=True)
+    editor = models.CharField(max_length=200, blank=True)
     voicing = models.CharField(max_length=50)  # free text, e.g. "SATB", "SSATB", "SATB.SATB"
     soprano_parts = models.PositiveSmallIntegerField(default=0)
     alto_parts = models.PositiveSmallIntegerField(default=0)
@@ -62,6 +63,7 @@ class Score(models.Model):
     copies_owned = models.PositiveIntegerField(default=0)
     filing_location = models.CharField(max_length=100, blank=True)
     duration_minutes = models.PositiveIntegerField(blank=True, null=True)
+    last_sung_manual = models.DateField(blank=True, null=True)  # history before Precentor
     suited_use_types = models.ManyToManyField("ordo.UseType", blank=True, related_name="suited_scores")
     suited_seasons = models.ManyToManyField("ordo.LiturgicalSeason", blank=True, related_name="suited_scores")
     suited_occasions = models.ManyToManyField("ordo.LiturgicalOccasion", blank=True, related_name="suited_scores")
@@ -71,13 +73,49 @@ class Score(models.Model):
         """"{other_names} {surname}", or just the surname if no other
         names were given — the display form used everywhere else."""
         ...
+
+    @property
+    def composer_catalogue(self):
+        """Surname first, with any arranger and editor in brackets:
+        "Palestrina, Giovanni Pierluigi da (ed. Stockton)"."""
+        ...
+
+    class Meta:
+        ordering = ["composer_surname", "composer_other_names", "title"]
 ```
+
+**Editor alongside arranger:** an arranger changes the music, an
+editor prepares an edition of it, so they're separate fields. The
+library table shows both in the composer column, catalogue style.
+
+**Catalogue order:** scores are ordered by composer surname, then
+other names (which keeps the Bachs apart), then title, as a library
+catalogue would be.
+
+**Last sung, derived:** never stored, for the same reason as
+`Service.status`. `ScoreQuerySet.with_last_sung()` annotates each score
+with the latest date of a confirmed piece in a service dated on or
+before today; a confirmed piece in a future service is scheduled, not
+sung. `last_sung_manual` covers history from before Precentor, and the
+later of the two dates wins. It's a `Subquery`, not a `Max()` over a
+join, so it can't be thrown off by other joins on the same query, and
+it looks `RolePiece` up by name with `apps.get_model()` because
+`library` mustn't import from `planning`. Each side of `Greatest()` is
+wrapped in `Coalesce()`, because SQLite returns NULL when any argument
+is NULL while PostgreSQL ignores it; the coalescing gives the same
+answer on both.
+
+**Search and voicing:** `ScoreQuerySet.search(query)` needs every word
+to match somewhere in the title, composer names, arranger or editor (an
+AND of ORs), and `with_voicing(voicing)` takes one voicing or `"mixed"`
+for scores with all four parts. The view stays thin and each piece is
+tested on its own.
 
 **Composer split, surname required:** `composer` was originally one free-text field; it's now `composer_surname` (required) and `composer_other_names` (optional), so cataloguing/searching by surname alone always works even when a full name isn't known. `composer` lives on as a read-only property for display and `__str__`, not a database column — admin `search_fields` and any filtering must target the two real fields instead.
 
 **`lead_time_tag` removed:** dropped as unnecessary micromanagement — the field added a rehearsal-scheduling axis nothing else in the app used or surfaced.
 
-**Three-tier suitability tagging, ranking not filtering:** `suited_use_types` / `suited_seasons` / `suited_occasions` are three genuinely distinct kinds of fact (a service's structural type, a broad calendar season, a specific named day), not one generic tag concept. `Score.objects` uses a custom `ScoreQuerySet.ranked_by_suitability(occasion=, season=, use_type=)` that annotates an `is_suited` flag and sorts matching scores to the top — it never filters, since an untagged score might still be the right choice and the tool shouldn't claim to know otherwise. Each field carries `help_text` with examples (e.g. "Mass, Vespers, General use") since the underlying `UseType`/`LiturgicalSeason` vocab is otherwise invisible until populated — `ordo`'s `0004_seed_use_types_and_seasons` data migration seeds a starter set of both, revised for the Catholic-only scope by `0008` to `0010` (real `LiturgicalOccasion` data remains the separate, larger content task noted below).
+**Three-tier suitability tagging, ranking not filtering:** `suited_use_types` / `suited_seasons` / `suited_occasions` are three genuinely distinct kinds of fact (a service's structural type, a broad calendar season, a specific named day), not one generic tag concept. `Score.objects` uses a custom `ScoreQuerySet.ranked_by_suitability(occasion=, season=, use_type=)` that annotates an `is_suited` flag and sorts matching scores to the top — it never filters, since an untagged score might still be the right choice and the tool shouldn't claim to know otherwise. Each condition is a `pk__in` subquery ("is this score among those tagged X?"); an earlier version joined through the tags, which listed a score with several tags once per tag. Each field carries `help_text` with examples (e.g. "Mass, Vespers, General use") since the underlying `UseType`/`LiturgicalSeason` vocab is otherwise invisible until populated — `ordo`'s `0004_seed_use_types_and_seasons` data migration seeds a starter set of both, revised for the Catholic-only scope by `0008` to `0010` (real `LiturgicalOccasion` data remains the separate, larger content task noted below).
 
 **Voicing design decision:** an earlier version of this plan used a fixed
 `choices` list for `voicing` (SATB, SATTB, unison, etc.). This was
