@@ -2,16 +2,17 @@
 {% block title %}{{ term }} — Precentor{% endblock %}
 {% block content %}
 <div class="flow">
-    <h1>{{ term }}</h1>
+    <header class="page-header">
+        <h1>{{ term }}</h1>
+        <div class="page-header__actions">
+            <a class="btn-primary" href="{% url 'planning:service_create' term.pk %}">New service</a>
+            <a class="btn" href="{% url 'planning:marker_create' term.pk %}">New notice</a>
+            <a class="btn" href="{% url 'planning:term_music_list' term.pk %}">Music list</a>
+            <a class="btn-ghost" href="{% url 'planning:term_update' term.pk %}">Edit term</a>
+            <a class="btn-danger" href="{% url 'planning:term_delete' term.pk %}">Delete term</a>
+        </div>
+    </header>
     <p>{{ term.start_date|date }} to {{ term.end_date|date }}</p>
-
-    <div class="cluster">
-        <a class="btn-ghost" href="{% url 'planning:term_update' term.pk %}">Edit term</a>
-        <a class="btn-danger" href="{% url 'planning:term_delete' term.pk %}">Delete term</a>
-        <a href="{% url 'planning:service_create' term.pk %}">New service</a>
-        <a href="{% url 'planning:marker_create' term.pk %}">New notice</a>
-        <a href="{% url 'planning:term_music_list' term.pk %}">Music list</a>
-    </div>
 
     <div class="flow">
         <h2>Services</h2>

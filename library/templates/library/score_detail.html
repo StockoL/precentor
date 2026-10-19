@@ -2,7 +2,13 @@
 {% block title %}{{ score }} — Precentor{% endblock %}
 {% block content %}
 <div class="flow">
-    <h1>{{ score }}</h1>
+    <header class="page-header">
+        <h1>{{ score }}</h1>
+        <div class="page-header__actions">
+            <a class="btn-ghost" href="{% url 'library:score_update' score.pk %}">Edit</a>
+            <a class="btn-danger" href="{% url 'library:score_delete' score.pk %}">Delete</a>
+        </div>
+    </header>
 
     <div class="flow" style="--flow-space: var(--spacing-3xs);">
         <h2>About this score</h2>
@@ -19,9 +25,5 @@
         <p>Filing location: {{ score.filing_location|default:"—" }}</p>
     </div>
 
-    <div class="cluster">
-        <a class="btn-ghost" href="{% url 'library:score_update' score.pk %}">Edit</a>
-        <a class="btn-danger" href="{% url 'library:score_delete' score.pk %}">Delete</a>
-    </div>
 </div>
 {% endblock %}
