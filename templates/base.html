@@ -58,16 +58,16 @@
 <body>
     <a class="skip-link" href="#main">Skip to main content</a>
     <header class="wrapper">
-        <nav class="site-nav cluster" style="--cluster-justify: space-between;">
+        <nav class="site-nav cluster" style="--cluster-justify: space-between;" aria-label="Main">
             <a href="{% url 'planning:term_list' %}">Precentor</a>
             <div class="cluster" style="--gutter: var(--spacing-s);">
+                {% if user.is_authenticated %}
                 <a href="{% url 'planning:term_list' %}">Terms</a>
                 <a href="{% url 'library:score_list' %}">Library</a>
                 <a href="{% url 'comments:inbox' %}">Inbox{% if open_comment_count %} <span class="nav-count">{{ open_comment_count }}<span class="visually-hidden"> open</span></span>{% endif %}</a>
                 {% if is_conductor %}
                 <a href="{% url 'core:site_config_update' %}">Settings</a>
                 {% endif %}
-                {% if user.is_authenticated %}
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
                     <button type="submit">Log out</button>

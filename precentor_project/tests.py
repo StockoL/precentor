@@ -12,6 +12,17 @@ class BaseTemplateTests(TestCase):
     def setUp(self):
         self.response = self.client.get("/accounts/login/")
 
+    def test_nav_is_labelled(self):
+        self.assertContains(self.response, 'aria-label="Main"')
+
+    def test_logged_out_nav_offers_only_log_in(self):
+        # Every other page needs a login, so its link would only bounce
+        # the visitor back here.
+        for href in ("/library/", "/comments/inbox/", "/settings/"):
+            with self.subTest(href=href):
+                self.assertNotContains(self.response, f'href="{href}"')
+        self.assertContains(self.response, 'href="/accounts/login/"')
+
     def test_viewport_meta_tag_present(self):
         # Without it, phones lay the page out at desktop width and zoom
         # out, so the fluid type scale and media queries never apply.
