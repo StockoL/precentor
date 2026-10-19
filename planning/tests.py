@@ -306,6 +306,54 @@ class ServiceDetailListTests(TestCase):
         self.assertNotContains(response, "<p>Term:")
 
 
+class DeletionSummaryTests(TestCase):
+    def setUp(self):
+        from comments.models import Comment
+
+        self.user = User.objects.create_superuser(username="admin", password="testpass123")
+        self.term = Term.objects.create(
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+        self.service = Service.objects.create(
+            term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"
+        )
+        Service.objects.create(term=self.term, date=date(2026, 1, 18), service_type="Vespers")
+        score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        setting = ServiceRole.objects.create(service=self.service, role_name="Setting")
+        ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
+        piece = RolePiece.objects.create(service_role=setting, score=score)
+        RolePiece.objects.create(service_role=setting, score=score)
+        TermMarker.objects.create(term=self.term, date=date(2026, 2, 16), text="Half term")
+        # One comment at each level: term, service and piece.
+        for target in (self.term, self.service, piece):
+            Comment.objects.create(author=self.user, body="Query", target=target)
+
+    def test_term_summary_counts_everything_it_takes_with_it(self):
+        self.assertEqual(
+            self.term.deletion_summary(),
+            [(2, "service"), (2, "slot"), (2, "proposed piece"), (1, "notice"), (3, "comment")],
+        )
+
+    def test_service_summary_leaves_out_what_it_has_none_of(self):
+        self.assertEqual(
+            self.service.deletion_summary(),
+            [(2, "slot"), (2, "proposed piece"), (2, "comment")],
+        )
+        empty = Service.objects.get(service_type="Vespers")
+        self.assertEqual(empty.deletion_summary(), [])
+
+    def test_delete_page_lists_the_counts(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("planning:term_delete", args=[self.term.pk]))
+        for line in ("2 services", "2 slots", "2 proposed pieces", "1 notice", "3 comments"):
+            with self.subTest(line=line):
+                self.assertContains(response, f"<li>{line}</li>", html=True)
+        self.assertContains(response, "This can't be undone.")
+
+
 class SlotWordingTests(TestCase):
     """A ServiceRole is called a slot in the UI; the model keeps its name."""
 

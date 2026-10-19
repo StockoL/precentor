@@ -3,6 +3,7 @@
 {% block content %}
 <div class="flow">
     <h1>Delete "{{ term }}"?</h1>
+    {% include "planning/_deletion_summary.html" with summary=term.deletion_summary %}
     <div class="cluster">
         <form method="post">
             {% csrf_token %}

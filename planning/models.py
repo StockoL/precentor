@@ -1,9 +1,23 @@
+from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.urls import reverse
 from django.utils.formats import date_format
 
 from ordo.models import CALENDAR_USE_CHOICES
+
+
+def comment_count_on(model, pks):
+    """
+    How many comments are attached to the given objects of one model.
+    Comments link through a generic relation, so this filters on the
+    content type and the ids: one query per model, not one per object.
+    """
+    Comment = apps.get_model("comments", "Comment")
+    return Comment.objects.filter(
+        content_type=ContentType.objects.get_for_model(model), object_id__in=pks
+    ).count()
 
 
 class Term(models.Model):
@@ -31,6 +45,31 @@ class Term(models.Model):
             "in_progress": statuses.count("in_progress"),
             "not_started": statuses.count("not_started"),
         }
+
+    def deletion_summary(self):
+        """
+        What deleting this term takes with it, for the confirmation page:
+        (count, noun) pairs, leaving out anything there's none of.
+        """
+        service_pks = list(self.services.values_list("pk", flat=True))
+        piece_pks = list(
+            RolePiece.objects.filter(service_role__service__term=self).values_list(
+                "pk", flat=True
+            )
+        )
+        counts = [
+            (len(service_pks), "service"),
+            (ServiceRole.objects.filter(service__term=self).count(), "slot"),
+            (len(piece_pks), "proposed piece"),
+            (self.markers.count(), "notice"),
+            (
+                self.comments.count()
+                + comment_count_on(Service, service_pks)
+                + comment_count_on(RolePiece, piece_pks),
+                "comment",
+            ),
+        ]
+        return [(count, noun) for count, noun in counts if count]
 
     class Meta:
         ordering = ["start_date"]  # noqa
@@ -95,6 +134,20 @@ class Service(models.Model):
 
     def effective_calendar_use(self):
         return self.calendar_use or self.term.calendar_use
+
+    def deletion_summary(self):
+        """What deleting this service takes with it; see Term's version."""
+        piece_pks = list(
+            RolePiece.objects.filter(service_role__service=self).values_list(
+                "pk", flat=True
+            )
+        )
+        counts = [
+            (self.roles.count(), "slot"),
+            (len(piece_pks), "proposed piece"),
+            (self.comments.count() + comment_count_on(RolePiece, piece_pks), "comment"),
+        ]
+        return [(count, noun) for count, noun in counts if count]
 
     @property
     def status(self):

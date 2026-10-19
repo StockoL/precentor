@@ -3,10 +3,13 @@
 {% block content %}
 <div class="flow">
     <h1>Delete "{{ service }}"?</h1>
-    <form method="post">
-        {% csrf_token %}
-        <button class="btn-danger" type="submit">Yes, delete</button>
-    </form>
-    <a class="btn-ghost" href="{{ service.get_absolute_url }}">Cancel</a>
+    {% include "planning/_deletion_summary.html" with summary=service.deletion_summary %}
+    <div class="cluster">
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn-danger" type="submit">Yes, delete</button>
+        </form>
+        <a class="btn-ghost" href="{{ service.get_absolute_url }}">Cancel</a>
+    </div>
 </div>
 {% endblock %}

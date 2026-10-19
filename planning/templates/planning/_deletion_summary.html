@@ -1,0 +1,12 @@
+{# What a delete takes with it. summary is a list of (count, noun) pairs from a model's deletion_summary(). #}
+{% if summary %}
+<p>This will also delete:</p>
+<ul>
+    {% for count, noun in summary %}
+    <li>{{ count }} {{ noun }}{{ count|pluralize }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>Nothing else is attached to it.</p>
+{% endif %}
+<p><strong>This can't be undone.</strong></p>
