@@ -233,10 +233,11 @@ static/
 │   │   └── cover.css          # added mid-project, not in the original
 │   │                           # looseleaf-ui set — see below
 │   ├── blocks/
-│   │   ├── badge.css / comment-card.css / form.css / button.css
-│   │   ├── nav.css / role-block.css / term-summary.css
-│   │   ├── music-list.css / liturgical-accent.css
-│   │   ├── score-combobox.css / crest-crop.css
+│   │   ├── badge.css / button.css / card.css / comment-card.css
+│   │   ├── form.css / list-row.css / nav.css / role-block.css
+│   │   ├── music-list.css / liturgical-accent.css / term-summary.css
+│   │   ├── score-combobox.css / crest-crop.css / toast.css
+│   │   └── skip-link.css
 │   └── utilities/
 │       └── utilities.css
 └── fonts/
@@ -286,10 +287,36 @@ Block styling wholesale:
   already set from `service.occasion.colour` (see "Liturgical accent"
   below) — via a new `.music-list-entry--accent` class, rather than
   inventing a second colour mechanism for the same underlying fact.
+- The Public / Draft toggle is a small labelled `<nav>`. The version
+  being viewed carries `aria-current="page"`, which screen readers
+  announce and the stylesheet shows in bold, so one attribute does
+  both jobs.
 - The page uses plain `.center` (not `.center[data-intrinsic]`, unlike
   `login.html`) — a document should stay left-aligned internally, only
   centred as a whole block on the page, unlike a small centred form
   where every child should align to the middle.
+
+## Accessibility basics
+
+- **Viewport:** `base.html` sets `width=device-width`. Without it,
+  phones lay the page out at about 980px and zoom out, so none of the
+  fluid sizing or media queries respond to the real screen.
+- **Skip link:** the first focusable element on every page is
+  "Skip to main content" (`skip-link.css`), which jumps to
+  `<main id="main">`. It sits above the viewport until it receives
+  focus, and it's moved with `transform`, not `display: none`, so
+  screen readers still find it.
+- **Reading measure:** the global layer caps `p` and `li` at 60ch for
+  comfortable reading. `.list-row` lifts the cap, because a row
+  should span the content width with its badge or buttons at the far
+  end. The blocks layer comes after global, so `max-width: none`
+  wins without any extra specificity.
+- **Help text:** Django links each field's help text to its input with
+  `aria-describedby`; `form.css` styles `.helptext` small and muted on
+  its own line.
+- **Inbox count:** the number beside Inbox is followed by a visually
+  hidden " open", so it's read as "Inbox 2 open" rather than a bare
+  number.
 
 ## `crest-crop.js` — a hand-rolled image crop tool
 
