@@ -90,6 +90,36 @@ class ControlHeightBrowserTest(PlaywrightTestCase):
         assert input_height == button_height == 40, (input_height, button_height)
 
 
+class ListRowWidthBrowserTest(PlaywrightTestCase):
+    def test_list_row_spans_its_list_not_the_reading_measure(self):
+        from datetime import date
+
+        from planning.models import Service, Term
+
+        self.login_as_conductor()
+        term = Term.objects.create(
+            name="Layout Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+        Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        self.page.set_viewport_size({"width": 1280, "height": 800})
+        self.page.goto(term.get_absolute_url())
+
+        # Compare with the list's content box: its own padding is not the row's.
+        row_width, list_content_width = self.page.locator(".list-row").first.evaluate(
+            """row => {
+                const list = getComputedStyle(row.parentElement);
+                const content = row.parentElement.clientWidth
+                    - parseFloat(list.paddingInlineStart)
+                    - parseFloat(list.paddingInlineEnd);
+                return [row.getBoundingClientRect().width, content];
+            }"""
+        )
+        assert abs(row_width - list_content_width) < 1, (row_width, list_content_width)
+
+
 class SkipLinkBrowserTest(PlaywrightTestCase):
     def test_first_tab_reveals_skip_link_and_enter_jumps_to_main(self):
         # Not the login page: Django's login form autofocuses the

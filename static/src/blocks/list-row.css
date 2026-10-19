@@ -7,8 +7,15 @@
    * Simple row-per-item lists (term's service list, score list, comment
    * inbox) — a border-top separator between rows, with the first row's
    * border removed so the list doesn't double up against its container.
+   *
+   * A row is an <li>, which the global layer caps at the 60ch reading
+   * measure. That suits prose, not a row that should span the content
+   * width with its badge or buttons at the far end, so the cap is lifted
+   * here. The blocks layer comes after global, so this wins without
+   * extra specificity.
    */
   .list-row {
+    max-width: none;
     display: flex;
     justify-content: space-between;
     align-items: center;
