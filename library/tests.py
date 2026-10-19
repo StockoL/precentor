@@ -279,6 +279,12 @@ class ScoreFilterTests(TestCase):
         self.assertContains(response, '<option value="SATB">SATB (2)</option>', html=True)
         self.assertContains(response, '<option value="SSA">SSA (1)</option>', html=True)
 
+    def test_a_score_without_a_language_adds_no_blank_option(self):
+        Score.objects.create(title="Untitled", composer_surname="Anon", language="")
+        response = self.client.get("/library/")
+        self.assertContains(response, '<option value="">Any</option>', count=2, html=True)
+        self.assertNotContains(response, '<option value=""></option>', html=True)
+
     def test_clear_link_only_when_filtering(self):
         self.assertNotContains(self.client.get("/library/"), ">Clear</a>")
         self.assertContains(self.client.get("/library/", {"q": "ave"}), ">Clear</a>")

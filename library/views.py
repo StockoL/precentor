@@ -99,8 +99,11 @@ class ScoreListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # A blank language would add an option with the same empty value
+        # as "Any", which the browser then shows as selected.
         context["languages"] = (
-            Score.objects.values_list("language", flat=True)
+            Score.objects.exclude(language="")
+            .values_list("language", flat=True)
             .distinct()
             .order_by("language")
         )
