@@ -54,6 +54,79 @@ class LastSungManualFieldTests(TestCase):
         self.assertIn('value="2019-06-02"', field)
 
 
+class LastSungTests(TestCase):
+    def setUp(self):
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        from planning.models import Service, Term
+
+        # The same "today" as with_last_sung, which uses the UK time zone.
+        self.today = timezone.localdate()
+        self.term = Term.objects.create(
+            name="Term",
+            start_date=self.today - timedelta(days=365),
+            end_date=self.today + timedelta(days=365),
+            calendar_use="current",
+        )
+        self.Service = Service
+        self.score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+
+    def sing(self, days_from_today, confirmed=True):
+        from datetime import timedelta
+
+        from planning.models import RolePiece, ServiceRole
+
+        service = self.Service.objects.create(
+            term=self.term,
+            date=self.today + timedelta(days=days_from_today),
+            service_type="Sung Mass",
+        )
+        role = ServiceRole.objects.create(service=service, role_name="Motet")
+        RolePiece.objects.create(service_role=role, score=self.score, is_confirmed=confirmed)
+        return service.date
+
+    def last_sung(self):
+        return Score.objects.with_last_sung().get(pk=self.score.pk).last_sung
+
+    def test_latest_confirmed_past_service(self):
+        self.sing(-30)
+        latest = self.sing(-7)
+        self.assertEqual(self.last_sung(), latest)
+
+    def test_unconfirmed_pieces_do_not_count(self):
+        self.sing(-7, confirmed=False)
+        self.assertIsNone(self.last_sung())
+
+    def test_a_future_service_is_scheduled_not_sung(self):
+        past = self.sing(-7)
+        self.sing(14)
+        self.assertEqual(self.last_sung(), past)
+
+    def test_the_later_of_recorded_and_manual_wins(self):
+        from datetime import timedelta
+
+        recorded = self.sing(-7)
+        self.score.last_sung_manual = recorded - timedelta(days=400)
+        self.score.save()
+        self.assertEqual(self.last_sung(), recorded)
+
+        self.score.last_sung_manual = recorded + timedelta(days=1)
+        self.score.save()
+        self.assertEqual(self.last_sung(), recorded + timedelta(days=1))
+
+    def test_manual_date_alone(self):
+        from datetime import date
+
+        self.score.last_sung_manual = date(2019, 6, 2)
+        self.score.save()
+        self.assertEqual(self.last_sung(), date(2019, 6, 2))
+
+    def test_never_sung(self):
+        self.assertIsNone(self.last_sung())
+
+
 class ScoreDetailListTests(TestCase):
     def test_facts_are_a_description_list(self):
         self.client.force_login(

@@ -1,9 +1,45 @@
+from django.apps import apps
 from django.db import models
-from django.db.models import BooleanField, Case, When
+from django.db.models import BooleanField, Case, OuterRef, Subquery, When
+from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse
+from django.utils import timezone
 
 
 class ScoreQuerySet(models.QuerySet):
+    def with_last_sung(self):
+        """
+        Annotate each score with last_sung: the latest date it was sung.
+
+        Derived, never stored. "Sung" means a confirmed piece in a service
+        dated on or before today; a confirmed piece in a future service is
+        scheduled, not sung. The manual date covers history from before
+        Precentor, and whichever date is later wins.
+
+        A Subquery rather than a Max() over a join, so it stays correct
+        when combined with ranked_by_suitability's joins. RolePiece is
+        looked up by name because library mustn't import from planning.
+        """
+        RolePiece = apps.get_model("planning", "RolePiece")
+        latest_confirmed = (
+            RolePiece.objects.filter(
+                score=OuterRef("pk"),
+                is_confirmed=True,
+                service_role__service__date__lte=timezone.localdate(),
+            )
+            .order_by("-service_role__service__date")
+            .values("service_role__service__date")[:1]
+        )
+        return self.annotate(
+            last_sung_recorded=Subquery(latest_confirmed),
+            # Greatest of a date and NULL is NULL on SQLite but the date on
+            # PostgreSQL; coalescing each side gives the same answer on both.
+            last_sung=Greatest(
+                Coalesce("last_sung_recorded", "last_sung_manual"),
+                Coalesce("last_sung_manual", "last_sung_recorded"),
+            ),
+        )
+
     def ranked_by_suitability(self, occasion=None, season=None, use_type=None):
         """
         Ranking, not filtering — every score stays in the results;
