@@ -39,22 +39,53 @@
         {% endif %}
     </form>
 
-    <ul role="list" class="flow">
-        {% for score in scores %}
-        <li class="list-row"><a href="{{ score.get_absolute_url }}">{{ score }}</a></li>
-        {% empty %}
-        {% if filters_active %}
-        <li class="empty-state flow">
-            <p>No scores match these filters.</p>
-            <a class="btn" href="{% url 'library:score_list' %}">Clear filters</a>
-        </li>
-        {% else %}
-        <li class="empty-state flow">
-            <p>The library is empty. Add the scores you own, and you can propose them for services.</p>
-            <a class="btn" href="{% url 'library:score_create' %}">Add the first score</a>
-        </li>
-        {% endif %}
-        {% endfor %}
-    </ul>
+    {% if scores %}
+    {# A focusable region, so a keyboard user can scroll the table sideways on a narrow screen. #}
+    <div class="table-scroll" role="region" aria-labelledby="library-caption" tabindex="0">
+        <table class="data-table">
+            <caption id="library-caption" class="visually-hidden">Scores, sorted by {{ sort_label|lower }}, {{ sort_direction }}</caption>
+            <thead>
+                <tr>
+                    {% for column in columns %}
+                    <th scope="col"{% if column.aria_sort %} aria-sort="{{ column.aria_sort }}"{% endif %}>
+                        <a href="{% querystring sort=column.key dir=column.next_dir page=None %}">{{ column.label }}</a>
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for score in scores %}
+                <tr>
+                    <td>{{ score.composer_catalogue }}</td>
+                    <td><a href="{{ score.get_absolute_url }}">{{ score.title }}</a></td>
+                    <td>{{ score.voicing }}</td>
+                    <td>{{ score.language }}</td>
+                    <td class="data-table__number">{% if score.duration_minutes %}{{ score.duration_minutes }} min{% else %}—{% endif %}</td>
+                    <td class="data-table__number">{{ score.copies_owned }}</td>
+                    <td>{{ score.filing_location|default:"—" }}</td>
+                    <td>
+                        {% if score.last_sung %}
+                        {{ score.last_sung|date }}
+                        <span class="data-table__hint">{{ score.last_sung|timesince }} ago</span>
+                        {% else %}
+                        Never
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% elif filters_active %}
+    <div class="empty-state flow">
+        <p>No scores match these filters.</p>
+        <a class="btn" href="{% url 'library:score_list' %}">Clear filters</a>
+    </div>
+    {% else %}
+    <div class="empty-state flow">
+        <p>The library is empty. Add the scores you own, and you can propose them for services.</p>
+        <a class="btn" href="{% url 'library:score_create' %}">Add the first score</a>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

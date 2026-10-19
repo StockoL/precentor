@@ -1,0 +1,88 @@
+/* ==========================================================================
+   BLOCK: DATA TABLE
+   A dense, spreadsheet-style table (the Library). Thin borders,
+   tabular figures so numbers line up, a header that stays in view while
+   the rows scroll, and a highlight on the row under the pointer.
+   ========================================================================== */
+
+@layer blocks {
+  /*
+   * The table's own scroll area. On a narrow screen the table scrolls
+   * sideways here instead of widening the page. It also scrolls
+   * vertically within a height cap, because a sticky header only sticks
+   * inside its nearest scrolling box: once this box scrolls sideways it
+   * is that box, so the header has to stick inside it, not to the window.
+   */
+  .table-scroll {
+    max-width: 100%;
+    max-block-size: 75vh;
+    overflow: auto;
+    border: 1px solid var(--colors-border-subtle);
+    border-radius: 6px;
+  }
+
+  .table-scroll:focus-visible {
+    outline: 2px solid var(--colors-action-primary);
+    outline-offset: 2px;
+  }
+
+  .data-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-size: var(--typography-step--1);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .data-table :is(th, td) {
+    padding: var(--spacing-3xs) var(--spacing-2xs);
+    border-block-end: 1px solid var(--colors-border-subtle);
+    text-align: start;
+    vertical-align: top;
+  }
+
+  .data-table thead th {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
+    background-color: var(--colors-surface-sunken);
+    border-block-end: 2px solid var(--colors-border-strong);
+    white-space: nowrap;
+  }
+
+  .data-table thead a {
+    color: var(--colors-text-base);
+    text-decoration: none;
+  }
+
+  .data-table thead a:hover {
+    text-decoration: underline;
+  }
+
+  /* The sorted column shows its direction; aria-sort already tells
+     screen readers, so the arrow is hidden from them. */
+  /* The plain declaration first: a browser that can't read the "/ ''"
+     form (empty alternative text) drops it and keeps this one. */
+  .data-table th[aria-sort="ascending"] a::after {
+    content: " ▲";
+    content: " ▲" / "";
+  }
+
+  .data-table th[aria-sort="descending"] a::after {
+    content: " ▼";
+    content: " ▼" / "";
+  }
+
+  .data-table tbody tr:hover {
+    background-color: var(--colors-surface-sunken);
+  }
+
+  .data-table__number {
+    text-align: end;
+  }
+
+  .data-table__hint {
+    display: block;
+    color: var(--colors-text-muted);
+    font-size: var(--typography-step--2);
+  }
+}

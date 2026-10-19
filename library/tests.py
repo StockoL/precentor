@@ -332,7 +332,53 @@ class ScoreSuitabilityRankingTests(TestCase):
         self.assertEqual(ranked.count(self.matching), 1)
         self.assertEqual(len(ranked), Score.objects.count())
 
-    def test_ordering_falls_back_to_title_when_suitability_ties(self):
+    def test_without_suitability_the_library_is_in_catalogue_order(self):
         response = self.client.get("/library/")
-        titles = [score.title for score in response.context["scores"]]
-        self.assertEqual(titles, sorted(titles))
+        surnames = [score.composer_surname for score in response.context["scores"]]
+        self.assertEqual(surnames, sorted(surnames))
+
+
+class LibrarySortTests(TestCase):
+    def setUp(self):
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="testpass123")
+        )
+        Score.objects.create(title="Ave verum", composer_surname="Byrd", duration_minutes=4)
+        Score.objects.create(title="Sicut cervus", composer_surname="Palestrina")
+        Score.objects.create(title="Jesu, joy", composer_surname="Bach", duration_minutes=3)
+
+    def titles(self, **params):
+        return [s.title for s in self.client.get("/library/", params).context["scores"]]
+
+    def test_default_is_composer_ascending(self):
+        self.assertEqual(self.titles(), ["Jesu, joy", "Ave verum", "Sicut cervus"])
+
+    def test_sort_by_title_either_way(self):
+        self.assertEqual(self.titles(sort="title"), ["Ave verum", "Jesu, joy", "Sicut cervus"])
+        self.assertEqual(
+            self.titles(sort="title", dir="desc"), ["Sicut cervus", "Jesu, joy", "Ave verum"]
+        )
+
+    def test_blanks_sort_last_both_ways(self):
+        self.assertEqual(self.titles(sort="duration")[-1], "Sicut cervus")
+        self.assertEqual(self.titles(sort="duration", dir="desc")[-1], "Sicut cervus")
+
+    def test_unknown_sort_falls_back_to_the_default(self):
+        self.assertEqual(self.titles(sort="nonsense", dir="sideways"), self.titles())
+
+    def test_headings_carry_aria_sort_and_flip_direction(self):
+        response = self.client.get("/library/", {"sort": "title"})
+        self.assertContains(response, 'aria-sort="ascending"', count=1)
+        # The sorted heading's link asks for the other direction next.
+        self.assertContains(response, 'href="?sort=title&amp;dir=desc"')
+        self.assertContains(response, 'href="?sort=composer&amp;dir=asc"')
+
+    def test_sort_links_keep_the_filters(self):
+        response = self.client.get("/library/", {"q": "ave", "sort": "title"})
+        self.assertContains(response, 'href="?q=ave&amp;sort=title&amp;dir=desc"')
+
+    def test_table_shows_catalogue_names_and_last_sung(self):
+        Score.objects.filter(title="Sicut cervus").update(editor="Stockton")
+        response = self.client.get("/library/")
+        self.assertContains(response, "<td>Palestrina (ed. Stockton)</td>", html=True)
+        self.assertContains(response, "Never")
