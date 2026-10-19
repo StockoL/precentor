@@ -80,6 +80,7 @@
   /* -- LAYOUT -------------------------------------------------------------- */
   --layout-measure: 60ch;
   --layout-wrapper-max-width: 80rem;
+  --layout-control-height: 2.5rem;
 
   /* -- FONTS --------------------------------------------------------------- */
   --fonts-heading: 'EB Garamond', 'EB Garamond Fallback', Georgia, serif;

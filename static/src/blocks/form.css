@@ -31,6 +31,14 @@
     font-size: max(1rem, var(--typography-step--1));
   }
 
+  /* Single-line controls share the button height, so a field and its
+     submit button line up. Textareas, checkboxes and radios keep their
+     natural size. */
+  form :is(input:not([type="checkbox"], [type="radio"]), select) {
+    min-block-size: var(--layout-control-height);
+    padding-block: 0;
+  }
+
   form :is(input, select, textarea):focus-visible {
     outline: 2px solid var(--colors-action-primary);
     outline-offset: 2px;

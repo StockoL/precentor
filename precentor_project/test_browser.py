@@ -81,6 +81,15 @@ class RootFontSizeBrowserTest(PlaywrightTestCase):
         assert root_size == "16px", root_size
 
 
+class ControlHeightBrowserTest(PlaywrightTestCase):
+    def test_text_input_and_button_share_the_control_height(self):
+        # --layout-control-height is 2.5rem: 40px at the default 16px root.
+        self.page.goto("/accounts/login/")
+        input_height = self.page.locator("#id_username").bounding_box()["height"]
+        button_height = self.page.locator("button[type=submit]").bounding_box()["height"]
+        assert input_height == button_height == 40, (input_height, button_height)
+
+
 class SkipLinkBrowserTest(PlaywrightTestCase):
     def test_first_tab_reveals_skip_link_and_enter_jumps_to_main(self):
         # Not the login page: Django's login form autofocuses the

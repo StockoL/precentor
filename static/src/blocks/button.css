@@ -10,7 +10,11 @@
     display: inline-flex;
     align-items: center;
     gap: var(--spacing-3xs);
-    padding-block: var(--spacing-2xs);
+    /* Height comes from the shared control height, not padding, so a
+       button lines up with the input beside it. min- lets a wrapping
+       label still grow. */
+    min-block-size: var(--layout-control-height);
+    padding-block: 0;
     padding-inline: var(--spacing-s);
     border-radius: 4px;
     font-weight: 600;
