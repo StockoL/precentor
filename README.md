@@ -30,8 +30,9 @@ tracks liturgical seasons and feast days.
 
 ## 1. The Problem
 
-Choral conductors working in a church context (Anglican or Catholic, though
-the pattern holds more widely) are responsible for planning music across a
+Choral conductors working in a church context (Precentor is built for
+Catholic choirs, though the pattern holds across traditions) are
+responsible for planning music across a
 term made up of multiple weekly services — typically a midweek service
 and one or two Sunday services. This involves:
 
@@ -87,8 +88,8 @@ it obvious at a glance which term(s) matter right now. (An earlier idea
 of an explicit "active term" flag was deliberately dropped — it would
 have duplicated information the date already provides.)
 
-A **Service** belongs to a Term, has a date, a type (Sung Eucharist,
-Choral Evensong, etc.), and a liturgical occasion (see §3.4). It also
+A **Service** belongs to a Term, has a date, a type (Sung Mass,
+Vespers, etc.), and a liturgical occasion (see §3.4). It also
 carries optional free-text **hymns** and **psalm** fields — genuinely
 simple reference fields, deliberately kept outside the propose/confirm
 workflow that governs Setting/Anthem-type roles, since hymn numbers
@@ -131,15 +132,16 @@ need attention.
 
 ### 3.4 Ordo (the Liturgical Calendar)
 
-**Ordo** is this project's name for its liturgical calendar engine.
-Catholic and Church of England calendars follow the same broad shape
-(Advent → Christmas → Epiphany → Lent → Easter → the season after
-Pentecost/Trinity) but differ in naming, some boundaries, and many
-saints'/feast days. Some occasions are fixed-date (Christmas Day),
-others are moveable, calculated relative to Easter (Ash Wednesday, Palm
-Sunday, Pentecost). Services carry a liturgical occasion drawn from
-Ordo, which drives both automatic tagging/filtering of suitable Scores
-and the seasonal colour context used in the UI.
+**Ordo** is this project's name for its liturgical calendar engine. It
+follows the Roman calendar: Advent, Christmas, Ordinary Time, Lent, the
+Easter Triduum and Easter, with Ordinary Time resuming after Pentecost.
+Some occasions are fixed-date (Christmas Day), others are moveable,
+calculated relative to Easter (Ash Wednesday, Palm Sunday, Pentecost).
+Each term follows either the Ordinary Form or the 1962 Extraordinary
+Form calendar, and a single service can override its term's choice,
+since some choirs sing both. Services carry a liturgical occasion drawn
+from Ordo, which drives both automatic tagging/filtering of suitable
+Scores and the seasonal colour context used in the UI.
 
 ### 3.5 Rehearsal Lead-Time (not "difficulty")
 
@@ -259,7 +261,7 @@ This remains a **"should have,"** not core to MVP.
 
 **Should have**
 
-- Full dual-tradition Ordo (liturgical calendar) with moveable feast calculation
+- Full Ordo (Roman liturgical calendar, Ordinary and Extraordinary Form) with moveable feast calculation
 - Filter by language
 - Physical copy tracking (copies owned, filing location)
 - Conductor vs. Librarian roles with distinct permissions
@@ -275,6 +277,16 @@ This remains a **"should have,"** not core to MVP.
 ## 8. Deliberately Out of Scope
 
 - Multi-tenancy (multiple churches/choirs in one instance)
+- Calendars other than the Roman one, such as the Church of England's
+  Common Worship and Book of Common Prayer. Precentor originally
+  modelled the Catholic and Church of England calendars side by side,
+  with a tradition chosen per term. I narrowed it to the Catholic
+  calendar because Precentor is single-tenant: one installation
+  serves one church, and one church follows one tradition, so a
+  per-term choice added a field to every form, a second set of seed
+  data and a second set of tests without helping any real user. A
+  second tradition remains possible future work, most simply as a
+  site-wide setting, not a per-term choice.
 - Template-editing UI (templates are seeded, not user-editable, for MVP)
 - Snapshot history/archive of past generated music lists
 - An "active term" flag (superseded by a simple chronological list)
@@ -296,8 +308,8 @@ This remains a **"should have,"** not core to MVP.
   name, date, and colour-tag occasions, for repertoire filtering and
   service labelling — it deliberately does not model readings,
   psalms, propers, or rubrical detail (e.g. whether the Gloria is
-  said), regardless of how many calendar traditions it eventually
-  covers. That's a separate, mature application domain with
+  said), even if it later covers other calendars. That's a separate,
+  mature application domain with
   existing, authoritative tools already serving it well; duplicating
   it would mean building an entirely different application inside
   Precentor, not extending its actual purpose.
