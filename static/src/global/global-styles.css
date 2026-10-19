@@ -7,6 +7,7 @@
   body {
     min-height: 100%;
     font-family: var(--fonts-body);
+    font-size: var(--typography-step-0);
     line-height: 1.5;
     color: var(--colors-text-base);
     background-color: var(--colors-surface-base);
@@ -37,17 +38,23 @@
     text-wrap: balance;
   }
 
-  /* Map heading tags to the fluid scale */
+  /*
+   * Map headings to the fluid scale by role: h1 is the page title, h2 a
+   * section, h3 a card or sub-heading. Each level skips no more than one
+   * step, so the hierarchy reads clearly without a section heading
+   * rivalling the page title. h4 sits at body size and relies on the
+   * heading font to stand apart.
+   */
   h1 {
     font-size: var(--typography-step-4);
   }
   h2 {
-    font-size: var(--typography-step-3);
-  }
-  h3 {
     font-size: var(--typography-step-2);
   }
-  h4 {
+  h3 {
     font-size: var(--typography-step-1);
+  }
+  h4 {
+    font-size: var(--typography-step-0);
   }
 }
