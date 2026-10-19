@@ -10,20 +10,33 @@
         </div>
     </header>
 
-    <div class="flow" style="--flow-space: var(--spacing-3xs);">
+    <section class="flow">
         <h2>About this score</h2>
-        {% if score.arranger %}<p>Arranger: {{ score.arranger }}</p>{% endif %}
-        <p>Voicing: {{ score.voicing }}</p>
-        <p>Parts: S{{ score.soprano_parts }} A{{ score.alto_parts }} T{{ score.tenor_parts }} B{{ score.bass_parts }}</p>
-        <p>Language: {{ score.language }}</p>
-        <p>Duration: {% if score.duration_minutes %}{{ score.duration_minutes }} min{% else %}—{% endif %}</p>
-    </div>
+        <dl class="detail-list">
+            {% if score.arranger %}
+            <dt>Arranger</dt>
+            <dd>{{ score.arranger }}</dd>
+            {% endif %}
+            <dt>Voicing</dt>
+            <dd>{{ score.voicing }}</dd>
+            <dt>Parts</dt>
+            <dd>S{{ score.soprano_parts }} A{{ score.alto_parts }} T{{ score.tenor_parts }} B{{ score.bass_parts }}</dd>
+            <dt>Language</dt>
+            <dd>{{ score.language }}</dd>
+            <dt>Duration</dt>
+            <dd>{% if score.duration_minutes %}{{ score.duration_minutes }} min{% else %}—{% endif %}</dd>
+        </dl>
+    </section>
 
-    <div class="flow" style="--flow-space: var(--spacing-3xs);">
+    <section class="flow">
         <h2>Library</h2>
-        <p>Copies owned: {{ score.copies_owned }}</p>
-        <p>Filing location: {{ score.filing_location|default:"—" }}</p>
-    </div>
+        <dl class="detail-list">
+            <dt>Copies owned</dt>
+            <dd>{{ score.copies_owned }}</dd>
+            <dt>Filing location</dt>
+            <dd>{{ score.filing_location|default:"—" }}</dd>
+        </dl>
+    </section>
 
 </div>
 {% endblock %}

@@ -282,6 +282,30 @@ class ServiceDetailProposePieceRankingTests(TestCase):
         self.assertIn(self.untagged, queryset)
 
 
+class ServiceDetailListTests(TestCase):
+    def test_facts_are_a_description_list_including_hymns_and_psalm(self):
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="testpass123")
+        )
+        term = Term.objects.create(
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+        service = Service.objects.create(
+            term=term, date=date(2026, 1, 11), service_type="Sung Mass",
+            hymns="123, 345", psalm="150",
+        )
+        response = self.client.get(service.get_absolute_url())
+        self.assertContains(response, '<dl class="detail-list">')
+        for label, value in (("Hymns", "123, 345"), ("Psalm", "150")):
+            with self.subTest(label=label):
+                self.assertContains(response, f"<dt>{label}</dt>", html=True)
+                self.assertContains(response, f"<dd>{value}</dd>", html=True)
+        self.assertNotContains(response, "<p>Term:")
+
+
 class SlotWordingTests(TestCase):
     """A ServiceRole is called a slot in the UI; the model keeps its name."""
 

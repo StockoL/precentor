@@ -16,18 +16,28 @@
     <div class="accent-rule" style="--accent: var(--colors-liturgical-{{ service.occasion.colour }});"></div>
     {% endif %}
 
-    <div class="flow" style="--flow-space: var(--spacing-3xs);">
-        <p>Term: <a href="{{ service.term.get_absolute_url }}">{{ service.term }}</a></p>
-        <p>Status: {% include "planning/_service_status_badge.html" %}</p>
-        <p>
-            Occasion:
+    <dl class="detail-list">
+        <dt>Term</dt>
+        <dd><a href="{{ service.term.get_absolute_url }}">{{ service.term }}</a></dd>
+        <dt>Status</dt>
+        <dd>{% include "planning/_service_status_badge.html" %}</dd>
+        <dt>Occasion</dt>
+        <dd>
             {% if service.occasion %}
                 {% if service.occasion.colour %}<span class="occasion-dot" style="--accent: var(--colors-liturgical-{{ service.occasion.colour }});"></span>{% endif %}{{ service.occasion }}
             {% else %}
                 —
             {% endif %}
-        </p>
-    </div>
+        </dd>
+        {% if service.hymns %}
+        <dt>Hymns</dt>
+        <dd>{{ service.hymns }}</dd>
+        {% endif %}
+        {% if service.psalm %}
+        <dt>Psalm</dt>
+        <dd>{{ service.psalm }}</dd>
+        {% endif %}
+    </dl>
 
     <div class="flow">
         <h2>Slots</h2>

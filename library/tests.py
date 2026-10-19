@@ -27,6 +27,21 @@ class ScoreFormLabelTests(TestCase):
                 self.assertNotContains(response, old)
 
 
+class ScoreDetailListTests(TestCase):
+    def test_facts_are_a_description_list(self):
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="testpass123")
+        )
+        score = Score.objects.create(
+            title="Ave verum", composer_surname="Byrd", voicing="SATB", language="Latin"
+        )
+        response = self.client.get(score.get_absolute_url())
+        self.assertContains(response, '<dl class="detail-list">', count=2)
+        self.assertContains(response, "<dt>Voicing</dt>", html=True)
+        self.assertContains(response, "<dd>SATB</dd>", html=True)
+        self.assertNotContains(response, "<p>Voicing:")
+
+
 class ScoreComposerTests(TestCase):
     def test_surname_only_displays_as_surname(self):
         score = Score.objects.create(title="Ave Verum", composer_surname="Byrd")

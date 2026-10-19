@@ -1,0 +1,25 @@
+/* ==========================================================================
+   BLOCK: DETAIL LIST
+   Label-and-value facts on detail pages, as a <dl>: each <dt> is a
+   label and the <dd> after it is its value, which screen readers
+   announce as a pair. Laid out as two columns, labels sized to the
+   longest, so the values line up.
+   ========================================================================== */
+
+@layer blocks {
+  .detail-list {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--spacing-3xs) var(--spacing-s);
+    margin: 0;
+  }
+
+  .detail-list dt {
+    color: var(--colors-text-muted);
+    font-weight: 600;
+  }
+
+  .detail-list dd {
+    margin: 0;
+  }
+}
