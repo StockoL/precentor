@@ -36,25 +36,59 @@ from .models import RolePiece, Service, ServiceRole, Term, TermMarker
 
 # --- Term views ---
 
+# A service this close is flagged if it still has slots to settle.
+SOON_DAYS = 14
+
+
+def services_prefetch():
+    """
+    A term's services in date order, with their slots, pieces and
+    occasion loaded alongside. Service.status, unsettled_slots and
+    ServiceRole.is_resolved read these prefetched rows, so a page of
+    services costs a fixed number of queries rather than several each.
+    """
+    return Prefetch(
+        "services",
+        queryset=Service.objects.order_by("date")
+        .select_related("occasion")
+        .prefetch_related("roles__pieces"),
+    )
+
+
+def describe_term(term, today):
+    """
+    Set the attributes a term's status display reads: phase and timing,
+    counts by status, readiness, and the next service with what it still
+    needs. Shared by the Terms page and the term page; expects the term's
+    services prefetched with services_prefetch().
+    """
+    services = list(term.services.all())
+    statuses = Counter(service.status for service in services)
+    term.card_phase = term.phase(today)
+    term.card_phase_label = term.phase_label(today)
+    term.card_timing = term.timing_label(today)
+    term.summary = {
+        "total": len(services),
+        "complete": statuses["complete"],
+        "in_progress": statuses["in_progress"],
+        "not_started": statuses["not_started"],
+    }
+    term.ready_to_publish = bool(services) and statuses["complete"] == len(services)
+    term.next_service = next((s for s in services if s.date >= today), None)
+    if term.next_service:
+        term.outstanding = term.next_service.unsettled_slots
+        term.next_is_soon = (term.next_service.date - today).days <= SOON_DAYS
+
 
 class TermListView(LoginRequiredMixin, ListView):
     model = Term
     context_object_name = "terms"
     template_name = "planning/term_list.html"
 
-    # A service this close is flagged if it still has slots to settle.
-    SOON_DAYS = 14
-
     def get_queryset(self):
-        # Every term's services, slots and pieces in four queries, however
-        # many there are; Service.status and ServiceRole.is_resolved then
-        # read the prefetched rows instead of querying for each one.
-        return Term.objects.prefetch_related(
-            Prefetch(
-                "services",
-                queryset=Service.objects.order_by("date").prefetch_related("roles__pieces"),
-            )
-        )
+        # Every term's services, slots and pieces in a fixed number of
+        # queries, however many there are.
+        return Term.objects.prefetch_related(services_prefetch())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -63,26 +97,7 @@ class TermListView(LoginRequiredMixin, ListView):
         open_comments = self.open_comment_counts(terms)
 
         for term in terms:
-            services = list(term.services.all())
-            statuses = Counter(service.status for service in services)
-            term.card_phase = term.phase(today)
-            term.card_phase_label = term.phase_label(today)
-            term.card_timing = term.timing_label(today)
-            term.summary = {
-                "total": len(services),
-                "complete": statuses["complete"],
-                "in_progress": statuses["in_progress"],
-                "not_started": statuses["not_started"],
-            }
-            term.ready_to_publish = bool(services) and statuses["complete"] == len(services)
-            term.next_service = next((s for s in services if s.date >= today), None)
-            if term.next_service:
-                term.outstanding = [
-                    role.role_name
-                    for role in term.next_service.roles.all()
-                    if not role.is_resolved
-                ]
-                term.next_is_soon = (term.next_service.date - today).days <= self.SOON_DAYS
+            describe_term(term, today)
             term.open_comments = open_comments[term.pk]
 
         # Current and upcoming terms first, soonest first; past terms
@@ -130,8 +145,12 @@ class TermListView(LoginRequiredMixin, ListView):
 class TermDetailView(LoginRequiredMixin, DetailView):
     model = Term
 
+    def get_queryset(self):
+        return Term.objects.prefetch_related(services_prefetch())
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        describe_term(self.object, timezone.localdate())
         context["services"] = self.object.services.all()
         context["markers"] = self.object.markers.all()
         context["content_type_id"] = ContentType.objects.get_for_model(Term).id

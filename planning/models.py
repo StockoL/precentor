@@ -215,6 +215,12 @@ class Service(models.Model):
         return "in_progress"
 
     @property
+    def unsettled_slots(self):
+        """Names of the slots still to settle (not marked not needed, no
+        confirmed piece). Uses .all(), so prefetched slots cost nothing."""
+        return [role.role_name for role in self.roles.all() if not role.is_resolved]
+
+    @property
     def status_label(self):
         """The status as shown in the UI, e.g. "Not started". Status is
         derived, not a choices field, so there's no get_status_display()."""
