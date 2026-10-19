@@ -91,6 +91,36 @@ with Utopia's multipliers (`3xs` 0.25 up to `3xl` 6). Sharing the type
 scale's base means padding grows in step with the text instead of
 outgrowing it.
 
+**Sizes by role, not by tag:**
+
+| Role | Token | About |
+| --- | --- | --- |
+| Page title (`h1`) | `step-4` | 26px to 37px |
+| Section heading (`h2`) | `step-2` | 20px to 26px |
+| Card or sub-heading (`h3`) | `step-1` | 18px to 22px |
+| Body text, `h4` | `step-0` | 16px to 18px |
+| Buttons, nav | `step--1` | 14px to 15px |
+| Inputs | `max(1rem, step--1)` | 16px |
+| Badges, help text | `step--2` | 12.5px |
+
+Controls sit a step below body text so they don't compete with the
+content around them. Inputs are held at 16px for the iOS reason
+above. Error messages stay at `step--1`, because they have to be read
+rather than skimmed.
+
+Body text is sized on `body`, never on `html`. Every `rem` is
+measured from the root element, so a fluid size there would quietly
+rescale every token in the system. I made exactly that mistake once,
+and on a desktop every rem became 18px; a browser test now checks the
+root stays at the browser's default.
+
+**Control height:** `--layout-control-height` (2.5rem, so 40px) is the
+minimum height of buttons, text inputs and selects, with their
+vertical padding removed, so a field and the button beside it line
+up. It's a minimum rather than a fixed height, so a button whose label
+wraps can still grow. Textareas, checkboxes and radios keep their
+natural size.
+
 ### Colour
 
 - A neutral grayscale ramp, with semantic tokens (`surface-*`,
