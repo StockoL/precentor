@@ -140,6 +140,12 @@ class ListRowWidthBrowserTest(PlaywrightTestCase):
         )
         assert abs(row_width - list_content_width) < 1, (row_width, list_content_width)
 
+        # role="list" lists lose their bullets, and their indent with them.
+        indent = self.page.locator(".list-row").first.evaluate(
+            "row => getComputedStyle(row.parentElement).paddingInlineStart"
+        )
+        assert indent == "0px", indent
+
 
 class UserMenuBrowserTest(PlaywrightTestCase):
     def test_appearance_choice_applies_persists_and_resets(self):

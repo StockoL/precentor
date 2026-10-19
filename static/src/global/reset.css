@@ -31,10 +31,12 @@
     margin-block: 0;
   }
 
-  /* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed */
+  /* Remove list styles on ul, ol elements with a list role, which suggests default styling will be removed.
+     The indent goes too: it only made room for the bullets. */
   ul[role="list"],
   ol[role="list"] {
     list-style: none;
+    padding-inline-start: 0;
   }
 
   /* Set core body defaults */
