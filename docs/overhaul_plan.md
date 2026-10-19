@@ -205,6 +205,12 @@ Done when no underscore or raw choice value is visible anywhere in the UI.
 
 Terms, Term detail, Service detail (the screen I'll use most), Library, Score detail and form, Inbox, Music list (screen and print), Settings and Login, each in both themes at 360px and 1280px, with screenshots before and after. The music list gets fixed `pt` print sizes and a real print check (Save as PDF).
 
+Progress:
+
+- [x] **Library** (`909a90f` to `eec04d9`), built to the spec in section 7: `editor` and `last_sung_manual` fields; last sung derived by `with_last_sung()`; catalogue names and ordering; search, Language and Voicing filters (the old Voice part filter dropped, as decided); a sortable table with `aria-sort`; fifty to a page with the filters kept in the links. Found and fixed on the way: suitability ranking listed a score once per tag (it also affected the propose-piece picker), and a score with no language blanked the Language menu.
+- [ ] Score model: `background`, `notes` and the four vocal ranges (with the score detail page).
+- [ ] Score detail, score form, and the remaining pages.
+
 ### Phase 5: performance and robustness (about half a day)
 
 1. Prefetch status data for the term list, with `assertNumQueries` tests so it stays fixed.
