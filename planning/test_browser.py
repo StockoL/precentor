@@ -37,7 +37,7 @@ class ConfirmToggleBrowserTest(PlaywrightTestCase):
 
         self.page.click(button)
         self.page.wait_for_function(
-            f"document.querySelector('{button}')?.textContent.trim() === 'Un-confirm'"
+            f"document.querySelector('{button}')?.textContent.trim() === 'Unconfirm'"
         )
 
         assert self.page.evaluate("window.__browser_test_marker") is True, (
@@ -54,7 +54,7 @@ class ConfirmToggleBrowserTest(PlaywrightTestCase):
         self.page.wait_for_selector(".toast--success")
         assert "Piece updated" in self.page.inner_text(".toast--success")
 
-        # Focus restored onto the same button (now reading "Un-confirm"),
+        # Focus restored onto the same button (now reading "Unconfirm"),
         # not lost to <body> by the outerHTML swap.
         assert self.page.evaluate("document.activeElement.id") == button.lstrip("#")
 

@@ -155,7 +155,7 @@ class RolePieceWorkflowTests(TestCase):
         fragments = response.json()["fragments"]
         self.assertIn(f"piece-row-{piece.pk}", fragments)
         self.assertIn("service-status-badge", fragments)
-        self.assertIn("Un-confirm", fragments[f"piece-row-{piece.pk}"])
+        self.assertIn("Unconfirm", fragments[f"piece-row-{piece.pk}"])
 
     def test_add_piece_ajax_success_returns_new_piece_fragment(self):
         role = ServiceRole.objects.create(service=self.service, role_name="Anthem")

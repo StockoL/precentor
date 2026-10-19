@@ -7,6 +7,6 @@
     </span>
     <form method="post" action="{% url 'planning:toggle_confirm' piece.pk %}" class="ajax-toggle-confirm">
         {% csrf_token %}
-        <button id="confirm-toggle-{{ piece.pk }}" type="submit">{% if piece.is_confirmed %}Un-confirm{% else %}Confirm{% endif %}</button>
+        <button id="confirm-toggle-{{ piece.pk }}" type="submit">{% if piece.is_confirmed %}Unconfirm{% else %}Confirm{% endif %}</button>
     </form>
 </li>
