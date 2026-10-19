@@ -29,6 +29,10 @@ class ScoreForm(forms.ModelForm):
             "last_sung_manual",
             "background",
             "notes",
+            "range_soprano",
+            "range_alto",
+            "range_tenor",
+            "range_bass",
         ]
         widgets = {  # noqa
             "last_sung_manual": NativeDateInput(),

@@ -128,6 +128,53 @@ class LastSungTests(TestCase):
         self.assertIsNone(self.last_sung())
 
 
+class VocalRangeTests(TestCase):
+    def test_accepts_note_names_from_low_to_high(self):
+        from .validators import validate_vocal_range
+
+        for value in ("A3–E5", "A3-E5", "c4 - a5", "F#3–Bb4", "Bb2–E♭4", "C4–C4"):
+            with self.subTest(value=value):
+                validate_vocal_range(value)  # raises if invalid
+
+    def test_refuses_anything_else(self):
+        from .validators import validate_vocal_range
+
+        for value in ("A3", "H3–E5", "A–E5", "low to high", "A3–E5–G5"):
+            with self.subTest(value=value):
+                with self.assertRaises(ValidationError) as caught:
+                    validate_vocal_range(value)
+                self.assertEqual(caught.exception.code, "format")
+
+    def test_refuses_the_wrong_way_round(self):
+        from .validators import validate_vocal_range
+
+        for value in ("E5–A3", "C4–B3", "C#4–C4"):
+            with self.subTest(value=value):
+                with self.assertRaises(ValidationError) as caught:
+                    validate_vocal_range(value)
+                self.assertEqual(caught.exception.code, "order")
+
+    def test_form_stores_one_tidy_form(self):
+        from .forms import ScoreForm
+
+        form = ScoreForm(data={
+            "title": "Ave verum", "composer_surname": "Byrd", "voicing": "SATB",
+            "language": "Latin", "soprano_parts": 1, "alto_parts": 1, "tenor_parts": 1,
+            "bass_parts": 1, "copies_owned": 0, "range_soprano": "d4 - f#5",
+            "range_bass": "F♯2–D4",
+        })
+        self.assertTrue(form.is_valid(), form.errors)
+        score = form.save()
+        self.assertEqual(score.range_soprano, "D4–F#5")
+        self.assertEqual(score.range_bass, "F#2–D4")
+
+    def test_form_shows_the_error_against_the_field(self):
+        from .forms import ScoreForm
+
+        form = ScoreForm(data={"title": "T", "composer_surname": "X", "range_tenor": "E5–A3"})
+        self.assertIn("Put the lower note first, as in A3–E5.", form.errors["range_tenor"])
+
+
 class ScoreDetailListTests(TestCase):
     def test_facts_are_a_description_list(self):
         self.client.force_login(

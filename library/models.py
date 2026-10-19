@@ -5,6 +5,10 @@ from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse
 from django.utils import timezone
 
+from .validators import tidy_vocal_range, validate_vocal_range
+
+RANGE_FIELDS = ("range_soprano", "range_alto", "range_tenor", "range_bass")
+
 
 class ScoreQuerySet(models.QuerySet):
     # The Voicing filter's value for "any four-part mixed".
@@ -152,6 +156,22 @@ class Score(models.Model):
         blank=True,
         help_text="How you take it: tempo, balance, things to rehearse.",
     )
+    range_soprano = models.CharField(
+        "soprano range",
+        max_length=20,
+        blank=True,
+        validators=[validate_vocal_range],
+        help_text="Lowest to highest note, e.g. C4–A5",
+    )
+    range_alto = models.CharField(
+        "alto range", max_length=20, blank=True, validators=[validate_vocal_range]
+    )
+    range_tenor = models.CharField(
+        "tenor range", max_length=20, blank=True, validators=[validate_vocal_range]
+    )
+    range_bass = models.CharField(
+        "bass range", max_length=20, blank=True, validators=[validate_vocal_range]
+    )
     # "Last sung" is derived from confirmed pieces in past services (see
     # ScoreQuerySet.with_last_sung). This is only for history from before
     # Precentor; the library shows whichever date is later.
@@ -192,6 +212,12 @@ class Score(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.composer})"
+
+    def clean(self):
+        """Store vocal ranges in one form ('a3 - e5' becomes 'A3–E5').
+        Runs after each field's validators, so the ranges are valid."""
+        for field in RANGE_FIELDS:
+            setattr(self, field, tidy_vocal_range(getattr(self, field)))
 
     @property
     def composer(self):
