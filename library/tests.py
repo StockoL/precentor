@@ -187,6 +187,19 @@ class ScoreComposerTests(TestCase):
             with self.subTest(expected=expected):
                 self.assertEqual(Score(title="T", **fields).composer_catalogue, expected)
 
+    def test_default_order_is_composer_then_title(self):
+        for surname, other, title in [
+            ("Bach", "Johann Sebastian", "Jesu, meine Freude"),
+            ("Bach", "Carl Philipp Emanuel", "Magnificat"),
+            ("Byrd", "", "Ave verum corpus"),
+            ("Bach", "Johann Sebastian", "Der Geist hilft"),
+        ]:
+            Score.objects.create(title=title, composer_surname=surname, composer_other_names=other)
+        self.assertEqual(
+            [s.title for s in Score.objects.all()],
+            ["Magnificat", "Der Geist hilft", "Jesu, meine Freude", "Ave verum corpus"],
+        )
+
     def test_surname_is_required(self):
         score = Score(
             title="Untitled Anthem",

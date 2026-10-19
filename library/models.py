@@ -148,7 +148,9 @@ class Score(models.Model):
     objects = ScoreQuerySet.as_manager()
 
     class Meta:
-        ordering = ["title"]  # noqa (Django Meta, not a normal class — no shared-state risk)
+        # As a library catalogue orders them: by composer, then title.
+        # Other names split composers who share a surname (the Bachs).
+        ordering = ["composer_surname", "composer_other_names", "title"]  # noqa (Django Meta, not a normal class — no shared-state risk)
 
     def __str__(self):
         return f"{self.title} ({self.composer})"
