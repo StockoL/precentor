@@ -1,4 +1,5 @@
-from datetime import date
+from datetime import date, datetime
+from datetime import timezone as dt_timezone
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
@@ -117,6 +118,18 @@ class AddCommentViewTests(TestCase):
         response = self.client.get("/comments/inbox/")
         self.assertContains(response, "Open one")
         self.assertNotContains(response, "Closed one")
+
+    def test_inbox_shows_times_in_uk_local_time(self):
+        # Stored in UTC; shown in Europe/London, which is on BST (UTC+1)
+        # in July, so noon UTC must read as 13:00.
+        comment = Comment.objects.create(
+            author=self.user, body="Summer query", target=self.term
+        )
+        Comment.objects.filter(pk=comment.pk).update(
+            created_at=datetime(2026, 7, 1, 12, 0, tzinfo=dt_timezone.utc)
+        )
+        response = self.client.get("/comments/inbox/")
+        self.assertContains(response, "01/07/2026 13:00")
 
     def test_add_comment_ajax_top_level_returns_new_comment_fragment(self):
         response = self.client.post(
