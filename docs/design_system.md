@@ -252,7 +252,7 @@ static/
 │   │   ├── score-combobox.css / crest-crop.css / toast.css
 │   │   ├── skip-link.css / page-header.css / user-menu.css
 │   │   ├── detail-list.css / empty-state.css
-│   │   └── toolbar.css / data-table.css
+│   │   └── toolbar.css / data-table.css / tag-input.css
 │   └── utilities/
 │       └── utilities.css
 └── fonts/
@@ -390,6 +390,13 @@ help text and input stay together inside it:
 
 Other form details:
 
+- A row of small fields side by side (the score's part counts and
+  vocal ranges) uses the `grid` composition. `form.css` caps it at
+  the reading measure, so the form keeps one right-hand edge, and
+  lines it up along the bottom, so a field whose help text wraps
+  doesn't push its input below its neighbours'.
+- The voicing field suggests the voicings already in the library
+  through a native `<datalist>`, with no JavaScript.
 - Groups get more space after them than the fields inside them get,
   so each group reads as separate.
 - Checkboxes and radios keep their natural size, instead of being
@@ -424,6 +431,37 @@ under a row of filters (`toolbar.css`).
   vertically, and the header sticks inside it.
 - **Numbers** use tabular figures and line up on the right, headings
   included.
+
+## Chip inputs
+
+The score form's three "suitable for" fields are multi-selects,
+which are awkward to use: a long list and Ctrl-click to choose
+several. `tag-input.js` turns each into chips over a search box:
+type to see the options not yet chosen, Enter or a click to add one,
+click a chip (or Backspace in an empty box) to remove one.
+
+- **The select stays the source of truth.** A chip selects or
+  deselects its option, so the form submits exactly as it would
+  without JavaScript. The select is only hidden once the widget is
+  fully built; if anything fails first, the plain select still works.
+- **Accessibility:** the search box is an ARIA combobox with arrow
+  keys, each chip is a button labelled "Remove Advent", and a live
+  region announces every change. The field's `<label>` moves to the
+  search box and its help text stays linked through
+  `aria-describedby`. The list closes on Escape, on a click elsewhere
+  and when focus leaves by Tab.
+- **New use types:** uses can also take a name that isn't in the
+  list, offered as Add "…". It goes into the form's Other uses field,
+  which the script hides, and the server creates it on save. Seasons
+  and occasions are pick-only, because an occasion carries a date
+  rule that a typed name wouldn't have.
+
+Building this showed up a cascade problem worth recording. The
+`hidden` attribute hides an element through the browser's own
+`display: none`, and any author style outranks the browser's, so
+`form.css`, which gives every select `display: block`, quietly undid
+it. A `[hidden] { display: none; }` rule in the utilities layer, the
+last layer, now makes `hidden` mean hidden everywhere.
 
 ## Page transitions
 
