@@ -24,6 +24,25 @@ from `accounts` — it needed the same conductor-only gate as `planning`
 for its settings page, which is exactly why the mixin was moved out of
 `planning` and into `accounts` rather than duplicated.
 
+## Labels and interface words
+
+Every field the forms show has an explicit `verbose_name` wherever the
+one Django generates from the field name reads badly (`soprano_parts`
+would show as "Soprano parts"; it's labelled "Sopranos"), and
+`help_text` with a short example wherever a field needs guidance.
+Setting them on the model, not the form, means the label is defined
+once and the admin shows it too. The samples below leave most of them
+out to stay readable; `models.py` has the full set.
+
+Two models keep names that differ from the words people see:
+`ServiceRole` appears as a **slot** and `TermMarker` as a **notice**.
+I chose those words in October 2026 (the reasons are in
+[`overhaul_plan.md`](overhaul_plan.md), section 8). The model and
+field names stay, since renaming them would rename database tables
+for no benefit to anyone using the app; `verbose_name` carries the
+interface word instead. Every one of these label changes produced a
+migration that records the new label and runs no SQL.
+
 ## Model field plan
 
 ### `library.Score`
@@ -185,18 +204,38 @@ class Service(models.Model):
         """Derived, not stored: not_started / in_progress / complete."""
         ...
 
+    @property
+    def status_label(self):
+        """"Not started" / "In progress" / "Complete", from STATUS_LABELS."""
+        ...
+
     def music_list_rows(self, draft=False):
-        """Rows for music list rendering — N/A roles always skipped;
-        unconfirmed roles skipped in the public version, shown as TBC
+        """Rows for music list rendering — N/A slots always skipped;
+        unconfirmed slots skipped in the public version, shown as TBC
         in draft mode. See README §4."""
         ...
 ```
 
-**`hymns`/`psalm` as plain fields, not roles:** these were always
+**`hymns`/`psalm` as plain fields, not slots:** these were always
 intended as simple text/reference fields, separate from the
-Score-driven roles (`ServiceRole`/`RolePiece`) that model
-Setting/Anthem-type slots — a hymn number or psalm reference doesn't
-need a shortlist, a confirmation step, or a link to `library.Score`.
+Score-driven slots (`ServiceRole`/`RolePiece`) used for the Mass
+setting, motets and the like — a hymn number or psalm reference
+doesn't need a shortlist, a confirmation step, or a link to
+`library.Score`.
+
+**Status labels:** `status` returns a raw value, which templates use
+for CSS classes (`badge--not_started`) and comparisons. Because it's
+derived rather than a field with `choices`, Django's
+`get_status_display()` doesn't exist for it, so `Service.STATUS_LABELS`
+and the `status_label` property do the same job by hand; templates
+show the label and never the raw value.
+
+**Dates in `__str__`:** `Service.__str__` ("Sung Mass — Sun 11 Jan
+2026") and `TermMarker.__str__` format their dates with Django's
+`date_format()`, which reads `DATE_FORMAT` from the project's format
+module, `precentor_project/formats/en_GB/formats.py`. That module,
+found through `FORMAT_MODULE_PATH`, is the one place the app's date
+style is set; templates use a bare `|date` filter to follow it.
 
 **`GenericRelation` on the commentable models:** `Term`, `Service`, and `RolePiece` each carry a `comments = GenericRelation("comments.Comment")` field. This adds no database column and needs no migration — it's a query-time convenience (enabling `term.comments.all()`) that also makes Django cascade-delete a target's comments if the target itself is deleted, completing the `GenericForeignKey` relationship properly per Django's own recommended pattern. This technically means `planning` now references `comments`, a justified exception to the one-way dependency rule above, since `comments.models.Comment` still has zero knowledge of `planning`'s models in return.
 
@@ -206,13 +245,14 @@ need a shortlist, a confirmation step, or a link to `library.Score`.
 class TermMarker(models.Model):
     term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name="markers")
     date = models.DateField()
-    text = models.CharField(max_length=200)
+    text = models.CharField("notice", max_length=200)
 
     class Meta:
         ordering = ["date"]
 ```
 
-Lets a conductor drop a one-off free-text note at a specific date in a
+Shown in the interface as a **notice**. Lets a conductor drop a
+one-off free-text notice at a specific date in a
 term's timeline — half-term, a retreat, anything that isn't itself a
 Service — for the public music list (see README §4). The music list
 view merges `Term.services` and `Term.markers` into a single
@@ -226,9 +266,12 @@ rather than reusing another feature's merge logic.
 ```python
 class ServiceRole(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="roles")
-    role_name = models.CharField(max_length=50)  # e.g. "Anthem", "Setting"
-    is_not_applicable = models.BooleanField(default=False)
+    role_name = models.CharField("slot", max_length=50)  # e.g. "Introit", "Offertory motet"
+    is_not_applicable = models.BooleanField("not needed (N/A)", default=False)
 ```
+
+Shown in the interface as a **slot**. Slot names are free text; see
+the README (§3.2) for why.
 
 ### `planning.RolePiece`
 
@@ -249,7 +292,7 @@ from django.contrib.contenttypes.models import ContentType
 
 class Comment(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    body = models.TextField()
+    body = models.TextField("comment")
     is_open = models.BooleanField(default=True)
     parent = models.ForeignKey(
         "self", null=True, blank=True, on_delete=models.CASCADE, related_name="replies"
