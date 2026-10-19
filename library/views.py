@@ -84,6 +84,7 @@ class ScoreCreateView(LoginRequiredMixin, CreateView):
         "composer_surname",
         "composer_other_names",
         "arranger",
+        "editor",
         "voicing",
         "soprano_parts",
         "alto_parts",

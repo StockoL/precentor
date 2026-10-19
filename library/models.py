@@ -44,6 +44,11 @@ class Score(models.Model):
         help_text="Forenames and any particle, e.g. Giovanni Pierluigi da",
     )
     arranger = models.CharField(max_length=200, blank=True)
+    # Separate from arranger: an arranger changes the music, an editor
+    # prepares an edition of it.
+    editor = models.CharField(
+        max_length=200, blank=True, help_text="Of this edition, e.g. Stockton"
+    )
     voicing = models.CharField(
         max_length=50, help_text="As printed, e.g. SATB, SSATB, SATB.SATB"
     )

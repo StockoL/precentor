@@ -27,6 +27,21 @@ class ScoreFormLabelTests(TestCase):
                 self.assertNotContains(response, old)
 
 
+class ScoreEditorTests(TestCase):
+    def test_editor_can_be_recorded_from_the_form(self):
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="testpass123")
+        )
+        response = self.client.post("/library/add/", {
+            "title": "Sicut cervus", "composer_surname": "Palestrina",
+            "editor": "Stockton", "voicing": "SATB", "language": "Latin",
+            "soprano_parts": 1, "alto_parts": 1, "tenor_parts": 1, "bass_parts": 1,
+            "copies_owned": 0,
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Score.objects.get().editor, "Stockton")
+
+
 class ScoreDetailListTests(TestCase):
     def test_facts_are_a_description_list(self):
         self.client.force_login(
