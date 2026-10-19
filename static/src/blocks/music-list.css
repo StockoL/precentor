@@ -108,6 +108,18 @@
     padding-block-start: var(--spacing-m);
     border-block-start: 1px solid var(--colors-border-subtle);
   }
+
+  /* Public / Draft toggle: the version being viewed is marked with
+     aria-current, which screen readers announce and this rule styles. */
+  .music-list-version a {
+    color: var(--colors-text-muted);
+  }
+
+  .music-list-version a[aria-current] {
+    color: var(--colors-text-base);
+    font-weight: 700;
+    text-decoration: none;
+  }
 }
 
 /*

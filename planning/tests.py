@@ -409,6 +409,15 @@ class MusicListTests(TestCase):
         )
         self.score = Score.objects.create(title="Test Anthem", composer_surname="Test Composer")
 
+    def test_version_toggle_marks_the_version_being_viewed(self):
+        url = f"/terms/{self.term.pk}/music-list/"
+        public = self.client.get(url)
+        self.assertContains(public, '<a href="?" aria-current="page">Public</a>', html=True)
+        self.assertContains(public, '<a href="?draft=1">Draft</a>', html=True)
+        draft = self.client.get(url + "?draft=1")
+        self.assertContains(draft, '<a href="?">Public</a>', html=True)
+        self.assertContains(draft, '<a href="?draft=1" aria-current="page">Draft</a>', html=True)
+
     def test_na_role_never_shown(self):
         ServiceRole.objects.create(
             service=self.service, role_name="Setting", is_not_applicable=True

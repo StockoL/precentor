@@ -1,6 +1,6 @@
 <!-- planning/templates/planning/music_list.html -->
 {% extends "base.html" %}
-{% block title %}Music List — {{ term }} — Precentor{% endblock %}
+{% block title %}Music list — {{ term }} — Precentor{% endblock %}
 {% block content %}
 <div class="music-list center flow"
      style="--center-max-width: {% if draft %}65ch{% else %}60rem{% endif %}; --accent: {{ site_config.house_accent_colour }};">
@@ -30,8 +30,10 @@
     </div>
 
     <div class="music-list-controls cluster">
-        <a href="?draft=1">View draft (internal)</a>
-        <a href="?">View public version</a>
+        <nav class="music-list-version cluster" aria-label="Music list version">
+            <a href="?"{% if not draft %} aria-current="page"{% endif %}>Public</a>
+            <a href="?draft=1"{% if draft %} aria-current="page"{% endif %}>Draft</a>
+        </nav>
         <button onclick="window.print()">Print</button>
     </div>
 </div>
