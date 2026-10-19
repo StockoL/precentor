@@ -185,10 +185,10 @@ Done when every page is readable at 360px and 1280px, headings step down visibly
 
 ### Phase 2: nomenclature (about two hours)
 
-1. Settle the glossary in section 8.
-2. Status labels via a model property or filter, keeping raw values for CSS classes.
-3. Nav, page titles, headings and button wording per section 3.
-4. Date format and `verbose_name` / `help_text` on the model fields.
+1. [x] Settle the glossary in section 8 (slot, notice, term).
+2. [x] Status labels via a model property or filter, keeping raw values for CSS classes. Done as `Service.STATUS_LABELS` and a `status_label` property; status is derived, so there is no `get_status_display()`.
+3. [x] Nav, page titles, headings and button wording per section 3. The nav's Settings link shows to the conductor only and Inbox carries an open count, both from a `nav` context processor in `precentor_project`.
+4. [x] Date format and `verbose_name` / `help_text` on the model fields. One format module (`precentor_project/formats/en_GB/formats.py`, via `FORMAT_MODULE_PATH`) sets "Sun 4 Oct 2026". The calendar choice labels were kept, since Phase 0 had just settled them; the help text now explains the term default and the service override instead.
 
 Done when no underscore or raw choice value is visible anywhere in the UI.
 
@@ -313,3 +313,4 @@ One line per phase as it completes, with the commit range.
 - Step 0 (19 Oct 2026): baseline tagged `pre-overhaul` at `94a7781`; branch `overhaul`.
 - Phase 0 (19 Oct 2026): `13548ef` to `ad6fb3e`. Beyond the six planned steps, it also renamed the use types to Mass and Vespers, switched test fixtures and the add-role placeholder to Catholic service and slot names, and corrected the README and ERD, which claimed role templates were seeded (none exist). 73 tests pass.
 - Phase 1 (19 Oct 2026): `031c217` to `54e3a7d`. Browser tests now cover the skip link, the root font size, the shared control height and list row width. A screenshot pass of eleven pages in light and dark at 360px and 1280px found no overflow and no light patches; it also caught Anglican examples left in the score form's help text, fixed in `54e3a7d`. Left for later phases: music list headings too large for their columns (Phase 4), every nav button styled as primary (Phase 3), the "Is not applicable" checkbox stretched to full width (Phase 3 form layout). 81 tests pass.
+- Phase 2 (19 Oct 2026): `bc395b1` to `e683bdd`. A scan of the visible text of fifteen pages found no underscores, raw values or retired words, except the crest's storage path ("Currently: site_config/crest.png") from Django's file widget on Settings; that widget goes when the crest moves into the database (Phase 7). Also found: the `core` app had no tests at all; `core/tests.py` now exists, but the settings singleton, crest processing and conductor-only access still need tests (Phase 5). The term page now calls `Service.status` three times per row; Phase 5's prefetching rewrite should make that cheap. 99 tests pass.
