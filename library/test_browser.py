@@ -53,6 +53,12 @@ class TagInputBrowserTest(PlaywrightTestCase):
         self.save()
         assert list(self.score.suited_use_types.values_list("name", flat=True)) == ["Benediction"]
 
+    def test_leaving_by_keyboard_closes_the_list(self):
+        self.page.click(self.uses)
+        assert self.page.is_visible("#id_suited_use_types-tags-listbox")
+        self.page.keyboard.press("Tab")
+        assert self.page.is_hidden("#id_suited_use_types-tags-listbox")
+
     def test_seasons_cannot_be_invented(self):
         self.page.fill(self.seasons, "Septuagesima")
         assert self.page.locator("#id_suited_seasons-tags-listbox li").count() == 0

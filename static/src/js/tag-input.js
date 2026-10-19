@@ -212,6 +212,12 @@ function buildTagInput(container) {
     if (!wrapper.contains(event.target)) closeList();
   });
 
+  // Also close when focus leaves, by Tab for instance; a click elsewhere
+  // isn't the only way out.
+  wrapper.addEventListener("focusout", (event) => {
+    if (!wrapper.contains(event.relatedTarget)) closeList();
+  });
+
   renderChips();
 
   // Everything is built, so the native controls can go. The label now

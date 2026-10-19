@@ -5,9 +5,12 @@
    ========================================================================== */
 
 @layer blocks {
+  /* The same font size as the search box, so the measure (in ch, which
+     depends on font size) is the same width for the box and its list. */
   .tag-input {
     position: relative;
     max-width: var(--layout-measure);
+    font-size: max(1rem, var(--typography-step--1));
   }
 
   .tag-input__chips {
