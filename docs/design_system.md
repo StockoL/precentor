@@ -357,6 +357,47 @@ like one. Each variant has its own `:hover` rule, because
 and would otherwise turn a primary button grey. The small lift on
 hover is switched off for people who ask for reduced motion.
 
+## Forms
+
+`form.css` styles Django's standard form output once, so every form
+looks the same without per-page styling. Most forms render with
+`{{ form.as_p }}`, which wraps each field in a `<p>`.
+
+Longer forms group related fields in a `<fieldset>` with a `<legend>`
+(the service form has When, Liturgy and Music list). Screen readers
+announce the legend with each field inside it, so the grouping isn't
+only visual. Each field in a fieldset is rendered with Django's
+`{{ field.as_field_group }}`, which outputs the field's label, help
+text, errors and input together.
+
+One Django 6 detail caught me out here. `as_field_group` doesn't wrap
+those parts in an element of their own: the label, help text and input
+come out as loose siblings. A fieldset with the `.flow` composition
+spaces its direct children apart, so it treated the label and its own
+input as separate items and put a full gap between them, as wide as
+the gap between two fields. Wrapping each field in a plain `<div>`
+fixes it. The `<div>` becomes the thing `.flow` spaces, and the label,
+help text and input stay together inside it:
+
+```html
+<fieldset class="flow">
+    <legend>When</legend>
+    <div>{{ form.date.as_field_group }}</div>
+    <div>{{ form.service_type.as_field_group }}</div>
+</fieldset>
+```
+
+Other form details:
+
+- Groups get more space after them than the fields inside them get,
+  so each group reads as separate.
+- Checkboxes and radios keep their natural size, instead of being
+  stretched to the full width like text inputs.
+- Django marks a field with errors `aria-invalid="true"`, which screen
+  readers announce; `form.css` gives the same fields a red border.
+- Help text and the shared control height are described under
+  "Accessibility basics" and "Scales" above.
+
 ## Page transitions
 
 Moving between pages fades the content in about 180ms, using

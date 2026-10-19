@@ -6,6 +6,7 @@
     <form method="post" class="flow">
         {% csrf_token %}
         {{ form.non_field_errors }}
+        {# Each field sits in a <div>: as_field_group has no wrapper of its own in Django 6, so without one the fieldset's .flow spacing would separate each label from its input. See "Forms" in docs/design_system.md. #}
 
         <fieldset class="flow">
             <legend>When</legend>
