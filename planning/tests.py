@@ -57,6 +57,25 @@ class ServiceStatusTests(TestCase):
         )
         self.assertEqual(self.service.status, "in_progress")
 
+    def test_status_label_is_readable(self):
+        self.assertEqual(self.service.status_label, "Not started")
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+        piece = RolePiece.objects.create(service_role=role, score=self.score)
+        self.assertEqual(self.service.status_label, "In progress")
+        piece.is_confirmed = True
+        piece.save()
+        self.assertEqual(self.service.status_label, "Complete")
+
+    def test_badges_show_label_and_keep_raw_value_as_class(self):
+        user = User.objects.create_superuser(username="admin", password="testpass123")
+        self.client.force_login(user)
+        for url in (self.service.get_absolute_url(), self.term.get_absolute_url()):
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertContains(response, "badge--not_started")
+                self.assertContains(response, ">Not started<")
+                self.assertNotContains(response, ">not_started<")
+
 
 class ServiceEffectiveCalendarUseTests(TestCase):
     def setUp(self):

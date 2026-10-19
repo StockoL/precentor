@@ -48,7 +48,7 @@ class ConfirmToggleBrowserTest(PlaywrightTestCase):
         assert self.piece.is_confirmed is True
 
         # Service status badge recomputed in place, no reload.
-        assert "complete" in self.page.inner_text("#service-status-badge")
+        assert self.page.inner_text("#service-status-badge").strip() == "Complete"
 
         # Success toast appeared.
         self.page.wait_for_selector(".toast--success")

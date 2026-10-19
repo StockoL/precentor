@@ -36,6 +36,15 @@ class Term(models.Model):
 
 
 class Service(models.Model):
+    # Display labels for the derived status. The raw values stay in use
+    # for CSS classes (badge--not_started) and comparisons; only the
+    # label is shown to people.
+    STATUS_LABELS = {  # noqa
+        "not_started": "Not started",
+        "in_progress": "In progress",
+        "complete": "Complete",
+    }
+
     term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name="services")
     date = models.DateField()
     service_type = models.CharField(max_length=50)
@@ -95,6 +104,12 @@ class Service(models.Model):
         if resolved_count == 0 and not has_any_piece:
             return "not_started"
         return "in_progress"
+
+    @property
+    def status_label(self):
+        """The status as shown in the UI, e.g. "Not started". Status is
+        derived, not a choices field, so there's no get_status_display()."""
+        return self.STATUS_LABELS[self.status]
 
     def music_list_rows(self, draft=False):
         rows = []

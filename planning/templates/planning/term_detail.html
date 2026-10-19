@@ -19,7 +19,7 @@
             {% for service in services %}
             <li class="list-row">
                 <a href="{{ service.get_absolute_url }}">{{ service.date|date:"d/m/Y" }} — {{ service.service_type }}</a>
-                <span class="badge badge--{{ service.status }}">{{ service.status }}</span>
+                <span class="badge badge--{{ service.status }}">{{ service.status_label }}</span>
             </li>
             {% empty %}
             <li>No services yet.</li>

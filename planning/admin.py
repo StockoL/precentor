@@ -26,7 +26,7 @@ class ServiceAdmin(admin.ModelAdmin):
     inlines = [ServiceRoleInline]  # noqa
 
     def display_status(self, obj):
-        return obj.status
+        return obj.status_label
 
     display_status.short_description = "Status"
 
