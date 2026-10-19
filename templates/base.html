@@ -63,7 +63,9 @@
                 <a href="{% url 'planning:term_list' %}">Terms</a>
                 <a href="{% url 'library:score_list' %}">Library</a>
                 <a href="{% url 'comments:inbox' %}">Inbox</a>
+                {% if is_conductor %}
                 <a href="{% url 'core:site_config_update' %}">Settings</a>
+                {% endif %}
                 {% if user.is_authenticated %}
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
