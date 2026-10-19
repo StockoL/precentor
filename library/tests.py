@@ -45,6 +45,20 @@ class ScoreFormLayoutTests(TestCase):
                 self.assertContains(response, f'name="{field}"')
 
 
+class VoicingSuggestionTests(TestCase):
+    def test_voicing_field_suggests_existing_voicings_once_each(self):
+        for title, voicing in (("A", "SATB"), ("B", "SATB"), ("C", "SSA"), ("D", "")):
+            Score.objects.create(title=title, composer_surname="X", voicing=voicing)
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="testpass123")
+        )
+        response = self.client.get("/library/add/")
+        self.assertContains(response, 'list="voicing-options"')
+        self.assertContains(response, '<option value="SATB"></option>', count=1, html=True)
+        self.assertContains(response, '<option value="SSA"></option>', count=1, html=True)
+        self.assertNotContains(response, '<option value=""></option>', html=True)
+
+
 class ScoreEditorTests(TestCase):
     def test_editor_can_be_recorded_from_the_form(self):
         self.client.force_login(

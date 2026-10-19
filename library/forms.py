@@ -36,4 +36,7 @@ class ScoreForm(forms.ModelForm):
         ]
         widgets = {  # noqa
             "last_sung_manual": NativeDateInput(),
+            # Suggests the voicings already in the library (a <datalist> in
+            # score_form.html), so SATB and S.A.T.B. don't split in two.
+            "voicing": forms.TextInput(attrs={"list": "voicing-options"}),
         }

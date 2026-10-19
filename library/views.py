@@ -165,12 +165,27 @@ class ScoreDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class ScoreCreateView(LoginRequiredMixin, CreateView):
+class ScoreFormMixin:
+    """What the score form page needs beyond the form itself."""
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # For the voicing field's <datalist> of suggestions.
+        context["existing_voicings"] = (
+            Score.objects.exclude(voicing="")
+            .order_by("voicing")
+            .values_list("voicing", flat=True)
+            .distinct()
+        )
+        return context
+
+
+class ScoreCreateView(LoginRequiredMixin, ScoreFormMixin, CreateView):
     model = Score
     form_class = ScoreForm
 
 
-class ScoreUpdateView(LoginRequiredMixin, UpdateView):
+class ScoreUpdateView(LoginRequiredMixin, ScoreFormMixin, UpdateView):
     model = Score
     form_class = ScoreForm
 
