@@ -1,6 +1,7 @@
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.urls import reverse
+from django.utils.formats import date_format
 
 from ordo.models import CALENDAR_USE_CHOICES
 
@@ -69,7 +70,7 @@ class Service(models.Model):
         ordering = ["date"]  # noqa
 
     def __str__(self):
-        return f"{self.service_type} — {self.date.strftime('%d/%m/%Y')}"
+        return f"{self.service_type} — {date_format(self.date)}"
 
     def get_absolute_url(self):
         return reverse("planning:service_detail", kwargs={"pk": self.pk})
@@ -132,7 +133,7 @@ class TermMarker(models.Model):
         ordering = ["date"]  # noqa
 
     def __str__(self):
-        return f"{self.text} ({self.date.strftime('%d/%m/%Y')})"
+        return f"{self.text} ({date_format(self.date)})"
 
 
 class ServiceRole(models.Model):

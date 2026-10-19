@@ -58,6 +58,12 @@ class ServiceStatusTests(TestCase):
         )
         self.assertEqual(self.service.status, "in_progress")
 
+    def test_str_uses_the_ui_date_format(self):
+        # __str__ feeds the service page's heading and tab title.
+        self.assertEqual(str(self.service), "Sung Mass — Sun 11 Jan 2026")
+        marker = TermMarker(term=self.term, date=date(2026, 2, 16), text="Half term")
+        self.assertEqual(str(marker), "Half term (Mon 16 Feb 2026)")
+
     def test_status_label_is_readable(self):
         self.assertEqual(self.service.status_label, "Not started")
         role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
