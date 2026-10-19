@@ -5,6 +5,17 @@ before code is written. Covers two related but separable features that
 give the existing computus algorithm/`Ordo` work a genuine payoff, rather
 than leaving it as correct-but-underused machinery.
 
+> **Update, 19 October 2026: Catholic only.** Both features were first
+> designed for two traditions (Catholic and Church of England), chosen
+> per term. I've since narrowed Precentor to the Roman calendar: the
+> `tradition` field is gone from `LiturgicalSeason`,
+> `LiturgicalOccasion`, `Term` and `Service`, along with
+> `effective_tradition()`, and `occasion_for_date()` now takes only a
+> date and a calendar use. `calendar_use` stays, relabelled as the
+> Ordinary Form and the 1962 Extraordinary Form. The reasoning is in
+> the README's out-of-scope list. The code samples below show the
+> current shape; the reasoning around them is unchanged.
+
 ---
 
 ## 1. Problem statement
@@ -33,12 +44,17 @@ own earliest MoSCoW — has not been implemented. Two features close both gaps:
   named `LiturgicalOccasion`'s `date_for_year(year)`:
 
 ```python
-def occasion_for_date(target_date, tradition):
-    for occasion in LiturgicalOccasion.objects.filter(tradition=tradition):
-        if occasion.date_for_year(target_date.year) == target_date:
-            return occasion
-    return None
+def occasion_for_date(target_date, calendar_use):
+    candidates = LiturgicalOccasion.objects.filter(calendar_use=calendar_use)
+    return [
+        occasion
+        for occasion in candidates
+        if occasion.date_for_year(target_date.year) == target_date
+    ]
 ```
+
+It returns a list, because more than one occasion can fall on a date
+(see "Multiple matching occasions" below).
 
 - This is deliberately lighter than, and different from, a
   previously-descoped idea of modelling continuous season date-ranges — it
@@ -49,49 +65,43 @@ def occasion_for_date(target_date, tradition):
 
 ### Open questions
 
-### Tradition/calendar-use selection: Term default, Service override
+### Calendar-use selection: Term default, Service override
 
 Resolved via real usage patterns rather than a hypothetical: most
-churches use one tradition/calendar throughout, but some (e.g.
-Catholic oratories running both EF and NO Masses) need per-service
-override within the same term.
+churches use one calendar throughout, but some (e.g. Catholic
+oratories running both EF and NO Masses) need per-service override
+within the same term.
 
-`LiturgicalOccasion` gains a second axis:
+`LiturgicalOccasion` carries the calendar it belongs to:
 
 ```python
 CALENDAR_USE_CHOICES = [
-    ("current", "Current (Common Worship / Novus Ordo)"),
-    ("historic", "Historic (Book of Common Prayer / Extraordinary Form)"),
+    ("current", "Ordinary Form (Novus Ordo)"),
+    ("historic", "Extraordinary Form (1962)"),
 ]
 calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES, default="current")
 ```
 
-`Term` gets both fields **required** (the sensible default for the
-common single-tradition case). `Service` gets both fields **optional**
-(`null=True, blank=True`) — set only when a specific service genuinely
+`Term.calendar_use` is **required** (the sensible default for the
+common single-calendar case). `Service.calendar_use` is **optional**
+(`null=True, blank=True`), set only when a specific service genuinely
 differs from its term. A fat-model helper (matching `Service.status`'s
 own convention) resolves "override if set, else inherit from Term" in
 one place:
 
 ```python
-def effective_tradition(self):
-    return self.tradition or self.term.tradition
-
 def effective_calendar_use(self):
     return self.calendar_use or self.term.calendar_use
 ```
 
-This directly answers the "which tradition does the lookup run against" question:
-
-`occasion_for_date(date, service.effective_tradition(),
-service.effective_calendar_use())`.
+This directly answers the "which calendar does the lookup run against"
+question: `occasion_for_date(date, service.effective_calendar_use())`.
 
 **Explicitly not committed to by this:** populating real Extraordinary
-Form or Book of Common Prayer occasion data remains a separate, large
-content task, unchanged from when it was first raised in planning. This
-resolves the _selection mechanism_ only — the model cleanly supports all four
-combinations; only whichever ones have real data behind them need to
-be usable in practice.
+Form occasion data remains a separate, large content task, unchanged
+from when it was first raised in planning. This resolves the
+_selection mechanism_ only; only calendars with real data behind them
+need to be usable in practice.
 
 ### Multiple matching occasions: present as choices, additive model change only
 
@@ -116,15 +126,15 @@ every already-built piece that currently reads `service.occasion` as a
 single value.
 
 **Aside, worth a brief clarification:** the EF calendar's 1-year cycle
-vs. Novus Ordo/Common Worship's 3-year lectionary cycle (Year A/B/C)
-doesn't actually add complexity to `Ordo`'s own job — the lectionary
-cycle governs which _readings_ are assigned to an already-named,
+vs. the Novus Ordo's 3-year lectionary cycle (Year A/B/C) doesn't
+actually add complexity to `Ordo`'s own job — the lectionary cycle
+governs which _readings_ are assigned to an already-named,
 already-dated Sunday, and `Ordo` deliberately never models readings at
 all (see the README's scope boundary). Where EF may genuinely be
 simpler to enter is a different, real reason: it's long-stable with no
-ongoing modern additions, versus Common Worship's more actively
-expanding set of optional commemorations — a smaller dataset, not a
-structurally simpler one.
+ongoing modern additions, versus the Ordinary Form's growing set of
+optional memorials — a smaller dataset, not a structurally simpler
+one.
 
 ### Mechanism: live JS suggestion
 
@@ -155,10 +165,10 @@ types; these are three _different_ kinds of fact that happen to serve
 the same filtering goal):
 
 1. **Use-type** — a structural property of the service itself
-   (Eucharist / Evening / General), independent of the calendar.
+   (Mass / Vespers / General use), independent of the calendar.
 2. **Season** — a broad calendar category (Advent, Christmas, Lent...).
 3. **Specific occasion** — an individual named day (Advent Sunday 4,
-   Trinity 7, SS Peter & Paul).
+   the Seventh Sunday in Ordinary Time, SS Peter & Paul).
 
 ```python
 class UseType(models.Model):
@@ -166,7 +176,6 @@ class UseType(models.Model):
 
 class LiturgicalSeason(models.Model):
     name = models.CharField(max_length=50)
-    tradition = models.CharField(max_length=20, choices=LiturgicalOccasion.TRADITION_CHOICES)
 ```
 
 `Score` gains three separate M2M fields:
