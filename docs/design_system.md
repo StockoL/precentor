@@ -252,7 +252,7 @@ static/
 │   │   ├── score-combobox.css / crest-crop.css / toast.css
 │   │   ├── skip-link.css / page-header.css / user-menu.css
 │   │   ├── detail-list.css / empty-state.css
-│   │   └── toolbar.css / data-table.css / tag-input.css
+│   │   └── toolbar.css / data-table.css / tag-input.css / term-card.css
 │   └── utilities/
 │       └── utilities.css
 └── fonts/
@@ -431,6 +431,34 @@ under a row of filters (`toolbar.css`).
   vertically, and the header sticks inside it.
 - **Numbers** use tabular figures and line up on the right, headings
   included.
+
+## Term cards
+
+The Terms page shows each term as a card (`term-card.css`): name
+and phase badge, how far through it is, a status bar, the next
+service with what's still to settle, open comments, and "Ready to
+publish" once everything is complete.
+
+- **Stretched link:** the term's name is the card's link, and its
+  `::after` is stretched over the whole card, so the card is one big
+  target. Wrapping the card in an `<a>` instead would put the
+  next-service link inside another link, which isn't valid HTML.
+  Links inside the card sit above the stretched one, and keyboard
+  focus on the name rings the whole card through `:has()`.
+- **Status bar:** three segments grow in proportion to the counts of
+  complete, in progress and not started services. The counts reach
+  the CSS as custom properties on the bar (`style="--complete: 3"`),
+  which carry data, not styling choices. The bar is hidden from
+  screen readers because the sentence beside it says the same.
+- **Hover** gives an accent border, a small lift and a shadow; the
+  lift is off for anyone who asks for reduced motion.
+
+**A stacking lesson:** the nav's `view-transition-name` makes it a
+stacking context, so the user menu's `z-index` only counted inside
+the nav, and the term cards, positioned for their stretched links,
+painted over the open menu on a phone. The nav itself now has
+`position: relative` and a `z-index`, and a browser test checks the
+menu is the topmost thing over a card.
 
 ## Chip inputs
 

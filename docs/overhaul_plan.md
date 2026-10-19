@@ -210,7 +210,8 @@ Progress:
 - [x] **Library** (`909a90f` to `eec04d9`), built to the spec in section 7: `editor` and `last_sung_manual` fields; last sung derived by `with_last_sung()`; catalogue names and ordering; search, Language and Voicing filters (the old Voice part filter dropped, as decided); a sortable table with `aria-sort`; fifty to a page with the filters kept in the links. Found and fixed on the way: suitability ranking listed a score once per tag (it also affected the propose-piece picker), and a score with no language blanked the Language menu.
 - [x] **Score page** (`85fd49f` to `a191936`): `background`, `notes` and four vocal ranges, the ranges checked by a validator and stored in one tidy form; a history state for each proposed piece (Sung, Scheduled or Proposed); and the page rebuilt as a summary, background, notes, ranges and a service history table.
 - [x] **Score form** (`f7a1396` to `7455901`): five fieldsets, a datalist of existing voicings, freehand use types created on save, and chip inputs over the three suitability selects. Found on the way: `hidden` didn't hide a select inside a form, because `form.css` sets its `display`; a `[hidden]` utility now fixes that everywhere.
-- [ ] The remaining pages: Terms, Term detail, Service detail, Inbox, Music list (screen and print), Settings, Login.
+- [x] **Terms** (`e48afba` to `a7106c6`): full-width status cards built to the spec in section 7, current and upcoming first, past folded away. The view loads everything in a fixed number of queries, which also does Phase 5's first item for this page; a test checks the count doesn't grow with more terms. Found on the way: the open user menu was drawn behind the cards on a phone (a stacking context from the nav's view-transition-name).
+- [ ] The remaining pages: Term detail, Service detail, Inbox, Music list (screen and print), Settings, Login.
 
 ### Phase 5: performance and robustness (about half a day)
 
