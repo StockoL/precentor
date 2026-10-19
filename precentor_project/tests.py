@@ -16,3 +16,11 @@ class BaseTemplateTests(TestCase):
             '<meta name="viewport" content="width=device-width, initial-scale=1">',
             html=True,
         )
+
+    def test_skip_link_targets_main(self):
+        self.assertContains(
+            self.response,
+            '<a class="skip-link" href="#main">Skip to main content</a>',
+            html=True,
+        )
+        self.assertContains(self.response, '<main id="main"')

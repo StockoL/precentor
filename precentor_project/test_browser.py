@@ -68,3 +68,23 @@ class PlaywrightTestCase(StaticLiveServerTestCase):
         self.page.click("button[type=submit]")
         self.page.wait_for_load_state("networkidle")
         return user
+
+
+class SkipLinkBrowserTest(PlaywrightTestCase):
+    def test_first_tab_reveals_skip_link_and_enter_jumps_to_main(self):
+        # Not the login page: Django's login form autofocuses the
+        # username field, so Tab starts from there instead of the top.
+        self.login_as_conductor()
+        self.page.goto("/")
+        skip_link = self.page.locator(".skip-link")
+
+        # Off-screen until focused: its bottom edge is above the viewport.
+        box = skip_link.bounding_box()
+        assert box["y"] + box["height"] <= 0
+
+        self.page.keyboard.press("Tab")
+        assert skip_link.evaluate("el => el === document.activeElement")
+        assert skip_link.bounding_box()["y"] >= 0
+
+        self.page.keyboard.press("Enter")
+        assert self.page.url.endswith("#main")
