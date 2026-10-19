@@ -11,7 +11,7 @@ domain concept.
 | ---------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | `accounts` | User profile/role (conductor vs. librarian), `ConductorRequiredMixin`     | Keeps auth/permissions separate from domain logic; the mixin lives here so any app can gate a view by role without depending on `planning` |
 | `library`  | `Score`, plus copies/filing fields                                        | The reusable "what do we own" side, independent of any term                                  |
-| `ordo`     | `LiturgicalOccasion` (season/tradition logic, moveable feast calculation) | Self-contained calendar engine; conceivably reusable elsewhere                               |
+| `ordo`     | `LiturgicalOccasion` (seasons, calendar use, moveable feast calculation)  | Self-contained calendar engine; conceivably reusable elsewhere                               |
 | `planning` | `Term`, `Service`, `TermMarker`, `ServiceRole`, `RolePiece`               | The core planning workflow — the spine of the MVP                                            |
 | `comments` | `Comment` (generic relation via `contenttypes`)                           | Cuts across `planning`, so it's cleanest as its own app rather than living inside `planning` |
 | `core`     | `SiteConfig` (church name, crest, house colour, layout toggles)           | Site-wide branding/print-layout preferences, not owned by any one term — doesn't belong inside `planning` |
@@ -58,7 +58,7 @@ class Score(models.Model):
 
 **`lead_time_tag` removed:** dropped as unnecessary micromanagement — the field added a rehearsal-scheduling axis nothing else in the app used or surfaced.
 
-**Three-tier suitability tagging, ranking not filtering:** `suited_use_types` / `suited_seasons` / `suited_occasions` are three genuinely distinct kinds of fact (a service's structural type, a broad calendar season, a specific named day), not one generic tag concept. `Score.objects` uses a custom `ScoreQuerySet.ranked_by_suitability(occasion=, season=, use_type=)` that annotates an `is_suited` flag and sorts matching scores to the top — it never filters, since an untagged score might still be the right choice and the tool shouldn't claim to know otherwise. Each field carries `help_text` with examples (e.g. "Eucharist, General use, Evening, Harvest") since the underlying `UseType`/`LiturgicalSeason` vocab is otherwise invisible until populated — `ordo`'s `0004_seed_use_types_and_seasons` data migration seeds a starter set of both (real `LiturgicalOccasion` data remains the separate, larger content task noted below).
+**Three-tier suitability tagging, ranking not filtering:** `suited_use_types` / `suited_seasons` / `suited_occasions` are three genuinely distinct kinds of fact (a service's structural type, a broad calendar season, a specific named day), not one generic tag concept. `Score.objects` uses a custom `ScoreQuerySet.ranked_by_suitability(occasion=, season=, use_type=)` that annotates an `is_suited` flag and sorts matching scores to the top — it never filters, since an untagged score might still be the right choice and the tool shouldn't claim to know otherwise. Each field carries `help_text` with examples (e.g. "Mass, Vespers, General use") since the underlying `UseType`/`LiturgicalSeason` vocab is otherwise invisible until populated — `ordo`'s `0004_seed_use_types_and_seasons` data migration seeds a starter set of both, revised for the Catholic-only scope by `0008` to `0010` (real `LiturgicalOccasion` data remains the separate, larger content task noted below).
 
 **Voicing design decision:** an earlier version of this plan used a fixed
 `choices` list for `voicing` (SATB, SATTB, unison, etc.). This was
@@ -89,23 +89,18 @@ COLOUR_CHOICES = [
 ]
 
 CALENDAR_USE_CHOICES = [
-    ("current", "Current (Common Worship / Novus Ordo)"),
-    ("historic", "Historic (Book of Common Prayer / Extraordinary Form)"),
+    ("current", "Ordinary Form (Novus Ordo)"),
+    ("historic", "Extraordinary Form (1962)"),
 ]
-
-TRADITION_CHOICES = [("catholic", "Catholic"), ("cofe", "Church of England")]
 
 class LiturgicalSeason(models.Model):
     name = models.CharField(max_length=50)
-    tradition = models.CharField(max_length=20, choices=TRADITION_CHOICES)
 
 class UseType(models.Model):
     name = models.CharField(max_length=50)
 
 class LiturgicalOccasion(models.Model):
-    TRADITION_CHOICES = TRADITION_CHOICES
     name = models.CharField(max_length=100)
-    tradition = models.CharField(max_length=20, choices=TRADITION_CHOICES)
     calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES, default="current")
     is_moveable = models.BooleanField(default=False)
     fixed_month = models.PositiveSmallIntegerField(blank=True, null=True)
@@ -120,9 +115,9 @@ class LiturgicalOccasion(models.Model):
         ...
 
 
-def occasion_for_date(target_date, tradition, calendar_use):
+def occasion_for_date(target_date, calendar_use):
     """Reverse lookup: which LiturgicalOccasion(s) fall on target_date.
-    Scopes candidates by tradition/calendar_use, then evaluates
+    Scopes candidates by calendar_use, then evaluates
     date_for_year() in Python since it isn't a database column. Returns
     a list — zero, one, or more occasions can share a date."""
     ...
@@ -132,9 +127,11 @@ def occasion_for_date(target_date, tradition, calendar_use):
 
 **Colour design decision — the mirror image of the voicing decision above:** liturgical colour is a genuinely small, fixed, real-world vocabulary (violet/red/green/white/rose) — unlike voicing's combinatorial notation problem, there's no equivalent of "SATB.SATB" here needing free text. `choices` was added specifically so every stored value maps predictably onto a CSS design token name (see `docs/design_system.md`), rather than risking a typo like `"Purple"` vs `"violet"` silently breaking that mapping.
 
-**Deliberately out of scope:** Ordo is strictly a naming/dating/colour-tagging engine for repertoire filtering and service labelling — it does not model readings, psalms, propers, or rubrical detail (e.g. whether the Gloria is said), regardless of how many calendar traditions it eventually covers. See the README's out-of-scope list.
+**Deliberately out of scope:** Ordo is strictly a naming/dating/colour-tagging engine for repertoire filtering and service labelling — it does not model readings, psalms, propers, or rubrical detail (e.g. whether the Gloria is said), even if it later covers other calendars. See the README's out-of-scope list.
 
-**Tradition vs. calendar-use, and the reverse lookup:** `calendar_use` is a second, independent axis from `tradition` — some traditions (e.g. Catholic oratories) run both a `current` and a `historic` calendar side by side. `LiturgicalSeason` and `UseType` exist to support three-tier `Score` suitability tagging (see below); `LiturgicalOccasion.season` is the link that lets a season-level tag (e.g. "Advent") and a day-level tag (e.g. "Advent Sunday 4") match each other. `occasion_for_date()` is the reverse of `date_for_year()` — given a date, which occasion(s) is it — used to auto-suggest a `Service`'s occasion from its date.
+**Catholic-only design decision:** an earlier version of this plan gave `LiturgicalSeason`, `LiturgicalOccasion`, `Term` and `Service` a `tradition` field (Catholic or Church of England), with `Service.effective_tradition()` resolving the override. This was removed in October 2026. Precentor is single-tenant, and one church follows one tradition, so a per-term choice added a field to every form, a second set of seed data and a second set of tests without helping any real user. `ordo/0005` deleted the Church of England rows while the column still identified them, then `ordo/0006` and `planning/0005` dropped the field; data and schema changes are separate migrations because Postgres can refuse to alter a table with pending trigger events in the same transaction. A second tradition is listed in the README as future work.
+
+**Calendar use, and the reverse lookup:** `calendar_use` distinguishes the Ordinary Form (`current`) from the 1962 Extraordinary Form (`historic`); some churches (e.g. Catholic oratories) run both side by side. `LiturgicalSeason` and `UseType` exist to support three-tier `Score` suitability tagging (see below); `LiturgicalOccasion.season` is the link that lets a season-level tag (e.g. "Advent") and a day-level tag (e.g. "Advent Sunday 4") match each other. `occasion_for_date()` is the reverse of `date_for_year()` — given a date, which occasion(s) is it — used to auto-suggest a `Service`'s occasion from its date.
 
 ### `planning.Term`
 
@@ -143,7 +140,6 @@ class Term(models.Model):
     name = models.CharField(max_length=100)
     start_date = models.DateField()
     end_date = models.DateField()
-    tradition = models.CharField(max_length=20, choices=TRADITION_CHOICES)
     calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES)
     comments = GenericRelation("comments.Comment")
 
@@ -165,7 +161,7 @@ class Term(models.Model):
 class Service(models.Model):
     term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name="services")
     date = models.DateField()
-    service_type = models.CharField(max_length=50)  # e.g. "sung_eucharist"
+    service_type = models.CharField(max_length=50)  # free text, e.g. "Sung Mass"
     occasion = models.ForeignKey(
         "ordo.LiturgicalOccasion", on_delete=models.SET_NULL, null=True, blank=True,
         related_name="services",
@@ -173,7 +169,6 @@ class Service(models.Model):
     additional_occasions = models.ManyToManyField(
         "ordo.LiturgicalOccasion", blank=True, related_name="also_relevant_services",
     )
-    tradition = models.CharField(max_length=20, choices=TRADITION_CHOICES, null=True, blank=True)
     calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES, null=True, blank=True)
     hymns = models.CharField(max_length=200, blank=True)
     psalm = models.CharField(max_length=100, blank=True)
@@ -181,9 +176,6 @@ class Service(models.Model):
 
     class Meta:
         ordering = ["date"]
-
-    def effective_tradition(self):
-        return self.tradition or self.term.tradition
 
     def effective_calendar_use(self):
         return self.calendar_use or self.term.calendar_use
@@ -350,9 +342,9 @@ shared across every app rather than owned by any one of them.
   hiding the button — so a comment can't be silently discarded while
   still an open query. Deleting a parent cascades to its replies via
   the existing `on_delete=CASCADE` on `Comment.parent`.
-- `Term.tradition`/`calendar_use` are required (the common single-tradition
-  case); `Service.tradition`/`calendar_use` are optional overrides, resolved
-  by `effective_tradition()`/`effective_calendar_use()`. This supports
+- `Term.calendar_use` is required (the common single-calendar case);
+  `Service.calendar_use` is an optional override, resolved by
+  `effective_calendar_use()`. This supports
   churches that run more than one calendar within the same term (e.g.
   Catholic oratories running both EF and NO Masses) without forcing every
   church to set an override.
