@@ -13,6 +13,7 @@ from django.views.generic import (
 
 from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 
+from .forms import ScoreForm
 from .models import Score
 
 
@@ -79,30 +80,12 @@ class ScoreDetailView(LoginRequiredMixin, DetailView):
 
 class ScoreCreateView(LoginRequiredMixin, CreateView):
     model = Score
-    fields = [  # noqa
-        "title",
-        "composer_surname",
-        "composer_other_names",
-        "arranger",
-        "editor",
-        "voicing",
-        "soprano_parts",
-        "alto_parts",
-        "tenor_parts",
-        "bass_parts",
-        "language",
-        "copies_owned",
-        "filing_location",
-        "suited_use_types",
-        "suited_seasons",
-        "suited_occasions",
-        "duration_minutes",
-    ]
+    form_class = ScoreForm
 
 
 class ScoreUpdateView(LoginRequiredMixin, UpdateView):
     model = Score
-    fields = ScoreCreateView.fields
+    form_class = ScoreForm
 
 
 class ScoreDeleteView(LoginRequiredMixin, DeleteView):
