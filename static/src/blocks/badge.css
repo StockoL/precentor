@@ -42,6 +42,19 @@
     border-color: var(--colors-success-border);
   }
 
+  /* A piece's place in a score's history (RolePiece.history_state);
+     "proposed" shares the confirmation style below. */
+  .badge--sung {
+    background-color: var(--colors-success-bg);
+    color: var(--colors-success-text);
+    border-color: var(--colors-success-border);
+  }
+  .badge--scheduled {
+    background-color: var(--colors-warning-bg);
+    color: var(--colors-warning-text);
+    border-color: var(--colors-warning-border);
+  }
+
   /* RolePiece confirmation state */
   .badge--proposed {
     background-color: var(--colors-info-bg);

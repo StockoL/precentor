@@ -10,33 +10,75 @@
         </div>
     </header>
 
+    <dl class="detail-list">
+        <dt>Composer</dt>
+        <dd>{{ score.composer_catalogue }}</dd>
+        <dt>Voicing</dt>
+        <dd>{{ score.voicing|default:"—" }} (S{{ score.soprano_parts }} A{{ score.alto_parts }} T{{ score.tenor_parts }} B{{ score.bass_parts }})</dd>
+        <dt>Language</dt>
+        <dd>{{ score.language|default:"—" }}</dd>
+        <dt>Duration</dt>
+        <dd>{% if score.duration_minutes %}{{ score.duration_minutes }} min{% else %}—{% endif %}</dd>
+        <dt>Copies</dt>
+        <dd>{{ score.copies_owned }}{% if score.filing_location %}, filed at {{ score.filing_location }}{% endif %}</dd>
+        <dt>Last sung</dt>
+        <dd>{% if score.last_sung %}{{ score.last_sung|date }} ({{ score.last_sung|timesince }} ago){% else %}Never{% endif %}</dd>
+    </dl>
+
+    {% if score.background %}
     <section class="flow">
-        <h2>About this score</h2>
+        <h2>Background</h2>
+        {{ score.background|linebreaks }}
+    </section>
+    {% endif %}
+
+    {% if score.notes %}
+    <section class="flow">
+        <h2>Interpretation notes</h2>
+        {{ score.notes|linebreaks }}
+    </section>
+    {% endif %}
+
+    {% if score.range_soprano or score.range_alto or score.range_tenor or score.range_bass %}
+    <section class="flow">
+        <h2>Vocal ranges</h2>
         <dl class="detail-list">
-            {% if score.arranger %}
-            <dt>Arranger</dt>
-            <dd>{{ score.arranger }}</dd>
-            {% endif %}
-            <dt>Voicing</dt>
-            <dd>{{ score.voicing }}</dd>
-            <dt>Parts</dt>
-            <dd>S{{ score.soprano_parts }} A{{ score.alto_parts }} T{{ score.tenor_parts }} B{{ score.bass_parts }}</dd>
-            <dt>Language</dt>
-            <dd>{{ score.language }}</dd>
-            <dt>Duration</dt>
-            <dd>{% if score.duration_minutes %}{{ score.duration_minutes }} min{% else %}—{% endif %}</dd>
+            {% if score.range_soprano %}<dt>Soprano</dt><dd>{{ score.range_soprano }}</dd>{% endif %}
+            {% if score.range_alto %}<dt>Alto</dt><dd>{{ score.range_alto }}</dd>{% endif %}
+            {% if score.range_tenor %}<dt>Tenor</dt><dd>{{ score.range_tenor }}</dd>{% endif %}
+            {% if score.range_bass %}<dt>Bass</dt><dd>{{ score.range_bass }}</dd>{% endif %}
         </dl>
     </section>
+    {% endif %}
 
     <section class="flow">
-        <h2>Library</h2>
-        <dl class="detail-list">
-            <dt>Copies owned</dt>
-            <dd>{{ score.copies_owned }}</dd>
-            <dt>Filing location</dt>
-            <dd>{{ score.filing_location|default:"—" }}</dd>
-        </dl>
+        <h2 id="history-heading">Service history</h2>
+        {% if history %}
+        <div class="table-scroll" role="region" aria-labelledby="history-heading" tabindex="0">
+            <table class="data-table data-table--narrow">
+                <thead>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Service</th>
+                        <th scope="col">Slot</th>
+                        <th scope="col">State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for piece in history %}
+                    <tr>
+                        <td>{{ piece.service_role.service.date|date }}</td>
+                        <td><a href="{{ piece.service_role.service.get_absolute_url }}">{{ piece.service_role.service.service_type }}</a> <span class="data-table__hint">{{ piece.service_role.service.term }}</span></td>
+                        <td>{{ piece.service_role.role_name }}</td>
+                        <td><span class="badge badge--{{ piece.history_state }}">{{ piece.history_label }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="empty-state">Not yet proposed for any service. Once it is, each service will be listed here, with whether it was sung.</p>
+        {% endif %}
     </section>
-
 </div>
 {% endblock %}

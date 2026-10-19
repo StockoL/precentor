@@ -175,19 +175,75 @@ class VocalRangeTests(TestCase):
         self.assertIn("Put the lower note first, as in A3–E5.", form.errors["range_tenor"])
 
 
-class ScoreDetailListTests(TestCase):
-    def test_facts_are_a_description_list(self):
+class ScoreDetailPageTests(TestCase):
+    def setUp(self):
         self.client.force_login(
             User.objects.create_superuser(username="admin", password="testpass123")
         )
-        score = Score.objects.create(
-            title="Ave verum", composer_surname="Byrd", voicing="SATB", language="Latin"
+        self.score = Score.objects.create(
+            title="Sicut cervus", composer_surname="Palestrina", editor="Stockton",
+            voicing="SATB", language="Latin",
         )
-        response = self.client.get(score.get_absolute_url())
-        self.assertContains(response, '<dl class="detail-list">', count=2)
-        self.assertContains(response, "<dt>Voicing</dt>", html=True)
-        self.assertContains(response, "<dd>SATB</dd>", html=True)
+
+    def get(self):
+        return self.client.get(self.score.get_absolute_url())
+
+    def test_summary_is_a_description_list(self):
+        response = self.get()
+        self.assertContains(response, "<dt>Composer</dt>", html=True)
+        self.assertContains(response, "<dd>Palestrina (ed. Stockton)</dd>", html=True)
+        self.assertContains(response, "<dd>Never</dd>", html=True)
         self.assertNotContains(response, "<p>Voicing:")
+
+    def test_optional_sections_appear_only_when_filled(self):
+        response = self.get()
+        for heading in ("Background", "Interpretation notes", "Vocal ranges"):
+            with self.subTest(heading=heading):
+                self.assertNotContains(response, f"<h2>{heading}</h2>", html=True)
+        self.score.background = "Psalm 42.\n\nPublished 1604."
+        self.score.notes = "Keep it moving."
+        self.score.range_bass = "F2–D4"
+        self.score.save()
+        response = self.get()
+        self.assertContains(response, "<p>Psalm 42.</p>", html=True)  # line breaks kept
+        self.assertContains(response, "<h2>Interpretation notes</h2>", html=True)
+        self.assertContains(response, "<dd>F2–D4</dd>", html=True)
+
+    def test_history_lists_each_service_with_its_state(self):
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        from planning.models import RolePiece, Service, ServiceRole, Term
+
+        today = timezone.localdate()
+        term = Term.objects.create(
+            name="Lent", start_date=today - timedelta(days=60),
+            end_date=today + timedelta(days=60), calendar_use="current",
+        )
+        for days, confirmed in ((-14, True), (14, True), (21, False)):
+            service = Service.objects.create(
+                term=term, date=today + timedelta(days=days), service_type="Sung Mass"
+            )
+            role = ServiceRole.objects.create(service=service, role_name="Offertory motet")
+            RolePiece.objects.create(service_role=role, score=self.score, is_confirmed=confirmed)
+
+        response = self.get()
+        for state, label in (("sung", "Sung"), ("scheduled", "Scheduled"), ("proposed", "Proposed")):
+            with self.subTest(state=state):
+                self.assertContains(
+                    response, f'<span class="badge badge--{state}">{label}</span>', html=True
+                )
+        history = list(response.context["history"])
+        self.assertEqual(len(history), 3)
+        self.assertGreater(  # newest first
+            history[0].service_role.service.date, history[-1].service_role.service.date
+        )
+        # The summary's last sung is the sung service, not the scheduled one.
+        self.assertEqual(response.context["score"].last_sung, today - timedelta(days=14))
+
+    def test_empty_history_says_so(self):
+        self.assertContains(self.get(), "Not yet proposed for any service.")
 
 
 class LibraryEmptyStateTests(TestCase):

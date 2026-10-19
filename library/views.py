@@ -151,6 +151,19 @@ class ScoreListView(LoginRequiredMixin, ListView):
 class ScoreDetailView(LoginRequiredMixin, DetailView):
     model = Score
 
+    def get_queryset(self):
+        return Score.objects.with_last_sung()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Every service the piece has been proposed or confirmed for,
+        # newest first. Through the reverse relation, so library doesn't
+        # import planning; select_related loads each service in one query.
+        context["history"] = self.object.role_pieces.select_related(
+            "service_role__service__term"
+        ).order_by("-service_role__service__date")
+        return context
+
 
 class ScoreCreateView(LoginRequiredMixin, CreateView):
     model = Score

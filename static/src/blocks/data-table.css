@@ -38,6 +38,12 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* A short table, such as a score's service history, needs less room
+     before it scrolls. */
+  .data-table--narrow {
+    inline-size: max(100%, 32rem);
+  }
+
   .data-table :is(th, td) {
     padding: var(--spacing-3xs) var(--spacing-2xs);
     border-block-end: 1px solid var(--colors-border-subtle);
