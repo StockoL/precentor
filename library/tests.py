@@ -174,6 +174,19 @@ class ScoreComposerTests(TestCase):
         )
         self.assertEqual(score.composer, "Ralph Vaughan Williams")
 
+    def test_catalogue_form_puts_the_surname_first_with_credits(self):
+        cases = [
+            ({"composer_surname": "Byrd"}, "Byrd"),
+            ({"composer_surname": "Palestrina", "composer_other_names": "Giovanni Pierluigi da",
+              "editor": "Stockton"}, "Palestrina, Giovanni Pierluigi da (ed. Stockton)"),
+            ({"composer_surname": "Tallis", "arranger": "Rutter"}, "Tallis (arr. Rutter)"),
+            ({"composer_surname": "Victoria", "arranger": "Smith", "editor": "Jones"},
+             "Victoria (arr. Smith; ed. Jones)"),
+        ]
+        for fields, expected in cases:
+            with self.subTest(expected=expected):
+                self.assertEqual(Score(title="T", **fields).composer_catalogue, expected)
+
     def test_surname_is_required(self):
         score = Score(
             title="Untitled Anthem",

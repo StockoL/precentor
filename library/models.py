@@ -159,5 +159,24 @@ class Score(models.Model):
             return f"{self.composer_other_names} {self.composer_surname}"
         return self.composer_surname
 
+    @property
+    def composer_catalogue(self):
+        """
+        The composer as a library catalogue lists them, surname first,
+        with any arranger and editor in brackets:
+        "Palestrina, Giovanni Pierluigi da (ed. Stockton)".
+        """
+        name = self.composer_surname
+        if self.composer_other_names:
+            name = f"{name}, {self.composer_other_names}"
+        credits = []
+        if self.arranger:
+            credits.append(f"arr. {self.arranger}")
+        if self.editor:
+            credits.append(f"ed. {self.editor}")
+        if credits:
+            name = f"{name} ({'; '.join(credits)})"
+        return name
+
     def get_absolute_url(self):
         return reverse("library:score_detail", kwargs={"pk": self.pk})
