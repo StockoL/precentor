@@ -7,11 +7,20 @@
   body {
     min-height: 100%;
     font-family: var(--fonts-body);
-    font-size: var(--typography-step-0);
     line-height: 1.5;
     color: var(--colors-text-base);
     background-color: var(--colors-surface-base);
     overflow-wrap: break-word;
+  }
+
+  /*
+   * Body text size on body only, never html: every rem is measured from
+   * the root element, so a fluid size there would scale every token in
+   * the system. Leaving html alone keeps 1rem at the user's browser
+   * setting (16px by default).
+   */
+  body {
+    font-size: var(--typography-step-0);
   }
 
   /*

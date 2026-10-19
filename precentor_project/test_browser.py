@@ -70,6 +70,17 @@ class PlaywrightTestCase(StaticLiveServerTestCase):
         return user
 
 
+class RootFontSizeBrowserTest(PlaywrightTestCase):
+    def test_root_font_size_is_left_at_the_browser_default(self):
+        # Every rem is measured from <html>. A fluid size there would
+        # silently scale every token, so body text is sized on <body>.
+        self.page.goto("/accounts/login/")
+        root_size = self.page.evaluate(
+            "getComputedStyle(document.documentElement).fontSize"
+        )
+        assert root_size == "16px", root_size
+
+
 class SkipLinkBrowserTest(PlaywrightTestCase):
     def test_first_tab_reveals_skip_link_and_enter_jumps_to_main(self):
         # Not the login page: Django's login form autofocuses the
