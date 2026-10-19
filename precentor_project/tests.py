@@ -1,4 +1,7 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
+
+User = get_user_model()
 
 
 class BaseTemplateTests(TestCase):
@@ -24,3 +27,23 @@ class BaseTemplateTests(TestCase):
             html=True,
         )
         self.assertContains(self.response, '<main id="main"')
+
+
+class NavWordingTests(TestCase):
+    def setUp(self):
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="testpass123")
+        )
+
+    def test_nav_links_and_page_headings_use_the_same_words(self):
+        pages = {
+            "/library/": "Library",
+            "/comments/inbox/": "Inbox",
+            "/settings/": "Settings",
+        }
+        for url, word in pages.items():
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertContains(response, f'<a href="{url}">{word}</a>', html=True)
+                self.assertContains(response, f"<h1>{word}</h1>", html=True)
+                self.assertContains(response, f"<title>{word} — Precentor</title>", html=True)

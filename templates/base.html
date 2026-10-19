@@ -61,9 +61,9 @@
             <a href="{% url 'planning:term_list' %}">Precentor</a>
             <div class="cluster" style="--gutter: var(--spacing-s);">
                 <a href="{% url 'planning:term_list' %}">Terms</a>
-                <a href="{% url 'library:score_list' %}">Score Library</a>
+                <a href="{% url 'library:score_list' %}">Library</a>
                 <a href="{% url 'comments:inbox' %}">Inbox</a>
-                <a href="{% url 'core:site_config_update' %}">Site settings</a>
+                <a href="{% url 'core:site_config_update' %}">Settings</a>
                 {% if user.is_authenticated %}
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
