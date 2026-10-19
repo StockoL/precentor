@@ -48,14 +48,14 @@
   --colors-liturgical-rose: #a34365;
 
   /* -- TYPOGRAPHY ---------------------------------------------------------- */
-  --typography-step--2: clamp(0.6944rem, 0.6513rem + 0.1919vw, 0.8rem);
-  --typography-step--1: clamp(0.8333rem, 0.7652rem + 0.303vw, 1rem);
-  --typography-step-0: clamp(1rem, 0.8977rem + 0.4545vw, 1.25rem);
-  --typography-step-1: clamp(1.2rem, 1.0517rem + 0.6591vw, 1.5625rem);
-  --typography-step-2: clamp(1.44rem, 1.2301rem + 0.933vw, 1.9531rem);
-  --typography-step-3: clamp(1.728rem, 1.4362rem + 1.2971vw, 2.4414rem);
-  --typography-step-4: clamp(2.0736rem, 1.6734rem + 1.7785vw, 3.0518rem);
-  --typography-step-5: clamp(2.4883rem, 1.9457rem + 2.4116vw, 3.8147rem);
+  --typography-step--2: clamp(0.7813rem, 0.7936rem - 0.0154vw, 0.7901rem);
+  --typography-step--1: clamp(0.8889rem, 0.8699rem + 0.0845vw, 0.9375rem);
+  --typography-step-0: clamp(1rem, 0.9511rem + 0.2174vw, 1.125rem);
+  --typography-step-1: clamp(1.125rem, 1.037rem + 0.3913vw, 1.35rem);
+  --typography-step-2: clamp(1.2656rem, 1.127rem + 0.6163vw, 1.62rem);
+  --typography-step-3: clamp(1.4238rem, 1.2203rem + 0.9046vw, 1.944rem);
+  --typography-step-4: clamp(1.6018rem, 1.3158rem + 1.2713vw, 2.3328rem);
+  --typography-step-5: clamp(1.802rem, 1.4118rem + 1.7345vw, 2.7994rem);
 
   /* -- SPACING ------------------------------------------------------------- */
   --spacing-3xs: clamp(0.25rem, 0.2244rem + 0.1136vw, 0.3125rem);

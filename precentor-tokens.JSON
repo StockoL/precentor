@@ -104,16 +104,16 @@
 
     "s-l": "clamp(1rem, 0.3864rem + 2.7273vw, 2.5rem)"
   },
-  "_comment_typography": "Utopia type scale, step-0 as the body-text baseline. step--2/-1 cover fine print (comment timestamps, TBC labels); step-4/5 cover page-level headings.",
+  "_comment_typography": "Utopia type scale (utopia.fyi): viewport 360px to 1280px, base 16px to 18px, ratio 1.125 to 1.2, steps -2 to 5. step-0 is body text; step--1 buttons, inputs and nav; step--2 badges and helper text; step-1 to step-4 headings. step--2 shrinks very slightly on wide screens (12.6px to 12.5px) because 16 / 1.125^2 is a hair larger than 18 / 1.2^2.",
   "typography": {
-    "step--2": "clamp(0.6944rem, 0.6513rem + 0.1919vw, 0.8rem)",
-    "step--1": "clamp(0.8333rem, 0.7652rem + 0.303vw, 1rem)",
-    "step-0": "clamp(1rem, 0.8977rem + 0.4545vw, 1.25rem)",
-    "step-1": "clamp(1.2rem, 1.0517rem + 0.6591vw, 1.5625rem)",
-    "step-2": "clamp(1.44rem, 1.2301rem + 0.933vw, 1.9531rem)",
-    "step-3": "clamp(1.728rem, 1.4362rem + 1.2971vw, 2.4414rem)",
-    "step-4": "clamp(2.0736rem, 1.6734rem + 1.7785vw, 3.0518rem)",
-    "step-5": "clamp(2.4883rem, 1.9457rem + 2.4116vw, 3.8147rem)"
+    "step--2": "clamp(0.7813rem, 0.7936rem - 0.0154vw, 0.7901rem)",
+    "step--1": "clamp(0.8889rem, 0.8699rem + 0.0845vw, 0.9375rem)",
+    "step-0": "clamp(1rem, 0.9511rem + 0.2174vw, 1.125rem)",
+    "step-1": "clamp(1.125rem, 1.037rem + 0.3913vw, 1.35rem)",
+    "step-2": "clamp(1.2656rem, 1.127rem + 0.6163vw, 1.62rem)",
+    "step-3": "clamp(1.4238rem, 1.2203rem + 0.9046vw, 1.944rem)",
+    "step-4": "clamp(1.6018rem, 1.3158rem + 1.2713vw, 2.3328rem)",
+    "step-5": "clamp(1.802rem, 1.4118rem + 1.7345vw, 2.7994rem)"
   },
   "transitions": {
     "spring-snappy": "cubic-bezier(0.175, 0.885, 0.32, 1.275)",

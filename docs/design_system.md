@@ -78,6 +78,14 @@ Type and space scales are fluid (via `clamp()`), generated with
 [Utopia](https://utopia.fyi) — sized to smoothly interpolate between a
 minimum and maximum viewport rather than jumping at fixed breakpoints.
 
+**Type scale:** viewport 360px to 1280px, base 16px to 18px, ratio
+1.125 to 1.2, steps -2 to 5. Body text is 16px on a phone and 18px on
+a desktop. I revised this in October 2026 from a 16px to 20px base
+with a 1.2 to 1.25 ratio: 20px body text suits a reading app more than
+a dense planning tool, and the steeper ratio made an `h2` around 39px
+on a desktop. 16px is kept as the floor because iOS zooms the page when
+a form control's text is smaller than that.
+
 ### Colour
 
 - A neutral grayscale ramp, with semantic tokens (`surface-*`,

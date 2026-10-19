@@ -293,6 +293,7 @@ The table now carries the metadata, so this page holds what doesn't fit in a row
 | Theme choice | User menu (System / Light / Dark); Settings stays for church-wide config, conductor only |
 | Page transitions | Cross-document View Transitions crossfade, nav pinned, reduced motion respected |
 | Crest storage on Heroku | In the database (single small image, no extra service) |
+| Base type size | 16px to 18px, ratio 1.125 to 1.2 (decided 19 Oct 2026) |
 
 ### Open
 
@@ -301,7 +302,6 @@ The table now carries the metadata, so this page holds what doesn't fit in a row
 | UI word for "Role" | "Slot" |
 | UI word for "Marker" | "Note" |
 | Keep "Term" | Yes |
-| Base type size | 16px to 18px (section 2) |
 | CSV import in or out of this submission | Out of the first deploy; build it after Phases 1 to 5 if time allows, since the overhaul and seed data matter more to the assessment |
 
 ## 9. Progress log
