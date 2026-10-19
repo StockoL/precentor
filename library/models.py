@@ -51,21 +51,24 @@ class ScoreQuerySet(models.QuerySet):
         if not (occasion or season or use_type):
             return self.order_by("title")
 
+        # Each condition asks "is this score among those tagged X?" as a
+        # subquery. Joining through the tags instead gave a score with
+        # several tags one row per tag, some suited and some not, so it
+        # appeared more than once.
         conditions = []
         if occasion is not None:
-            conditions.append(When(suited_occasions=occasion, then=True))
+            tagged = Score.objects.filter(suited_occasions=occasion).values("pk")
+            conditions.append(When(pk__in=tagged, then=True))
         if season is not None:
-            conditions.append(When(suited_seasons=season, then=True))
+            tagged = Score.objects.filter(suited_seasons=season).values("pk")
+            conditions.append(When(pk__in=tagged, then=True))
         if use_type is not None:
-            conditions.append(When(suited_use_types=use_type, then=True))
+            tagged = Score.objects.filter(suited_use_types=use_type).values("pk")
+            conditions.append(When(pk__in=tagged, then=True))
 
-        return (
-            self.annotate(
-                is_suited=Case(*conditions, default=False, output_field=BooleanField())
-            )
-            .order_by("-is_suited", "title")
-            .distinct()
-        )
+        return self.annotate(
+            is_suited=Case(*conditions, default=False, output_field=BooleanField())
+        ).order_by("-is_suited", "title")
 
 
 class Score(models.Model):

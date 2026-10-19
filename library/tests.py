@@ -262,6 +262,14 @@ class ScoreSuitabilityRankingTests(TestCase):
             titles.index(self.matching.title), titles.index(self.non_matching.title)
         )
 
+    def test_a_score_with_several_tags_appears_once(self):
+        # Ranking used to join through the tags, so a score tagged with
+        # two occasions came back twice: once suited, once not.
+        self.matching.suited_occasions.add(self.other_occasion)
+        ranked = list(Score.objects.ranked_by_suitability(occasion=self.occasion))
+        self.assertEqual(ranked.count(self.matching), 1)
+        self.assertEqual(len(ranked), Score.objects.count())
+
     def test_ordering_falls_back_to_title_when_suitability_ties(self):
         response = self.client.get("/library/")
         titles = [score.title for score in response.context["scores"]]
