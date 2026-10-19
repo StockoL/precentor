@@ -251,7 +251,8 @@ static/
 │   │   ├── music-list.css / liturgical-accent.css / term-summary.css
 │   │   ├── score-combobox.css / crest-crop.css / toast.css
 │   │   ├── skip-link.css / page-header.css / user-menu.css
-│   │   └── detail-list.css / empty-state.css
+│   │   ├── detail-list.css / empty-state.css
+│   │   └── toolbar.css / data-table.css
 │   └── utilities/
 │       └── utilities.css
 └── fonts/
@@ -397,6 +398,32 @@ Other form details:
   readers announce; `form.css` gives the same fields a red border.
 - Help text and the shared control height are described under
   "Accessibility basics" and "Scales" above.
+
+## The Library table
+
+The Library is a dense, spreadsheet-style table (`data-table.css`)
+under a row of filters (`toolbar.css`).
+
+- **Toolbar:** each control has its label above it, and the row lines
+  up along the bottom edge, so labelled controls and the buttons
+  beside them sit level. The form is marked `role="search"`.
+- **Sorting:** clicking a heading sorts by it, and clicking again
+  reverses it. The sorted heading carries `aria-sort`, which screen
+  readers announce, plus a small arrow that's hidden from them. The
+  view works out each heading's state, since a template can't do
+  that logic cleanly. Links use Django's `{% querystring %}` tag, so
+  sorting and paging keep the current search and filters.
+- **Narrow screens:** the table never goes below 64rem wide, so on a
+  phone it scrolls sideways inside a focusable region rather than
+  squeezing every title onto several lines. The minimum is written
+  as `inline-size: max(100%, 64rem)`, because `min-width` on a table
+  is undefined in CSS and browsers ignore it.
+- **Sticky header:** a sticky element only sticks inside its nearest
+  scrolling box. Once the table's region scrolls sideways it is that
+  box, so the region also caps its height (75vh) and scrolls
+  vertically, and the header sticks inside it.
+- **Numbers** use tabular figures and line up on the right, headings
+  included.
 
 ## Page transitions
 
