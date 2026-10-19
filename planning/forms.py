@@ -49,6 +49,8 @@ class TermMarkerForm(forms.ModelForm):
     class Meta:
         model = TermMarker
         fields = ["date", "text"]  # noqa
+        # "Notice" is the UI word for a TermMarker; the model keeps its name.
+        labels = {"text": "Notice"}  # noqa
         widgets = {  # noqa
             "date": NativeDateInput(),
         }

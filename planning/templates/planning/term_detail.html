@@ -9,7 +9,7 @@
         <a class="btn-ghost" href="{% url 'planning:term_update' term.pk %}">Edit term</a>
         <a class="btn-danger" href="{% url 'planning:term_delete' term.pk %}">Delete term</a>
         <a href="{% url 'planning:service_create' term.pk %}">Add a service</a>
-        <a href="{% url 'planning:marker_create' term.pk %}">Add a marker</a>
+        <a href="{% url 'planning:marker_create' term.pk %}">New notice</a>
         <a href="{% url 'planning:term_music_list' term.pk %}">View music list</a>
     </div>
 
@@ -28,7 +28,7 @@
     </div>
 
     <div class="flow">
-        <h2>Markers</h2>
+        <h2>Notices</h2>
         <ul role="list" class="flow">
             {% for marker in markers %}
             <li class="list-row">
@@ -39,7 +39,7 @@
                 </span>
             </li>
             {% empty %}
-            <li>No markers yet.</li>
+            <li>No notices yet.</li>
             {% endfor %}
         </ul>
     </div>

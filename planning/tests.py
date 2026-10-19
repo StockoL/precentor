@@ -3,6 +3,7 @@ from datetime import date
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.test import TestCase
+from django.urls import reverse
 
 from library.models import Score
 from ordo.models import LiturgicalOccasion
@@ -299,6 +300,50 @@ class SlotWordingTests(TestCase):
         for text in ("<h2>Roles</h2>", "Add a role", ">Add role<", "Role name"):
             with self.subTest(text=text):
                 self.assertNotContains(response, text)
+
+
+class NoticeWordingTests(TestCase):
+    """A TermMarker is called a notice in the UI; the model keeps its name."""
+
+    def setUp(self):
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="testpass123")
+        )
+        self.term = Term.objects.create(
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+        self.marker = TermMarker.objects.create(
+            term=self.term, date=date(2026, 2, 16), text="Half term"
+        )
+
+    def test_pages_say_notice_not_marker(self):
+        pages = {
+            self.term.get_absolute_url(): ["<h2>Notices</h2>", ">New notice</a>"],
+            reverse("planning:marker_create", args=[self.term.pk]): [
+                "<title>New notice — Precentor</title>",
+                "<h1>New notice</h1>",
+                ">Notice:</label>",
+            ],
+            reverse("planning:marker_update", args=[self.marker.pk]): [
+                "<title>Edit notice — Precentor</title>",
+                "<h1>Edit notice</h1>",
+            ],
+            reverse("planning:marker_delete", args=[self.marker.pk]): [
+                "<title>Delete notice — Precentor</title>",
+            ],
+        }
+        for url, texts in pages.items():
+            response = self.client.get(url)
+            for text in texts:
+                with self.subTest(url=url, text=text):
+                    self.assertContains(response, text)
+            # Visible text only: URLs such as /markers/1/edit/ are fine.
+            for old in ("Marker", " marker"):
+                with self.subTest(url=url, old=old):
+                    self.assertNotContains(response, old)
 
 
 class DateInputValueTests(TestCase):
