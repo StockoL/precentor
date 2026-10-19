@@ -20,6 +20,7 @@ from .models import Score, ScoreQuerySet
 class ScoreListView(LoginRequiredMixin, ListView):
     model = Score
     context_object_name = "scores"
+    paginate_by = 50
 
     # Table columns: (sort key, heading, fields to order by). The first
     # field follows the chosen direction; the rest are tie-breaks in

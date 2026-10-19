@@ -40,6 +40,7 @@
     </form>
 
     {% if scores %}
+    <p>{{ paginator.count }} score{{ paginator.count|pluralize }}{% if is_paginated %}, page {{ page_obj.number }} of {{ paginator.num_pages }}{% endif %}</p>
     {# A focusable region, so a keyboard user can scroll the table sideways on a narrow screen. #}
     <div class="table-scroll" role="region" aria-labelledby="library-caption" tabindex="0">
         <table class="data-table">
@@ -76,6 +77,18 @@
             </tbody>
         </table>
     </div>
+    {% if is_paginated %}
+    {# querystring keeps the search, filters and sort, changing only the page. #}
+    <nav class="cluster" aria-label="Pages">
+        {% if page_obj.has_previous %}
+        <a class="btn" href="{% querystring page=page_obj.previous_page_number %}">Previous</a>
+        {% endif %}
+        <span>Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+        <a class="btn" href="{% querystring page=page_obj.next_page_number %}">Next</a>
+        {% endif %}
+    </nav>
+    {% endif %}
     {% elif filters_active %}
     <div class="empty-state flow">
         <p>No scores match these filters.</p>

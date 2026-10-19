@@ -377,6 +377,17 @@ class LibrarySortTests(TestCase):
         response = self.client.get("/library/", {"q": "ave", "sort": "title"})
         self.assertContains(response, 'href="?q=ave&amp;sort=title&amp;dir=desc"')
 
+    def test_fifty_to_a_page_with_filters_kept_in_the_links(self):
+        Score.objects.bulk_create(
+            Score(title=f"Motet {n:02}", composer_surname="Anon") for n in range(60)
+        )
+        first = self.client.get("/library/", {"q": "motet", "sort": "title"})
+        self.assertEqual(len(first.context["scores"]), 50)
+        self.assertContains(first, "60 scores, page 1 of 2")
+        self.assertContains(first, 'href="?q=motet&amp;sort=title&amp;page=2"')
+        second = self.client.get("/library/", {"q": "motet", "sort": "title", "page": 2})
+        self.assertEqual(len(second.context["scores"]), 10)
+
     def test_table_shows_catalogue_names_and_last_sung(self):
         Score.objects.filter(title="Sicut cervus").update(editor="Stockton")
         response = self.client.get("/library/")
