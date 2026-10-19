@@ -140,7 +140,15 @@ natural size.
 changes. `build-tokens.js` writes them twice: inside
 `@media (prefers-color-scheme: dark)` for `:root:not([data-theme])`,
 which follows the operating system, and under `:root[data-theme="dark"]`,
-which the theme toggle sets and which wins whatever the system says.
+which wins whatever the system says.
+
+People choose under Appearance in the user menu: System, Light or
+Dark. System removes `data-theme`, so the operating system decides;
+Light and Dark set it. `theme-choice.js` stores the choice in
+`localStorage`, and a few lines of blocking script in `base.html`'s
+`<head>` reapply it before the first paint, so a page never flashes
+the wrong theme. The choice needs JavaScript, so the Appearance
+fieldset is hidden in the HTML and the script reveals it.
 
 Blocks use semantic tokens, never the raw `neutral-*` ramp, because
 only semantic tokens carry dark values. Three blocks broke that rule,
@@ -242,7 +250,8 @@ static/
 │   │   ├── form.css / list-row.css / nav.css / role-block.css
 │   │   ├── music-list.css / liturgical-accent.css / term-summary.css
 │   │   ├── score-combobox.css / crest-crop.css / toast.css
-│   │   └── skip-link.css
+│   │   ├── skip-link.css / page-header.css / user-menu.css
+│   │   └── detail-list.css / empty-state.css
 │   └── utilities/
 │       └── utilities.css
 └── fonts/
@@ -322,6 +331,51 @@ Block styling wholesale:
 - **Inbox count:** the number beside Inbox is followed by a visually
   hidden " open", so it's read as "Inbox 2 open" rather than a bare
   number.
+- **Current section:** the nav link for the section you're in carries
+  `aria-current`: `page` on the section's own page, `true` elsewhere
+  in it, so a service page marks Terms without claiming to be the
+  Terms page. It's shown with an underline as well as colour.
+- **Facts on detail pages** are `<dl>` lists, so each label and its
+  value are announced as a pair (`detail-list.css`).
+
+## Buttons
+
+There's one filled button per view at most, for the main action:
+Save on a form, New term on the terms page, Print on the music list.
+Everything else is quieter, so the main action is easy to find.
+
+| Class | Look | Used for |
+| --- | --- | --- |
+| `button` / `.btn` | Neutral, bordered | Ordinary actions: Confirm, Filter, Add comment |
+| `.btn-primary` | Filled with the action colour | The one main action in a view |
+| `.btn-ghost` | Transparent, bordered | Secondary actions: Edit, Cancel |
+| `.btn-danger` | Red text | Destructive actions: Delete |
+
+Every class works on `<a>` too, so a link that acts as a button looks
+like one. Each variant has its own `:hover` rule, because
+`button:hover` (an element plus a pseudo-class) outranks a plain class
+and would otherwise turn a primary button grey. The small lift on
+hover is switched off for people who ask for reduced motion.
+
+## Page transitions
+
+Moving between pages fades the content in about 180ms, using
+cross-document view transitions: an `@view-transition` rule at the
+end of `global-styles.css`. The nav has its own
+`view-transition-name`, so it stays still while the content changes.
+The rule sits inside `@media (prefers-reduced-motion:
+no-preference)`, so anyone who asks for less motion gets plain page
+loads, and browsers without support load pages as they always did.
+It's outside the cascade layers because `@view-transition` is a
+document setting, not a style rule competing in the cascade.
+
+The login page opts out. In automated testing, Chromium sometimes
+froze the page for three or four seconds before abandoning a
+transition, most reliably right after logging in. A transition needs
+both pages to opt in, so a `@view-transition { navigation: none; }`
+rule on the login page makes logging in a plain page load. I
+checked the rest by hand in Chrome, where page-to-page transitions
+run smoothly.
 
 ## `crest-crop.js` — a hand-rolled image crop tool
 
