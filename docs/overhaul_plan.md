@@ -175,11 +175,11 @@ For seed data, romcal and missalemeum both cover the Roman calendar; romcal also
 
 ### Phase 1: foundations (about half a day)
 
-1. Add the viewport meta tag and a skip link.
-2. Set `LANGUAGE_CODE = "en-gb"` and `TIME_ZONE = "Europe/London"`.
-3. Regenerate the type and space scales (section 2) in `precentor-tokens.JSON`, run `node build-tokens.js`, and remap headings by role in `global-styles.css`.
-4. Fix dark mode: dark values for `action-primary` and the `neutral-*` tokens used by badges and hover states.
-5. Fix the 60ch measure so it doesn't constrain `.list-row` items.
+1. [x] Add the viewport meta tag and a skip link.
+2. [x] Set `LANGUAGE_CODE = "en-gb"` and `TIME_ZONE = "Europe/London"`. This needed a `NativeDateInput` widget first: under `en-gb`, Django renders dates as DD/MM/YYYY, which `<input type="date">` rejects, so every edit form's dates would have opened blank.
+3. [x] Regenerate the type and space scales (section 2) in `precentor-tokens.JSON`, run `node build-tokens.js`, and remap headings by role in `global-styles.css`. Also: body text sized on `body` (it had no size, and must not go on `html`, where it would rescale every rem); buttons, inputs and nav at step--1 with inputs floored at 16px; badges and help text at step--2; a shared `--layout-control-height` of 2.5rem.
+4. [x] Fix dark mode: dark values for `action-primary` and the colours used by badges and hover states. Instead of overriding the raw `neutral-*` ramp, the blocks now use semantic tokens with their own dark values (`action-primary-hover`, and an `inactive-*` trio).
+5. [x] Fix the 60ch measure so it doesn't constrain `.list-row` items.
 
 Done when every page is readable at 360px and 1280px, headings step down visibly from `h1` to `h3`, and dark mode has no light patches.
 
@@ -310,3 +310,4 @@ One line per phase as it completes, with the commit range.
 
 - Step 0 (19 Oct 2026): baseline tagged `pre-overhaul` at `94a7781`; branch `overhaul`.
 - Phase 0 (19 Oct 2026): `13548ef` to `ad6fb3e`. Beyond the six planned steps, it also renamed the use types to Mass and Vespers, switched test fixtures and the add-role placeholder to Catholic service and slot names, and corrected the README and ERD, which claimed role templates were seeded (none exist). 73 tests pass.
+- Phase 1 (19 Oct 2026): `031c217` to `54e3a7d`. Browser tests now cover the skip link, the root font size, the shared control height and list row width. A screenshot pass of eleven pages in light and dark at 360px and 1280px found no overflow and no light patches; it also caught Anglican examples left in the score form's help text, fixed in `54e3a7d`. Left for later phases: music list headings too large for their columns (Phase 4), every nav button styled as primary (Phase 3), the "Is not applicable" checkbox stretched to full width (Phase 3 form layout). 81 tests pass.
