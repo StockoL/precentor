@@ -14,18 +14,21 @@ These user stories drive the design and functionality of Precentor.
 - As a conductor, I want to see how long it's been since a piece was
   last sung (with full history available on demand), so I can avoid
   over-repeating it — or deliberately repeat it.
-- As a conductor, I want to propose a shortlist of pieces for a role
-  slot (e.g. two anthem options), so I can weigh choices before
+- As a conductor, I want to propose a shortlist of pieces for a slot
+  (e.g. two motets for the Offertory), so I can weigh choices before
   deciding.
-- As a conductor, I want to confirm or un-confirm individual pieces
+- As a conductor, I want to confirm or unconfirm individual pieces
   independently, so I can lock in decisions as they're made without
   being forced to decide everything at once.
-- As a conductor, I want to mark a role as not applicable for a
-  specific service (e.g. no setting on Good Friday), so the system
-  doesn't treat a deliberate absence as unfinished work.
-- As a conductor, I want to add or remove role slots on a specific
-  service, so I can handle exceptions (an extra anthem, a substituted
-  offertory motet) without fighting a fixed template.
+- As a conductor, I want to mark a slot as not needed for a specific
+  service (e.g. no setting on Good Friday), so the system doesn't treat
+  a deliberate absence as unfinished work.
+- As a conductor, I want to add or remove slots on a specific service,
+  so I can handle exceptions (an extra motet, a hymn sung in place of a
+  Proper) without fighting a fixed template.
+- As a conductor, I want to add a dated notice to a term's music list
+  (e.g. "Choir resumes on 22 February"), so the congregation knows
+  about breaks without a service being invented to carry the message.
 - As a conductor, I want to generate a public-facing music list
   reflecting only confirmed pieces, so I never accidentally publish
   something still under consideration.
