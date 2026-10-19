@@ -10,7 +10,7 @@
                 <p><strong>{{ comment.author }}</strong> on {{ comment.target }}</p>
                 <p>{{ comment.body }}</p>
             </div>
-            <span>{{ comment.created_at|date:"d/m/Y H:i" }}</span>
+            <span>{{ comment.created_at|date:"DATETIME_FORMAT" }}</span>
         </li>
         {% empty %}
         <li>Nothing needs your attention.</li>

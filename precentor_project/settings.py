@@ -116,6 +116,10 @@ LANGUAGE_CODE = "en-gb"
 
 TIME_ZONE = "Europe/London"
 
+# The app's own date formats (precentor_project/formats/en_GB/formats.py),
+# checked before Django's built-in en_GB ones.
+FORMAT_MODULE_PATH = ["precentor_project.formats"]
+
 USE_I18N = True
 
 USE_TZ = True

@@ -1,5 +1,5 @@
 <div id="comment-{{ comment.pk }}" class="comment comment--{{ comment.state }} flow" style="--flow-space: var(--spacing-2xs);">
-    <p><strong>{{ comment.author }}</strong> ({{ comment.created_at|date:"d/m/Y H:i" }})</p>
+    <p><strong>{{ comment.author }}</strong> ({{ comment.created_at|date:"DATETIME_FORMAT" }})</p>
     <p>{{ comment.body }}</p>
 
     <div class="cluster">

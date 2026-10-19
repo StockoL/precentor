@@ -384,6 +384,19 @@ class TermDetailViewTests(TestCase):
             calendar_use="current",
         )
 
+    def test_dates_use_the_short_ui_format(self):
+        Service.objects.create(
+            term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"
+        )
+        for url in ("/", self.term.get_absolute_url()):
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertContains(response, "Thu 1 Jan 2026 to Tue 31 Mar 2026")
+                self.assertNotContains(response, "01/01/2026")
+        self.assertContains(
+            self.client.get(self.term.get_absolute_url()), "Sun 11 Jan 2026 — Sung Mass"
+        )
+
     def test_service_list_links_to_service_detail(self):
         service = Service.objects.create(
             term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"

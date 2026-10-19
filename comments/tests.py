@@ -129,7 +129,7 @@ class AddCommentViewTests(TestCase):
             created_at=datetime(2026, 7, 1, 12, 0, tzinfo=dt_timezone.utc)
         )
         response = self.client.get("/comments/inbox/")
-        self.assertContains(response, "01/07/2026 13:00")
+        self.assertContains(response, "Wed 1 Jul 2026, 13:00")
 
     def test_add_comment_ajax_top_level_returns_new_comment_fragment(self):
         response = self.client.post(

@@ -3,7 +3,7 @@
 {% block content %}
 <div class="flow">
     <h1>{{ term }}</h1>
-    <p>{{ term.start_date|date:"d/m/Y" }} to {{ term.end_date|date:"d/m/Y" }}</p>
+    <p>{{ term.start_date|date }} to {{ term.end_date|date }}</p>
 
     <div class="cluster">
         <a class="btn-ghost" href="{% url 'planning:term_update' term.pk %}">Edit term</a>
@@ -18,7 +18,7 @@
         <ul role="list" class="flow">
             {% for service in services %}
             <li class="list-row">
-                <a href="{{ service.get_absolute_url }}">{{ service.date|date:"d/m/Y" }} — {{ service.service_type }}</a>
+                <a href="{{ service.get_absolute_url }}">{{ service.date|date }} — {{ service.service_type }}</a>
                 <span class="badge badge--{{ service.status }}">{{ service.status_label }}</span>
             </li>
             {% empty %}
@@ -32,7 +32,7 @@
         <ul role="list" class="flow">
             {% for marker in markers %}
             <li class="list-row">
-                {{ marker.date|date:"d/m/Y" }} — {{ marker.text }}
+                {{ marker.date|date }} — {{ marker.text }}
                 <span class="cluster">
                     <a class="btn-ghost" href="{% url 'planning:marker_update' marker.pk %}">Edit</a>
                     <a class="btn-danger" href="{% url 'planning:marker_delete' marker.pk %}">Delete</a>
