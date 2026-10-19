@@ -8,14 +8,9 @@ function initOccasionSuggest() {
   const container = document.getElementById("occasion-suggestions");
   if (!dateField || !container) return;
 
-  const traditionField = document.getElementById("id_tradition");
   const calendarUseField = document.getElementById("id_calendar_use");
   const occasionField = document.getElementById("id_occasion");
   const additionalField = document.getElementById("id_additional_occasions");
-
-  function effectiveTradition() {
-    return traditionField?.value || container.dataset.termTradition || "";
-  }
 
   function effectiveCalendarUse() {
     return calendarUseField?.value || container.dataset.termCalendarUse || "";
@@ -78,16 +73,14 @@ function initOccasionSuggest() {
 
   async function suggest() {
     const dateValue = dateField.value;
-    const tradition = effectiveTradition();
     const calendarUse = effectiveCalendarUse();
-    if (!dateValue || !tradition || !calendarUse) {
+    if (!dateValue || !calendarUse) {
       clear();
       return;
     }
 
     const params = new URLSearchParams({
       date: dateValue,
-      tradition,
       calendar_use: calendarUse,
     });
 

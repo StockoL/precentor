@@ -15,7 +15,6 @@ class ConfirmToggleBrowserTest(PlaywrightTestCase):
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
         self.service = Service.objects.create(
@@ -71,7 +70,6 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
         self.service = Service.objects.create(
@@ -117,7 +115,6 @@ class AddRoleBrowserTest(PlaywrightTestCase):
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
         self.service = Service.objects.create(
@@ -158,7 +155,6 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
         self.service = Service.objects.create(
@@ -233,12 +229,10 @@ class OccasionAutoSuggestBrowserTest(PlaywrightTestCase):
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
         self.christmas = LiturgicalOccasion.objects.create(
             name="Christmas Day",
-            tradition="cofe",
             calendar_use="current",
             fixed_month=12,
             fixed_day=25,

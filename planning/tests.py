@@ -18,7 +18,6 @@ class ServiceStatusTests(TestCase):
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
         self.service = Service.objects.create(
@@ -58,13 +57,12 @@ class ServiceStatusTests(TestCase):
         self.assertEqual(self.service.status, "in_progress")
 
 
-class ServiceEffectiveTraditionTests(TestCase):
+class ServiceEffectiveCalendarUseTests(TestCase):
     def setUp(self):
         self.term = Term.objects.create(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
 
@@ -72,7 +70,6 @@ class ServiceEffectiveTraditionTests(TestCase):
         service = Service.objects.create(
             term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
         )
-        self.assertEqual(service.effective_tradition(), "cofe")
         self.assertEqual(service.effective_calendar_use(), "current")
 
     def test_uses_own_value_when_set(self):
@@ -80,10 +77,8 @@ class ServiceEffectiveTraditionTests(TestCase):
             term=self.term,
             date=date(2026, 1, 11),
             service_type="Sung Eucharist",
-            tradition="catholic",
             calendar_use="historic",
         )
-        self.assertEqual(service.effective_tradition(), "catholic")
         self.assertEqual(service.effective_calendar_use(), "historic")
 
 
@@ -98,7 +93,6 @@ class RolePieceWorkflowTests(TestCase):
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
         self.service = Service.objects.create(
@@ -237,11 +231,10 @@ class ServiceDetailProposePieceRankingTests(TestCase):
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
         self.occasion = LiturgicalOccasion.objects.create(
-            name="Advent Sunday 4", tradition="cofe"
+            name="Advent Sunday 4"
         )
         self.service = Service.objects.create(
             term=self.term,
@@ -272,7 +265,6 @@ class TermDetailViewTests(TestCase):
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
 
@@ -294,7 +286,6 @@ class MusicListTests(TestCase):
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
         self.service = Service.objects.create(

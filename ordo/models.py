@@ -17,22 +17,15 @@ CALENDAR_USE_CHOICES = [
     ("historic", "Historic (Book of Common Prayer / Extraordinary Form)"),
 ]
 
-TRADITION_CHOICES = [
-    ("catholic", "Catholic"),
-    ("cofe", "Church of England"),
-]
-
 
 class LiturgicalSeason(models.Model):
-    TRADITION_CHOICES = TRADITION_CHOICES  # noqa
     name = models.CharField(max_length=50)
-    tradition = models.CharField(max_length=20, choices=TRADITION_CHOICES)
 
     class Meta:
-        ordering = ["tradition", "name"]  # noqa
+        ordering = ["name"]  # noqa
 
     def __str__(self):
-        return f"{self.name} ({self.get_tradition_display()})"
+        return self.name
 
 
 class UseType(models.Model):
@@ -46,9 +39,7 @@ class UseType(models.Model):
 
 
 class LiturgicalOccasion(models.Model):
-    TRADITION_CHOICES = TRADITION_CHOICES  # noqa
     name = models.CharField(max_length=100)
-    tradition = models.CharField(max_length=20, choices=TRADITION_CHOICES)
     calendar_use = models.CharField(
         max_length=20, choices=CALENDAR_USE_CHOICES, default="current"
     )
@@ -66,10 +57,10 @@ class LiturgicalOccasion(models.Model):
     )
 
     class Meta:
-        ordering = ["tradition", "name"]  # noqa
+        ordering = ["name"]  # noqa
 
     def __str__(self):
-        return f"{self.name} ({self.get_tradition_display()})"
+        return self.name
 
     def date_for_year(self, year):
         """Return this occasion's actual date in a given calendar year."""
@@ -79,17 +70,15 @@ class LiturgicalOccasion(models.Model):
         return date(year, self.fixed_month, self.fixed_day)
 
 
-def occasion_for_date(target_date, tradition, calendar_use):
+def occasion_for_date(target_date, calendar_use):
     """
     Reverse lookup: which LiturgicalOccasion(s) fall on target_date for a
-    given tradition/calendar_use. date_for_year() is a Python method, not
-    a database field, so candidates are scoped by tradition/calendar_use
-    first (to keep the loop small) and then evaluated in Python. Returns
-    a list — zero, one, or more occasions can share a date.
+    given calendar_use. date_for_year() is a Python method, not a
+    database field, so candidates are scoped by calendar_use first (to
+    keep the loop small) and then evaluated in Python. Returns a list —
+    zero, one, or more occasions can share a date.
     """
-    candidates = LiturgicalOccasion.objects.filter(
-        tradition=tradition, calendar_use=calendar_use
-    )
+    candidates = LiturgicalOccasion.objects.filter(calendar_use=calendar_use)
     return [
         occasion
         for occasion in candidates

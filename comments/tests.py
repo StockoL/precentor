@@ -21,7 +21,6 @@ class CommentTests(TestCase):
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
 
@@ -75,7 +74,6 @@ class AddCommentViewTests(TestCase):
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
         self.client.login(username="conductor", password="testpass123")

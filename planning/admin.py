@@ -15,7 +15,7 @@ class RolePieceInline(admin.TabularInline):
 
 @admin.register(Term)
 class TermAdmin(admin.ModelAdmin):
-    list_display = ["name", "start_date", "end_date", "tradition", "calendar_use"]  # noqa
+    list_display = ["name", "start_date", "end_date", "calendar_use"]  # noqa
 
 
 @admin.register(Service)

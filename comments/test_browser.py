@@ -14,7 +14,6 @@ class CommentThreadBrowserTest(PlaywrightTestCase):
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
 
@@ -71,7 +70,6 @@ class CommentDeleteBrowserTest(PlaywrightTestCase):
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
-            tradition="cofe",
             calendar_use="current",
         )
 

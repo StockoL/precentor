@@ -6,7 +6,7 @@ from .models import RolePiece, Service, ServiceRole, Term, TermMarker
 class TermForm(forms.ModelForm):
     class Meta:
         model = Term
-        fields = ["name", "start_date", "end_date", "tradition", "calendar_use"]  # noqa
+        fields = ["name", "start_date", "end_date", "calendar_use"]  # noqa
         widgets = {  # noqa
             "start_date": forms.DateInput(attrs={"type": "date"}),
             "end_date": forms.DateInput(attrs={"type": "date"}),
@@ -21,7 +21,6 @@ class ServiceForm(forms.ModelForm):
             "service_type",
             "occasion",
             "additional_occasions",
-            "tradition",
             "calendar_use",
             "hymns",
             "psalm",

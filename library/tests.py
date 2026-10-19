@@ -76,11 +76,9 @@ class ScoreSuitabilityRankingTests(TestCase):
             username="conductor", password="testpass123"
         )
         self.client.login(username="conductor", password="testpass123")
-        self.occasion = LiturgicalOccasion.objects.create(
-            name="Advent Sunday 4", tradition="cofe"
-        )
+        self.occasion = LiturgicalOccasion.objects.create(name="Advent Sunday 4")
         self.other_occasion = LiturgicalOccasion.objects.create(
-            name="Trinity 7", tradition="cofe"
+            name="Ordinary Time 7"
         )
         self.untagged = Score.objects.create(
             title="Untagged Anthem", composer_surname="Nobody"

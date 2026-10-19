@@ -33,37 +33,31 @@ class OccasionForDateTests(TestCase):
     def setUp(self):
         self.christmas = LiturgicalOccasion.objects.create(
             name="Christmas Day",
-            tradition="cofe",
             calendar_use="current",
             fixed_month=12,
             fixed_day=25,
         )
         self.easter = LiturgicalOccasion.objects.create(
             name="Easter Day",
-            tradition="cofe",
             calendar_use="current",
             is_moveable=True,
             easter_offset_days=0,
         )
 
     def test_matches_fixed_occasion(self):
-        matches = occasion_for_date(date(2026, 12, 25), "cofe", "current")
+        matches = occasion_for_date(date(2026, 12, 25), "current")
         self.assertEqual(matches, [self.christmas])
 
     def test_matches_moveable_occasion(self):
-        matches = occasion_for_date(date(2026, 4, 5), "cofe", "current")
+        matches = occasion_for_date(date(2026, 4, 5), "current")
         self.assertEqual(matches, [self.easter])
 
     def test_no_match_returns_empty_list(self):
-        matches = occasion_for_date(date(2026, 6, 1), "cofe", "current")
-        self.assertEqual(matches, [])
-
-    def test_wrong_tradition_excluded(self):
-        matches = occasion_for_date(date(2026, 12, 25), "catholic", "current")
+        matches = occasion_for_date(date(2026, 6, 1), "current")
         self.assertEqual(matches, [])
 
     def test_wrong_calendar_use_excluded(self):
-        matches = occasion_for_date(date(2026, 12, 25), "cofe", "historic")
+        matches = occasion_for_date(date(2026, 12, 25), "historic")
         self.assertEqual(matches, [])
 
     def test_multiple_occasions_on_same_date_both_returned(self):
@@ -71,12 +65,11 @@ class OccasionForDateTests(TestCase):
         # distinct named occasions can legitimately share a calendar date.
         also_christmas = LiturgicalOccasion.objects.create(
             name="Nativity of the Lord",
-            tradition="cofe",
             calendar_use="current",
             fixed_month=12,
             fixed_day=25,
         )
-        matches = occasion_for_date(date(2026, 12, 25), "cofe", "current")
+        matches = occasion_for_date(date(2026, 12, 25), "current")
         self.assertEqual(set(matches), {self.christmas, also_christmas})
         self.assertEqual(len(matches), 2)
 
@@ -89,7 +82,6 @@ class OccasionLookupViewTests(TestCase):
         self.client.login(username="conductor", password="testpass123")
         self.christmas = LiturgicalOccasion.objects.create(
             name="Christmas Day",
-            tradition="cofe",
             calendar_use="current",
             fixed_month=12,
             fixed_day=25,
@@ -98,7 +90,7 @@ class OccasionLookupViewTests(TestCase):
     def test_matching_date_returns_occasion(self):
         response = self.client.get(
             "/ordo/occasion-lookup/",
-            {"date": "2026-12-25", "tradition": "cofe", "calendar_use": "current"},
+            {"date": "2026-12-25", "calendar_use": "current"},
         )
         self.assertEqual(response.status_code, 200)
         occasions = response.json()["occasions"]
@@ -108,22 +100,22 @@ class OccasionLookupViewTests(TestCase):
     def test_non_matching_date_returns_empty_list(self):
         response = self.client.get(
             "/ordo/occasion-lookup/",
-            {"date": "2026-06-01", "tradition": "cofe", "calendar_use": "current"},
+            {"date": "2026-06-01", "calendar_use": "current"},
         )
         self.assertEqual(response.json()["occasions"], [])
 
     def test_invalid_date_returns_empty_list(self):
         response = self.client.get(
             "/ordo/occasion-lookup/",
-            {"date": "not-a-date", "tradition": "cofe", "calendar_use": "current"},
+            {"date": "not-a-date", "calendar_use": "current"},
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["occasions"], [])
 
-    def test_invalid_tradition_returns_empty_list(self):
+    def test_invalid_calendar_use_returns_empty_list(self):
         response = self.client.get(
             "/ordo/occasion-lookup/",
-            {"date": "2026-12-25", "tradition": "bogus", "calendar_use": "current"},
+            {"date": "2026-12-25", "calendar_use": "bogus"},
         )
         self.assertEqual(response.json()["occasions"], [])
 
@@ -131,6 +123,6 @@ class OccasionLookupViewTests(TestCase):
         self.client.logout()
         response = self.client.get(
             "/ordo/occasion-lookup/",
-            {"date": "2026-12-25", "tradition": "cofe", "calendar_use": "current"},
+            {"date": "2026-12-25", "calendar_use": "current"},
         )
         self.assertEqual(response.status_code, 302)
