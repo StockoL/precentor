@@ -118,6 +118,13 @@ with its own message. `Score.clean()` then stores every range in one
 tidy form (`a3 - e5` becomes `A3–E5`); a `ModelForm` runs it after
 each field's own validators, so it only ever sees valid ranges.
 
+**Freehand use types:** the score form has an extra, non-model field,
+`new_use_types`, for comma-separated names. `ScoreForm` matches each
+case-insensitively against existing `UseType`s, creates any new ones
+and adds them all to the score. It overrides `save()` so this happens
+however the form is saved, including later through `save_m2m()` after
+`commit=False`. Seasons and occasions stay pick-only.
+
 **Search and voicing:** `ScoreQuerySet.search(query)` needs every word
 to match somewhere in the title, composer names, arranger or editor (an
 AND of ORs), and `with_voicing(voicing)` takes one voicing or `"mixed"`
