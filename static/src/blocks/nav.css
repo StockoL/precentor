@@ -18,4 +18,18 @@
   .site-nav a:hover {
     color: var(--colors-action-primary);
   }
+
+  /* Open-comment count beside Inbox. */
+  .nav-count {
+    display: inline-block;
+    min-inline-size: 1.5em;
+    padding-inline: var(--spacing-3xs);
+    border-radius: 999px;
+    background-color: var(--colors-warning-bg);
+    color: var(--colors-warning-text);
+    border: 1px solid var(--colors-warning-border);
+    font-size: var(--typography-step--2);
+    text-align: center;
+    line-height: 1.5;
+  }
 }

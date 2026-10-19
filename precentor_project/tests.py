@@ -50,6 +50,39 @@ class NavWordingTests(TestCase):
                 self.assertContains(response, f"<title>{word} — Precentor</title>", html=True)
 
 
+class NavInboxCountTests(TestCase):
+    def setUp(self):
+        from datetime import date
+
+        from planning.models import Term
+
+        self.user = User.objects.create_superuser(username="admin", password="pw")
+        self.client.force_login(self.user)
+        self.term = Term.objects.create(
+            name="Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+
+    def test_count_shows_open_comments_only(self):
+        from comments.models import Comment
+
+        Comment.objects.create(author=self.user, body="Open", target=self.term)
+        Comment.objects.create(author=self.user, body="Open too", target=self.term)
+        Comment.objects.create(
+            author=self.user, body="Closed", target=self.term, is_open=False
+        )
+        self.assertContains(
+            self.client.get("/library/"),
+            '<span class="nav-count">2<span class="visually-hidden"> open</span></span>',
+            html=True,
+        )
+
+    def test_no_count_when_nothing_is_open(self):
+        self.assertNotContains(self.client.get("/library/"), "nav-count")
+
+
 class NavSettingsLinkTests(TestCase):
     """Settings is conductor-only, so the link shows only to conductors."""
 

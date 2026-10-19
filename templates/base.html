@@ -62,7 +62,7 @@
             <div class="cluster" style="--gutter: var(--spacing-s);">
                 <a href="{% url 'planning:term_list' %}">Terms</a>
                 <a href="{% url 'library:score_list' %}">Library</a>
-                <a href="{% url 'comments:inbox' %}">Inbox</a>
+                <a href="{% url 'comments:inbox' %}">Inbox{% if open_comment_count %} <span class="nav-count">{{ open_comment_count }}<span class="visually-hidden"> open</span></span>{% endif %}</a>
                 {% if is_conductor %}
                 <a href="{% url 'core:site_config_update' %}">Settings</a>
                 {% endif %}
