@@ -90,6 +90,27 @@ class ControlHeightBrowserTest(PlaywrightTestCase):
         assert input_height == button_height == 40, (input_height, button_height)
 
 
+class CheckboxBrowserTest(PlaywrightTestCase):
+    def test_checkbox_keeps_its_natural_size(self):
+        from datetime import date
+
+        from planning.models import Service, Term
+
+        self.login_as_conductor()
+        term = Term.objects.create(
+            name="Form Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+        service = Service.objects.create(
+            term=term, date=date(2026, 1, 11), service_type="Sung Mass"
+        )
+        self.page.goto(service.get_absolute_url())
+        width = self.page.locator("#id_is_not_applicable").bounding_box()["width"]
+        assert width < 30, width  # not stretched across the form
+
+
 class ListRowWidthBrowserTest(PlaywrightTestCase):
     def test_list_row_spans_its_list_not_the_reading_measure(self):
         from datetime import date

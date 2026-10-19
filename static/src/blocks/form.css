@@ -39,6 +39,20 @@
     padding-block: 0;
   }
 
+  /* Checkboxes and radios keep their natural size and sit at the start
+     of the line, instead of being stretched into a full-width box. */
+  form :is(input[type="checkbox"], input[type="radio"]) {
+    display: inline-block;
+    width: auto;
+    accent-color: var(--colors-action-primary);
+  }
+
+  /* Django marks a field with errors aria-invalid="true", which screen
+     readers announce; the same attribute gives it a red border. */
+  form [aria-invalid="true"] {
+    border-color: var(--colors-danger-text);
+  }
+
   form :is(input, select, textarea):focus-visible {
     outline: 2px solid var(--colors-action-primary);
     outline-offset: 2px;
