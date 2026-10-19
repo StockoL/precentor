@@ -208,8 +208,8 @@ Terms, Term detail, Service detail (the screen I'll use most), Library, Score de
 Progress:
 
 - [x] **Library** (`909a90f` to `eec04d9`), built to the spec in section 7: `editor` and `last_sung_manual` fields; last sung derived by `with_last_sung()`; catalogue names and ordering; search, Language and Voicing filters (the old Voice part filter dropped, as decided); a sortable table with `aria-sort`; fifty to a page with the filters kept in the links. Found and fixed on the way: suitability ranking listed a score once per tag (it also affected the propose-piece picker), and a score with no language blanked the Language menu.
-- [ ] Score model: `background`, `notes` and the four vocal ranges (with the score detail page).
-- [ ] Score detail, score form, and the remaining pages.
+- [x] **Score page** (`85fd49f` to `a191936`): `background`, `notes` and four vocal ranges, the ranges checked by a validator and stored in one tidy form; a history state for each proposed piece (Sung, Scheduled or Proposed); and the page rebuilt as a summary, background, notes, ranges and a service history table.
+- [ ] Score form, and the remaining pages.
 
 ### Phase 5: performance and robustness (about half a day)
 
