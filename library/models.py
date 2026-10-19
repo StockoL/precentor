@@ -1,12 +1,42 @@
 from django.apps import apps
 from django.db import models
-from django.db.models import BooleanField, Case, OuterRef, Subquery, When
+from django.db.models import BooleanField, Case, OuterRef, Q, Subquery, When
 from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse
 from django.utils import timezone
 
 
 class ScoreQuerySet(models.QuerySet):
+    # The Voicing filter's value for "any four-part mixed".
+    MIXED = "mixed"
+
+    def search(self, query):
+        """
+        Every word of the query must match somewhere: in the title, the
+        composer's names, the arranger or the editor. An AND across words
+        of an OR across fields, so "byrd ave" finds Byrd's Ave verum, not
+        every Byrd.
+        """
+        queryset = self
+        for word in query.split():
+            queryset = queryset.filter(
+                Q(title__icontains=word)
+                | Q(composer_surname__icontains=word)
+                | Q(composer_other_names__icontains=word)
+                | Q(arranger__icontains=word)
+                | Q(editor__icontains=word)
+            )
+        return queryset
+
+    def with_voicing(self, voicing):
+        """One voicing exactly, or MIXED: every one of the four parts
+        present, so SATB and anything larger, such as SSATB."""
+        if voicing == self.MIXED:
+            return self.filter(
+                soprano_parts__gt=0, alto_parts__gt=0, tenor_parts__gt=0, bass_parts__gt=0
+            )
+        return self.filter(voicing=voicing)
+
     def with_last_sung(self):
         """
         Annotate each score with last_sung: the latest date it was sung.

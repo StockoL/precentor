@@ -1,0 +1,32 @@
+/* ==========================================================================
+   BLOCK: TOOLBAR
+   A row of filter controls above a list or table: each control has its
+   label above it, and the row lines up along the bottom edge, so
+   labelled controls and the buttons beside them sit level. Every
+   control shares the control height, so their bottoms match exactly.
+   Wraps onto more lines on a narrow screen.
+   ========================================================================== */
+
+@layer blocks {
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--spacing-2xs) var(--spacing-s);
+  }
+
+  /* form.css makes controls full width for ordinary forms; in a toolbar
+     each control is only as wide as it needs to be. */
+  .toolbar :is(input, select) {
+    width: auto;
+  }
+
+  /* The search box takes whatever room is left, but not less than this. */
+  .toolbar__search {
+    flex: 1 1 16rem;
+  }
+
+  .toolbar__search input {
+    width: 100%;
+  }
+}

@@ -9,36 +9,41 @@
         </div>
     </header>
 
-    <form method="get" class="cluster">
-        <div class="cluster" style="--gutter: var(--spacing-2xs);">
+    <form method="get" role="search" class="toolbar">
+        <div class="toolbar__search">
+            <label for="q">Search</label>
+            <input type="search" name="q" id="q" value="{{ query }}" placeholder="Title, composer, arranger or editor">
+        </div>
+        <div>
             <label for="language">Language</label>
             <select name="language" id="language">
-                <option value="">All</option>
+                <option value="">Any</option>
                 {% for lang in languages %}
-                <option value="{{ lang }}" {% if lang == selected_language %}selected{% endif %}>{{ lang }}</option>
+                <option value="{{ lang }}"{% if lang == selected_language %} selected{% endif %}>{{ lang }}</option>
                 {% endfor %}
             </select>
         </div>
-
-        <div class="cluster" style="--gutter: var(--spacing-2xs);">
-            <label for="voice_part">Voice part</label>
-            <select name="voice_part" id="voice_part">
+        <div>
+            <label for="voicing">Voicing</label>
+            <select name="voicing" id="voicing">
                 <option value="">Any</option>
-                <option value="soprano" {% if selected_voice_part == "soprano" %}selected{% endif %}>Soprano</option>
-                <option value="alto" {% if selected_voice_part == "alto" %}selected{% endif %}>Alto</option>
-                <option value="tenor" {% if selected_voice_part == "tenor" %}selected{% endif %}>Tenor</option>
-                <option value="bass" {% if selected_voice_part == "bass" %}selected{% endif %}>Bass</option>
+                <option value="{{ mixed_value }}"{% if selected_voicing == mixed_value %} selected{% endif %}>Any four-part mixed ({{ mixed_count }})</option>
+                {% for option in voicings %}
+                <option value="{{ option.voicing }}"{% if option.voicing == selected_voicing %} selected{% endif %}>{{ option.voicing }} ({{ option.count }})</option>
+                {% endfor %}
             </select>
         </div>
-
         <button type="submit">Filter</button>
+        {% if filters_active %}
+        <a class="btn-ghost" href="{% url 'library:score_list' %}">Clear</a>
+        {% endif %}
     </form>
 
     <ul role="list" class="flow">
         {% for score in scores %}
         <li class="list-row"><a href="{{ score.get_absolute_url }}">{{ score }}</a></li>
         {% empty %}
-        {% if selected_language or selected_voice_part %}
+        {% if filters_active %}
         <li class="empty-state flow">
             <p>No scores match these filters.</p>
             <a class="btn" href="{% url 'library:score_list' %}">Clear filters</a>

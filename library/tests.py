@@ -242,10 +242,46 @@ class ScoreFilterTests(TestCase):
         self.assertContains(response, "Ave Verum")
         self.assertNotContains(response, "O Taste and See")
 
-    def test_filter_by_voice_part(self):
-        response = self.client.get("/library/", {"voice_part": "tenor"})
-        self.assertContains(response, "Ave Verum")
-        self.assertNotContains(response, "O Taste and See")
+    def titles(self, **params):
+        return [s.title for s in self.client.get("/library/", params).context["scores"]]
+
+    def test_search_needs_every_word_to_match_somewhere(self):
+        Score.objects.create(title="Ave Maria", composer_surname="Parsons")
+        Score.objects.create(
+            title="Sicut cervus", composer_surname="Palestrina", editor="Stockton"
+        )
+        self.assertCountEqual(self.titles(q="ave"), ["Ave Verum", "Ave Maria"])
+        self.assertEqual(self.titles(q="byrd ave"), ["Ave Verum"])
+        self.assertEqual(self.titles(q="AVE   byrd"), ["Ave Verum"])  # case, spacing
+        self.assertEqual(self.titles(q="stockton"), ["Sicut cervus"])  # editor
+        self.assertEqual(self.titles(q="byrd parsons"), [])
+
+    def test_filter_by_voicing(self):
+        Score.objects.all().update(voicing="SATB")
+        Score.objects.create(title="Laudate", composer_surname="Ssa", voicing="SSA")
+        self.assertEqual(self.titles(voicing="SSA"), ["Laudate"])
+
+    def test_any_four_part_mixed_needs_all_four_parts(self):
+        Score.objects.create(
+            title="Full", composer_surname="A", voicing="SSATB",
+            soprano_parts=2, alto_parts=1, tenor_parts=1, bass_parts=1,
+        )
+        Score.objects.create(
+            title="Upper voices", composer_surname="B", voicing="SSA",
+            soprano_parts=2, alto_parts=1,
+        )
+        self.assertEqual(self.titles(voicing="mixed"), ["Full"])
+
+    def test_voicing_menu_counts_each_voicing(self):
+        Score.objects.all().update(voicing="SATB")
+        Score.objects.create(title="Laudate", composer_surname="Ssa", voicing="SSA")
+        response = self.client.get("/library/")
+        self.assertContains(response, '<option value="SATB">SATB (2)</option>', html=True)
+        self.assertContains(response, '<option value="SSA">SSA (1)</option>', html=True)
+
+    def test_clear_link_only_when_filtering(self):
+        self.assertNotContains(self.client.get("/library/"), ">Clear</a>")
+        self.assertContains(self.client.get("/library/", {"q": "ave"}), ">Clear</a>")
 
 
 class ScoreSuitabilityRankingTests(TestCase):

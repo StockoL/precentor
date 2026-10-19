@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import ProtectedError
+from django.db.models import Count, ProtectedError
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import (
@@ -14,7 +14,7 @@ from django.views.generic import (
 from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 
 from .forms import ScoreForm
-from .models import Score
+from .models import Score, ScoreQuerySet
 
 
 class ScoreListView(LoginRequiredMixin, ListView):
@@ -23,20 +23,16 @@ class ScoreListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        query = self.request.GET.get("q", "").strip()
         language = self.request.GET.get("language")
-        voice_part = self.request.GET.get("voice_part")
+        voicing = self.request.GET.get("voicing")
 
+        if query:
+            queryset = queryset.search(query)
         if language:
             queryset = queryset.filter(language__iexact=language)
-
-        voice_part_lookup = {
-            "soprano": "soprano_parts__gt",
-            "alto": "alto_parts__gt",
-            "tenor": "tenor_parts__gt",
-            "bass": "bass_parts__gt",
-        }
-        if voice_part in voice_part_lookup:
-            queryset = queryset.filter(**{voice_part_lookup[voice_part]: 0})
+        if voicing:
+            queryset = queryset.with_voicing(voicing)
 
         occasion_pk = self.request.GET.get("suited_occasion")
         season_pk = self.request.GET.get("suited_season")
@@ -69,8 +65,23 @@ class ScoreListView(LoginRequiredMixin, ListView):
             .distinct()
             .order_by("language")
         )
+        # Voicings actually in the library, with how many scores each.
+        # The explicit order_by replaces the model's default ordering,
+        # which would otherwise be added to the GROUP BY and split counts.
+        context["voicings"] = (
+            Score.objects.exclude(voicing="")
+            .values("voicing")
+            .annotate(count=Count("pk"))
+            .order_by("voicing")
+        )
+        context["mixed_value"] = ScoreQuerySet.MIXED
+        context["mixed_count"] = Score.objects.with_voicing(ScoreQuerySet.MIXED).count()
+        context["query"] = self.request.GET.get("q", "").strip()
         context["selected_language"] = self.request.GET.get("language", "")
-        context["selected_voice_part"] = self.request.GET.get("voice_part", "")
+        context["selected_voicing"] = self.request.GET.get("voicing", "")
+        context["filters_active"] = any(
+            (context["query"], context["selected_language"], context["selected_voicing"])
+        )
         return context
 
 
