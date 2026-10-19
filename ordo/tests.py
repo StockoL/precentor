@@ -3,7 +3,12 @@ from datetime import date
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from .models import LiturgicalOccasion, LiturgicalSeason, occasion_for_date
+from .models import (
+    LiturgicalOccasion,
+    LiturgicalSeason,
+    UseType,
+    occasion_for_date,
+)
 from .utils import calculate_easter_sunday
 
 User = get_user_model()
@@ -29,9 +34,15 @@ class CalculateEasterSundayTests(TestCase):
                 self.assertEqual(calculate_easter_sunday(year), expected)
 
 
-class SeededSeasonTests(TestCase):
-    """The test database is built by running the migrations, so this
-    checks what the seed and revision migrations leave behind."""
+class SeededDataTests(TestCase):
+    """The test database is built by running the migrations, so these
+    check what the seed and revision migrations leave behind."""
+
+    def test_seeded_use_types(self):
+        self.assertEqual(
+            set(UseType.objects.values_list("name", flat=True)),
+            {"Eucharist", "General use", "Evening"},
+        )
 
     def test_seeded_seasons_are_the_roman_calendar_seasons(self):
         self.assertEqual(

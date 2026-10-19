@@ -52,7 +52,7 @@ class Score(models.Model):
         "ordo.UseType",
         blank=True,
         related_name="suited_scores",
-        help_text="e.g. Eucharist, General use, Evening, Harvest",
+        help_text="e.g. Eucharist, General use, Evening",
     )
     suited_seasons = models.ManyToManyField(
         "ordo.LiturgicalSeason",

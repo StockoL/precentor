@@ -166,7 +166,7 @@ Steps:
 2. [x] Remove `tradition` from models, forms, admin, the lookup view, the template and the JS. `occasion_for_date(date, calendar_use)` loses a parameter.
 3. [x] Rewrite the tests to match. The "wrong tradition excluded" test goes; the "invalid tradition" test becomes an "invalid calendar use" test; the other `calendar_use` tests stay.
 4. [x] Relabel `calendar_use` as the Catholic choice it now is: "Ordinary Form (Novus Ordo)" and "Extraordinary Form (1962)". It stays, because a choir that sings both rites needs it. The stored values `current` and `historic` are unchanged; only the labels move, so the migrations (`ordo/0007`, `planning/0006`) are SQL no-ops.
-5. [ ] Revise the seeded seasons to the Catholic set (Advent, Christmas, Ordinary Time, Lent, Easter Triduum, Easter; Pentecost is a feast, not a season) and drop "Harvest" from the use types, in a new data migration.
+5. [x] Revise the seeded seasons to the Catholic set (Advent, Christmas, Ordinary Time, Lent, Easter Triduum, Easter; Pentecost is a feast, not a season) and drop "Harvest" from the use types. `ordo/0008` renames Holy Week to Easter Triduum (keeping existing score tags) and removes Pentecost; `ordo/0009` removes Harvest, and the score form's help text no longer suggests it. Both are reversible.
 6. [ ] Docs: README scope and out-of-scope list (the dual-tradition Ordo moves to "future work", with the reasoning kept), `ordo_plan.md`, `models_plan.md`.
 
 Steps 1 to 3 go in one commit, because the migrations, models and tests only pass together.
