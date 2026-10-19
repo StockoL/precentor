@@ -18,6 +18,7 @@
   --colors-neutral-900: #18181b;
   --colors-neutral-950: #09090b;
   --colors-action-primary: #8b1a2b;
+  --colors-action-primary-hover: var(--colors-neutral-800);
   --colors-surface-base: var(--colors-neutral-0);
   --colors-surface-sunken: var(--colors-neutral-100);
   --colors-text-base: var(--colors-neutral-900);
@@ -97,6 +98,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
   --colors-action-primary: #e8798a;
+  --colors-action-primary-hover: #f2a2ae;
   --colors-text-on-action: #1c1b1f;
   --colors-surface-base: #1c1b1f;
   --colors-surface-sunken: #242226;
@@ -127,6 +129,7 @@
 /* Explicit manual override — set by the theme toggle, wins regardless of OS setting */
 :root[data-theme="dark"] {
   --colors-action-primary: #e8798a;
+  --colors-action-primary-hover: #f2a2ae;
   --colors-text-on-action: #1c1b1f;
   --colors-surface-base: #1c1b1f;
   --colors-surface-sunken: #242226;

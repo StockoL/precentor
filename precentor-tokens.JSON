@@ -15,6 +15,7 @@
     "neutral-950": "#09090b",
 
     "action-primary": "#8b1a2b",
+    "action-primary-hover": "var(--colors-neutral-800)",
 
     "surface-base": "var(--colors-neutral-0)",
     "surface-sunken": "var(--colors-neutral-100)",
@@ -53,6 +54,7 @@
   "_comment_colorsDark": "Dark-mode overrides for the tokens above that actually need to change — same key names as 'colors' (surface-base, text-base, etc.), different values only. build-tokens.js emits these into two places: a @media(prefers-color-scheme:dark) block scoped to :root:not([data-theme]) (automatic, only when no manual choice has been made) and an explicit :root[data-theme=\"dark\"] block (wins regardless of OS setting, set by the theme toggle and remembered in localStorage). action-primary IS overridden: besides button backgrounds it colours nav hover text, focus rings and the accent fallback directly on the page, and the light value (#8b1a2b) is only 1.86:1 against the dark surface. The dark value (#e8798a) is 6.14:1 on surface-base; because it is light, text-on-action flips to the dark surface colour, also 6.14:1 on it. surface-sunken is intentionally LIGHTER than surface-base in dark mode (the reverse of their light-mode relationship, where sunken is slightly darker than base) — this follows the standard dark-UI convention that elevation reads as lighter, not darker, once the base surface is already dark.",
   "colorsDark": {
     "action-primary": "#e8798a",
+    "action-primary-hover": "#f2a2ae",
     "text-on-action": "#1c1b1f",
 
     "surface-base": "#1c1b1f",

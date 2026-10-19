@@ -35,7 +35,7 @@
 
   button:hover,
   .btn-confirm:hover {
-    background-color: var(--colors-neutral-800);
+    background-color: var(--colors-action-primary-hover);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(139, 26, 43, 0.24);
   }
