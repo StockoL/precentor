@@ -9,6 +9,14 @@
     /* Its own name in page transitions, so it stays put while the rest
        of the page crossfades (see global-styles.css). */
     view-transition-name: site-nav;
+    /*
+     * A view-transition-name makes the nav a stacking context, so the
+     * user menu's z-index only counts inside it, and positioned content
+     * further down the page (the term cards) would paint over the open
+     * menu. Raising the nav itself keeps the menu on top.
+     */
+    position: relative;
+    z-index: 10;
     border-block-end: 1px solid var(--colors-border-subtle);
   }
 

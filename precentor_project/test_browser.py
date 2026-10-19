@@ -167,6 +167,29 @@ class UserMenuBrowserTest(PlaywrightTestCase):
         assert self.page.evaluate(theme) is None
         assert self.page.evaluate("localStorage.getItem('precentor-theme')") is None
 
+    def test_open_menu_is_drawn_above_the_page(self):
+        from datetime import date, timedelta
+
+        from planning.models import Term
+
+        # A term card sits under the menu on a phone; it's positioned (for
+        # its stretched link), so it would cover the menu if the nav
+        # weren't raised.
+        Term.objects.create(
+            name="Covered?", start_date=date.today() - timedelta(days=7),
+            end_date=date.today() + timedelta(days=60), calendar_use="current",
+        )
+        self.page.set_viewport_size({"width": 360, "height": 800})
+        self.login_as_conductor()
+        self.page.goto("/")
+        self.page.click(".user-menu summary")
+        box = self.page.locator("#theme-choice").bounding_box()
+        topmost = self.page.evaluate(
+            "([x, y]) => document.elementFromPoint(x, y).closest('.user-menu') !== null",
+            [box["x"] + box["width"] / 2, box["y"] + box["height"] - 4],
+        )
+        assert topmost
+
     def test_escape_closes_the_menu_and_returns_focus(self):
         self.login_as_conductor()
         self.page.goto("/")
