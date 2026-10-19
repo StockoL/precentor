@@ -64,6 +64,10 @@ class Score(models.Model):
     filing_location = models.CharField(max_length=100, blank=True)
     duration_minutes = models.PositiveIntegerField(blank=True, null=True)
     last_sung_manual = models.DateField(blank=True, null=True)  # history before Precentor
+    background = models.TextField(blank=True)
+    notes = models.TextField("interpretation notes", blank=True)
+    range_soprano = models.CharField(max_length=20, blank=True, validators=[validate_vocal_range])
+    # ... range_alto, range_tenor and range_bass the same
     suited_use_types = models.ManyToManyField("ordo.UseType", blank=True, related_name="suited_scores")
     suited_seasons = models.ManyToManyField("ordo.LiturgicalSeason", blank=True, related_name="suited_scores")
     suited_occasions = models.ManyToManyField("ordo.LiturgicalOccasion", blank=True, related_name="suited_scores")
@@ -104,6 +108,15 @@ it looks `RolePiece` up by name with `apps.get_model()` because
 wrapped in `Coalesce()`, because SQLite returns NULL when any argument
 is NULL while PostgreSQL ignores it; the coalescing gives the same
 answer on both.
+
+**Background, notes and vocal ranges:** these give the score page
+something the library table can't show. Each range is two notes in
+scientific pitch notation from low to high, such as `A3–E5`.
+`library/validators.py` checks the format and converts each note to
+a semitone count, so a range written the wrong way round is refused
+with its own message. `Score.clean()` then stores every range in one
+tidy form (`a3 - e5` becomes `A3–E5`); a `ModelForm` runs it after
+each field's own validators, so it only ever sees valid ranges.
 
 **Search and voicing:** `ScoreQuerySet.search(query)` needs every word
 to match somewhere in the title, composer names, arranger or editor (an
@@ -320,6 +333,15 @@ class RolePiece(models.Model):
     is_confirmed = models.BooleanField(default=False)
     comments = GenericRelation("comments.Comment")
 ```
+
+**History state:** `RolePiece.history_state` is `sung` once confirmed
+for a service dated on or before today, `scheduled` if confirmed for
+a later one, and `proposed` otherwise, with `history_label` for
+display, the same pattern as `Service.status`. It uses the same
+"today" as `Score.objects.with_last_sung()`, so a score's history and
+its last-sung date always agree. The score page lists a piece's
+history through the reverse relation `score.role_pieces`, so `library`
+still doesn't import from `planning`.
 
 ### `comments.Comment`
 
