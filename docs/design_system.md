@@ -86,6 +86,11 @@ a dense planning tool, and the steeper ratio made an `h2` around 39px
 on a desktop. 16px is kept as the floor because iOS zooms the page when
 a form control's text is smaller than that.
 
+**Space scale:** the same viewport and the same 16px to 18px base,
+with Utopia's multipliers (`3xs` 0.25 up to `3xl` 6). Sharing the type
+scale's base means padding grows in step with the text instead of
+outgrowing it.
+
 ### Colour
 
 - A neutral grayscale ramp, with semantic tokens (`surface-*`,
