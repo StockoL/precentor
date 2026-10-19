@@ -96,6 +96,8 @@
 /* Automatic dark mode — only when no manual theme choice has been made */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
+  --colors-action-primary: #e8798a;
+  --colors-text-on-action: #1c1b1f;
   --colors-surface-base: #1c1b1f;
   --colors-surface-sunken: #242226;
   --colors-text-base: #f4f4f5;
@@ -124,6 +126,8 @@
 
 /* Explicit manual override — set by the theme toggle, wins regardless of OS setting */
 :root[data-theme="dark"] {
+  --colors-action-primary: #e8798a;
+  --colors-text-on-action: #1c1b1f;
   --colors-surface-base: #1c1b1f;
   --colors-surface-sunken: #242226;
   --colors-text-base: #f4f4f5;
