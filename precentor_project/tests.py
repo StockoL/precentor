@@ -50,6 +50,61 @@ class NavWordingTests(TestCase):
                 self.assertContains(response, f"<title>{word} — Precentor</title>", html=True)
 
 
+class NewAndEditWordingTests(TestCase):
+    """Create pages and links say New; edit pages say Edit; the tab title
+    matches the heading."""
+
+    def setUp(self):
+        from datetime import date
+
+        from library.models import Score
+        from planning.models import Service, Term
+
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="pw")
+        )
+        self.term = Term.objects.create(
+            name="Lent 2027",
+            start_date=date(2027, 1, 1),
+            end_date=date(2027, 3, 31),
+            calendar_use="current",
+        )
+        self.service = Service.objects.create(
+            term=self.term, date=date(2027, 1, 10), service_type="Sung Mass"
+        )
+        self.score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+
+    def test_form_pages(self):
+        from django.urls import reverse
+
+        pages = [
+            (reverse("planning:term_create"), "New term", "New term"),
+            (reverse("planning:term_update", args=[self.term.pk]), "Edit term", "Edit term"),
+            (reverse("planning:service_create", args=[self.term.pk]),
+             "New service", "New service in Lent 2027"),
+            (reverse("planning:service_update", args=[self.service.pk]),
+             "Edit service", "Edit service"),
+            (reverse("library:score_create"), "New score", "New score"),
+            (reverse("library:score_update", args=[self.score.pk]), "Edit score", "Edit score"),
+        ]
+        for url, title, heading in pages:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertContains(response, f"<title>{title} — Precentor</title>", html=True)
+                self.assertContains(response, f"<h1>{heading}</h1>", html=True)
+
+    def test_create_links(self):
+        for url, link in [
+            ("/", ">New term</a>"),
+            (self.term.get_absolute_url(), ">New service</a>"),
+            ("/library/", ">New score</a>"),
+        ]:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertContains(response, link)
+                self.assertNotContains(response, ">Add a ")
+
+
 class NavInboxCountTests(TestCase):
     def setUp(self):
         from datetime import date
