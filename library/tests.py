@@ -17,7 +17,8 @@ class ScoreFormLabelTests(TestCase):
             User.objects.create_superuser(username="admin", password="testpass123")
         )
         response = self.client.get("/library/add/")
-        for label in ("Composer&#x27;s other names", "Sopranos", "Basses",
+        for label in ("Background", "Interpretation notes",
+                      "Composer&#x27;s other names", "Sopranos", "Basses",
                       "Duration (minutes)", "Suitable uses", "Suitable seasons",
                       "Suitable occasions"):
             with self.subTest(label=label):

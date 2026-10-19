@@ -144,6 +144,14 @@ class Score(models.Model):
     duration_minutes = models.PositiveIntegerField(
         "duration (minutes)", blank=True, null=True
     )
+    background = models.TextField(
+        blank=True, help_text="Where the piece comes from: its history, text and context."
+    )
+    notes = models.TextField(
+        "interpretation notes",
+        blank=True,
+        help_text="How you take it: tempo, balance, things to rehearse.",
+    )
     # "Last sung" is derived from confirmed pieces in past services (see
     # ScoreQuerySet.with_last_sung). This is only for history from before
     # Precentor; the library shows whichever date is later.

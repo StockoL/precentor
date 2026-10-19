@@ -27,6 +27,8 @@ class ScoreForm(forms.ModelForm):
             "suited_occasions",
             "duration_minutes",
             "last_sung_manual",
+            "background",
+            "notes",
         ]
         widgets = {  # noqa
             "last_sung_manual": NativeDateInput(),
