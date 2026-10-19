@@ -2,8 +2,12 @@
 {% block title %}Terms — Precentor{% endblock %}
 {% block content %}
 <div class="flow">
-    <h1>Terms</h1>
-    <a href="{% url 'planning:term_create' %}">New term</a>
+    <header class="page-header">
+        <h1>Terms</h1>
+        <div class="page-header__actions">
+            <a class="btn-primary" href="{% url 'planning:term_create' %}">New term</a>
+        </div>
+    </header>
 
     <div class="grid">
         {% for term in terms %}

@@ -137,6 +137,13 @@ class PrimaryActionTests(TestCase):
                 else:
                     self.assertLessEqual(count, 1)
 
+    def test_list_pages_put_their_new_action_in_the_page_header(self):
+        for url, new in [("/", "/terms/add/"), ("/library/", "/library/add/")]:
+            with self.subTest(url=url):
+                html = self.client.get(url).content.decode()
+                header = html.split('<header class="page-header">', 1)[1].split("</header>", 1)[0]
+                self.assertIn(f'<a class="btn-primary" href="{new}">', header)
+
 
 class NavInboxCountTests(TestCase):
     def setUp(self):

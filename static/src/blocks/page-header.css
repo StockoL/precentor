@@ -1,0 +1,23 @@
+/* ==========================================================================
+   BLOCK: PAGE HEADER
+   The page title on the left and the page's actions on the right, so
+   every page puts its actions in the same place. On a narrow screen the
+   actions wrap beneath the title instead of squeezing it.
+   ========================================================================== */
+
+@layer blocks {
+  .page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-xs) var(--spacing-s);
+  }
+
+  .page-header__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-2xs);
+  }
+}
