@@ -289,6 +289,45 @@ class ServiceDetailProposePieceRankingTests(TestCase):
         self.assertIn(self.untagged, queryset)
 
 
+class TermTimingTests(TestCase):
+    def setUp(self):
+        # Michaelmas: Sun 6 Sep to Fri 25 Dec 2026, 111 days, so 16 weeks.
+        self.term = Term(
+            name="Michaelmas 2026",
+            start_date=date(2026, 9, 6),
+            end_date=date(2026, 12, 25),
+            calendar_use="current",
+        )
+
+    def test_current_term_counts_weeks_from_its_first_day(self):
+        for today, label in [
+            (date(2026, 9, 6), "Week 1 of 16"),
+            (date(2026, 9, 12), "Week 1 of 16"),
+            (date(2026, 9, 13), "Week 2 of 16"),
+            (date(2026, 12, 25), "Week 16 of 16"),
+        ]:
+            with self.subTest(today=today):
+                self.assertEqual(self.term.phase(today), "current")
+                self.assertEqual(self.term.timing_label(today), label)
+
+    def test_upcoming_term_counts_down(self):
+        for today, label in [
+            (date(2026, 9, 5), "Starts tomorrow"),
+            (date(2026, 8, 30), "Starts in 7 days"),
+            (date(2026, 8, 23), "Starts in 2 weeks"),
+            (date(2026, 7, 1), "Starts in 9 weeks"),
+        ]:
+            with self.subTest(today=today):
+                self.assertEqual(self.term.phase(today), "upcoming")
+                self.assertEqual(self.term.timing_label(today), label)
+
+    def test_past_term_says_when_it_ended(self):
+        today = date(2027, 1, 4)
+        self.assertEqual(self.term.phase(today), "past")
+        self.assertEqual(self.term.phase_label(today), "Past")
+        self.assertEqual(self.term.timing_label(today), "Ended Fri 25 Dec 2026")
+
+
 class RolePieceHistoryStateTests(TestCase):
     def test_sung_scheduled_or_proposed(self):
         from datetime import timedelta

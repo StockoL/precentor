@@ -47,6 +47,46 @@ class Term(models.Model):
             "not_started": statuses.count("not_started"),
         }
 
+    PHASE_LABELS = {  # noqa
+        "current": "Current",
+        "upcoming": "Upcoming",
+        "past": "Past",
+    }
+
+    def phase(self, today=None):
+        """Where the term sits relative to today: current, upcoming or
+        past. today is a parameter so tests can fix the date."""
+        today = today or timezone.localdate()
+        if today < self.start_date:
+            return "upcoming"
+        if today > self.end_date:
+            return "past"
+        return "current"
+
+    def phase_label(self, today=None):
+        return self.PHASE_LABELS[self.phase(today)]
+
+    def timing_label(self, today=None):
+        """
+        "Week 4 of 12" while the term runs, counting from its first day
+        with a part week at the end counted as a week; "Starts in 3 weeks"
+        (or days) before it; "Ended Fri 25 Dec 2026" after.
+        """
+        today = today or timezone.localdate()
+        phase = self.phase(today)
+        if phase == "current":
+            week = (today - self.start_date).days // 7 + 1
+            weeks = -(-((self.end_date - self.start_date).days + 1) // 7)  # rounds up
+            return f"Week {week} of {weeks}"
+        if phase == "upcoming":
+            days = (self.start_date - today).days
+            if days == 1:
+                return "Starts tomorrow"
+            if days < 14:
+                return f"Starts in {days} days"
+            return f"Starts in {days // 7} weeks"
+        return f"Ended {date_format(self.end_date)}"
+
     def deletion_summary(self):
         """
         What deleting this term takes with it, for the confirmation page:
