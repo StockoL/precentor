@@ -157,7 +157,11 @@ class Service(models.Model):
         A role counts as "resolved" if it's marked N/A, or if it has
         at least one confirmed piece.
         """
-        roles = self.roles.all()
+        # .all() and plain Python, not .exists()/.filter()/.count(): those
+        # always query, but .all() uses prefetched roles and pieces when a
+        # view has loaded them (prefetch_related("roles__pieces")), so a
+        # list of services can show every status without a query each.
+        roles = list(self.roles.all())
         if not roles:
             return "not_started"
 
@@ -167,12 +171,13 @@ class Service(models.Model):
             if role.is_not_applicable:
                 resolved_count += 1
                 continue
-            if role.pieces.exists():
+            pieces = list(role.pieces.all())
+            if pieces:
                 has_any_piece = True
-            if role.pieces.filter(is_confirmed=True).exists():
+            if any(piece.is_confirmed for piece in pieces):
                 resolved_count += 1
 
-        if resolved_count == roles.count():
+        if resolved_count == len(roles):
             return "complete"
         if resolved_count == 0 and not has_any_piece:
             return "not_started"
