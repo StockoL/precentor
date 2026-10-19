@@ -41,7 +41,7 @@ class SeededDataTests(TestCase):
     def test_seeded_use_types(self):
         self.assertEqual(
             set(UseType.objects.values_list("name", flat=True)),
-            {"Eucharist", "General use", "Evening"},
+            {"Mass", "Vespers", "General use"},
         )
 
     def test_seeded_seasons_are_the_roman_calendar_seasons(self):
