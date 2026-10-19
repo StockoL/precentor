@@ -129,17 +129,11 @@ class Score(models.Model):
     soprano_parts = models.PositiveSmallIntegerField(
         "sopranos",
         default=0,
-        help_text="Number of soprano parts, e.g. 2 for SSATB (0 if none)",
+        help_text="How many parts of each: 2 for SSATB, 0 if none",
     )
-    alto_parts = models.PositiveSmallIntegerField(
-        "altos", default=0, help_text="Number of alto parts (0 if none)"
-    )
-    tenor_parts = models.PositiveSmallIntegerField(
-        "tenors", default=0, help_text="Number of tenor parts (0 if none)"
-    )
-    bass_parts = models.PositiveSmallIntegerField(
-        "basses", default=0, help_text="Number of bass parts (0 if none)"
-    )
+    alto_parts = models.PositiveSmallIntegerField("altos", default=0)
+    tenor_parts = models.PositiveSmallIntegerField("tenors", default=0)
+    bass_parts = models.PositiveSmallIntegerField("basses", default=0)
     language = models.CharField(max_length=50, help_text="e.g. Latin, English")
     copies_owned = models.PositiveIntegerField(default=0)
     filing_location = models.CharField(
