@@ -53,6 +53,8 @@ class ConfirmToggleBrowserTest(PlaywrightTestCase):
         # Success toast appeared.
         self.page.wait_for_selector(".toast--success")
         assert "Piece updated" in self.page.inner_text(".toast--success")
+        # The × keeps a 24px target, not the buttons' 40px control height.
+        assert self.page.locator(".toast-dismiss").bounding_box()["height"] == 24
 
         # Focus restored onto the same button (now reading "Unconfirm"),
         # not lost to <body> by the outerHTML swap.
