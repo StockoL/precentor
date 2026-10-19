@@ -1,0 +1,36 @@
+{# One term on the Terms page; the data comes from TermListView.get_context_data. #}
+<article class="term-card card flow" style="--flow-space: var(--spacing-2xs);">
+    <div class="term-card__header">
+        <h2><a class="term-card__link" href="{{ term.get_absolute_url }}">{{ term }}</a></h2>
+        <span class="badge badge--{{ term.card_phase }}">{{ term.card_phase_label }}</span>
+    </div>
+    <p class="term-card__meta">{{ term.card_timing }} · {{ term.start_date|date }} to {{ term.end_date|date }}</p>
+
+    {% if term.summary.total %}
+    <div class="status-bar" aria-hidden="true"
+         style="--complete: {{ term.summary.complete }}; --in-progress: {{ term.summary.in_progress }}; --not-started: {{ term.summary.not_started }};">
+        <span class="status-bar__complete"></span>
+        <span class="status-bar__in-progress"></span>
+        <span class="status-bar__not-started"></span>
+    </div>
+    <p class="term-summary">
+        {{ term.summary.complete }} of {{ term.summary.total }} service{{ term.summary.total|pluralize }} complete{% if term.summary.in_progress %}, {{ term.summary.in_progress }} in progress{% endif %}{% if term.summary.not_started %}, {{ term.summary.not_started }} not started{% endif %}
+    </p>
+    {% else %}
+    <p class="term-summary">No services yet</p>
+    {% endif %}
+
+    {% if term.ready_to_publish %}
+    <p class="term-card__ready">Ready to publish</p>
+    {% endif %}
+
+    {% if term.next_service %}
+    <p class="term-card__next"{% if term.next_is_soon and term.outstanding %} data-soon{% endif %}>
+        Next: <a href="{{ term.next_service.get_absolute_url }}">{{ term.next_service }}</a>{% if term.outstanding %}, still to settle: {{ term.outstanding|join:", " }}{% else %}, all settled{% endif %}
+    </p>
+    {% endif %}
+
+    {% if term.open_comments %}
+    <p class="term-card__meta">{{ term.open_comments }} open comment{{ term.open_comments|pluralize }}</p>
+    {% endif %}
+</article>

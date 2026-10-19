@@ -1,0 +1,123 @@
+/* ==========================================================================
+   BLOCK: TERM CARD
+   One term on the Terms page: name and phase, timing, a status bar, the
+   next service and what's still to settle. Composes with .card for the
+   border and background.
+   ========================================================================== */
+
+@layer blocks {
+  .term-card {
+    position: relative;
+    padding: var(--spacing-s);
+    transition: border-color var(--transitions-dur-fast) var(--transitions-spring-smooth),
+      transform var(--transitions-dur-fast) var(--transitions-spring-smooth),
+      box-shadow var(--transitions-dur-fast) var(--transitions-spring-smooth);
+  }
+
+  .term-card__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--spacing-3xs) var(--spacing-s);
+  }
+
+  /*
+   * Stretched link: the title's link covers the whole card, so the card
+   * is one big target without wrapping it in an <a>, which would make
+   * the next-service link a link inside a link (invalid HTML).
+   */
+  .term-card__link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .term-card__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  /* Links inside the card sit above the stretched one. */
+  .term-card__next a {
+    position: relative;
+    z-index: 1;
+  }
+
+  .term-card:hover {
+    border-color: var(--colors-action-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(24, 24, 27, 0.12);
+  }
+
+  /* Keyboard focus lands on the title link; ring the whole card. */
+  .term-card:has(.term-card__link:focus-visible) {
+    outline: 2px solid var(--colors-action-primary);
+    outline-offset: 2px;
+  }
+
+  .term-card__link:focus-visible {
+    outline: none;
+  }
+
+  .term-card__meta {
+    color: var(--colors-text-muted);
+  }
+
+  /*
+   * Complete / in progress / not started, as one bar. The counts arrive
+   * as custom properties on the bar (style="--complete: 3"), data rather
+   * than styling, and each segment grows in proportion. The sentence
+   * beside it says the same in words, so the bar is hidden from screen
+   * readers.
+   */
+  .status-bar {
+    display: flex;
+    block-size: 0.5rem;
+    max-width: var(--layout-measure);
+    border-radius: 999px;
+    overflow: hidden;
+    background-color: var(--colors-inactive-bg);
+  }
+
+  .status-bar > span {
+    flex-basis: 0;
+  }
+
+  .status-bar__complete {
+    flex-grow: var(--complete);
+    background-color: var(--colors-success);
+  }
+
+  .status-bar__in-progress {
+    flex-grow: var(--in-progress);
+    background-color: var(--colors-warning);
+  }
+
+  .status-bar__not-started {
+    flex-grow: var(--not-started);
+    background-color: var(--colors-inactive-border);
+  }
+
+  .term-card__ready {
+    color: var(--colors-success-text);
+    font-weight: 600;
+  }
+
+  /* The next service is close and still has slots to settle. */
+  .term-card__next[data-soon] {
+    color: var(--colors-warning-text);
+    font-weight: 600;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .term-card {
+      transition: none;
+    }
+
+    .term-card:hover {
+      transform: none;
+    }
+  }
+}

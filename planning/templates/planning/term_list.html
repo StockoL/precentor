@@ -9,21 +9,30 @@
         </div>
     </header>
 
-    <div class="grid">
-        {% for term in terms %}
-        <a class="card term-card flow" style="--flow-space: var(--spacing-2xs);" href="{{ term.get_absolute_url }}">
-            <h2>{{ term }}</h2>
-            <p>{{ term.start_date|date }} to {{ term.end_date|date }}</p>
-            <p class="term-summary" {% if term.summary.total > 0 and term.summary.complete == term.summary.total %}data-all-complete{% endif %}>
-                {{ term.summary.complete }} of {{ term.summary.total }} services complete
-            </p>
-        </a>
-        {% empty %}
-        <div class="empty-state flow">
-            <p>No terms yet. A term holds a run of services and their music, such as Michaelmas 2026.</p>
-            <a class="btn" href="{% url 'planning:term_create' %}">Create the first term</a>
-        </div>
+    {% if active_terms %}
+    <ul role="list" class="flow">
+        {% for term in active_terms %}
+        <li>{% include "planning/_term_card.html" %}</li>
         {% endfor %}
+    </ul>
+    {% elif not past_terms %}
+    <div class="empty-state flow">
+        <p>No terms yet. A term holds a run of services and their music, such as Michaelmas 2026.</p>
+        <a class="btn" href="{% url 'planning:term_create' %}">Create the first term</a>
     </div>
+    {% else %}
+    <p>No current or upcoming terms.</p>
+    {% endif %}
+
+    {% if past_terms %}
+    <details class="flow">
+        <summary>Past terms ({{ past_terms|length }})</summary>
+        <ul role="list" class="flow">
+            {% for term in past_terms %}
+            <li>{% include "planning/_term_card.html" %}</li>
+            {% endfor %}
+        </ul>
+    </details>
+    {% endif %}
 </div>
 {% endblock %}

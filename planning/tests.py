@@ -289,6 +289,90 @@ class ServiceDetailProposePieceRankingTests(TestCase):
         self.assertIn(self.untagged, queryset)
 
 
+class TermListPageTests(TestCase):
+    def setUp(self):
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        self.user = User.objects.create_superuser(username="admin", password="testpass123")
+        self.client.force_login(self.user)
+        self.today = timezone.localdate()
+        self.days = lambda n: self.today + timedelta(days=n)
+        self.score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+
+    def make_term(self, name, start, end, services=()):
+        """services: (days from today, [(slot name, confirmed)]) pairs."""
+        term = Term.objects.create(
+            name=name, start_date=self.days(start), end_date=self.days(end),
+            calendar_use="current",
+        )
+        made = []
+        for offset, slots in services:
+            service = Service.objects.create(
+                term=term, date=self.days(offset), service_type="Sung Mass"
+            )
+            for slot, confirmed in slots:
+                role = ServiceRole.objects.create(service=service, role_name=slot)
+                RolePiece.objects.create(service_role=role, score=self.score, is_confirmed=confirmed)
+            made.append(service)
+        return term, made
+
+    def test_card_shows_phase_progress_and_next_service(self):
+        from comments.models import Comment
+
+        term, services = self.make_term("Michaelmas", -20, 60, services=[
+            (-7, [("Setting", True)]),
+            (5, [("Setting", True), ("Offertory motet", False)]),
+            (30, []),
+        ])
+        piece = RolePiece.objects.filter(service_role__service=services[1]).first()
+        for target in (term, services[0], piece):
+            Comment.objects.create(author=self.user, body="Query", target=target)
+        Comment.objects.create(author=self.user, body="Done", target=term, is_open=False)
+
+        response = self.client.get("/")
+        self.assertContains(response, '<span class="badge badge--current">Current</span>', html=True)
+        self.assertContains(response, "Week 3 of 12")
+        self.assertContains(response, "1 of 3 services complete, 1 in progress, 1 not started")
+        self.assertContains(response, "still to settle: Offertory motet")
+        self.assertContains(response, "data-soon")  # five days away, something unsettled
+        self.assertContains(response, "3 open comments")  # term, service and piece; not the closed one
+        self.assertNotContains(response, "Ready to publish")
+
+    def test_a_fully_planned_term_is_ready_to_publish(self):
+        self.make_term("Advent", 10, 40, services=[(14, [("Setting", True)])])
+        response = self.client.get("/")
+        self.assertContains(response, "Ready to publish")
+        self.assertContains(response, "all settled")
+        self.assertNotContains(response, "data-soon")
+
+    def test_current_and_upcoming_first_and_past_terms_folded_away(self):
+        self.make_term("Lent", 40, 90)
+        self.make_term("Michaelmas", -20, 60)
+        self.make_term("Easter", -200, -120)
+        response = self.client.get("/")
+        self.assertEqual([t.name for t in response.context["active_terms"]], ["Michaelmas", "Lent"])
+        self.assertEqual([t.name for t in response.context["past_terms"]], ["Easter"])
+        self.assertContains(response, "<summary>Past terms (1)</summary>", html=True)
+
+    def test_query_count_does_not_grow_with_more_terms(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        def queries():
+            with CaptureQueriesContext(connection) as captured:
+                self.client.get("/")
+            return len(captured)
+
+        services = [(-7, [("Setting", True), ("Motet", False)]), (7, [("Setting", False)])]
+        self.make_term("One", -20, 60, services=services)
+        one_term = queries()
+        self.make_term("Two", 70, 120, services=services)
+        self.make_term("Three", -200, -120, services=services)
+        self.assertEqual(queries(), one_term)
+
+
 class TermTimingTests(TestCase):
     def setUp(self):
         # Michaelmas: Sun 6 Sep to Fri 25 Dec 2026, 111 days, so 16 weeks.

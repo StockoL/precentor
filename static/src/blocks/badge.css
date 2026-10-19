@@ -42,6 +42,23 @@
     border-color: var(--colors-success-border);
   }
 
+  /* A term's phase on the Terms page (Term.phase). */
+  .badge--current {
+    background-color: var(--colors-success-bg);
+    color: var(--colors-success-text);
+    border-color: var(--colors-success-border);
+  }
+  .badge--upcoming {
+    background-color: var(--colors-info-bg);
+    color: var(--colors-info-text);
+    border-color: var(--colors-info-border);
+  }
+  .badge--past {
+    background-color: var(--colors-inactive-bg);
+    color: var(--colors-inactive-text);
+    border-color: var(--colors-inactive-border);
+  }
+
   /* A piece's place in a score's history (RolePiece.history_state);
      "proposed" shares the confirmation style below. */
   .badge--sung {

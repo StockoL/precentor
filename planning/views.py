@@ -1,9 +1,13 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
+from collections import Counter
+
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import (
     CreateView,
@@ -15,6 +19,7 @@ from django.views.generic import (
 
 from accounts.mixins import ConductorRequiredMixin
 from comments.forms import CommentForm
+from comments.models import Comment
 from comments.utils import attach_reply_forms
 from core.models import SiteConfig
 from library.models import Score
@@ -37,11 +42,89 @@ class TermListView(LoginRequiredMixin, ListView):
     context_object_name = "terms"
     template_name = "planning/term_list.html"
 
+    # A service this close is flagged if it still has slots to settle.
+    SOON_DAYS = 14
+
     def get_queryset(self):
-        terms = list(super().get_queryset())
+        # Every term's services, slots and pieces in four queries, however
+        # many there are; Service.status and ServiceRole.is_resolved then
+        # read the prefetched rows instead of querying for each one.
+        return Term.objects.prefetch_related(
+            Prefetch(
+                "services",
+                queryset=Service.objects.order_by("date").prefetch_related("roles__pieces"),
+            )
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        today = timezone.localdate()
+        terms = list(context["terms"])
+        open_comments = self.open_comment_counts(terms)
+
         for term in terms:
-            term.summary = term.completion_summary()
-        return terms
+            services = list(term.services.all())
+            statuses = Counter(service.status for service in services)
+            term.card_phase = term.phase(today)
+            term.card_phase_label = term.phase_label(today)
+            term.card_timing = term.timing_label(today)
+            term.summary = {
+                "total": len(services),
+                "complete": statuses["complete"],
+                "in_progress": statuses["in_progress"],
+                "not_started": statuses["not_started"],
+            }
+            term.ready_to_publish = bool(services) and statuses["complete"] == len(services)
+            term.next_service = next((s for s in services if s.date >= today), None)
+            if term.next_service:
+                term.outstanding = [
+                    role.role_name
+                    for role in term.next_service.roles.all()
+                    if not role.is_resolved
+                ]
+                term.next_is_soon = (term.next_service.date - today).days <= self.SOON_DAYS
+            term.open_comments = open_comments[term.pk]
+
+        # Current and upcoming terms first, soonest first; past terms
+        # after, most recent first, folded away in the template.
+        context["active_terms"] = sorted(
+            (t for t in terms if t.card_phase != "past"), key=lambda t: t.start_date
+        )
+        context["past_terms"] = sorted(
+            (t for t in terms if t.card_phase == "past"),
+            key=lambda t: t.start_date,
+            reverse=True,
+        )
+        return context
+
+    @staticmethod
+    def open_comment_counts(terms):
+        """
+        Open comments per term, counting those on the term, on its
+        services and on their pieces. Three queries in all, one per kind
+        of target, matched to terms using the prefetched services.
+        """
+        term_of_service = {}
+        term_of_piece = {}
+        for term in terms:
+            for service in term.services.all():
+                term_of_service[service.pk] = term.pk
+                for role in service.roles.all():
+                    for piece in role.pieces.all():
+                        term_of_piece[piece.pk] = term.pk
+
+        def open_on(model, pks):
+            return Comment.objects.filter(
+                is_open=True,
+                content_type=ContentType.objects.get_for_model(model),
+                object_id__in=pks,
+            ).values_list("object_id", flat=True)
+
+        counts = Counter()
+        counts.update(open_on(Term, [term.pk for term in terms]))
+        counts.update(term_of_service[pk] for pk in open_on(Service, term_of_service))
+        counts.update(term_of_piece[pk] for pk in open_on(RolePiece, term_of_piece))
+        return counts
 
 
 class TermDetailView(LoginRequiredMixin, DetailView):

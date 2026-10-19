@@ -205,17 +205,8 @@ class Service(models.Model):
         if not roles:
             return "not_started"
 
-        resolved_count = 0
-        has_any_piece = False
-        for role in roles:
-            if role.is_not_applicable:
-                resolved_count += 1
-                continue
-            pieces = list(role.pieces.all())
-            if pieces:
-                has_any_piece = True
-            if any(piece.is_confirmed for piece in pieces):
-                resolved_count += 1
+        resolved_count = sum(role.is_resolved for role in roles)
+        has_any_piece = any(list(role.pieces.all()) for role in roles)
 
         if resolved_count == len(roles):
             return "complete"
@@ -265,6 +256,14 @@ class ServiceRole(models.Model):
 
     def __str__(self):
         return f"{self.role_name} ({self.service})"
+
+    @property
+    def is_resolved(self):
+        """Settled: marked not needed, or holding a confirmed piece. Uses
+        .all(), so prefetched pieces cost no query."""
+        return self.is_not_applicable or any(
+            piece.is_confirmed for piece in self.pieces.all()
+        )
 
 
 class RolePiece(models.Model):
