@@ -9,7 +9,7 @@ class Comment(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="comments"
     )
-    body = models.TextField()
+    body = models.TextField("comment")
     is_open = models.BooleanField(default=True)
     parent = models.ForeignKey(
         "self", null=True, blank=True, on_delete=models.CASCADE, related_name="replies"

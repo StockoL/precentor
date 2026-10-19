@@ -119,6 +119,11 @@ class AddCommentViewTests(TestCase):
         self.assertContains(response, "Open one")
         self.assertNotContains(response, "Closed one")
 
+    def test_comment_form_label_says_comment(self):
+        response = self.client.get(self.term.get_absolute_url())
+        self.assertContains(response, "Comment:</label>")
+        self.assertNotContains(response, "Body:")
+
     def test_inbox_shows_times_in_uk_local_time(self):
         # Stored in UTC; shown in Europe/London, which is on BST (UTC+1)
         # in July, so noon UTC must read as 13:00.
