@@ -1,21 +1,8 @@
 from django import forms
 
+from precentor_project.widgets import NativeDateInput
+
 from .models import RolePiece, Service, ServiceRole, Term, TermMarker
-
-
-class NativeDateInput(forms.DateInput):
-    """
-    The browser's own date picker. <input type="date"> only accepts an
-    ISO value (YYYY-MM-DD), but Django renders a date in the locale's
-    first input format, which for en-gb is DD/MM/YYYY and would leave
-    every edit form's date blank. Pinning the format fixes that for any
-    locale.
-    """
-
-    input_type = "date"
-
-    def __init__(self, attrs=None):
-        super().__init__(attrs=attrs, format="%Y-%m-%d")
 
 
 class TermForm(forms.ModelForm):
