@@ -27,9 +27,9 @@
 
   /* Service.status */
   .badge--not_started {
-    background-color: var(--colors-neutral-100);
-    color: var(--colors-neutral-600);
-    border-color: var(--colors-neutral-300);
+    background-color: var(--colors-inactive-bg);
+    color: var(--colors-inactive-text);
+    border-color: var(--colors-inactive-border);
   }
   .badge--in_progress {
     background-color: var(--colors-warning-bg);

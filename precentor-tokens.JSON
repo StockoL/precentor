@@ -1,5 +1,5 @@
 {
-  "_comment_colors": "PROCESS: neutral-* is the raw grayscale ramp. Semantic tokens (surface-*, text-*, border-*) alias into it via var(--colors-neutral-N). Status tokens (success/warning/danger/info) each ship a base + -bg/-border/-text trio for blocks like alert and badge. liturgical-* maps directly onto ordo.LiturgicalOccasion.colour's five choices (violet/red/green/white/rose) — the template sets a per-page --accent custom property to one of these five values when a Service/Occasion is in context; pages with no occasion in view fall back to action-primary.",
+  "_comment_colors": "PROCESS: neutral-* is the raw grayscale ramp. Semantic tokens (surface-*, text-*, border-*) alias into it via var(--colors-neutral-N). Status tokens (success/warning/danger/info) each ship a base + -bg/-border/-text trio for blocks like alert and badge. inactive-* is the same trio for a state that has not begun (e.g. a service not started); its text uses neutral-600, not text-muted, because text-muted on its background is 4.40:1, under AA for small text. liturgical-* maps directly onto ordo.LiturgicalOccasion.colour's five choices (violet/red/green/white/rose) — the template sets a per-page --accent custom property to one of these five values when a Service/Occasion is in context; pages with no occasion in view fall back to action-primary.",
   "colors": {
     "neutral-0": "#ffffff",
     "neutral-50": "#fafafa",
@@ -45,6 +45,10 @@
     "info-border": "#bfdbfe",
     "info-text": "#1e3a8a",
 
+    "inactive-bg": "var(--colors-neutral-100)",
+    "inactive-border": "var(--colors-neutral-300)",
+    "inactive-text": "var(--colors-neutral-600)",
+
     "liturgical-violet": "#5b2a86",
     "liturgical-red": "#8b1a2b",
     "liturgical-green": "#2f6b3a",
@@ -79,6 +83,10 @@
     "info-bg": "rgba(2, 132, 199, 0.16)",
     "info-text": "#7dd3fc",
     "info-border": "rgba(2, 132, 199, 0.4)",
+
+    "inactive-bg": "rgba(161, 161, 170, 0.12)",
+    "inactive-text": "#d4d4d8",
+    "inactive-border": "rgba(161, 161, 170, 0.35)",
 
     "liturgical-violet": "#b794f4",
     "liturgical-red": "#f87171",

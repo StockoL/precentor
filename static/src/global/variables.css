@@ -42,6 +42,9 @@
   --colors-info-bg: #eff6ff;
   --colors-info-border: #bfdbfe;
   --colors-info-text: #1e3a8a;
+  --colors-inactive-bg: var(--colors-neutral-100);
+  --colors-inactive-border: var(--colors-neutral-300);
+  --colors-inactive-text: var(--colors-neutral-600);
   --colors-liturgical-violet: #5b2a86;
   --colors-liturgical-red: #8b1a2b;
   --colors-liturgical-green: #2f6b3a;
@@ -118,6 +121,9 @@
   --colors-info-bg: rgba(2, 132, 199, 0.16);
   --colors-info-text: #7dd3fc;
   --colors-info-border: rgba(2, 132, 199, 0.4);
+  --colors-inactive-bg: rgba(161, 161, 170, 0.12);
+  --colors-inactive-text: #d4d4d8;
+  --colors-inactive-border: rgba(161, 161, 170, 0.35);
   --colors-liturgical-violet: #b794f4;
   --colors-liturgical-red: #f87171;
   --colors-liturgical-green: #4ade80;
@@ -149,6 +155,9 @@
   --colors-info-bg: rgba(2, 132, 199, 0.16);
   --colors-info-text: #7dd3fc;
   --colors-info-border: rgba(2, 132, 199, 0.4);
+  --colors-inactive-bg: rgba(161, 161, 170, 0.12);
+  --colors-inactive-text: #d4d4d8;
+  --colors-inactive-border: rgba(161, 161, 170, 0.35);
   --colors-liturgical-violet: #b794f4;
   --colors-liturgical-red: #f87171;
   --colors-liturgical-green: #4ade80;
