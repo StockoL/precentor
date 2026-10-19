@@ -1,10 +1,18 @@
 /* ==========================================================================
    BLOCK: BUTTON
+   A hierarchy, so the most important action in a view stands out:
+   - button / .btn   neutral, for ordinary actions (the default)
+   - .btn-primary    filled, for the one main action in a view
+   - .btn-ghost      transparent, for secondary actions (Edit, Cancel)
+   - .btn-danger     red text, for destructive actions (Delete)
+   Every class works on <a> too, so a link that acts as a button looks
+   like one.
    ========================================================================== */
 
 @layer blocks {
   button,
-  .btn-confirm,
+  .btn,
+  .btn-primary,
   .btn-ghost,
   .btn-danger {
     display: inline-flex;
@@ -26,24 +34,42 @@
       box-shadow var(--transitions-dur-fast) var(--transitions-spring-smooth);
   }
 
+  button:focus-visible,
+  .btn:focus-visible,
+  .btn-primary:focus-visible,
+  .btn-ghost:focus-visible {
+    outline: 2px solid var(--colors-action-primary);
+    outline-offset: 2px;
+  }
+
+  /* Default: neutral. */
   button,
-  .btn-confirm {
+  .btn {
+    border: 1px solid var(--colors-border-strong);
+    background-color: var(--colors-surface-base);
+    color: var(--colors-text-base);
+  }
+
+  button:hover,
+  .btn:hover {
+    background-color: var(--colors-surface-sunken);
+  }
+
+  /*
+   * Primary: filled. Each variant needs its own :hover, because
+   * button:hover (an element plus a pseudo-class) outranks a plain
+   * .btn-primary and would otherwise turn a primary button grey.
+   */
+  .btn-primary {
     border: 1px solid transparent;
     background-color: var(--colors-action-primary);
     color: var(--colors-text-on-action);
   }
 
-  button:hover,
-  .btn-confirm:hover {
+  .btn-primary:hover {
     background-color: var(--colors-action-primary-hover);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(139, 26, 43, 0.24);
-  }
-
-  button:focus-visible,
-  .btn-confirm:focus-visible {
-    outline: 2px solid var(--colors-action-primary);
-    outline-offset: 2px;
   }
 
   .btn-ghost {
@@ -54,11 +80,6 @@
 
   .btn-ghost:hover {
     background-color: var(--colors-surface-sunken);
-  }
-
-  .btn-ghost:focus-visible {
-    outline: 2px solid var(--colors-action-primary);
-    outline-offset: 2px;
   }
 
   /*
@@ -80,5 +101,19 @@
   .btn-danger:focus-visible {
     outline: 2px solid var(--colors-danger-text);
     outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    button,
+    .btn,
+    .btn-primary,
+    .btn-ghost,
+    .btn-danger {
+      transition: none;
+    }
+
+    .btn-primary:hover {
+      transform: none;
+    }
   }
 }

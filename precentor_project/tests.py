@@ -105,6 +105,39 @@ class NewAndEditWordingTests(TestCase):
                 self.assertNotContains(response, ">Add a ")
 
 
+class PrimaryActionTests(TestCase):
+    """One filled primary button per view, at most; form pages have one."""
+
+    # Same term, service and score as the wording tests, without
+    # inheriting (and so rerunning) their test methods.
+    setUp = NewAndEditWordingTests.setUp
+
+    def test_at_most_one_primary_action_per_page(self):
+        from django.urls import reverse
+
+        forms = [
+            reverse("planning:term_create"),
+            reverse("planning:service_update", args=[self.service.pk]),
+            reverse("library:score_update", args=[self.score.pk]),
+            "/settings/",
+        ]
+        others = [
+            "/",
+            self.term.get_absolute_url(),
+            self.service.get_absolute_url(),
+            "/library/",
+            self.score.get_absolute_url(),
+            "/comments/inbox/",
+        ]
+        for url in forms + others:
+            with self.subTest(url=url):
+                count = self.client.get(url).content.decode().count('class="btn-primary"')
+                if url in forms:
+                    self.assertEqual(count, 1)
+                else:
+                    self.assertLessEqual(count, 1)
+
+
 class NavInboxCountTests(TestCase):
     def setUp(self):
         from datetime import date

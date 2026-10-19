@@ -34,7 +34,7 @@
             <a href="?"{% if not draft %} aria-current="page"{% endif %}>Public</a>
             <a href="?draft=1"{% if draft %} aria-current="page"{% endif %}>Draft</a>
         </nav>
-        <button onclick="window.print()">Print</button>
+        <button class="btn-primary" onclick="window.print()">Print</button>
     </div>
 </div>
 {% endblock %}
