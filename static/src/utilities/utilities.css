@@ -21,4 +21,15 @@
     white-space: nowrap;
     border: 0;
   }
+
+  /*
+   * The hidden attribute hides an element through the browser's own
+   * display: none, and any author style outranks the browser's, so a
+   * block that sets display (form.css gives every select display: block)
+   * would quietly undo it. Repeating it here, in the last layer, makes
+   * hidden mean hidden everywhere.
+   */
+  [hidden] {
+    display: none;
+  }
 }
