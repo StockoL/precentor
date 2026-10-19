@@ -7,10 +7,16 @@ from ordo.models import CALENDAR_USE_CHOICES
 
 
 class Term(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, help_text="e.g. Michaelmas 2026")
     start_date = models.DateField()
     end_date = models.DateField()
-    calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES)
+    calendar_use = models.CharField(
+        "calendar",
+        max_length=20,
+        choices=CALENDAR_USE_CHOICES,
+        help_text="Which calendar of the Roman Rite this term follows. "
+        "A service can override it.",
+    )
     comments = GenericRelation("comments.Comment")
 
     def completion_summary(self):
@@ -48,22 +54,34 @@ class Service(models.Model):
 
     term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name="services")
     date = models.DateField()
-    service_type = models.CharField(max_length=50)
+    service_type = models.CharField(max_length=50, help_text="e.g. Sung Mass, Vespers")
     occasion = models.ForeignKey(
         "ordo.LiturgicalOccasion",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name="services",
+        help_text="The main liturgical day; it sets the service's colour.",
     )
     additional_occasions = models.ManyToManyField(
-        "ordo.LiturgicalOccasion", blank=True, related_name="also_relevant_services"
+        "ordo.LiturgicalOccasion",
+        verbose_name="other occasions",
+        blank=True,
+        related_name="also_relevant_services",
+        help_text="Any other days this service also marks.",
     )
     calendar_use = models.CharField(
-        max_length=20, choices=CALENDAR_USE_CHOICES, null=True, blank=True
+        "calendar",
+        max_length=20,
+        choices=CALENDAR_USE_CHOICES,
+        null=True,
+        blank=True,
+        help_text="Leave blank to follow the term's calendar.",
     )
-    hymns = models.CharField(max_length=200, blank=True)
-    psalm = models.CharField(max_length=100, blank=True)
+    hymns = models.CharField(
+        max_length=200, blank=True, help_text="Hymn numbers, e.g. 123, 345, 234"
+    )
+    psalm = models.CharField(max_length=100, blank=True, help_text="e.g. 150")
     comments = GenericRelation("comments.Comment")
 
     class Meta:
@@ -127,7 +145,8 @@ class Service(models.Model):
 class TermMarker(models.Model):
     term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name="markers")
     date = models.DateField()
-    text = models.CharField(max_length=200)
+    # "Notice" is the UI word for a TermMarker.
+    text = models.CharField("notice", max_length=200)
 
     class Meta:
         ordering = ["date"]  # noqa
@@ -138,8 +157,9 @@ class TermMarker(models.Model):
 
 class ServiceRole(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="roles")
-    role_name = models.CharField(max_length=50)
-    is_not_applicable = models.BooleanField(default=False)
+    # "Slot" is the UI word for a ServiceRole.
+    role_name = models.CharField("slot", max_length=50)
+    is_not_applicable = models.BooleanField("not needed (N/A)", default=False)
 
     class Meta:
         ordering = ["id"]  # noqa

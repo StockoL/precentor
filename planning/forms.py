@@ -49,8 +49,6 @@ class TermMarkerForm(forms.ModelForm):
     class Meta:
         model = TermMarker
         fields = ["date", "text"]  # noqa
-        # "Notice" is the UI word for a TermMarker; the model keeps its name.
-        labels = {"text": "Notice"}  # noqa
         widgets = {  # noqa
             "date": NativeDateInput(),
         }
@@ -60,11 +58,6 @@ class ServiceRoleForm(forms.ModelForm):
     class Meta:
         model = ServiceRole
         fields = ["role_name", "is_not_applicable"]  # noqa
-        # "Slot" is the UI word for a ServiceRole; the model keeps its name.
-        labels = {  # noqa
-            "role_name": "Slot",
-            "is_not_applicable": "Not needed (N/A)",
-        }
         widgets = {  # noqa
             "role_name": forms.TextInput(
                 attrs={

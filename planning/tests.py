@@ -352,6 +352,19 @@ class NoticeWordingTests(TestCase):
                     self.assertNotContains(response, old)
 
 
+class PlanningFormLabelTests(TestCase):
+    def test_term_and_service_forms_explain_the_calendar(self):
+        term_form = str(TermForm())
+        self.assertIn("Calendar:</label>", term_form)
+        self.assertIn("A service can override it.", term_form)
+        service_form = str(ServiceForm())
+        self.assertIn("Calendar:</label>", service_form)
+        # help_text is not HTML-escaped by Django, so the apostrophe is literal.
+        self.assertIn("Leave blank to follow the term's calendar.", service_form)
+        self.assertIn("Other occasions:</label>", service_form)
+        self.assertNotIn("Calendar use", term_form + service_form)
+
+
 class DateInputValueTests(TestCase):
     """<input type="date"> only accepts an ISO value (YYYY-MM-DD).
     Django otherwise renders a date in the locale's first input format,
