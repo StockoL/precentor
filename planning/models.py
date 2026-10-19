@@ -3,6 +3,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.formats import date_format
 
 from ordo.models import CALENDAR_USE_CHOICES
@@ -222,6 +223,14 @@ class ServiceRole(models.Model):
 
 
 class RolePiece(models.Model):
+    # A piece's place in a score's history. The raw value names the CSS
+    # class (badge--sung); the label is what people see.
+    HISTORY_LABELS = {  # noqa
+        "sung": "Sung",
+        "scheduled": "Scheduled",
+        "proposed": "Proposed",
+    }
+
     service_role = models.ForeignKey(
         ServiceRole, on_delete=models.CASCADE, related_name="pieces"
     )
@@ -236,3 +245,21 @@ class RolePiece(models.Model):
 
     def __str__(self):
         return f"{self.score} ({'confirmed' if self.is_confirmed else 'proposed'})"
+
+    @property
+    def history_state(self):
+        """
+        Derived, never stored: "sung" once confirmed for a service dated on
+        or before today, "scheduled" if confirmed for a later one, otherwise
+        "proposed". The same "today" rule as Score's last sung, so the
+        history and the last-sung date always agree.
+        """
+        if not self.is_confirmed:
+            return "proposed"
+        if self.service_role.service.date <= timezone.localdate():
+            return "sung"
+        return "scheduled"
+
+    @property
+    def history_label(self):
+        return self.HISTORY_LABELS[self.history_state]

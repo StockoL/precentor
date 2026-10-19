@@ -282,6 +282,41 @@ class ServiceDetailProposePieceRankingTests(TestCase):
         self.assertIn(self.untagged, queryset)
 
 
+class RolePieceHistoryStateTests(TestCase):
+    def test_sung_scheduled_or_proposed(self):
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        today = timezone.localdate()
+        term = Term.objects.create(
+            name="Term",
+            start_date=today - timedelta(days=60),
+            end_date=today + timedelta(days=60),
+            calendar_use="current",
+        )
+        score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+
+        def piece(days, confirmed):
+            service = Service.objects.create(
+                term=term, date=today + timedelta(days=days), service_type="Sung Mass"
+            )
+            role = ServiceRole.objects.create(service=service, role_name="Motet")
+            return RolePiece.objects.create(service_role=role, score=score, is_confirmed=confirmed)
+
+        cases = [
+            (piece(-7, True), "sung", "Sung"),
+            (piece(0, True), "sung", "Sung"),  # today counts as sung
+            (piece(7, True), "scheduled", "Scheduled"),
+            (piece(-7, False), "proposed", "Proposed"),
+            (piece(7, False), "proposed", "Proposed"),
+        ]
+        for rolepiece, state, label in cases:
+            with self.subTest(state=state, date=rolepiece.service_role.service.date):
+                self.assertEqual(rolepiece.history_state, state)
+                self.assertEqual(rolepiece.history_label, label)
+
+
 class ServiceDetailListTests(TestCase):
     def test_facts_are_a_description_list_including_hymns_and_psalm(self):
         self.client.force_login(
