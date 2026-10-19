@@ -294,14 +294,16 @@ The table now carries the metadata, so this page holds what doesn't fit in a row
 | Page transitions | Cross-document View Transitions crossfade, nav pinned, reduced motion respected |
 | Crest storage on Heroku | In the database (single small image, no extra service) |
 | Base type size | 16px to 18px, ratio 1.125 to 1.2 (decided 19 Oct 2026) |
+| UI word for `ServiceRole` | "Slot": it reads as a place that holds pieces ("Offertory slot: 2 pieces proposed"). "Moment" (the liturgical documents' word) reads oddly in "Add a moment"; "Item" blurs with "piece"; "Part" clashes with voice parts. |
+| UI word for `TermMarker` | "Notice": these are public announcements on the music list, as parish notices are. "Note" risked confusion with musical notes and the planned score notes field; "Rubric" is too obscure. |
+| Keep "Term" | Yes: cathedral and choir-school usage, and it matches term names like "Michaelmas 2026". "Season" clashes with liturgical seasons. |
+
+Model names stay as they are (`ServiceRole`, `TermMarker`); only the words shown in the UI change, in Phase 2.
 
 ### Open
 
 | Question | Leaning |
 |---|---|
-| UI word for "Role" | "Slot" |
-| UI word for "Marker" | "Note" |
-| Keep "Term" | Yes |
 | CSV import in or out of this submission | Out of the first deploy; build it after Phases 1 to 5 if time allows, since the overhaul and seed data matter more to the assessment |
 
 ## 9. Progress log
