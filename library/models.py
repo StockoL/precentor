@@ -58,13 +58,13 @@ class Score(models.Model):
         "ordo.LiturgicalSeason",
         blank=True,
         related_name="suited_scores",
-        help_text="e.g. Advent, Christmas, Lent, Easter, Trinity",
+        help_text="e.g. Advent, Christmas, Lent, Easter, Ordinary Time",
     )
     suited_occasions = models.ManyToManyField(
         "ordo.LiturgicalOccasion",
         blank=True,
         related_name="suited_scores",
-        help_text="Specific named days, e.g. Advent Sunday 4, Trinity 7",
+        help_text="Specific named days, e.g. Fourth Sunday of Advent, Corpus Christi",
     )
 
     objects = ScoreQuerySet.as_manager()
