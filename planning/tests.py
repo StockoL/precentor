@@ -7,7 +7,8 @@ from django.test import TestCase
 from library.models import Score
 from ordo.models import LiturgicalOccasion
 
-from .models import RolePiece, Service, ServiceRole, Term
+from .forms import ServiceForm, TermForm, TermMarkerForm
+from .models import RolePiece, Service, ServiceRole, Term, TermMarker
 
 User = get_user_model()
 
@@ -253,6 +254,31 @@ class ServiceDetailProposePieceRankingTests(TestCase):
         queryset = list(response.context["roles"][0].piece_form.fields["score"].queryset)
         self.assertEqual(queryset[0], self.matching)
         self.assertIn(self.untagged, queryset)
+
+
+class DateInputValueTests(TestCase):
+    """<input type="date"> only accepts an ISO value (YYYY-MM-DD).
+    Django otherwise renders a date in the locale's first input format,
+    which for en-gb is DD/MM/YYYY, and the browser shows a blank field."""
+
+    def test_edit_forms_render_dates_as_iso(self):
+        term = Term.objects.create(
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+        service = Service(term=term, date=date(2026, 1, 11))
+        marker = TermMarker(term=term, date=date(2026, 2, 16), text="Half term")
+        cases = [
+            (TermForm(instance=term), "start_date", "2026-01-01"),
+            (TermForm(instance=term), "end_date", "2026-03-31"),
+            (ServiceForm(instance=service), "date", "2026-01-11"),
+            (TermMarkerForm(instance=marker), "date", "2026-02-16"),
+        ]
+        for form, field, expected in cases:
+            with self.subTest(form=type(form).__name__, field=field):
+                self.assertIn(f'value="{expected}"', str(form[field]))
 
 
 class TermDetailViewTests(TestCase):
