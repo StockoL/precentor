@@ -18,7 +18,7 @@ class ConfirmToggleBrowserTest(PlaywrightTestCase):
             calendar_use="current",
         )
         self.service = Service.objects.create(
-            term=term, date=date(2026, 1, 11), service_type="Sung Eucharist"
+            term=term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
         score = Score.objects.create(title="Browser Anthem", composer_surname="Browser Composer")
         role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
@@ -73,7 +73,7 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
             calendar_use="current",
         )
         self.service = Service.objects.create(
-            term=term, date=date(2026, 1, 11), service_type="Sung Eucharist"
+            term=term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
         self.score = Score.objects.create(title="Browser Anthem", composer_surname="Browser Composer")
         self.role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
@@ -118,7 +118,7 @@ class AddRoleBrowserTest(PlaywrightTestCase):
             calendar_use="current",
         )
         self.service = Service.objects.create(
-            term=term, date=date(2026, 1, 11), service_type="Sung Eucharist"
+            term=term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
 
     def test_add_role_appends_role_block_without_reload(self):
@@ -158,7 +158,7 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
             calendar_use="current",
         )
         self.service = Service.objects.create(
-            term=term, date=date(2026, 1, 11), service_type="Sung Eucharist"
+            term=term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
         self.score_a = Score.objects.create(title="Ave Verum", composer_surname="Byrd")
         self.score_b = Score.objects.create(title="Locus Iste", composer_surname="Bruckner")

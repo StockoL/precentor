@@ -21,7 +21,7 @@ class ServiceStatusTests(TestCase):
             calendar_use="current",
         )
         self.service = Service.objects.create(
-            term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
+            term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
         self.score = Score.objects.create(title="Test Anthem", composer_surname="Test Composer")
 
@@ -68,7 +68,7 @@ class ServiceEffectiveCalendarUseTests(TestCase):
 
     def test_falls_back_to_term_when_unset(self):
         service = Service.objects.create(
-            term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
+            term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
         self.assertEqual(service.effective_calendar_use(), "current")
 
@@ -76,7 +76,7 @@ class ServiceEffectiveCalendarUseTests(TestCase):
         service = Service.objects.create(
             term=self.term,
             date=date(2026, 1, 11),
-            service_type="Sung Eucharist",
+            service_type="Sung Mass",
             calendar_use="historic",
         )
         self.assertEqual(service.effective_calendar_use(), "historic")
@@ -96,7 +96,7 @@ class RolePieceWorkflowTests(TestCase):
             calendar_use="current",
         )
         self.service = Service.objects.create(
-            term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
+            term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
         self.score = Score.objects.create(title="Test Anthem", composer_surname="Test Composer")
 
@@ -239,7 +239,7 @@ class ServiceDetailProposePieceRankingTests(TestCase):
         self.service = Service.objects.create(
             term=self.term,
             date=date(2026, 1, 11),
-            service_type="Sung Eucharist",
+            service_type="Sung Mass",
             occasion=self.occasion,
         )
         ServiceRole.objects.create(service=self.service, role_name="Anthem")
@@ -270,7 +270,7 @@ class TermDetailViewTests(TestCase):
 
     def test_service_list_links_to_service_detail(self):
         service = Service.objects.create(
-            term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
+            term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
         response = self.client.get(self.term.get_absolute_url())
         self.assertContains(response, service.get_absolute_url())
@@ -289,7 +289,7 @@ class MusicListTests(TestCase):
             calendar_use="current",
         )
         self.service = Service.objects.create(
-            term=self.term, date=date(2026, 1, 11), service_type="Sung Eucharist"
+            term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
         self.score = Score.objects.create(title="Test Anthem", composer_surname="Test Composer")
 
