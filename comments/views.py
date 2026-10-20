@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
+from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
@@ -148,4 +149,13 @@ class CommentInboxView(LoginRequiredMixin, ListView):
     template_name = "comments/inbox.html"
 
     def get_queryset(self):
-        return Comment.objects.filter(is_open=True).order_by("-created_at")
+        # A fixed number of queries however many comments: the author in
+        # the same query, each kind of target (term, service, piece) in one
+        # query of its own, and the reply count as an annotation.
+        return (
+            Comment.objects.filter(is_open=True)
+            .select_related("author")
+            .prefetch_related("target")
+            .annotate(reply_count=Count("replies"))
+            .order_by("-created_at")
+        )

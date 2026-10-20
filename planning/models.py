@@ -296,6 +296,11 @@ class RolePiece(models.Model):
     def __str__(self):
         return f"{self.score} ({'confirmed' if self.is_confirmed else 'proposed'})"
 
+    def get_absolute_url(self):
+        """A piece is shown on its service's page; the fragment jumps to
+        its row (each has id="piece-row-<pk>")."""
+        return f"{self.service_role.service.get_absolute_url()}#piece-row-{self.pk}"
+
     @property
     def history_state(self):
         """

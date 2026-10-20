@@ -66,6 +66,67 @@ class CommentTests(TestCase):
             nested.full_clean()
 
 
+class InboxPageTests(TestCase):
+    def setUp(self):
+        from planning.models import Service
+
+        self.user = User.objects.create_user(username="conductor", password="testpass123")
+        self.client.force_login(self.user)
+        self.term = Term.objects.create(
+            name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+        self.service = Service.objects.create(
+            term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"
+        )
+
+    def test_each_subject_links_to_its_page(self):
+        from library.models import Score
+        from planning.models import RolePiece, ServiceRole
+
+        role = ServiceRole.objects.create(service=self.service, role_name="Motet")
+        piece = RolePiece.objects.create(
+            service_role=role, score=Score.objects.create(title="Ave", composer_surname="Byrd")
+        )
+        for target in (self.term, self.service, piece):
+            Comment.objects.create(author=self.user, body="Query", target=target)
+        response = self.client.get("/comments/inbox/")
+        self.assertContains(response, f'<a href="{self.term.get_absolute_url()}">Lent</a>', html=True)
+        self.assertContains(response, f'href="{self.service.get_absolute_url()}"')
+        # A piece links to its service page, jumping to the piece's row.
+        self.assertContains(
+            response, f'href="{self.service.get_absolute_url()}#piece-row-{piece.pk}"'
+        )
+
+    def test_shows_how_many_replies(self):
+        question = Comment.objects.create(author=self.user, body="Copies?", target=self.term)
+        for body in ("Twelve", "Thanks"):
+            Comment.objects.create(author=self.user, body=body, target=self.term, parent=question)
+        Comment.objects.create(author=self.user, body="Other", target=self.service)
+        response = self.client.get("/comments/inbox/")
+        self.assertContains(response, "2 replies")
+        self.assertContains(response, "No replies yet")
+
+    def test_query_count_does_not_grow_with_more_comments(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        def queries():
+            self.client.get("/comments/inbox/")  # warm-up: session and caches
+            with CaptureQueriesContext(connection) as captured:
+                self.client.get("/comments/inbox/")
+            return len(captured)
+
+        # One query per kind of subject, so start with both kinds present.
+        Comment.objects.create(author=self.user, body="On the term", target=self.term)
+        Comment.objects.create(author=self.user, body="On the service", target=self.service)
+        two = queries()
+        for n in range(4):
+            Comment.objects.create(author=self.user, body=f"Term {n}", target=self.term)
+            Comment.objects.create(author=self.user, body=f"Service {n}", target=self.service)
+        self.assertEqual(queries(), two)
+
+
 class AddCommentViewTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(
