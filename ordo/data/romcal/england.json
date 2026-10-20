@@ -1,0 +1,382 @@
+{
+ "source": "romcal 3.0.0-dev.140 (https://github.com/romcal/romcal), copyright 2018 Julian Pereira, MIT licence",
+ "calendar": "england",
+ "occasions": [
+  {
+   "key": "all_saints",
+   "name": "All Saints",
+   "rank": "solemnity",
+   "precedence": "3",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 11,
+   "fixed_day": 1,
+   "transfers": [
+    {
+     "if_day_of_week": 1,
+     "then": {
+      "add_days": -1
+     }
+    },
+    {
+     "if_day_of_week": 6,
+     "then": {
+      "add_days": 1
+     }
+    }
+   ],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "andrew_apostle",
+   "name": "Saint Andrew, Apostle",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 11,
+   "fixed_day": 30,
+   "transfers": [],
+   "colour": "red",
+   "season": null
+  },
+  {
+   "key": "assumption_of_the_blessed_virgin_mary",
+   "name": "The Assumption of the Blessed Virgin Mary",
+   "rank": "solemnity",
+   "precedence": "2",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 8,
+   "fixed_day": 15,
+   "transfers": [
+    {
+     "if_day_of_week": 1,
+     "then": {
+      "add_days": -1
+     }
+    },
+    {
+     "if_day_of_week": 6,
+     "then": {
+      "add_days": 1
+     }
+    }
+   ],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "augustine_of_canterbury_bishop",
+   "name": "Saint Augustine of Canterbury, Bishop",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 5,
+   "fixed_day": 27,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "bede_the_venerable_priest",
+   "name": "Saint Bede the Venerable, Priest and Doctor of the Church",
+   "rank": "memorial",
+   "precedence": "11b",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 5,
+   "fixed_day": 25,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "benedict_of_nursia_abbot",
+   "name": "Saint Benedict, Abbot, Patron of Europe",
+   "rank": "feast",
+   "precedence": "8c",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 7,
+   "fixed_day": 11,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "boniface_of_mainz_bishop",
+   "name": "Saint Boniface, Bishop and Martyr",
+   "rank": "memorial",
+   "precedence": "11b",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 6,
+   "fixed_day": 5,
+   "transfers": [],
+   "colour": "red",
+   "season": null
+  },
+  {
+   "key": "bridget_of_sweden_religious",
+   "name": "Saint Bridget, Religious, Copatroness of Europe",
+   "rank": "feast",
+   "precedence": "8c",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 7,
+   "fixed_day": 23,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "catherine_of_siena_virgin",
+   "name": "Saint Catherine of Siena, Virgin and Doctor of the Church, Copatroness of Europe",
+   "rank": "feast",
+   "precedence": "8c",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 4,
+   "fixed_day": 29,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "commemoration_of_all_the_faithful_departed",
+   "name": "The Commemoration of All the Faithful Departed (All Souls’ Day)",
+   "rank": "solemnity",
+   "precedence": "3",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 11,
+   "fixed_day": 2,
+   "transfers": [
+    {
+     "if_day_of_week": 0,
+     "then": {
+      "add_days": 1
+     }
+    }
+   ],
+   "colour": "violet",
+   "season": null
+  },
+  {
+   "key": "cyril_constantine_the_philosopher_monk_and_methodius_michael_of_thessaloniki_bishop",
+   "name": "Saints Cyril, Monk, and Methodius, Bishop, Copatrons of Europe",
+   "rank": "feast",
+   "precedence": "8c",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 2,
+   "fixed_day": 14,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "david_of_wales_bishop",
+   "name": "Saint David, Bishop",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 3,
+   "fixed_day": 1,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "elizabeth_of_hungary_religious",
+   "name": "Saint Elizabeth of Hungary, Religious",
+   "rank": "optional_memorial",
+   "precedence": "12",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 11,
+   "fixed_day": 17,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "english_martyrs",
+   "name": "English Martyrs",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 5,
+   "fixed_day": 4,
+   "transfers": [],
+   "colour": "red",
+   "season": null
+  },
+  {
+   "key": "george_of_lydda_martyr",
+   "name": "Saint George, Martyr, Patron of England",
+   "rank": "solemnity",
+   "precedence": "4a",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 4,
+   "fixed_day": 23,
+   "transfers": [
+    {
+     "if_between": {
+      "from": {
+       "rule": "palm_sunday"
+      },
+      "to": {
+       "rule": "divine_mercy_sunday"
+      },
+      "inclusive": true
+     },
+     "then": {
+      "rule": "divine_mercy_sunday",
+      "add_days": 1
+     }
+    }
+   ],
+   "colour": "red",
+   "season": null
+  },
+  {
+   "key": "gregory_i_the_great_pope",
+   "name": "Saint Gregory the Great, Pope and Doctor of the Church",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 9,
+   "fixed_day": 3,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "john_fisher_bishop_and_thomas_more_martyrs",
+   "name": "Saints John Fisher, Bishop, and Thomas More, Martyrs",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 6,
+   "fixed_day": 22,
+   "transfers": [],
+   "colour": "red",
+   "season": null
+  },
+  {
+   "key": "john_henry_newman_priest",
+   "name": "Saint John Henry Newman, Priest and Doctor of the Church",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 10,
+   "fixed_day": 9,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "our_lady_of_walsingham",
+   "name": "Our Lady of Walsingham",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 9,
+   "fixed_day": 24,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "our_lord_jesus_christ_the_eternal_high_priest",
+   "name": "Our Lord Jesus Christ, the Eternal High Priest",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "date_rule": "pentecost_sunday",
+   "date_rule_args": [],
+   "date_offset_days": 4,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "patrick_of_ireland_bishop",
+   "name": "Saint Patrick, Bishop",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 3,
+   "fixed_day": 17,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "peter_and_paul_apostles",
+   "name": "Saints Peter and Paul, Apostles",
+   "rank": "solemnity",
+   "precedence": "3",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "date_rule": "peter_and_paul_apostles",
+   "date_rule_args": [],
+   "date_offset_days": 0,
+   "transfers": [
+    {
+     "if_day_of_week": 1,
+     "then": {
+      "add_days": -1
+     }
+    },
+    {
+     "if_day_of_week": 6,
+     "then": {
+      "add_days": 1
+     }
+    }
+   ],
+   "colour": "red",
+   "season": null
+  },
+  {
+   "key": "teresa_benedicta_of_the_cross_stein_virgin",
+   "name": "Saint Teresa Benedicta of the Cross Stein, Virgin and Martyr, Copatroness of Europe",
+   "rank": "feast",
+   "precedence": "8c",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 8,
+   "fixed_day": 9,
+   "transfers": [],
+   "colour": "red",
+   "season": null
+  },
+  {
+   "key": "thomas_becket_bishop",
+   "name": "Saint Thomas Becket, Bishop and Martyr",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 12,
+   "fixed_day": 29,
+   "transfers": [],
+   "colour": "red",
+   "season": null
+  }
+ ]
+}

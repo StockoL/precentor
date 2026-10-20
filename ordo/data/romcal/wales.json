@@ -1,0 +1,236 @@
+{
+ "source": "romcal 3.0.0-dev.140 (https://github.com/romcal/romcal), copyright 2018 Julian Pereira, MIT licence",
+ "calendar": "wales",
+ "occasions": [
+  {
+   "key": "all_saints",
+   "name": "All Saints",
+   "rank": "solemnity",
+   "precedence": "3",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 11,
+   "fixed_day": 1,
+   "transfers": [
+    {
+     "if_day_of_week": 1,
+     "then": {
+      "add_days": -1
+     }
+    },
+    {
+     "if_day_of_week": 6,
+     "then": {
+      "add_days": 1
+     }
+    }
+   ],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "all_saints_of_wales",
+   "name": "All Saints of Wales",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 11,
+   "fixed_day": 8,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "assumption_of_the_blessed_virgin_mary",
+   "name": "The Assumption of the Blessed Virgin Mary",
+   "rank": "solemnity",
+   "precedence": "2",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 8,
+   "fixed_day": 15,
+   "transfers": [
+    {
+     "if_day_of_week": 1,
+     "then": {
+      "add_days": -1
+     }
+    },
+    {
+     "if_day_of_week": 6,
+     "then": {
+      "add_days": 1
+     }
+    }
+   ],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "benedict_of_nursia_abbot",
+   "name": "Saint Benedict, Abbot, Patron of Europe",
+   "rank": "feast",
+   "precedence": "8c",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 7,
+   "fixed_day": 11,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "bridget_of_sweden_religious",
+   "name": "Saint Bridget, Religious, Copatroness of Europe",
+   "rank": "feast",
+   "precedence": "8c",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 7,
+   "fixed_day": 23,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "catherine_of_siena_virgin",
+   "name": "Saint Catherine of Siena, Virgin and Doctor of the Church, Copatroness of Europe",
+   "rank": "feast",
+   "precedence": "8c",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 4,
+   "fixed_day": 29,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "commemoration_of_all_the_faithful_departed",
+   "name": "The Commemoration of All the Faithful Departed (All Souls’ Day)",
+   "rank": "solemnity",
+   "precedence": "3",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 11,
+   "fixed_day": 2,
+   "transfers": [
+    {
+     "if_day_of_week": 0,
+     "then": {
+      "add_days": 1
+     }
+    }
+   ],
+   "colour": "violet",
+   "season": null
+  },
+  {
+   "key": "cyril_constantine_the_philosopher_monk_and_methodius_michael_of_thessaloniki_bishop",
+   "name": "Saints Cyril, Monk, and Methodius, Bishop, Copatrons of Europe",
+   "rank": "feast",
+   "precedence": "8c",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 2,
+   "fixed_day": 14,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "david_of_wales_bishop",
+   "name": "Saint David, Bishop, Patron of Wales",
+   "rank": "solemnity",
+   "precedence": "4a",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 3,
+   "fixed_day": 1,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "john_henry_newman_priest",
+   "name": "Saint John Henry Newman, Priest and Doctor of the Church",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 10,
+   "fixed_day": 9,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "our_lord_jesus_christ_the_eternal_high_priest",
+   "name": "Our Lord Jesus Christ, the Eternal High Priest",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "date_rule": "pentecost_sunday",
+   "date_rule_args": [],
+   "date_offset_days": 4,
+   "transfers": [],
+   "colour": "white",
+   "season": null
+  },
+  {
+   "key": "peter_and_paul_apostles",
+   "name": "Saints Peter and Paul, Apostles",
+   "rank": "solemnity",
+   "precedence": "3",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "date_rule": "peter_and_paul_apostles",
+   "date_rule_args": [],
+   "date_offset_days": 0,
+   "transfers": [
+    {
+     "if_day_of_week": 1,
+     "then": {
+      "add_days": -1
+     }
+    },
+    {
+     "if_day_of_week": 6,
+     "then": {
+      "add_days": 1
+     }
+    }
+   ],
+   "colour": "red",
+   "season": null
+  },
+  {
+   "key": "six_welsh_martyrs_and_companions",
+   "name": "Six Welsh Martyrs and Companions",
+   "rank": "feast",
+   "precedence": "8f",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 10,
+   "fixed_day": 25,
+   "transfers": [],
+   "colour": "red",
+   "season": null
+  },
+  {
+   "key": "teresa_benedicta_of_the_cross_stein_virgin",
+   "name": "Saint Teresa Benedicta of the Cross Stein, Virgin and Martyr, Copatroness of Europe",
+   "rank": "feast",
+   "precedence": "8c",
+   "is_proper_of_time": false,
+   "shares_with_memorials": false,
+   "fixed_month": 8,
+   "fixed_day": 9,
+   "transfers": [],
+   "colour": "red",
+   "season": null
+  }
+ ]
+}
