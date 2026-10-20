@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.formats import date_format
 
+from library.models import Score
 from ordo.models import CALENDAR_USE_CHOICES
 
 
@@ -175,6 +176,17 @@ class Service(models.Model):
 
     def effective_calendar_use(self):
         return self.calendar_use or self.term.calendar_use
+
+    def suggested_scores(self):
+        """
+        Every score, with those suited to this service's occasion or its
+        season first. Ranked, never filtered: see
+        ScoreQuerySet.ranked_by_suitability.
+        """
+        occasion = self.occasion
+        return Score.objects.ranked_by_suitability(
+            occasion=occasion, season=occasion.season if occasion else None
+        )
 
     def deletion_summary(self):
         """What deleting this service takes with it; see Term's version."""

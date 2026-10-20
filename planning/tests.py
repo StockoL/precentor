@@ -255,6 +255,47 @@ class RolePieceWorkflowTests(TestCase):
         self.assertIn("Couldn't add that slot", str(messages[0]))
 
 
+class ServiceSuggestedScoresTests(TestCase):
+    def setUp(self):
+        from ordo.models import LiturgicalSeason
+
+        self.term = Term.objects.create(
+            name="Test Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+        self.advent = LiturgicalSeason.objects.create(name="Advent")
+        self.occasion = LiturgicalOccasion.objects.create(
+            name="Advent Sunday 4", season=self.advent
+        )
+        # The untagged score comes first by title, so only the ranking
+        # can put the other one ahead of it.
+        self.untagged = Score.objects.create(title="Aaa Untagged", composer_surname="Nobody")
+        self.suited = Score.objects.create(title="Zzz Suited", composer_surname="Somebody")
+
+    def make_service(self, occasion=None):
+        return Service.objects.create(
+            term=self.term, date=date(2026, 1, 11), service_type="Sung Mass",
+            occasion=occasion,
+        )
+
+    def test_occasion_tag_ranks_first(self):
+        self.suited.suited_occasions.add(self.occasion)
+        scores = list(self.make_service(self.occasion).suggested_scores())
+        self.assertEqual(scores, [self.suited, self.untagged])
+
+    def test_tag_on_the_occasions_season_ranks_first(self):
+        self.suited.suited_seasons.add(self.advent)
+        scores = list(self.make_service(self.occasion).suggested_scores())
+        self.assertEqual(scores, [self.suited, self.untagged])
+
+    def test_without_an_occasion_scores_are_in_title_order(self):
+        self.suited.suited_seasons.add(self.advent)
+        scores = list(self.make_service().suggested_scores())
+        self.assertEqual(scores, [self.untagged, self.suited])
+
+
 class ServiceDetailProposePieceRankingTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(

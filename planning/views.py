@@ -22,7 +22,6 @@ from comments.forms import CommentForm
 from comments.models import Comment
 from comments.utils import attach_reply_forms
 from core.models import SiteConfig
-from library.models import Score
 from precentor_project.utils import ajax_or_redirect
 
 from .forms import (
@@ -198,11 +197,7 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        occasion = self.object.occasion
-        season = occasion.season if occasion else None
-        ranked_scores = Score.objects.ranked_by_suitability(
-            occasion=occasion, season=season
-        )
+        ranked_scores = self.object.suggested_scores()
 
         roles = list(self.object.roles.prefetch_related("pieces__score"))
         for role in roles:
