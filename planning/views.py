@@ -285,10 +285,26 @@ def add_role(request, service_pk):
 
 @login_required
 @user_passes_test(ConductorRequiredMixin.is_conductor)
-@require_POST
 def add_piece(request, role_pk):
-    role = get_object_or_404(ServiceRole, pk=role_pk)
+    """
+    With JavaScript, the service page posts here from each slot's
+    combobox. Without it, each slot links here instead: a page with one
+    ranked list of scores, so the service page never has to carry a full
+    <select> per slot.
+    """
+    role = get_object_or_404(ServiceRole.objects.select_related("service"), pk=role_pk)
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+    if request.method != "POST":
+        form = RolePieceForm()
+        form.fields["score"].queryset = role.service.suggested_scores()
+        return render(request, "planning/add_piece.html", {"role": role, "form": form})
+
     form = RolePieceForm(request.POST, auto_id=f"id_role_{role.pk}_%s")
+
+    if not form.is_valid() and not is_ajax:
+        form.fields["score"].queryset = role.service.suggested_scores()
+        return render(request, "planning/add_piece.html", {"role": role, "form": form})
 
     if form.is_valid():
         piece = form.save(commit=False)
@@ -306,10 +322,7 @@ def add_piece(request, role_pk):
             "planning/_add_piece_form.html", {"role": role, "form": form}, request=request
         ),
     }
-    return ajax_or_redirect(
-        request, fragments, role.service.get_absolute_url(),
-        error_message="Couldn't add that piece — please check the form.", status=400,
-    )
+    return ajax_or_redirect(request, fragments, role.service.get_absolute_url(), status=400)
 
 
 @login_required

@@ -201,17 +201,32 @@ class RolePieceWorkflowTests(TestCase):
         self.assertIn(f"add-piece-form-{role.pk}", fragments)
         self.assertIn("errorlist", fragments[f"add-piece-form-{role.pk}"])
 
-    def test_add_piece_non_ajax_invalid_sets_error_message(self):
+    def test_add_piece_non_ajax_invalid_shows_the_page_with_errors(self):
         role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
 
-        response = self.client.post(
-            f"/roles/{role.pk}/pieces/add/", {"score": ""}, follow=True
-        )
+        response = self.client.post(f"/roles/{role.pk}/pieces/add/", {"score": ""})
 
         self.assertEqual(role.pieces.count(), 0)
-        messages = list(response.context["messages"])
-        self.assertEqual(len(messages), 1)
-        self.assertIn("Couldn't add that piece", str(messages[0]))
+        self.assertTemplateUsed(response, "planning/add_piece.html")
+        self.assertContains(response, "errorlist")
+
+    def test_add_piece_page_lists_suggested_scores(self):
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+
+        response = self.client.get(f"/roles/{role.pk}/pieces/add/")
+
+        self.assertContains(response, "<h1>Propose a piece</h1>", html=True)
+        self.assertContains(response, "For the Anthem at")
+        self.assertContains(response, f'<option value="{self.score.pk}">')
+
+    def test_add_piece_page_is_for_conductors_only(self):
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+        librarian = User.objects.create_user(username="librarian", password="testpass123")
+        self.client.force_login(librarian)
+
+        response = self.client.get(f"/roles/{role.pk}/pieces/add/")
+
+        self.assertEqual(response.status_code, 302)
 
     def test_add_role_ajax_success_returns_role_block_and_status_badge(self):
         response = self.client.post(
