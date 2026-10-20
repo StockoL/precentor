@@ -1,17 +1,24 @@
 # Calendar export
 
-A one-off script that turns [romcal](https://github.com/romcal/romcal)'s
-Ordinary Form calendars into the data files Precentor loads. It isn't
-part of the app: nothing here is installed on the server, and the app
-never runs Node.
+Two one-off scripts that turn published calendars into the data files
+Precentor loads. They aren't part of the app: nothing here is
+installed on the server, and the app never runs Node or imports either
+library.
 
-romcal is copyright 2018 Julian Pereira, MIT licence. I'm grateful to
-its authors; [`docs/acknowledgements.md`](../../docs/acknowledgements.md)
-says exactly how I've used it.
+- `export_romcal.js`: the Ordinary Form, from
+  [romcal](https://github.com/romcal/romcal) (copyright 2018 Julian
+  Pereira, MIT licence).
+- `export_missalemeum.py`: the 1962 calendar, from
+  [Missalemeum](https://github.com/mmolenda/Missalemeum) (copyright
+  2022 Marcin Molenda, MIT licence).
 
-## What it writes
+I'm grateful to both projects' authors;
+[`docs/acknowledgements.md`](../../docs/acknowledgements.md) says
+exactly how I've used each.
 
-Into `ordo/data/romcal/`:
+## What they write
+
+`export_romcal.js`, into `ordo/data/romcal/`:
 
 - `general_roman.json`, `england.json`, `wales.json`: each calendar's
   occasions (name, rank, precedence, date rule, transfers, colour and
@@ -27,27 +34,47 @@ Ordinary weekdays and optional memorials are left out (see
 except where a national calendar makes a general memorial optional:
 that row is kept so it can override the general one.
 
-## Changes to romcal's data
+`export_missalemeum.py`, into `ordo/data/missalemeum/`:
 
-Only in names, and only these:
+- `general_1962.json`: every day of the 1962 calendar, all four
+  classes, with Missalemeum's English names. Each key is Missalemeum's
+  ID without its class and colour (`sancti:12-08`), which become
+  fields.
+- `blocks_1962.json`: the order of the Proper of Time, which
+  `ordo/calendar_1962.py` lays out each year.
+- `reference/general_1962.json`: Missalemeum's resolved calendar for
+  2020 to 2040, first to third class, for the tests.
 
-- the first letter is capitalised ("Fifth Sunday in Ordinary Time");
-- the week is capitalised, as in the English Missal ("Saturday of the
-  Second Week of Lent");
-- one typo is corrected, in `NAME_CORRECTIONS` ("All Souls' Day").
+## Changes to the source data
 
-## Running it again
+romcal: only in names. The first letter is capitalised ("Fifth Sunday
+in Ordinary Time"); the week is capitalised, as in the English Missal
+("Saturday of the Second Week of Lent"); and one typo is corrected, in
+`NAME_CORRECTIONS` ("All Souls' Day").
 
-With Node installed, from this folder:
+Missalemeum: none. Its names are used as they are.
+
+## Running them again
+
+romcal, with Node installed, from this folder:
 
 ```
 npm install
 node export_romcal.js
 ```
 
-The versions in `package.json` are pinned, so the output only changes
-when I change them. Then load the files into the database from the
-project root:
+Missalemeum, with a copy of its repository and a Python environment of
+its own (not the project's), from this folder:
+
+```
+python -m venv missalemeum-env
+missalemeum-env/Scripts/pip install python-dateutil PyYAML trans mistune
+missalemeum-env/Scripts/python -I export_missalemeum.py PATH/TO/Missalemeum/backend
+```
+
+The romcal versions are pinned in `package.json`. For Missalemeum I
+used commit `75adfbb` (16 October 2026). Then load the files
+into the database from the project root:
 
 ```
 python manage.py load_calendar
