@@ -18,6 +18,56 @@ CALENDAR_USE_CHOICES = [
     ("historic", "Extraordinary Form (1962)"),
 ]
 
+# Which calendar an occasion belongs to. A national calendar adds days
+# to the general one and overrides some of its days, matched by key.
+NATIONAL_CALENDAR_CHOICES = [
+    ("general_roman", "General Roman Calendar"),
+    ("england", "England"),
+    ("wales", "Wales"),
+]
+
+RANK_CHOICES = [
+    # Ordinary Form
+    ("solemnity", "Solemnity"),
+    ("sunday", "Sunday"),
+    ("feast", "Feast"),
+    ("memorial", "Memorial"),
+    ("weekday", "Weekday"),
+    # 1962
+    ("class_1", "First class"),
+    ("class_2", "Second class"),
+    ("class_3", "Third class"),
+    ("class_4", "Fourth class"),
+]
+
+# The Ordinary Form's Table of Liturgical Days (General Norms for the
+# Liturgical Year and the Calendar, no. 59), highest first. A lower
+# number wins; letters order the days within a level. Level 12 (optional
+# memorials) is left out, since Precentor doesn't carry them.
+OF_PRECEDENCE_CHOICES = [
+    ("1", "1: The Paschal Triduum"),
+    ("2", "2: Christmas, Epiphany, Ascension, Pentecost; Sundays of Advent, Lent and Easter; Ash Wednesday; Holy Week; the Easter Octave"),
+    ("3", "3: Solemnities of the General Calendar; All Souls"),
+    ("4a", "4a: Principal patron of the place or country"),
+    ("4b", "4b: Dedication of one's own church"),
+    ("4c", "4c: Title of one's own church"),
+    ("4d", "4d: Title, founder or principal patron of an order"),
+    ("5", "5: Feasts of the Lord in the General Calendar"),
+    ("6", "6: Sundays of Christmas Time and Ordinary Time"),
+    ("7", "7: Feasts of the General Calendar"),
+    ("8a", "8a: Principal patron of the diocese"),
+    ("8b", "8b: Dedication of the cathedral"),
+    ("8c", "8c: Principal patron of the region or country"),
+    ("8d", "8d: Title, founder or principal patron of an order"),
+    ("8e", "8e: Other feasts proper to a church"),
+    ("8f", "8f: Other feasts proper to a diocese or order"),
+    ("9", "9: Advent weekdays from 17 December; the Christmas Octave; Lent weekdays"),
+    ("10", "10: Obligatory memorials of the General Calendar"),
+    ("11a", "11a: Memorial of a secondary patron"),
+    ("11b", "11b: Other obligatory memorials proper to a diocese or order"),
+    ("13", "13: Other weekdays"),
+]
+
 
 class LiturgicalSeason(models.Model):
     name = models.CharField(max_length=50)
@@ -41,9 +91,26 @@ class UseType(models.Model):
 
 class LiturgicalOccasion(models.Model):
     name = models.CharField(max_length=100)
+    # Stable identifier from the source data (romcal's id for the
+    # Ordinary Form). Blank for an occasion entered by hand.
+    key = models.CharField(max_length=100, blank=True)
     calendar_use = models.CharField(
         max_length=20, choices=CALENDAR_USE_CHOICES, default="current"
     )
+    calendar = models.CharField(
+        max_length=20, choices=NATIONAL_CALENDAR_CHOICES, default="general_roman"
+    )
+    rank = models.CharField(max_length=20, choices=RANK_CHOICES, blank=True)
+    precedence = models.CharField(
+        max_length=4, choices=OF_PRECEDENCE_CHOICES, blank=True
+    )
+    # A named date rule and its arguments, e.g. "ordinary_time_sunday"
+    # with [5]; blank means the fixed month and day, or the Easter offset.
+    date_rule = models.CharField(max_length=50, blank=True)
+    date_rule_args = models.JSONField(default=list, blank=True)
+    # Moves the day makes in some years, e.g. off a Sunday or out of
+    # Holy Week; see docs/calendar_plan.md, section 3.
+    transfers = models.JSONField(default=list, blank=True)
     is_moveable = models.BooleanField(default=False)
     fixed_month = models.PositiveSmallIntegerField(blank=True, null=True)
     fixed_day = models.PositiveSmallIntegerField(blank=True, null=True)
@@ -59,6 +126,15 @@ class LiturgicalOccasion(models.Model):
 
     class Meta:
         ordering = ["name"]  # noqa
+        constraints = [
+            # A national calendar overrides a general day by sharing its
+            # key, so a key appears once per calendar and form.
+            models.UniqueConstraint(
+                fields=["calendar_use", "calendar", "key"],
+                condition=~models.Q(key=""),
+                name="unique_occasion_key_per_calendar",
+            ),
+        ]
 
     def __str__(self):
         return self.name

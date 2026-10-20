@@ -170,6 +170,30 @@ class OccasionLookupViewTests(TestCase):
         self.assertEqual(response.status_code, 302)
 
 
+class OccasionKeyTests(TestCase):
+    def make(self, calendar="general_roman", key="george_of_lydda_martyr"):
+        return LiturgicalOccasion.objects.create(
+            name="Saint George", key=key, calendar=calendar, fixed_month=4, fixed_day=23
+        )
+
+    def test_a_national_calendar_can_reuse_a_general_key(self):
+        self.make()
+        self.make(calendar="england")
+        self.assertEqual(LiturgicalOccasion.objects.filter(key="george_of_lydda_martyr").count(), 2)
+
+    def test_a_key_appears_once_in_each_calendar(self):
+        from django.db import IntegrityError, transaction
+
+        self.make()
+        with transaction.atomic(), self.assertRaises(IntegrityError):
+            self.make()
+
+    def test_occasions_entered_by_hand_need_no_key(self):
+        self.make(key="")
+        self.make(key="")
+        self.assertEqual(LiturgicalOccasion.objects.filter(key="").count(), 2)
+
+
 class LiturgicalColourTokenTests(TestCase):
     def test_every_colour_choice_has_a_token_in_both_themes(self):
         # Templates build var(--colors-liturgical-<colour>) from the stored
