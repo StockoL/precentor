@@ -400,7 +400,10 @@ Other form details:
 - Groups get more space after them than the fields inside them get,
   so each group reads as separate.
 - Checkboxes and radios keep their natural size, instead of being
-  stretched to the full width like text inputs.
+  stretched to the full width like text inputs. A checkbox in Django's
+  `as_p` output comes after its label on a line of its own; `form.css`
+  finds those paragraphs with `:has()` and lays them out as a reversed
+  row, so the box sits before its label on the same line.
 - Django marks a field with errors `aria-invalid="true"`, which screen
   readers announce; `form.css` gives the same fields a red border.
 - Help text and the shared control height are described under
