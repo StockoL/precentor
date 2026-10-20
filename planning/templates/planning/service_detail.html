@@ -54,7 +54,8 @@
         <h2>Add a slot</h2>
         {% include "planning/_add_role_form.html" with form=role_form %}
     </div>
-</div>
 
-{% include "comments/_thread.html" with object_id=service.pk %}
+    {# Inside the page's .flow, so it's spaced like every other section. #}
+    {% include "comments/_thread.html" with object_id=service.pk %}
+</div>
 {% endblock %}

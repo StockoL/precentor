@@ -62,7 +62,8 @@
             {% endfor %}
         </ul>
     </div>
-</div>
 
-{% include "comments/_thread.html" with object_id=term.pk %}
+    {# Inside the page's .flow, so it's spaced like every other section. #}
+    {% include "comments/_thread.html" with object_id=term.pk %}
+</div>
 {% endblock %}
