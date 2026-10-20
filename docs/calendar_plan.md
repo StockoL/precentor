@@ -10,8 +10,8 @@ the tests.
 
 - **Both forms of the Roman Rite:** the Ordinary Form and the 1962
   Extraordinary Form, as `calendar_use` already allows.
-- **Obligatory memorials included,** not just Sundays, solemnities and
-  feasts. Optional memorials are left out: a choir is very unlikely to
+- **Obligatory memorials included,** as well as Sundays, solemnities
+  and feasts. Optional memorials are left out: a choir is very unlikely to
   sing for one, so they're future development.
 - **Precedence worked out by Precentor itself:** each occasion stores
   its rank and a date rule, and Precentor applies the tables of
