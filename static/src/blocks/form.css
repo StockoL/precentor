@@ -82,16 +82,25 @@
 
   /*
    * A checkbox goes before its label on the same line, the usual
-   * pattern, rather than on a line of its own under it. Django's as_p
-   * puts the label first, so row-reverse swaps them visually; the label
-   * is still tied to its box by for/id.
+   * pattern, rather than on a line of its own under it. order: -1 puts
+   * the box first whichever order the HTML has: Django's as_p writes the
+   * label first, a hand-written template may not. The label is still
+   * tied to its box by for/id.
    */
   form p:has(> input[type="checkbox"]) {
     display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
     align-items: center;
     gap: var(--spacing-2xs);
+  }
+
+  form p > input[type="checkbox"] {
+    order: -1;
+  }
+
+  /* A colour picker is a swatch, not a full-width field. */
+  form input[type="color"] {
+    width: 4rem;
+    padding: var(--spacing-3xs);
   }
 
   form p:has(> input[type="checkbox"]) label {
