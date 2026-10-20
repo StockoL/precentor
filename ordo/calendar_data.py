@@ -1,9 +1,10 @@
 """
 Loading the published calendars in ordo/data/ into the database.
 
-The files in ordo/data/romcal/ are exported once from romcal by
-tools/calendar_export/export_romcal.js (see its README and
-docs/acknowledgements.md). Each holds one calendar's occasions; a
+The files are exported once by the scripts in tools/calendar_export/
+(see its README and docs/acknowledgements.md): the Ordinary Form from
+romcal into ordo/data/romcal/, and the 1962 calendar from Missalemeum
+into ordo/data/missalemeum/. Each holds one calendar's occasions; a
 national calendar holds only the days it adds or changes.
 
 Loading is repeatable: each occasion is matched by its form, calendar
@@ -18,7 +19,11 @@ from pathlib import Path
 
 from django.db import transaction
 
-ROMCAL_DIR = Path(__file__).resolve().parent / "data" / "romcal"
+DATA_DIR = Path(__file__).resolve().parent / "data"
+ROMCAL_DIR = DATA_DIR / "romcal"
+MISSALEMEUM_DIR = DATA_DIR / "missalemeum"
+# Each folder of data files, and the form its occasions belong to.
+SOURCES = ((ROMCAL_DIR, "current"), (MISSALEMEUM_DIR, "historic"))
 
 
 def occasion_fields(item):
@@ -26,10 +31,10 @@ def occasion_fields(item):
     fields = {
         "name": item["name"],
         "rank": item["rank"],
-        "precedence": item["precedence"],
+        "precedence": item.get("precedence", ""),
         "is_proper_of_time": item["is_proper_of_time"],
-        "shares_with_memorials": item["shares_with_memorials"],
-        "transfers": item["transfers"],
+        "shares_with_memorials": item.get("shares_with_memorials", False),
+        "transfers": item.get("transfers", []),
         "colour": item["colour"],
         "is_moveable": False,
         "easter_offset_days": None,
@@ -54,30 +59,40 @@ def occasion_fields(item):
 
 
 @transaction.atomic
-def load_calendar_files(directory=ROMCAL_DIR, calendar_use="current"):
-    """Load every calendar file in a directory. Returns
-    {calendar: (created, updated)}."""
-    from .models import LiturgicalOccasion, LiturgicalSeason
-
+def load_calendar_files(sources=SOURCES):
+    """Load every calendar file in each source folder. Returns
+    {label: (created, updated)}, labelled by calendar, with "(1962)"
+    after the 1962 ones."""
     seasons = {}
     counts = {}
-    for path in sorted(Path(directory).glob("*.json")):
-        data = json.loads(path.read_text(encoding="utf-8"))
-        created = updated = 0
-        for item in data["occasions"]:
-            fields = occasion_fields(item)
-            if item["season"]:
-                if item["season"] not in seasons:
-                    seasons[item["season"]], _ = LiturgicalSeason.objects.get_or_create(name=item["season"])
-                fields["season"] = seasons[item["season"]]
-            else:
-                fields["season"] = None
-            _, was_created = LiturgicalOccasion.objects.update_or_create(
-                calendar_use=calendar_use, calendar=data["calendar"], key=item["key"], defaults=fields
-            )
-            if was_created:
-                created += 1
-            else:
-                updated += 1
-        counts[data["calendar"]] = (created, updated)
+    for directory, calendar_use in sources:
+        for path in sorted(Path(directory).glob("*.json")):
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if "occasions" not in data:
+                continue  # the 1962 blocks, which aren't occasions
+            label = data["calendar"] + (" (1962)" if calendar_use == "historic" else "")
+            counts[label] = _load(data, calendar_use, seasons)
     return counts
+
+
+def _load(data, calendar_use, seasons):
+    """Create or update one file's occasions. Returns (created, updated)."""
+    from .models import LiturgicalOccasion, LiturgicalSeason
+
+    created = updated = 0
+    for item in data["occasions"]:
+        fields = occasion_fields(item)
+        if item["season"]:
+            if item["season"] not in seasons:
+                seasons[item["season"]], _ = LiturgicalSeason.objects.get_or_create(name=item["season"])
+            fields["season"] = seasons[item["season"]]
+        else:
+            fields["season"] = None
+        _, was_created = LiturgicalOccasion.objects.update_or_create(
+            calendar_use=calendar_use, calendar=data["calendar"], key=item["key"], defaults=fields
+        )
+        if was_created:
+            created += 1
+        else:
+            updated += 1
+    return created, updated

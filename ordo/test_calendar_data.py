@@ -15,9 +15,10 @@ def names(day, national_calendar="general_roman"):
 class LoadingTests(TestCase):
     def test_loads_each_calendar_and_reports_the_counts(self):
         counts = load_calendar_files()
-        self.assertEqual(set(counts), {"general_roman", "england", "wales"})
+        self.assertEqual(set(counts), {"general_roman", "england", "wales", "general_roman (1962)"})
         self.assertEqual(counts["general_roman"], (223, 0))
-        self.assertEqual(LiturgicalOccasion.objects.filter(calendar="general_roman").count(), 223)
+        self.assertEqual(counts["general_roman (1962)"], (702, 0))
+        self.assertEqual(LiturgicalOccasion.objects.filter(calendar_use="current", calendar="general_roman").count(), 223)
 
     def test_loading_again_updates_and_adds_nothing(self):
         load_calendar_files()
