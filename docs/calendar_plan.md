@@ -24,6 +24,9 @@ the tests.
 
 ## 2. Sources
 
+How each source has actually been used, and its licence, is recorded
+as the work goes in [`acknowledgements.md`](acknowledgements.md).
+
 | Form | Source | Licence | Used for |
 | --- | --- | --- | --- |
 | Ordinary Form | [romcal](https://github.com/romcal/romcal) 3 (core and calendar packages, version `3.0.0-dev.140`) | MIT | Definitions (names, ranks, date rules, transfer rules, colours, seasons) and a reference calendar for each year |

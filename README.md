@@ -366,6 +366,10 @@ not oversights, when an assessor reads this document.
 - [`docs/design_system.md`](docs/design_system.md): the visual design
   system, covering CUBE CSS, cascade layers (not `@import`), design
   tokens, self-hosted typography and the liturgical accent.
+- [`docs/acknowledgements.md`](docs/acknowledgements.md): every outside
+  source I've drawn on (calendar data and rules, liturgical documents,
+  design methods, typefaces and packages), what I used from each, and
+  its licence.
 - [`docs/blocks_backlog.md`](docs/blocks_backlog.md): the running log of
   Blocks found while laying out every page, each built only once the
   same pattern had appeared more than once, instead of being guessed at
@@ -380,6 +384,20 @@ alongside a librarian or music administrator. Each design decision
 above has a concrete reason behind it, drawn from how church music
 planning actually works, instead of a generic "library system"
 template.
+
+## 11. Acknowledgements
+
+I'm grateful to everyone whose work Precentor builds on. The liturgical
+calendar's date rules are a Python port of
+[romcal](https://github.com/romcal/romcal)'s (MIT licence), checked
+against romcal's own dates, and the order of precedence follows the
+Church's General Norms for the Liturgical Year and the Calendar. The
+stylesheets follow Andy Bell's CUBE CSS, with layouts based on Every
+Layout by Heydon Pickering and Andy Bell, and fluid scales from
+Utopia. The typefaces are EB Garamond and Inter, both under the SIL
+Open Font License. [`docs/acknowledgements.md`](docs/acknowledgements.md)
+lists every source in full, with what I took from each and how, and
+my thanks to each.
 
 ---
 

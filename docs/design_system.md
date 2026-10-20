@@ -38,8 +38,8 @@ from the order the files load in. That matters because every file is
 linked individually with a plain `<link>` tag in `base.html`, not
 chained together with `@import`.
 
-**Why not `@import`:** an early prototype (adapted from a toolkit
-called `looseleaf-ui`) used `@import "..." layer(name);` to import a
+**Why not `@import`:** an early prototype (adapted from `looseleaf-ui`,
+an earlier toolkit of my own whose layouts follow Every Layout) used `@import "..." layer(name);` to import a
 file and assign its layer in one line. I dropped it because `@import`
 chains are sequential, render-blocking requests: the browser can't
 request the second file until it has fetched and parsed the first.
@@ -168,7 +168,9 @@ Headings use **EB Garamond** and body text uses **Inter**. Both are
 self-hosted instead of loaded from the Google Fonts CDN. That saves a
 third-party DNS lookup and render-blocking request, and it means no
 visitor's IP address goes to Google on every page load. Both are
-variable fonts, so one file each covers the full weight range.
+variable fonts, so one file each covers the full weight range. Both
+are under the SIL Open Font License, and each font's licence file sits
+beside it, as the licence requires.
 
 I chose EB Garamond over an earlier candidate, Fraunces. Fraunces has
 a soft, editorial character that's very much of the moment, which
@@ -259,8 +261,9 @@ static/src/
 ```
 
 **`cover.css`** isn't part of the original `looseleaf-ui` Composition
-set. I added it during the design pass to centre `login.html`'s form
-vertically within the full page height. That's a different axis from
+set. I added it during the design pass, following Every Layout's
+Cover, to centre `login.html`'s form vertically within the full page
+height. That's a different axis from
 `.center`, which only caps the width and centres horizontally, so the
 two are used together, not as alternatives.
 
