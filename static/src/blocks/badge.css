@@ -23,6 +23,8 @@
     font-size: var(--typography-step--2);
     font-weight: 600;
     line-height: 1;
+    /* A short label reads as one unit; it shouldn't break across lines. */
+    white-space: nowrap;
   }
 
   /* Service.status */
