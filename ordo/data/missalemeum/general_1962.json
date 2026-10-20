@@ -1,0 +1,8116 @@
+{
+ "source": "Missalemeum (https://github.com/mmolenda/Missalemeum) at commit 75adfbb, copyright 2022 Marcin Molenda, MIT licence",
+ "calendar": "general_roman",
+ "occasions": [
+  {
+   "key": "sancti:01-01",
+   "name": "Octave Day of Christmas",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 1
+  },
+  {
+   "key": "sancti:01-05",
+   "name": "St. Telesphorus Pope and Martyr",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 5
+  },
+  {
+   "key": "sancti:01-06",
+   "name": "Epiphany of the Lord",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 6
+  },
+  {
+   "key": "sancti:01-11cc",
+   "name": "St. Hyginus Pope and Martyr",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 11
+  },
+  {
+   "key": "sancti:01-13",
+   "name": "Commemoration of the Baptism of the Lord",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 13
+  },
+  {
+   "key": "sancti:01-14",
+   "name": "St. Hilary",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 14
+  },
+  {
+   "key": "sancti:01-14cc",
+   "name": "S. Felicis",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 14
+  },
+  {
+   "key": "sancti:01-15",
+   "name": "St. Paul, the First Hermit",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 15
+  },
+  {
+   "key": "sancti:01-15cc",
+   "name": "St. Maur, Abbot",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 15
+  },
+  {
+   "key": "sancti:01-16",
+   "name": "St. Marcellus I",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 16
+  },
+  {
+   "key": "sancti:01-17",
+   "name": "St. Anthony",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 17
+  },
+  {
+   "key": "sancti:01-18r",
+   "name": "St. Prisca",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 18
+  },
+  {
+   "key": "sancti:01-19",
+   "name": "Sts. Marius, Martha, Audifax & Abachum",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 19
+  },
+  {
+   "key": "sancti:01-19o",
+   "name": "St. Canute, Martyr",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 19
+  },
+  {
+   "key": "sancti:01-20",
+   "name": "Sts. Fabian & Sebastian",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 20
+  },
+  {
+   "key": "sancti:01-21",
+   "name": "St. Agnes",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 21
+  },
+  {
+   "key": "sancti:01-22",
+   "name": "Sts. Vincent & Anastasius",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 22
+  },
+  {
+   "key": "sancti:01-23",
+   "name": "St. Raymond of Peñafort",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 23
+  },
+  {
+   "key": "sancti:01-23o",
+   "name": "St. Emerentiana",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 23
+  },
+  {
+   "key": "sancti:01-24",
+   "name": "St. Timothy",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 24
+  },
+  {
+   "key": "sancti:01-25c",
+   "name": "St. Peter",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:01-25r",
+   "name": "Conversion of St. Paul",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:01-26",
+   "name": "St. Polycarp",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 26
+  },
+  {
+   "key": "sancti:01-27",
+   "name": "St. John Chrysostom",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 27
+  },
+  {
+   "key": "sancti:01-28",
+   "name": "St. Peter Nolasco",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 28
+  },
+  {
+   "key": "sancti:01-28t",
+   "name": "St. Agnes",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 28
+  },
+  {
+   "key": "sancti:01-29",
+   "name": "St. Francis de Sales",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 29
+  },
+  {
+   "key": "sancti:01-30",
+   "name": "St. Martina",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 30
+  },
+  {
+   "key": "sancti:01-31",
+   "name": "St. John Bosco",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 1,
+   "fixed_day": 31
+  },
+  {
+   "key": "sancti:02-01",
+   "name": "St. Ignatius of Antioch",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 1
+  },
+  {
+   "key": "sancti:02-02",
+   "name": "Purification of the Blessed Virgin Mary",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:02-03",
+   "name": "St. Blaise",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 3
+  },
+  {
+   "key": "sancti:02-04",
+   "name": "St. Andrew Corsini",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 4
+  },
+  {
+   "key": "sancti:02-05",
+   "name": "St. Agatha",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 5
+  },
+  {
+   "key": "sancti:02-06",
+   "name": "St. Titus",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 6
+  },
+  {
+   "key": "sancti:02-06o",
+   "name": "St. Dorothy",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 6
+  },
+  {
+   "key": "sancti:02-07",
+   "name": "St. Romuald",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 7
+  },
+  {
+   "key": "sancti:02-08",
+   "name": "St. John of Matha",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 8
+  },
+  {
+   "key": "sancti:02-09",
+   "name": "St. Cyril of Alexandria",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 9
+  },
+  {
+   "key": "sancti:02-09o",
+   "name": "St. Appollonia",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 9
+  },
+  {
+   "key": "sancti:02-10",
+   "name": "St. Scholastica",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 10
+  },
+  {
+   "key": "sancti:02-11",
+   "name": "Our Lady of Lourdes",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 11
+  },
+  {
+   "key": "sancti:02-12",
+   "name": "Seven Holy Servite Founders",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 12
+  },
+  {
+   "key": "sancti:02-14",
+   "name": "St. Valentine",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 14
+  },
+  {
+   "key": "sancti:02-15",
+   "name": "Sts. Faustinus & Jovita",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 15
+  },
+  {
+   "key": "sancti:02-18",
+   "name": "St. Simeon",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 18
+  },
+  {
+   "key": "sancti:02-22",
+   "name": "Chair of St. Peter",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 22
+  },
+  {
+   "key": "sancti:02-22c",
+   "name": "St. Paul",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 22
+  },
+  {
+   "key": "sancti:02-23r",
+   "name": "St. Peter Damien",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 23
+  },
+  {
+   "key": "sancti:02-24",
+   "name": "St. Matthias",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 24
+  },
+  {
+   "key": "sancti:02-27",
+   "name": "St. Gabriel of Our Lady of Sorrows",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 2,
+   "fixed_day": 27
+  },
+  {
+   "key": "sancti:03-04",
+   "name": "St. Casimir",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 4
+  },
+  {
+   "key": "sancti:03-04cc",
+   "name": "St. Lucius",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 4
+  },
+  {
+   "key": "sancti:03-06",
+   "name": "Sts. Felicitas & Perpetua",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 6
+  },
+  {
+   "key": "sancti:03-07",
+   "name": "St. Thomas Aquinas",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 7
+  },
+  {
+   "key": "sancti:03-08",
+   "name": "St. John of God",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 8
+  },
+  {
+   "key": "sancti:03-09",
+   "name": "St. Frances Rome",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 9
+  },
+  {
+   "key": "sancti:03-10",
+   "name": "Forty Holy Martyrs of Sebaste",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 10
+  },
+  {
+   "key": "sancti:03-12",
+   "name": "St. Gregory the Great",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 12
+  },
+  {
+   "key": "sancti:03-17",
+   "name": "St. Patrick",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 17
+  },
+  {
+   "key": "sancti:03-18",
+   "name": "St. Cyril of Jerusalem",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 18
+  },
+  {
+   "key": "sancti:03-19",
+   "name": "St. Joseph, Spouse of the Bl. Virgin Mary",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 19
+  },
+  {
+   "key": "sancti:03-21",
+   "name": "St. Benedict",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 21
+  },
+  {
+   "key": "sancti:03-24",
+   "name": "St. Gabriel the Archangel",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 24
+  },
+  {
+   "key": "sancti:03-25",
+   "name": "Annunciation of the Blessed Virgin Mary",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:03-27",
+   "name": "St. John Damascene",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 27
+  },
+  {
+   "key": "sancti:03-28",
+   "name": "St. John of Capistrano",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 28
+  },
+  {
+   "key": "sancti:04-02",
+   "name": "St. Francis of Paola",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:04-04",
+   "name": "St. Isidore of Seville",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 4
+  },
+  {
+   "key": "sancti:04-05",
+   "name": "St. Vincent Ferrer",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 5
+  },
+  {
+   "key": "sancti:04-11",
+   "name": "St. Leo the Great",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 11
+  },
+  {
+   "key": "sancti:04-13",
+   "name": "St. Hermenegild",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 13
+  },
+  {
+   "key": "sancti:04-14",
+   "name": "St. Justin",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 14
+  },
+  {
+   "key": "sancti:04-14t",
+   "name": "Sts. Tiburtius, Valerian et Maximus, Martyrs",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 14
+  },
+  {
+   "key": "sancti:04-17",
+   "name": "St. Anicetus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 17
+  },
+  {
+   "key": "sancti:04-21",
+   "name": "St. Anselm",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 21
+  },
+  {
+   "key": "sancti:04-22",
+   "name": "Sts. Soter & Caius",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 22
+  },
+  {
+   "key": "sancti:04-23",
+   "name": "St. George",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 23
+  },
+  {
+   "key": "sancti:04-24",
+   "name": "St. Fidelis of Sigmaringen",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 24
+  },
+  {
+   "key": "sancti:04-25",
+   "name": "St. Mark",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:04-25c",
+   "name": "Pro rogationibus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:04-26",
+   "name": "Sts. Cletus & Marcellinus",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 26
+  },
+  {
+   "key": "sancti:04-27",
+   "name": "St. Peter Canisius",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 27
+  },
+  {
+   "key": "sancti:04-28",
+   "name": "St. Paul of the Cross",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 28
+  },
+  {
+   "key": "sancti:04-29",
+   "name": "St. Peter of Verona",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 29
+  },
+  {
+   "key": "sancti:04-30",
+   "name": "St. Catherine of Siena",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 30
+  },
+  {
+   "key": "sancti:05-01r",
+   "name": "St. Joseph the Workman",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 1
+  },
+  {
+   "key": "sancti:05-02",
+   "name": "St. Athanasius",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:05-03r",
+   "name": "Sts. Alexander & Companions",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 3
+  },
+  {
+   "key": "sancti:05-04",
+   "name": "St. Monica",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 4
+  },
+  {
+   "key": "sancti:05-05",
+   "name": "St. Pius V",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 5
+  },
+  {
+   "key": "sancti:05-07",
+   "name": "St. Stanislaus",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 7
+  },
+  {
+   "key": "sancti:05-09",
+   "name": "St. Gregory of Nazianzen",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 9
+  },
+  {
+   "key": "sancti:05-10",
+   "name": "St. Antoninus",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 10
+  },
+  {
+   "key": "sancti:05-10o",
+   "name": "St. Gordiano and Epimacho",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 10
+  },
+  {
+   "key": "sancti:05-11r",
+   "name": "Sts. Philip & James",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 11
+  },
+  {
+   "key": "sancti:05-12",
+   "name": "Sts. Nereus, Achilleus, Domitilla, & Pancras",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 12
+  },
+  {
+   "key": "sancti:05-13",
+   "name": "St. Robert Bellarmine",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 13
+  },
+  {
+   "key": "sancti:05-14",
+   "name": "St. Boniface",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 14
+  },
+  {
+   "key": "sancti:05-15",
+   "name": "St. John Baptist de la Salle",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 15
+  },
+  {
+   "key": "sancti:05-16",
+   "name": "St. Ubaldus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 16
+  },
+  {
+   "key": "sancti:05-17",
+   "name": "St. Paschal Baylon",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 17
+  },
+  {
+   "key": "sancti:05-18",
+   "name": "St. Venantius",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 18
+  },
+  {
+   "key": "sancti:05-19",
+   "name": "St. Peter Celestine",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 19
+  },
+  {
+   "key": "sancti:05-19o",
+   "name": "St. Pudentiana Virginis",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 19
+  },
+  {
+   "key": "sancti:05-20",
+   "name": "St. Bernardine of Siena",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 20
+  },
+  {
+   "key": "sancti:05-25",
+   "name": "St. Gregory VII",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:05-25o",
+   "name": "St. Urban, Pope and Martyr",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:05-26",
+   "name": "St. Philip Neri",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 26
+  },
+  {
+   "key": "sancti:05-26o",
+   "name": "S. Eleutherius",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 26
+  },
+  {
+   "key": "sancti:05-27",
+   "name": "St. Bede the Venerable",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 27
+  },
+  {
+   "key": "sancti:05-27o",
+   "name": "St. John I",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 27
+  },
+  {
+   "key": "sancti:05-28",
+   "name": "St. Augustine of Canterbury",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 28
+  },
+  {
+   "key": "sancti:05-29",
+   "name": "St. Mary Magdalene de Pazzi",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 29
+  },
+  {
+   "key": "sancti:05-30",
+   "name": "St. Felix I",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 30
+  },
+  {
+   "key": "sancti:05-31",
+   "name": "Queenship of the Blessed Virgin Mary",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 31
+  },
+  {
+   "key": "sancti:05-31c",
+   "name": "St. Petronilla",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 31
+  },
+  {
+   "key": "sancti:06-01",
+   "name": "St. Angela Merici",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 1
+  },
+  {
+   "key": "sancti:06-02",
+   "name": "Sts. Marcellinus, Peter, & Erasmus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:06-04",
+   "name": "St. Francis Caracciolo",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 4
+  },
+  {
+   "key": "sancti:06-05",
+   "name": "St. Boniface",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 5
+  },
+  {
+   "key": "sancti:06-06",
+   "name": "St. Norbert",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 6
+  },
+  {
+   "key": "sancti:06-09",
+   "name": "Sts. Primus & Felicianus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 9
+  },
+  {
+   "key": "sancti:06-10",
+   "name": "St. Margaret of Scotland",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 10
+  },
+  {
+   "key": "sancti:06-11",
+   "name": "St. Barnabas",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 11
+  },
+  {
+   "key": "sancti:06-12",
+   "name": "St. John of San Fecundo",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 12
+  },
+  {
+   "key": "sancti:06-12o",
+   "name": "St. Basilidus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 12
+  },
+  {
+   "key": "sancti:06-13",
+   "name": "St. Anthony of Padua",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 13
+  },
+  {
+   "key": "sancti:06-14",
+   "name": "St. Basil the Great",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 14
+  },
+  {
+   "key": "sancti:06-15",
+   "name": "St. Vitus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 15
+  },
+  {
+   "key": "sancti:06-17r",
+   "name": "St. Gregory Barbarigo",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 17
+  },
+  {
+   "key": "sancti:06-18",
+   "name": "St. Ephrem of Syria",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 18
+  },
+  {
+   "key": "sancti:06-18t",
+   "name": "Ss. Marcus and Marcellianus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 18
+  },
+  {
+   "key": "sancti:06-19",
+   "name": "St. Julia of Falconieri",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 19
+  },
+  {
+   "key": "sancti:06-19o",
+   "name": "Sts. Gervasius and Protasius",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 19
+  },
+  {
+   "key": "sancti:06-20",
+   "name": "St. Silverius",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 20
+  },
+  {
+   "key": "sancti:06-21",
+   "name": "St. Aloysius Gongzaga",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 21
+  },
+  {
+   "key": "sancti:06-22",
+   "name": "St. Paulinus of Nola",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 22
+  },
+  {
+   "key": "sancti:06-23",
+   "name": "Vigil of the Nativity of St. John the Baptist",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "violet",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 23
+  },
+  {
+   "key": "sancti:06-24",
+   "name": "Nativity of St. John the Baptist",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 24
+  },
+  {
+   "key": "sancti:06-25",
+   "name": "St. William",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:06-26",
+   "name": "Sts. John & Paul",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 26
+  },
+  {
+   "key": "sancti:06-28r",
+   "name": "Vigil of Sts. Peter & Paul",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "violet",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 28
+  },
+  {
+   "key": "sancti:06-29",
+   "name": "Sts. Peter & Paul",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 29
+  },
+  {
+   "key": "sancti:06-30",
+   "name": "In Commemoratione Sancti Pauli Apostoli",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 30
+  },
+  {
+   "key": "sancti:07-01",
+   "name": "The Precious Blood of Our Lord Jesus Christ",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 1
+  },
+  {
+   "key": "sancti:07-02",
+   "name": "Visitation of the Blessed Virgin Mary",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:07-02cc",
+   "name": "SS. Processus and Martinian",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:07-03r",
+   "name": "St. Irenaeus",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 3
+  },
+  {
+   "key": "sancti:07-05",
+   "name": "St. Anthony Mary Zaccariah",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 5
+  },
+  {
+   "key": "sancti:07-07",
+   "name": "Sts. Cyril & Methodius",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 7
+  },
+  {
+   "key": "sancti:07-08",
+   "name": "St. Elizabeth of Portugal",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 8
+  },
+  {
+   "key": "sancti:07-10",
+   "name": "Seven Holy Brothers and Sts. Rufina & Secunda",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 10
+  },
+  {
+   "key": "sancti:07-11",
+   "name": "St. Pius I",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 11
+  },
+  {
+   "key": "sancti:07-12",
+   "name": "St. John Gualbert",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 12
+  },
+  {
+   "key": "sancti:07-12o",
+   "name": "Ss. Naboris et Felicis",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 12
+  },
+  {
+   "key": "sancti:07-14",
+   "name": "St. Bonaventure",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 14
+  },
+  {
+   "key": "sancti:07-15",
+   "name": "St. Henry the Emperor",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 15
+  },
+  {
+   "key": "sancti:07-16",
+   "name": "Our Lady of Mt. Carmel",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 16
+  },
+  {
+   "key": "sancti:07-17",
+   "name": "St. Alexis",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 17
+  },
+  {
+   "key": "sancti:07-18",
+   "name": "Camillus de Lellis",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 18
+  },
+  {
+   "key": "sancti:07-18cc",
+   "name": "Ss. Symphorosa and sons",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 18
+  },
+  {
+   "key": "sancti:07-19",
+   "name": "St. Vincent de Paul",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 19
+  },
+  {
+   "key": "sancti:07-20",
+   "name": "St. Jerome Emiliani",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 20
+  },
+  {
+   "key": "sancti:07-20o",
+   "name": "St. Margaret",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 20
+  },
+  {
+   "key": "sancti:07-21",
+   "name": "St. Praxedis Virginis",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 21
+  },
+  {
+   "key": "sancti:07-21r",
+   "name": "St. Laurence of Brindisi",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 21
+  },
+  {
+   "key": "sancti:07-22",
+   "name": "St. Mary Magdalene",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 22
+  },
+  {
+   "key": "sancti:07-23",
+   "name": "St. Apollinaris",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 23
+  },
+  {
+   "key": "sancti:07-23cc",
+   "name": "S. Liborii",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 23
+  },
+  {
+   "key": "sancti:07-24r",
+   "name": "St. Christina",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 24
+  },
+  {
+   "key": "sancti:07-25",
+   "name": "St. James the Greater",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:07-25cc",
+   "name": "St. Christopher",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:07-26",
+   "name": "St. Anne, Mother of the Blessed Virgin",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 26
+  },
+  {
+   "key": "sancti:07-27",
+   "name": "St. Pantaleon",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 27
+  },
+  {
+   "key": "sancti:07-28",
+   "name": "Sts. Nazarius & Celsus, St. Victor I & St. Innocent I",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 28
+  },
+  {
+   "key": "sancti:07-29",
+   "name": "St. Martha",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 29
+  },
+  {
+   "key": "sancti:07-29cc",
+   "name": "Ss. Felicis, Simplicii, Faustini et Beatricis",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 29
+  },
+  {
+   "key": "sancti:07-30",
+   "name": "Sts. Abdon & Sennen",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 30
+  },
+  {
+   "key": "sancti:07-31",
+   "name": "St. Ignatius Loyola",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 31
+  },
+  {
+   "key": "sancti:08-01r",
+   "name": "Holy Machabees",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 1
+  },
+  {
+   "key": "sancti:08-02",
+   "name": "St. Alphonsus Liguori",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:08-02o",
+   "name": "St. Stephen I, Pope and Martyr",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:08-04",
+   "name": "St. Dominic",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 4
+  },
+  {
+   "key": "sancti:08-05",
+   "name": "Dedication of the Basilica of St. Mary Major",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 5
+  },
+  {
+   "key": "sancti:08-06",
+   "name": "Transfiguration of Our Lord",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 6
+  },
+  {
+   "key": "sancti:08-06cc",
+   "name": "Pope Sixtus II, Felicissimus and Agapitus, Martyrs",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 6
+  },
+  {
+   "key": "sancti:08-07",
+   "name": "St. Cajetan",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 7
+  },
+  {
+   "key": "sancti:08-07o",
+   "name": "St. Donatus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 7
+  },
+  {
+   "key": "sancti:08-08",
+   "name": "St. John Mary Vianney",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 8
+  },
+  {
+   "key": "sancti:08-08c",
+   "name": "Ss. Cyriacus, Largus and Smaragdus, Martyrs",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 8
+  },
+  {
+   "key": "sancti:08-09cc",
+   "name": "St. Romanus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 9
+  },
+  {
+   "key": "sancti:08-09t",
+   "name": "Vigil of St. Lawrence",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 9
+  },
+  {
+   "key": "sancti:08-10",
+   "name": "St. Lawrence",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 10
+  },
+  {
+   "key": "sancti:08-11",
+   "name": "Sts. Tiburtius & Susanna",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 11
+  },
+  {
+   "key": "sancti:08-12",
+   "name": "St. Clare",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 12
+  },
+  {
+   "key": "sancti:08-13",
+   "name": "Sts. Hippolytus & Cassian",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 13
+  },
+  {
+   "key": "sancti:08-14",
+   "name": "Vigil of the Assumption",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "violet",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 14
+  },
+  {
+   "key": "sancti:08-14cc",
+   "name": "St. Eusebius",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 14
+  },
+  {
+   "key": "sancti:08-15",
+   "name": "Assumption of the Blessed Virgin Mary",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 15
+  },
+  {
+   "key": "sancti:08-16",
+   "name": "St. Joachim, Father of the Blessed Virgin",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 16
+  },
+  {
+   "key": "sancti:08-17",
+   "name": "St. Hyacinth",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 17
+  },
+  {
+   "key": "sancti:08-18r",
+   "name": "St. Agapitus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 18
+  },
+  {
+   "key": "sancti:08-19",
+   "name": "St. John Eudes",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 19
+  },
+  {
+   "key": "sancti:08-20",
+   "name": "St. Bernard of Clairvaux",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 20
+  },
+  {
+   "key": "sancti:08-21",
+   "name": "St. Jane Frances de Chantal",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 21
+  },
+  {
+   "key": "sancti:08-22",
+   "name": "Immaculate Heart of Mary",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 22
+  },
+  {
+   "key": "sancti:08-22cc",
+   "name": "Sts. Timothy, Hippolytus and Symphorianus, Martyrs",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 22
+  },
+  {
+   "key": "sancti:08-23",
+   "name": "St. Philip Benizi",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 23
+  },
+  {
+   "key": "sancti:08-24",
+   "name": "St. Bartholomew",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 24
+  },
+  {
+   "key": "sancti:08-25",
+   "name": "St. Louis IX",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:08-26",
+   "name": "St. Zephyrinus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 26
+  },
+  {
+   "key": "sancti:08-27",
+   "name": "St. Joseph Calasance",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 27
+  },
+  {
+   "key": "sancti:08-28",
+   "name": "St. Augustine",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 28
+  },
+  {
+   "key": "sancti:08-28cc",
+   "name": "St. Hermes",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 28
+  },
+  {
+   "key": "sancti:08-29",
+   "name": "Beheading of St. John the Baptist",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 29
+  },
+  {
+   "key": "sancti:08-29cc",
+   "name": "St. Sabina",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 29
+  },
+  {
+   "key": "sancti:08-30",
+   "name": "St. Rose of Lima",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 30
+  },
+  {
+   "key": "sancti:08-30o",
+   "name": "Sts. Felix and Adauctus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 30
+  },
+  {
+   "key": "sancti:08-31",
+   "name": "St. Raymond Nonnatus",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 31
+  },
+  {
+   "key": "sancti:09-01",
+   "name": "St. Giles",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 1
+  },
+  {
+   "key": "sancti:09-01cc",
+   "name": "Twelve Holy Brothers, Martyrs",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 1
+  },
+  {
+   "key": "sancti:09-02",
+   "name": "St. Stephen of Hungary",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:09-03",
+   "name": "St. Pius X",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 3
+  },
+  {
+   "key": "sancti:09-05",
+   "name": "St. Lawrence Justinian",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 5
+  },
+  {
+   "key": "sancti:09-08",
+   "name": "Nativity of the Blessed Virgin Mary",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 8
+  },
+  {
+   "key": "sancti:09-08cc",
+   "name": "S. Hadriani",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 8
+  },
+  {
+   "key": "sancti:09-09",
+   "name": "St. Gorgonius",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 9
+  },
+  {
+   "key": "sancti:09-10",
+   "name": "St. Nicholas of Tolentino",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 10
+  },
+  {
+   "key": "sancti:09-11",
+   "name": "Sts. Protus & Hyacinth",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 11
+  },
+  {
+   "key": "sancti:09-12",
+   "name": "Most Holy Name of Mary",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 12
+  },
+  {
+   "key": "sancti:09-14",
+   "name": "Exaltation of the Holy Cross",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 14
+  },
+  {
+   "key": "sancti:09-15",
+   "name": "Seven Sorrows of the Blessed Virgin Mary",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 15
+  },
+  {
+   "key": "sancti:09-15cc",
+   "name": "S. Nicomedes",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 15
+  },
+  {
+   "key": "sancti:09-16",
+   "name": "Sts. Cornelius & Cyprian",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 16
+  },
+  {
+   "key": "sancti:09-16cc",
+   "name": "Sts. Euphemia, Lucy and Geminianus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 16
+  },
+  {
+   "key": "sancti:09-17",
+   "name": "Stigmata of St. Francis",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 17
+  },
+  {
+   "key": "sancti:09-18",
+   "name": "St. Joseph of Cupertino",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 18
+  },
+  {
+   "key": "sancti:09-19",
+   "name": "St. Januarius & Companions",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 19
+  },
+  {
+   "key": "sancti:09-20",
+   "name": "Sts. Eustace & Companions",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 20
+  },
+  {
+   "key": "sancti:09-21",
+   "name": "St. Matthew",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 21
+  },
+  {
+   "key": "sancti:09-22",
+   "name": "St. Thomas of Villanova",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 22
+  },
+  {
+   "key": "sancti:09-22o",
+   "name": "St. Maurice and Companions, Martyrs",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 22
+  },
+  {
+   "key": "sancti:09-23",
+   "name": "St. Linus",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 23
+  },
+  {
+   "key": "sancti:09-23cc",
+   "name": "St. Thecla",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 23
+  },
+  {
+   "key": "sancti:09-24",
+   "name": "Our Lady of Ransom",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 24
+  },
+  {
+   "key": "sancti:09-26",
+   "name": "Sts. Cyprian & Justina",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 26
+  },
+  {
+   "key": "sancti:09-27",
+   "name": "Sts. Cosmas & Damian",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 27
+  },
+  {
+   "key": "sancti:09-28",
+   "name": "St. Wenceslaus",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 28
+  },
+  {
+   "key": "sancti:09-29",
+   "name": "Dedication of St. Michael the Archangel",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 29
+  },
+  {
+   "key": "sancti:09-30",
+   "name": "St. Jerome",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 30
+  },
+  {
+   "key": "sancti:10-01",
+   "name": "St. Remigius",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 1
+  },
+  {
+   "key": "sancti:10-02",
+   "name": "Holy Guardian Angels",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:10-03",
+   "name": "St. Theresa of the Infant Jesus",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 3
+  },
+  {
+   "key": "sancti:10-04",
+   "name": "St. Francis of Assisi",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 4
+  },
+  {
+   "key": "sancti:10-05",
+   "name": "St. Placid & Companions",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 5
+  },
+  {
+   "key": "sancti:10-06",
+   "name": "St. Bruno",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 6
+  },
+  {
+   "key": "sancti:10-07",
+   "name": "Our Lady of the Rosary",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 7
+  },
+  {
+   "key": "sancti:10-07t",
+   "name": "St. Mark I",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 7
+  },
+  {
+   "key": "sancti:10-08",
+   "name": "St. Bridget of Sweden",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 8
+  },
+  {
+   "key": "sancti:10-08c",
+   "name": "Ss. Sergio, Baccho, Marcello and Apulejo Martyrs",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 8
+  },
+  {
+   "key": "sancti:10-09",
+   "name": "St. John Leonardi",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 9
+  },
+  {
+   "key": "sancti:10-09t",
+   "name": "St. Dionysius and companions",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 9
+  },
+  {
+   "key": "sancti:10-10",
+   "name": "St. Francis Borgia",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 10
+  },
+  {
+   "key": "sancti:10-11",
+   "name": "Maternity of the Blessed Virgin Mary",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 11
+  },
+  {
+   "key": "sancti:10-13",
+   "name": "St. Edward",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 13
+  },
+  {
+   "key": "sancti:10-14",
+   "name": "St. Callistus I",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 14
+  },
+  {
+   "key": "sancti:10-15",
+   "name": "St. Teresa of Avila",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 15
+  },
+  {
+   "key": "sancti:10-16",
+   "name": "St. Hedwig",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 16
+  },
+  {
+   "key": "sancti:10-17",
+   "name": "St. Margaret Mary Alacoque",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 17
+  },
+  {
+   "key": "sancti:10-18",
+   "name": "St. Luke the Evangelist",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 18
+  },
+  {
+   "key": "sancti:10-19",
+   "name": "St. Peter of Alcantara",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 19
+  },
+  {
+   "key": "sancti:10-20",
+   "name": "St. John Cantius",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 20
+  },
+  {
+   "key": "sancti:10-21",
+   "name": "St. Hilarion",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 21
+  },
+  {
+   "key": "sancti:10-21cc",
+   "name": "St. Ursula and Companions",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 21
+  },
+  {
+   "key": "sancti:10-23r",
+   "name": "St. Anthony Mary Claret",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 23
+  },
+  {
+   "key": "sancti:10-24",
+   "name": "St. Raphael the Archangel",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 24
+  },
+  {
+   "key": "sancti:10-25",
+   "name": "Sts. Chrysanthus & Daria",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:10-26",
+   "name": "St. Evaristus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 26
+  },
+  {
+   "key": "sancti:10-28",
+   "name": "Sts. Simon & Jude",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 28
+  },
+  {
+   "key": "sancti:10-DU",
+   "name": "Christ the King",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "date_rule": "christ_the_king_1962",
+   "date_rule_args": [],
+   "date_offset_days": 0
+  },
+  {
+   "key": "sancti:11-01",
+   "name": "All Saints",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 1
+  },
+  {
+   "key": "sancti:11-02m1",
+   "name": "Commemoration of All Souls",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "black",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:11-02m2",
+   "name": "Commemoration of All Souls – Second Mass",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "black",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:11-02m3",
+   "name": "Commemoration of All Souls – Third Mass",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "black",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:11-04",
+   "name": "St. Charles Borromeo",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 4
+  },
+  {
+   "key": "sancti:11-04cc",
+   "name": "Sts. Vitalis and Agricola, Martyrs",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 4
+  },
+  {
+   "key": "sancti:11-08r",
+   "name": "Four Holy Crowned Martyrs",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 8
+  },
+  {
+   "key": "sancti:11-09",
+   "name": "Dedication of the Archbasilica of Our Holy Savior",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 9
+  },
+  {
+   "key": "sancti:11-09cc",
+   "name": "St. Theodore",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 9
+  },
+  {
+   "key": "sancti:11-10",
+   "name": "St. Andrew Avellino",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 10
+  },
+  {
+   "key": "sancti:11-10o",
+   "name": "Sts. Tryphonis, Respicii, et Nymphae",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 10
+  },
+  {
+   "key": "sancti:11-11",
+   "name": "St. Martin of Tours",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 11
+  },
+  {
+   "key": "sancti:11-11cc",
+   "name": "St. Menna",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 11
+  },
+  {
+   "key": "sancti:11-12",
+   "name": "St. Martin I",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 12
+  },
+  {
+   "key": "sancti:11-13",
+   "name": "St. Didacus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 13
+  },
+  {
+   "key": "sancti:11-14",
+   "name": "St. Josaphat",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 14
+  },
+  {
+   "key": "sancti:11-15",
+   "name": "St. Albert the Great",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 15
+  },
+  {
+   "key": "sancti:11-16",
+   "name": "St. Gertrude the Great",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 16
+  },
+  {
+   "key": "sancti:11-17",
+   "name": "St. Gregory the Wonderworker",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 17
+  },
+  {
+   "key": "sancti:11-18r",
+   "name": "Dedication of the Basilicas of Sts. Peter & Paul",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 18
+  },
+  {
+   "key": "sancti:11-19",
+   "name": "St. Elizabeth of Hungary",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 19
+  },
+  {
+   "key": "sancti:11-19o",
+   "name": "St. Pontian",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 19
+  },
+  {
+   "key": "sancti:11-20",
+   "name": "St. Felix of Valois",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 20
+  },
+  {
+   "key": "sancti:11-21",
+   "name": "Presentation of the Blessed Virgin Mary",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 21
+  },
+  {
+   "key": "sancti:11-22",
+   "name": "St. Cecilia",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 22
+  },
+  {
+   "key": "sancti:11-23",
+   "name": "St. Clement I",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 23
+  },
+  {
+   "key": "sancti:11-23cc",
+   "name": "St. Felicity",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 23
+  },
+  {
+   "key": "sancti:11-24",
+   "name": "St. John of the Cross",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 24
+  },
+  {
+   "key": "sancti:11-24o",
+   "name": "St. Chrysogonus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 24
+  },
+  {
+   "key": "sancti:11-25",
+   "name": "St. Catherine of Alexandria",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:11-26",
+   "name": "St. Sylvester",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 26
+  },
+  {
+   "key": "sancti:11-26t",
+   "name": "St. Peter of Alexandria",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 26
+  },
+  {
+   "key": "sancti:11-29r",
+   "name": "St. Saturninus",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 29
+  },
+  {
+   "key": "sancti:11-30",
+   "name": "St. Andrew",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 30
+  },
+  {
+   "key": "sancti:12-02",
+   "name": "St. Vivian",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 2
+  },
+  {
+   "key": "sancti:12-03",
+   "name": "St. Francis Xavier",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 3
+  },
+  {
+   "key": "sancti:12-04",
+   "name": "St. Peter Chrysologus",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 4
+  },
+  {
+   "key": "sancti:12-05",
+   "name": "St. Sabbas",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 5
+  },
+  {
+   "key": "sancti:12-06",
+   "name": "St. Nicholas",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 6
+  },
+  {
+   "key": "sancti:12-07",
+   "name": "St. Ambrose",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 7
+  },
+  {
+   "key": "sancti:12-08",
+   "name": "Immaculate Conception of the Blessed Virgin Mary",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 8
+  },
+  {
+   "key": "sancti:12-10o",
+   "name": "St. Melchiades",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 10
+  },
+  {
+   "key": "sancti:12-11",
+   "name": "St. Damasus I",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 11
+  },
+  {
+   "key": "sancti:12-13r",
+   "name": "St. Lucy",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 13
+  },
+  {
+   "key": "sancti:12-16",
+   "name": "St. Eusebius",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 16
+  },
+  {
+   "key": "sancti:12-21",
+   "name": "St. Thomas",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 21
+  },
+  {
+   "key": "sancti:12-24",
+   "name": "Vigil of Christmas",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "violet",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 24
+  },
+  {
+   "key": "sancti:12-25m1",
+   "name": "The Nativity of Our Lord",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:12-25m2",
+   "name": "The Nativity of Our Lord – Morning Mass",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:12-25m3",
+   "name": "The Nativity of Our Lord – Day Mass",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 25
+  },
+  {
+   "key": "sancti:12-26",
+   "name": "St. Stephen",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 26
+  },
+  {
+   "key": "sancti:12-26c",
+   "name": "For Octave of the Nativity",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 26
+  },
+  {
+   "key": "sancti:12-27",
+   "name": "St. John the Evangelist",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 27
+  },
+  {
+   "key": "sancti:12-27c",
+   "name": "For Octave of the Nativity",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 27
+  },
+  {
+   "key": "sancti:12-28",
+   "name": "Holy Innocents",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 28
+  },
+  {
+   "key": "sancti:12-28c",
+   "name": "For Octave of the Nativity",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 28
+  },
+  {
+   "key": "sancti:12-29",
+   "name": "St. Thomas Becket",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 29
+  },
+  {
+   "key": "sancti:12-31",
+   "name": "St. Silvester",
+   "rank": "class_4",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 31
+  },
+  {
+   "key": "tempora:093-3",
+   "name": "Ember Wednesday of September",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "093-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:093-5",
+   "name": "Ember Friday of September",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "093-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:093-6",
+   "name": "Ember Saturday of September",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "093-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv1-0",
+   "name": "I Sunday of Advent",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv1-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv1-1",
+   "name": "Feria II after I Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv1-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv1-2",
+   "name": "Feria III after I Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv1-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv1-3",
+   "name": "Feria IV after I Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv1-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv1-4",
+   "name": "Feria V after I Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv1-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv1-5",
+   "name": "Feria VI after I Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv1-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv1-6",
+   "name": "Sabbato after I Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv1-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv2-0",
+   "name": "II Sunday of Advent",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv2-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv2-1",
+   "name": "Feria II after II Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv2-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv2-2",
+   "name": "Feria III after II Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv2-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv2-3",
+   "name": "Feria IV after II Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv2-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv2-4",
+   "name": "Feria V after II Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv2-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv2-5",
+   "name": "Feria VI after II Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv2-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv2-6",
+   "name": "Sabbato after II Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv2-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv3-0",
+   "name": "III Sunday of Advent",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "rose",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv3-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv3-1",
+   "name": "Feria II after III Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv3-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv3-2",
+   "name": "Feria III after III Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv3-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv3-3",
+   "name": "Ember Wednesday of Advent",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv3-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv3-4",
+   "name": "Feria V after III Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv3-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv3-5",
+   "name": "Ember Friday of Advent",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv3-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv3-6",
+   "name": "Ember Saturday of Advent",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv3-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv4-0",
+   "name": "IV Sunday of Advent",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv4-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv4-1",
+   "name": "Feria II after IV Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv4-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv4-2",
+   "name": "Feria III after IV Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv4-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv4-3",
+   "name": "Feria IV after IV Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv4-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv4-4",
+   "name": "Feria V after IV Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv4-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Adv4-5",
+   "name": "Feria VI after IV Sunday of Advent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Advent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Adv4-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi1-0",
+   "name": "The Holy Family: Jesus, Mary & Joseph",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi1-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi1-1",
+   "name": "Feria II after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi1-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi1-2",
+   "name": "Feria III after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi1-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi1-3",
+   "name": "Feria IV after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi1-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi1-4",
+   "name": "Feria V after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi1-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi1-5",
+   "name": "Feria VI after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi1-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi1-6",
+   "name": "Saturday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi1-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi2-0",
+   "name": "II Sunday after Epiphany",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi2-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi2-1",
+   "name": "Feria II after II Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi2-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi2-2",
+   "name": "Feria III after II Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi2-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi2-3",
+   "name": "Feria IV after II Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi2-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi2-4",
+   "name": "Feria V after II Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi2-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi2-5",
+   "name": "Feria VI after II Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi2-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi2-6",
+   "name": "Saturday after II Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi2-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi3-0",
+   "name": "III Sunday after Epiphany",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi3-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi3-1",
+   "name": "Feria II after III Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi3-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi3-2",
+   "name": "Feria III after III Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi3-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi3-3",
+   "name": "Feria IV after III Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi3-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi3-4",
+   "name": "Feria V after III Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi3-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi3-5",
+   "name": "Feria VI after III Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi3-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi3-6",
+   "name": "Saturday after III Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi3-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi4-0",
+   "name": "IV Sunday after Epiphany",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi4-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi4-1",
+   "name": "Feria II after IV Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi4-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi4-2",
+   "name": "Feria III after IV Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi4-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi4-3",
+   "name": "Feria IV after IV Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi4-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi4-4",
+   "name": "Feria V after IV Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi4-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi4-5",
+   "name": "Feria VI after IV Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi4-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi4-6",
+   "name": "Saturday after IV Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi4-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi5-0",
+   "name": "V Sunday after Epiphany",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi5-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi5-1",
+   "name": "Feria II after V Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi5-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi5-2",
+   "name": "Feria III after V Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi5-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi5-3",
+   "name": "Feria IV after V Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi5-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi5-4",
+   "name": "Feria V after V Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi5-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi5-5",
+   "name": "Feria VI after V Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi5-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi5-6",
+   "name": "Saturday after V Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi5-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi6-0",
+   "name": "VI Sunday after Epiphany",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi6-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi6-1",
+   "name": "Feria II after VI Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi6-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi6-2",
+   "name": "Feria III after VI Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi6-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi6-3",
+   "name": "Feria IV after VI Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi6-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi6-4",
+   "name": "Feria V after VI Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi6-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi6-5",
+   "name": "Feria VI after VI Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi6-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Epi6-6",
+   "name": "Saturday after VI Sunday after Epiphany",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Epi6-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Nat1-0",
+   "name": "Sunday in the Octave of Christmas",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Christmas",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Nat1-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Nat1-1",
+   "name": "Feria in the Octave of Christmas",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Christmas",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Nat1-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Nat2-0",
+   "name": "Holy Name of Jesus",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Christmas",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Nat2-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc0-0",
+   "name": "Easter Sunday",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc0-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc0-1",
+   "name": "Monday in the Octave of Easter",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc0-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc0-2",
+   "name": "Tuesday in the Octave of Easter",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc0-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc0-3",
+   "name": "Wednesday in the Octave of Easter",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc0-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc0-4",
+   "name": "Thursday in the Octave of Easter",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc0-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc0-5",
+   "name": "Friday in the Octave of Easter",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc0-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc0-6",
+   "name": "Saturday in the Octave of Easter",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc0-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc1-0",
+   "name": "Low Sunday",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc1-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc1-1",
+   "name": "Monday after I Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc1-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc1-2",
+   "name": "Tuesday after I Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc1-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc1-3",
+   "name": "Wednesday after I Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc1-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc1-4",
+   "name": "Thursday after I Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc1-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc1-5",
+   "name": "Friday after I Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc1-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc1-6",
+   "name": "Saturday after I Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc1-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc2-0",
+   "name": "II Sunday after Easter",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc2-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc2-1",
+   "name": "Monday after II Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc2-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc2-2",
+   "name": "Tuesday after II Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc2-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc2-3Feria",
+   "name": "Wednesday after II Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc2-3Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc2-4Feria",
+   "name": "Thursday after II Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc2-4Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc2-5Feria",
+   "name": "Friday after II Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc2-5Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc2-6Feria",
+   "name": "Saturday after II Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc2-6Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc3-0r",
+   "name": "III Sunday after Easter",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc3-0r"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc3-1Feria",
+   "name": "Monday after III Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc3-1Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc3-2Feria",
+   "name": "Tuesday after III Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc3-2Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc3-3Feria",
+   "name": "Wednesday after III Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc3-3Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc3-4",
+   "name": "Thursday after III Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc3-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc3-5",
+   "name": "Friday after III Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc3-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc3-6",
+   "name": "Saturday after III Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc3-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc4-0",
+   "name": "IV Sunday after Easter",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc4-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc4-1",
+   "name": "Monday after IV Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc4-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc4-2",
+   "name": "Tuesday after IV Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc4-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc4-3",
+   "name": "Wednesday after IV Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc4-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc4-4",
+   "name": "Thursday after IV Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc4-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc4-5",
+   "name": "Friday after IV Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc4-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc4-6",
+   "name": "Saturday after IV Sunday after Easter",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc4-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc5-0",
+   "name": "V Sunday after Easter",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc5-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc5-1",
+   "name": "The Minor Litanies – Rogations",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc5-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc5-2",
+   "name": "The Minor Litanies – Rogations",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc5-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc5-3",
+   "name": "Vigil of the Ascension",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc5-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc5-4",
+   "name": "Ascension of the Lord",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc5-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc5-5",
+   "name": "Feria VI after the Ascension",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc5-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc5-6",
+   "name": "Saturday after the Ascension",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc5-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc6-0",
+   "name": "Sunday after the Ascension",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc6-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc6-1",
+   "name": "Feria II after the Ascension",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc6-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc6-2",
+   "name": "Feria III after the Ascension",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc6-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc6-3",
+   "name": "Feria IV after the Ascension",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc6-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc6-4r",
+   "name": "Feria V after the Ascension",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc6-4r"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc6-5",
+   "name": "Feria VI after the Ascension",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc6-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc6-6",
+   "name": "Saturday after the Ascension",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "red",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc6-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc7-0",
+   "name": "Pentecost Sunday",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "red",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc7-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc7-1",
+   "name": "Monday after Pentecost",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "red",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc7-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc7-2",
+   "name": "Tuesday after Pentecost",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "red",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc7-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc7-3",
+   "name": "Ember Wednesday of Pentecost",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "red",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc7-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc7-4",
+   "name": "Thursday after Pentecost",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "red",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc7-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc7-5",
+   "name": "Ember Friday of Pentecost",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "red",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc7-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pasc7-6",
+   "name": "Ember Saturday of Pentecost",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "red",
+   "season": "Easter",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pasc7-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent01-0r",
+   "name": "Trinity Sunday",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent01-0r"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent01-1",
+   "name": "Feria II after I Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent01-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent01-2",
+   "name": "Feria III after I Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent01-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent01-3",
+   "name": "Feria IV after I Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent01-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent01-4",
+   "name": "Corpus Christi",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent01-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent01-5",
+   "name": "Feria V after I Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent01-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent01-6",
+   "name": "Saturday after I Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent01-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent02-0r",
+   "name": "II Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent02-0r"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent02-1",
+   "name": "Feria II after II Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent02-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent02-2",
+   "name": "Feria III after II Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent02-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent02-3",
+   "name": "Feria IV after II Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent02-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent02-4",
+   "name": "Feria V after II Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent02-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent02-5",
+   "name": "Sacred Heart of Jesus",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent02-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent02-6Feria",
+   "name": "Saturday after II Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent02-6Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent03-0r",
+   "name": "III Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent03-0r"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent03-1Feria",
+   "name": "Feria II after III Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent03-1Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent03-2Feria",
+   "name": "Feria III after III Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent03-2Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent03-3Feria",
+   "name": "Feria IV after III Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent03-3Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent03-4Feria",
+   "name": "Feria V after III Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent03-4Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent03-5Feria",
+   "name": "Feria VI after III Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent03-5Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent03-6",
+   "name": "Saturday after III Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent03-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent04-0",
+   "name": "IV Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent04-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent04-1",
+   "name": "Feria II after IV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent04-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent04-2",
+   "name": "Feria III after IV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent04-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent04-3",
+   "name": "Feria IV after IV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent04-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent04-4",
+   "name": "Feria V after IV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent04-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent04-5",
+   "name": "Feria VI after IV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent04-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent04-6",
+   "name": "Saturday after IV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent04-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent05-0",
+   "name": "V Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent05-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent05-1",
+   "name": "Feria II after V Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent05-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent05-2",
+   "name": "Feria III after V Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent05-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent05-3",
+   "name": "Feria IV after V Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent05-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent05-4",
+   "name": "Feria V after V Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent05-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent05-5",
+   "name": "Feria VI after V Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent05-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent05-6",
+   "name": "Saturday after V Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent05-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent06-0",
+   "name": "VI Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent06-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent06-1",
+   "name": "Feria II after VI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent06-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent06-2",
+   "name": "Feria III after VI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent06-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent06-3",
+   "name": "Feria IV after VI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent06-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent06-4",
+   "name": "Feria V after VI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent06-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent06-5",
+   "name": "Feria VI after VI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent06-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent06-6",
+   "name": "Saturday after VI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent06-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent07-0",
+   "name": "VII Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent07-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent07-1",
+   "name": "Feria II after VII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent07-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent07-2",
+   "name": "Feria III after VII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent07-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent07-3",
+   "name": "Feria IV after VII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent07-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent07-4",
+   "name": "Feria V after VII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent07-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent07-5",
+   "name": "Feria VI after VII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent07-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent07-6",
+   "name": "Saturday after VII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent07-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent08-0",
+   "name": "VIII Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent08-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent08-1",
+   "name": "Feria II after VIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent08-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent08-2",
+   "name": "Feria III after VIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent08-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent08-3",
+   "name": "Feria IV after VIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent08-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent08-4",
+   "name": "Feria V after VIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent08-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent08-5",
+   "name": "Feria VI after VIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent08-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent08-6",
+   "name": "Saturday after VIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent08-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent09-0",
+   "name": "IX Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent09-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent09-1",
+   "name": "Feria II after IX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent09-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent09-2",
+   "name": "Feria III after IX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent09-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent09-3",
+   "name": "Feria IV after IX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent09-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent09-4",
+   "name": "Feria V after IX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent09-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent09-5",
+   "name": "Feria VI after IX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent09-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent09-6",
+   "name": "Saturday after IX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent09-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent10-0",
+   "name": "X Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent10-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent10-1",
+   "name": "Feria II after X Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent10-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent10-2",
+   "name": "Feria III after X Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent10-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent10-3",
+   "name": "Feria IV after X Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent10-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent10-4",
+   "name": "Feria V after X Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent10-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent10-5",
+   "name": "Feria VI after X Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent10-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent10-6",
+   "name": "Saturday after X Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent10-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent11-0",
+   "name": "XI Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent11-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent11-1",
+   "name": "Feria II after XI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent11-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent11-2",
+   "name": "Feria III after XI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent11-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent11-3",
+   "name": "Feria IV after XI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent11-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent11-4",
+   "name": "Feria V after XI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent11-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent11-5",
+   "name": "Feria VI after XI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent11-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent11-6",
+   "name": "Saturday after XI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent11-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent12-0",
+   "name": "XII Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent12-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent12-1",
+   "name": "Feria II after XII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent12-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent12-2",
+   "name": "Feria III after XII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent12-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent12-3",
+   "name": "Feria IV after XII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent12-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent12-4",
+   "name": "Feria V after XII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent12-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent12-5",
+   "name": "Feria VI after XII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent12-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent12-6",
+   "name": "Saturday after XII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent12-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent13-0",
+   "name": "XIII Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent13-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent13-1",
+   "name": "Feria II after XIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent13-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent13-2",
+   "name": "Feria III after XIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent13-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent13-3",
+   "name": "Feria IV after XIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent13-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent13-4",
+   "name": "Feria V after XIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent13-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent13-5",
+   "name": "Feria VI after XIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent13-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent13-6",
+   "name": "Saturday after XIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent13-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent14-0",
+   "name": "XIV Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent14-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent14-1",
+   "name": "Feria II after XIV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent14-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent14-2",
+   "name": "Feria III after XIV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent14-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent14-3",
+   "name": "Feria IV after XIV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent14-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent14-4",
+   "name": "Feria V after XIV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent14-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent14-5",
+   "name": "Feria VI after XIV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent14-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent14-6",
+   "name": "Saturday after XIV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent14-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent15-0",
+   "name": "XV Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent15-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent15-1",
+   "name": "Feria II after XV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent15-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent15-2",
+   "name": "Feria III after XV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent15-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent15-3",
+   "name": "Feria IV after XV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent15-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent15-4",
+   "name": "Feria V after XV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent15-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent15-5",
+   "name": "Feria VI after XV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent15-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent15-6",
+   "name": "Saturday after XV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent15-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent16-0",
+   "name": "XVI Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent16-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent16-1",
+   "name": "Feria II after XVI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent16-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent16-2",
+   "name": "Feria III after XVI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent16-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent16-3",
+   "name": "Feria IV after XVI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent16-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent16-4",
+   "name": "Feria V after XVI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent16-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent16-5",
+   "name": "Feria VI after XVI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent16-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent16-6",
+   "name": "Saturday after XVI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent16-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent17-0",
+   "name": "XVII Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent17-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent17-1",
+   "name": "Feria II after XVII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent17-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent17-2",
+   "name": "Feria III after XVII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent17-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent17-3",
+   "name": "Feria IV after XVII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent17-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent17-4",
+   "name": "Feria V after XVII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent17-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent17-5",
+   "name": "Feria VI after XVII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent17-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent17-6",
+   "name": "Saturday after XVII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent17-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent18-0",
+   "name": "XVIII Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent18-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent18-1",
+   "name": "Feria II after XVIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent18-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent18-2",
+   "name": "Feria III after XVIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent18-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent18-3",
+   "name": "Feria IV after XVIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent18-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent18-4",
+   "name": "Feria V after XVIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent18-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent18-5",
+   "name": "Feria VI after XVIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent18-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent18-6",
+   "name": "Saturday after XVIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent18-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent19-0",
+   "name": "XIX Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent19-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent19-1",
+   "name": "Feria II after XIX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent19-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent19-2",
+   "name": "Feria III after XIX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent19-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent19-3",
+   "name": "Feria IV after XIX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent19-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent19-4",
+   "name": "Feria V after XIX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent19-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent19-5",
+   "name": "Feria VI after XIX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent19-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent19-6",
+   "name": "Saturday after XIX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent19-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent20-0",
+   "name": "XX Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent20-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent20-1",
+   "name": "Feria II after XX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent20-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent20-2",
+   "name": "Feria III after XX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent20-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent20-3",
+   "name": "Feria IV after XX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent20-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent20-4",
+   "name": "Feria V after XX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent20-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent20-5",
+   "name": "Feria VI after XX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent20-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent20-6",
+   "name": "Saturday after XX Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent20-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent21-0",
+   "name": "XXI Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent21-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent21-1",
+   "name": "Feria II after XXI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent21-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent21-2",
+   "name": "Feria III after XXI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent21-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent21-3",
+   "name": "Feria IV after XXI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent21-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent21-4",
+   "name": "Feria V after XXI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent21-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent21-5",
+   "name": "Feria VI after XXI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent21-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent21-6",
+   "name": "Saturday after XXI Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent21-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent22-0",
+   "name": "XXII Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent22-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent22-1",
+   "name": "Feria II after XXII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent22-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent22-2",
+   "name": "Feria III after XXII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent22-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent22-3",
+   "name": "Feria IV after XXII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent22-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent22-4",
+   "name": "Feria V after XXII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent22-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent22-5",
+   "name": "Feria VI after XXII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent22-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent22-6",
+   "name": "Saturday after XXII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent22-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent23-0",
+   "name": "XXIII Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent23-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent23-1",
+   "name": "Feria II after XXIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent23-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent23-2",
+   "name": "Feria III after XXIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent23-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent23-3",
+   "name": "Feria IV after XXIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent23-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent23-4",
+   "name": "Feria V after XXIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent23-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent23-5",
+   "name": "Feria VI after XXIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent23-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent23-6",
+   "name": "Saturday after XXIII Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent23-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent24-0",
+   "name": "XXIV Sunday after Pentecost",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent24-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent24-1",
+   "name": "Feria II after XXIV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent24-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent24-2",
+   "name": "Feria III after XXIV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent24-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent24-3",
+   "name": "Feria IV after XXIV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent24-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent24-4",
+   "name": "Feria V after XXIV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent24-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent24-5",
+   "name": "Feria VI after XXIV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent24-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Pent24-6",
+   "name": "Saturday after XXIV Sunday after Pentecost",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "green",
+   "season": "Ordinary Time",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Pent24-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad1-0",
+   "name": "I Sunday of Lent",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad1-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad1-1",
+   "name": "Feria II after the I Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad1-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad1-2",
+   "name": "Feria III after the I Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad1-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad1-3",
+   "name": "Ember Wednesday of Lent",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad1-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad1-4",
+   "name": "Feria V after the I Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad1-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad1-5",
+   "name": "Ember Friday of Lent",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad1-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad1-6",
+   "name": "Ember Saturday of Lent",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad1-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad2-0",
+   "name": "II Sunday of Lent",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad2-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad2-1",
+   "name": "Feria II after the II Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad2-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad2-2",
+   "name": "Feria III after the II Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad2-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad2-3",
+   "name": "Feria IV after the II Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad2-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad2-4",
+   "name": "Feria V after the II Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad2-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad2-5",
+   "name": "Feria VI after the II Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad2-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad2-6",
+   "name": "Saturday after the II Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad2-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad3-0",
+   "name": "III Sunday of Lent",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad3-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad3-1",
+   "name": "Feria II after the III Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad3-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad3-2",
+   "name": "Feria III after the III Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad3-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad3-3",
+   "name": "Feria IV after the III Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad3-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad3-4",
+   "name": "Feria V after the III Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad3-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad3-5",
+   "name": "Feria VI after the III Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad3-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad3-6",
+   "name": "Saturday after the III Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad3-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad4-0",
+   "name": "IV Sunday of Lent",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "rose",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad4-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad4-1",
+   "name": "Feria II after the IV Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad4-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad4-2",
+   "name": "Feria III after the IV Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad4-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad4-3",
+   "name": "Feria IV after the IV Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad4-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad4-4",
+   "name": "Feria V after the IV Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad4-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad4-5",
+   "name": "Feria VI after the IV Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad4-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad4-6",
+   "name": "Saturday after the IV Sunday of Lent",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad4-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad5-0",
+   "name": "Passion Sunday",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad5-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad5-1",
+   "name": "Feria II of Passion Week",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad5-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad5-2",
+   "name": "Feria III of Passion Week",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad5-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad5-3",
+   "name": "Feria IV of Passion Week",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad5-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad5-4",
+   "name": "Feria V of Passion Week",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad5-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad5-5Feria",
+   "name": "Feria VI of Passion Week",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad5-5Feria"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad5-5Feriac",
+   "name": "For Our Lady of the Seven Sorrows",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad5-5Feriac"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad5-6",
+   "name": "Saturday of Passion Week",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad5-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad6-0r",
+   "name": "Palm Sunday",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "red",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad6-0r"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad6-1",
+   "name": "Feria II of Holy Week",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad6-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad6-2",
+   "name": "Feria III of Holy Week",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad6-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad6-3",
+   "name": "Feria IV of Holy Week",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad6-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad6-4r",
+   "name": "Holy Thursday",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "white",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad6-4r"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad6-5r",
+   "name": "Good Friday",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "black",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad6-5r"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quad6-6r",
+   "name": "Holy Saturday",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": "Lent",
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quad6-6r"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp1-0",
+   "name": "Septuagesima Sunday",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp1-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp1-1",
+   "name": "Feria II after Septuagesima",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp1-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp1-2",
+   "name": "Feria III after Septuagesima",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp1-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp1-3",
+   "name": "Feria IV after Septuagesima",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp1-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp1-4",
+   "name": "Feria V after Septuagesima",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp1-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp1-5",
+   "name": "Feria VI after Septuagesima",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp1-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp1-6",
+   "name": "Saturday after Septuagesima",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp1-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp2-0",
+   "name": "Sexagesima Sunday",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp2-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp2-1",
+   "name": "Feria II after Sexagesima",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp2-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp2-2",
+   "name": "Feria III after Sexagesimæ",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp2-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp2-3",
+   "name": "Feria IV after Sexagesimæ",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp2-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp2-4",
+   "name": "Feria V after Sexagesimæ",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp2-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp2-5",
+   "name": "Feria VI after Sexagesimæ",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp2-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp2-6",
+   "name": "Saturday after Sexagesimæ",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp2-6"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp3-0",
+   "name": "Quinquagesima Sunday",
+   "rank": "class_2",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp3-0"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp3-1",
+   "name": "Feria II after Quinquagesima",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp3-1"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp3-2",
+   "name": "Feria III after Quinquagesima",
+   "rank": "class_4",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp3-2"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp3-3",
+   "name": "Ash Wednesday",
+   "rank": "class_1",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp3-3"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp3-4",
+   "name": "Feria V after Ash Wednesday",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp3-4"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp3-5",
+   "name": "Feria VI after Ash Wednesday",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp3-5"
+   ],
+   "date_offset_days": 0
+  },
+  {
+   "key": "tempora:Quadp3-6",
+   "name": "Saturday after Ash Wednesday",
+   "rank": "class_3",
+   "is_proper_of_time": true,
+   "colour": "violet",
+   "season": null,
+   "date_rule": "tempora_1962",
+   "date_rule_args": [
+    "Quadp3-6"
+   ],
+   "date_offset_days": 0
+  }
+ ]
+}
