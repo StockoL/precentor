@@ -1,6 +1,8 @@
 from django.core.validators import RegexValidator
 from django.db import models
 
+from ordo.models import NATIONAL_CALENDAR_CHOICES
+
 # The colour is written into an inline style on the music list, so it
 # must be exactly a hex colour: autoescaping stops HTML, not extra CSS.
 validate_hex_colour = RegexValidator(
@@ -30,6 +32,14 @@ class SiteConfig(models.Model):
         default="#8b1a2b",
         validators=[validate_hex_colour],
         help_text="Used for services without an occasion colour.",
+    )
+    national_calendar = models.CharField(
+        "calendar",
+        max_length=20,
+        choices=NATIONAL_CALENDAR_CHOICES,
+        default="general_roman",
+        help_text="Adds your country's own days, and its changes of date and rank, "
+        "to the general calendar when occasions are suggested.",
     )
     layout_style = models.CharField(
         "music list layout",

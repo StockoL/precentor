@@ -10,6 +10,7 @@
     <form method="post" enctype="multipart/form-data" class="flow">
         {% csrf_token %}
         <p>{{ form.church_name.label_tag }} {{ form.church_name }} {{ form.church_name.errors }}</p>
+        <div>{{ form.national_calendar.as_field_group }}</div>
 
         <div class="crest-crop" data-target="{{ form.crest_image.id_for_label }}"
              data-target-width="1600" data-target-height="400">

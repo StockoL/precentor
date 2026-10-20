@@ -10,6 +10,7 @@ class SiteConfigForm(forms.ModelForm):
         model = SiteConfig
         fields = [  # noqa
             "church_name",
+            "national_calendar",
             "crest_image",
             "house_accent_colour",
             "layout_style",

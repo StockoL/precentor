@@ -26,7 +26,7 @@ class SiteConfigSingletonTests(TestCase):
 class SiteConfigFormLabelTests(TestCase):
     def test_settings_form_labels_read_naturally(self):
         form = str(SiteConfigForm())
-        for label in ("Crest:", "Accent colour:", "Music list layout:",
+        for label in ("Calendar:", "Crest:", "Accent colour:", "Music list layout:",
                       "Show hymns and psalm on the music list:"):
             with self.subTest(label=label):
                 self.assertIn(f"{label}</label>", form)
@@ -39,7 +39,7 @@ class AccentColourTests(TestCase):
     def form(self, colour):
         return SiteConfigForm(data={
             "house_accent_colour": colour,
-            "layout_style": "columns",
+            "layout_style": "columns", "national_calendar": "general_roman",
         })
 
     def test_six_digit_hex_is_accepted(self):
@@ -109,7 +109,7 @@ class CrestProcessingTests(TestCase):
 
     def test_form_runs_uploads_through_the_processing(self):
         form = SiteConfigForm(
-            data={"house_accent_colour": "#8b1a2b", "layout_style": "columns"},
+            data={"house_accent_colour": "#8b1a2b", "layout_style": "columns", "national_calendar": "general_roman"},
             files={"crest_image": self.upload((1000, 1000))},
         )
         self.assertTrue(form.is_valid(), form.errors)
@@ -137,7 +137,7 @@ class SettingsAccessTests(TestCase):
         self.assertEqual(self.client.get(self.url).status_code, 403)
         response = self.client.post(self.url, {
             "church_name": "Changed", "house_accent_colour": "#000000",
-            "layout_style": "columns",
+            "layout_style": "columns", "national_calendar": "general_roman",
         })
         self.assertEqual(response.status_code, 403)
         self.assertEqual(SiteConfig.get_solo().church_name, "")
@@ -147,10 +147,29 @@ class SettingsAccessTests(TestCase):
         self.assertEqual(self.client.get(self.url).status_code, 200)
         response = self.client.post(self.url, {
             "church_name": "St Mary's", "house_accent_colour": "#123456",
-            "layout_style": "simple",
+            "layout_style": "simple", "national_calendar": "england",
         })
         self.assertRedirects(response, self.url)
         config = SiteConfig.get_solo()
         self.assertEqual(config.church_name, "St Mary's")
         self.assertEqual(config.house_accent_colour, "#123456")
+        self.assertEqual(config.national_calendar, "england")
         self.assertFalse(config.show_hymns_psalm)
+
+
+class NationalCalendarSettingTests(TestCase):
+    def test_defaults_to_the_general_calendar(self):
+        self.assertEqual(SiteConfig.get_solo().national_calendar, "general_roman")
+
+    def test_settings_page_offers_each_calendar_with_its_help_text(self):
+        from django.contrib.auth import get_user_model
+
+        user = get_user_model().objects.create_superuser(username="admin", password="testpass123")
+        self.client.force_login(user)
+        response = self.client.get("/settings/")
+        for label in ("General Roman Calendar", "England", "Wales"):
+            with self.subTest(label=label):
+                self.assertContains(response, f">{label}</option>")
+        # as_field_group links the help text to the select.
+        self.assertContains(response, 'aria-describedby="id_national_calendar_helptext"')
+        self.assertContains(response, "Adds your country's own days")
