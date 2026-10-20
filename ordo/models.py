@@ -10,6 +10,7 @@ COLOUR_CHOICES = [
     ("green", "Green"),
     ("white", "White/Gold"),
     ("rose", "Rose"),
+    ("black", "Black"),
 ]
 
 CALENDAR_USE_CHOICES = [

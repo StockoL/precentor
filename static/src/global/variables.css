@@ -50,6 +50,7 @@
   --colors-liturgical-green: #2f6b3a;
   --colors-liturgical-white: #836a21;
   --colors-liturgical-rose: #a34365;
+  --colors-liturgical-black: #2b2b2b;
 
   /* -- TYPOGRAPHY ---------------------------------------------------------- */
   --typography-step--2: clamp(0.7813rem, 0.7936rem - 0.0154vw, 0.7901rem);
@@ -129,6 +130,7 @@
   --colors-liturgical-green: #4ade80;
   --colors-liturgical-white: #fbbf24;
   --colors-liturgical-rose: #f0abfc;
+  --colors-liturgical-black: #b0b0b0;
   }
 }
 
@@ -163,4 +165,5 @@
   --colors-liturgical-green: #4ade80;
   --colors-liturgical-white: #fbbf24;
   --colors-liturgical-rose: #f0abfc;
+  --colors-liturgical-black: #b0b0b0;
 }

@@ -1,5 +1,5 @@
 {
-  "_comment_colors": "PROCESS: neutral-* is the raw grayscale ramp. Semantic tokens (surface-*, text-*, border-*) alias into it via var(--colors-neutral-N). Status tokens (success/warning/danger/info) each ship a base + -bg/-border/-text trio for blocks like alert and badge. inactive-* is the same trio for a state that has not begun (e.g. a service not started); its text uses neutral-600, not text-muted, because text-muted on its background is 4.40:1, under AA for small text. liturgical-* maps directly onto ordo.LiturgicalOccasion.colour's five choices (violet/red/green/white/rose) — the template sets a per-page --accent custom property to one of these five values when a Service/Occasion is in context; pages with no occasion in view fall back to action-primary.",
+  "_comment_colors": "PROCESS: neutral-* is the raw grayscale ramp. Semantic tokens (surface-*, text-*, border-*) alias into it via var(--colors-neutral-N). Status tokens (success/warning/danger/info) each ship a base + -bg/-border/-text trio for blocks like alert and badge. inactive-* is the same trio for a state that has not begun (e.g. a service not started); its text uses neutral-600, not text-muted, because text-muted on its background is 4.40:1, under AA for small text. liturgical-* maps directly onto ordo.LiturgicalOccasion.colour's six choices (violet/red/green/white/rose/black; black is for the 1962 calendar, and is a light grey in dark mode so it stays visible) — the template sets a per-page --accent custom property to one of these six values when a Service/Occasion is in context; pages with no occasion in view fall back to action-primary.",
   "colors": {
     "neutral-0": "#ffffff",
     "neutral-50": "#fafafa",
@@ -53,7 +53,8 @@
     "liturgical-red": "#8b1a2b",
     "liturgical-green": "#2f6b3a",
     "liturgical-white": "#836a21",
-    "liturgical-rose": "#a34365"
+    "liturgical-rose": "#a34365",
+    "liturgical-black": "#2b2b2b"
   },
   "_comment_colorsDark": "Dark-mode overrides for the tokens above that actually need to change — same key names as 'colors' (surface-base, text-base, etc.), different values only. build-tokens.js emits these into two places: a @media(prefers-color-scheme:dark) block scoped to :root:not([data-theme]) (automatic, only when no manual choice has been made) and an explicit :root[data-theme=\"dark\"] block (wins regardless of OS setting, set by the theme toggle and remembered in localStorage). action-primary IS overridden: besides button backgrounds it colours nav hover text, focus rings and the accent fallback directly on the page, and the light value (#8b1a2b) is only 1.86:1 against the dark surface. The dark value (#e8798a) is 6.14:1 on surface-base; because it is light, text-on-action flips to the dark surface colour, also 6.14:1 on it. surface-sunken is intentionally LIGHTER than surface-base in dark mode (the reverse of their light-mode relationship, where sunken is slightly darker than base) — this follows the standard dark-UI convention that elevation reads as lighter, not darker, once the base surface is already dark.",
   "colorsDark": {
@@ -92,7 +93,8 @@
     "liturgical-red": "#f87171",
     "liturgical-green": "#4ade80",
     "liturgical-white": "#fbbf24",
-    "liturgical-rose": "#f0abfc"
+    "liturgical-rose": "#f0abfc",
+    "liturgical-black": "#b0b0b0"
   },
   "_comment_spacing": "Utopia space scale (utopia.fyi): viewport 360px to 1280px, base 16px to 18px (the same base as the type scale, so padding grows with the text), multipliers 0.25 to 6. Includes one-up pairs for fluid gutters between two named steps (used by Composition-level layout primitives — stack/cluster gaps, etc.).",
   "spacing": {

@@ -168,3 +168,20 @@ class OccasionLookupViewTests(TestCase):
             {"date": "2026-12-25", "calendar_use": "current"},
         )
         self.assertEqual(response.status_code, 302)
+
+
+class LiturgicalColourTokenTests(TestCase):
+    def test_every_colour_choice_has_a_token_in_both_themes(self):
+        # Templates build var(--colors-liturgical-<colour>) from the stored
+        # value, so a choice without a token would quietly lose its colour.
+        from pathlib import Path
+
+        from django.conf import settings
+
+        from .models import COLOUR_CHOICES
+
+        css = (Path(settings.BASE_DIR) / "static/src/global/variables.css").read_text(encoding="utf-8")
+        for value, _ in COLOUR_CHOICES:
+            with self.subTest(colour=value):
+                # Light, dark by system setting, and dark by choice.
+                self.assertEqual(css.count(f"--colors-liturgical-{value}:"), 3)
