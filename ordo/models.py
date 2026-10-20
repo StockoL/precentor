@@ -2,7 +2,7 @@ from datetime import date, timedelta
 
 from django.db import models
 
-from .utils import calculate_easter_sunday
+from .dates import NATIONAL_SETTINGS, YearDates, apply_transfers
 
 COLOUR_CHOICES = [
     ("violet", "Violet"),
@@ -104,10 +104,13 @@ class LiturgicalOccasion(models.Model):
     precedence = models.CharField(
         max_length=4, choices=OF_PRECEDENCE_CHOICES, blank=True
     )
-    # A named date rule and its arguments, e.g. "ordinary_time_sunday"
-    # with [5]; blank means the fixed month and day, or the Easter offset.
+    # A named date rule from ordo/dates.py, its arguments and any days
+    # added: the 5th Sunday of Ordinary Time is "date_of_ordinary_time"
+    # with [0, 5]. Blank means the fixed month and day, or the Easter
+    # offset of an occasion entered by hand.
     date_rule = models.CharField(max_length=50, blank=True)
     date_rule_args = models.JSONField(default=list, blank=True)
+    date_offset_days = models.SmallIntegerField(default=0)
     # Moves the day makes in some years, e.g. off a Sunday or out of
     # Holy Week; see docs/calendar_plan.md, section 3.
     transfers = models.JSONField(default=list, blank=True)
@@ -139,12 +142,26 @@ class LiturgicalOccasion(models.Model):
     def __str__(self):
         return self.name
 
-    def date_for_year(self, year):
-        """Return this occasion's actual date in a given calendar year."""
-        if self.is_moveable:
-            easter = calculate_easter_sunday(year)
-            return easter + timedelta(days=self.easter_offset_days)
-        return date(year, self.fixed_month, self.fixed_day)
+    def date_for_year(self, year, national_calendar=None):
+        """
+        This occasion's date in a civil year, or None if it doesn't occur
+        that year. Some rules depend on the national calendar (Corpus
+        Christi on a Sunday, for one); without one given, the occasion's
+        own calendar's settings apply.
+        """
+        settings = NATIONAL_SETTINGS[national_calendar or self.calendar]
+        return self.date_in(YearDates(year, settings))
+
+    def date_in(self, dates):
+        """This occasion's date in a prepared YearDates, which a caller
+        working out a whole year can share across occasions."""
+        if self.date_rule:
+            day = dates.date_for(self.date_rule, self.date_rule_args, self.date_offset_days)
+        elif self.is_moveable:
+            day = dates.easter_sunday() + timedelta(days=self.easter_offset_days)
+        else:
+            day = date(dates.year, self.fixed_month, self.fixed_day)
+        return apply_transfers(day, self.transfers, dates)
 
 
 def occasion_for_date(target_date, calendar_use):
