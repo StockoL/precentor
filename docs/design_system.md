@@ -306,6 +306,20 @@ Block styling wholesale:
   being viewed carries `aria-current="page"`, which screen readers
   announce and the stylesheet shows in bold, so one attribute does
   both jobs.
+- Service headings use `step-1` on screen; at the app's usual `h2`
+  size they wrapped onto four lines in an 18rem column.
+- Each entry is a size container (`container-type: inline-size`).
+  Below 26rem the occasion, hymns and psalm go under the pieces
+  instead of beside them, which on screen means inside a newspaper
+  column. It's a container query, not a media query, because what
+  matters is the column's width, not the window's; wide entries,
+  print included, keep them side by side.
+- Print uses fixed sizes (11pt body, 14pt headings, 18pt title), since
+  the fluid screen scale is worked out from the window width and
+  means nothing on paper. It keeps Garamond throughout and resets the
+  colour tokens the list uses to print-safe values, so the paper
+  looks the same whichever theme the person printing has chosen. I
+  checked it by printing to PDF in both themes.
 - The page uses plain `.center` (not `.center[data-intrinsic]`, unlike
   `login.html`) — a document should stay left-aligned internally, only
   centred as a whole block on the page, unlike a small centred form
@@ -400,10 +414,12 @@ Other form details:
 - Groups get more space after them than the fields inside them get,
   so each group reads as separate.
 - Checkboxes and radios keep their natural size, instead of being
-  stretched to the full width like text inputs. A checkbox in Django's
-  `as_p` output comes after its label on a line of its own; `form.css`
-  finds those paragraphs with `:has()` and lays them out as a reversed
-  row, so the box sits before its label on the same line.
+  stretched to the full width like text inputs. A paragraph holding a
+  checkbox is found with `:has()` and laid out as a row, with the box
+  given `order: -1`, so it sits before its label on the same line
+  whichever order the HTML has. (A first attempt used `row-reverse`,
+  which only worked for Django's label-first `as_p`; the hand-written
+  Settings form showed it up.) Colour pickers are swatch-sized.
 - Django marks a field with errors `aria-invalid="true"`, which screen
   readers announce; `form.css` gives the same fields a red border.
 - Help text and the shared control height are described under
