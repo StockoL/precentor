@@ -105,3 +105,40 @@ class RomcalReferenceTests(TestCase):
     def test_holy_thursday_lists_the_lords_supper_first(self):
         days = self.precentor_days("general_roman")
         self.assertEqual(days["2026-04-02"], ["thursday_of_the_lords_supper", "holy_thursday"])
+
+
+class MissalemeumReferenceTests(TestCase):
+    """The 1962 calendar against Missalemeum's, 2020 to 2040: the
+    celebration and its commemorations, first to third class."""
+
+    @classmethod
+    def setUpTestData(cls):
+        load_calendar_files()
+
+    def test_every_day_agrees_except_the_known_differences(self):
+        from .calendar_1962 import resolve_year_1962
+        from .calendar_data import MISSALEMEUM_DIR
+
+        path = MISSALEMEUM_DIR / "reference" / "general_1962.json"
+        theirs = json.loads(path.read_text(encoding="utf-8"))["days"]
+        ours = {}
+        for year in range(2020, 2041):
+            for day, occasions in resolve_year_1962(year).items():
+                ours[day.isoformat()] = [o.key for o in occasions]
+        differences = {}
+        for day in sorted(set(ours) | set(theirs)):
+            if ours.get(day, []) != theirs.get(day, []):
+                differences[day] = (ours.get(day, []), theirs.get(day, []))
+        self.assertEqual(differences, KNOWN_1962_DIFFERENCES)
+
+
+# {day: (Precentor's list, Missalemeum's)}. Both are first-class Sundays
+# whose Missalemeum IDs have two colour letters (rose and violet on
+# Laetare, red and violet on Palm Sunday), which its "first class"
+# pattern doesn't match; the day then falls through to a rule that keeps
+# the third-class saint in the celebration. Under the 1960 rubrics a
+# third-class feast on a first-class Sunday is left out, as here.
+KNOWN_1962_DIFFERENCES = {
+    "2030-04-14": (["tempora:Quad6-0r"], ["tempora:Quad6-0r", "sancti:04-14"]),
+    "2035-03-04": (["tempora:Quad4-0"], ["tempora:Quad4-0", "sancti:03-04"]),
+}
