@@ -8,8 +8,10 @@ of the rules below in `date_rule`, with any arguments in
 (the Thursday after Ash Wednesday is `ash_wednesday` plus 1). Transfers
 then move a day in the years it would clash with something greater.
 
-The rules are ported from romcal (MIT; see docs/calendar_plan.md), and
-their names are romcal's in snake case, so its data converts without a
+The rules are ported from romcal's src/utils/dates.ts (copyright 2018
+Julian Pereira, MIT licence; the notice is in ROMCAL_LICENSE.txt beside
+this file, and docs/acknowledgements.md says how it was used). Their
+names are romcal's in snake case, so its data converts without a
 hand-kept mapping. As in romcal, a day of the week given as an argument
 counts Sunday as 0.
 
