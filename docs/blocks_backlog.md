@@ -1,10 +1,10 @@
-# Precentor — Blocks Backlog
+# Precentor: Blocks Backlog
 
 Blocks identified while applying global styles and Compositions across
-every page (deliberately done _before_ any Block is built, so this list
-reflects real, observed repetition rather than guessed-at components).
-Each entry notes where it was spotted and why it's a Block rather than
-a one-off.
+every page. I did that _before_ building any Block, so this list
+reflects repetition I'd actually seen, not components I guessed at.
+Each entry notes where it was spotted and why it's a Block, not a
+one-off.
 
 ## Built
 
@@ -28,17 +28,13 @@ a one-off.
 | Term card                           | `blocks/term-card.css`    | A term on the Terms page: phase, timing, status bar, next service. A stretched link makes the whole card clickable.                                                                               |
 | Toast                               | `blocks/toast.css`        | Success and error messages after AJAX actions, and server messages after a reload.                                                                                                                |
 | Role block                          | `blocks/role-block.css`   | One slot on the service page (the CSS keeps the model's name).                                                                                                                                     |
-| Term summary                        | `blocks/term-summary.css` |                                                                                                                                                                                                      |
+| Term summary                        | `blocks/term-summary.css` | The "3 of 5 services complete" line for a term, in the success colour once every service is complete. |
 | Liturgical accent                   | `blocks/liturgical-accent.css` | Occasion eyebrow, accent rule and dot, reading `--accent`; see `design_system.md`.                                                                                                            |
 | Music list                          | `blocks/music-list.css`   | The printable list, including the Public / Draft toggle and the unlayered print rules.                                                                                                            |
 | Score combobox                      | `blocks/score-combobox.css` | The type-to-search score picker over a native `<select>`.                                                                                                                                       |
 | Crest crop                          | `blocks/crest-crop.css`   | The crop frame for the crest upload on Settings.                                                                                                                                                   |
 | `[hidden]`                          | `utilities/utilities.css` | Makes the `hidden` attribute win over any block that sets `display`.                                                                                                                               |
-| `.visually-hidden`                  | `utilities/utilities.css` | The rest of the original "action link group" utility (`.text-danger`) was superseded by the `.btn-primary`/`.btn-ghost`/`.btn-danger` variants in `blocks/button.css` — a deliberate button choice reads better than a recoloured link. |
-
-## Not built as separate Blocks (covered by existing work)
-
-- **Filter bar** — `form.css`'s general `input`/`select` styling already covers the filter form's controls; no dedicated Block needed.
+| `.visually-hidden`                  | `utilities/utilities.css` | The rest of the original "action link group" utility (`.text-danger`) was superseded by the `.btn-primary`/`.btn-ghost`/`.btn-danger` variants in `blocks/button.css`, since a proper button reads better than a recoloured link. |
 
 ## Outstanding
 
