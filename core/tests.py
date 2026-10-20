@@ -114,3 +114,43 @@ class CrestProcessingTests(TestCase):
         )
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.cleaned_data["crest_image"].name, "crest.jpg")
+
+
+class SettingsAccessTests(TestCase):
+    url = "/settings/"
+
+    def make_user(self, name, conductor=False):
+        from django.contrib.auth import get_user_model
+        from django.contrib.auth.models import Group
+
+        user = get_user_model().objects.create_user(username=name, password="testpass123")
+        if conductor:
+            user.groups.add(Group.objects.get_or_create(name="Conductor")[0])
+        return user
+
+    def test_visitor_is_sent_to_log_in(self):
+        response = self.client.get(self.url)
+        self.assertRedirects(response, f"/accounts/login/?next={self.url}")
+
+    def test_librarian_is_refused(self):
+        self.client.force_login(self.make_user("librarian"))
+        self.assertEqual(self.client.get(self.url).status_code, 403)
+        response = self.client.post(self.url, {
+            "church_name": "Changed", "house_accent_colour": "#000000",
+            "layout_style": "columns",
+        })
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(SiteConfig.get_solo().church_name, "")
+
+    def test_conductor_can_change_the_settings(self):
+        self.client.force_login(self.make_user("conductor", conductor=True))
+        self.assertEqual(self.client.get(self.url).status_code, 200)
+        response = self.client.post(self.url, {
+            "church_name": "St Mary's", "house_accent_colour": "#123456",
+            "layout_style": "simple",
+        })
+        self.assertRedirects(response, self.url)
+        config = SiteConfig.get_solo()
+        self.assertEqual(config.church_name, "St Mary's")
+        self.assertEqual(config.house_accent_colour, "#123456")
+        self.assertFalse(config.show_hymns_psalm)
