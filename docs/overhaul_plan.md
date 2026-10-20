@@ -219,8 +219,8 @@ Progress:
 
 ### Phase 5: performance and robustness (about half a day)
 
-1. Prefetch status data for the term list, with `assertNumQueries` tests so it stays fixed.
-2. One shared score list for the comboboxes instead of one `<select>` per role.
+1. [x] Prefetch status data for the term list, with `assertNumQueries` tests so it stays fixed. Done during Phase 4.
+2. [x] One shared score list for the comboboxes instead of one `<select>` per role (`db66830` to `1eb85b8`). The ranking moved to `Service.suggested_scores()`; the service page sends the list once as JSON for every slot's search box; without JavaScript each slot links to a page with one `<select>` (decided 20 Oct 2026). Also found: the status badge reloaded every slot, so the service page now prefetches them and runs a fixed 12 queries however many slots it has.
 3. Per-page scripts via `{% block extra_js %}`; move the print handler out of the template.
 4. Validate `house_accent_colour` as hex.
 
