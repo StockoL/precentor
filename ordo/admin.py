@@ -5,9 +5,9 @@ from .models import LiturgicalOccasion, LiturgicalSeason, UseType
 
 @admin.register(LiturgicalOccasion)
 class LiturgicalOccasionAdmin(admin.ModelAdmin):
-    list_display = ["name", "calendar_use", "season", "colour", "is_moveable"]  # noqa
-    list_filter = ["calendar_use", "season", "colour", "is_moveable"]  # noqa
-    search_fields = ["name"]  # noqa
+    list_display = ["name", "calendar_use", "calendar", "rank", "precedence", "colour", "season"]  # noqa
+    list_filter = ["calendar_use", "calendar", "rank", "season", "colour"]  # noqa
+    search_fields = ["name", "key"]  # noqa
 
 
 @admin.register(LiturgicalSeason)
