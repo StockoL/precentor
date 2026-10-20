@@ -856,6 +856,13 @@ class MusicListTests(TestCase):
         )
         self.score = Score.objects.create(title="Test Anthem", composer_surname="Test Composer")
 
+    def test_page_sends_no_html_comments(self):
+        TermMarker.objects.create(term=self.term, date=date(2026, 1, 20), text="Half term")
+        response = self.client.get(f"/terms/{self.term.pk}/music-list/")
+        self.assertContains(response, "Half term")
+        self.assertContains(response, "Sung Mass")
+        self.assertNotContains(response, "<!--")
+
     def test_print_button_has_no_inline_handler(self):
         response = self.client.get(f"/terms/{self.term.pk}/music-list/")
         self.assertNotContains(response, "onclick")
