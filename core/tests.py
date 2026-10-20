@@ -1,6 +1,26 @@
 from django.test import TestCase
 
 from .forms import SiteConfigForm
+from .models import SiteConfig
+
+
+class SiteConfigSingletonTests(TestCase):
+    def test_get_solo_creates_the_row_with_defaults(self):
+        config = SiteConfig.get_solo()
+        self.assertEqual(config.pk, 1)
+        self.assertEqual(config.house_accent_colour, "#8b1a2b")
+        self.assertEqual(SiteConfig.objects.count(), 1)
+
+    def test_saving_a_new_object_overwrites_the_one_row(self):
+        SiteConfig(church_name="St Mary's").save()
+        SiteConfig(church_name="St Anne's").save()
+        self.assertEqual(SiteConfig.objects.count(), 1)
+        self.assertEqual(SiteConfig.get_solo().church_name, "St Anne's")
+
+    def test_delete_leaves_the_row_in_place(self):
+        config = SiteConfig.get_solo()
+        config.delete()
+        self.assertTrue(SiteConfig.objects.filter(pk=1).exists())
 
 
 class SiteConfigFormLabelTests(TestCase):
