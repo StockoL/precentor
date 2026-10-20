@@ -216,6 +216,8 @@ class LiturgicalOccasion(models.Model):
     date_rule_args = models.JSONField(default=list, blank=True)  # e.g. [0, 5]
     date_offset_days = models.SmallIntegerField(default=0)
     transfers = models.JSONField(default=list, blank=True)
+    is_proper_of_time = models.BooleanField(default=False)
+    shares_with_memorials = models.BooleanField(default=False)
     is_moveable = models.BooleanField(default=False)
     fixed_month = models.PositiveSmallIntegerField(blank=True, null=True)
     fixed_day = models.PositiveSmallIntegerField(blank=True, null=True)
@@ -293,7 +295,17 @@ calendars, from 2020 to 2040: 14,448 dates, eight different. All eight
 are moves "to the day after Divine Mercy Sunday" or "to the day before
 Palm Sunday", where romcal counts the day from the original date (so
 St George in 2022 lands on Divine Mercy Sunday itself, still inside
-the Easter Octave). Precentor follows the rule as the data states it. The design, its sources and the order of work are in
+the Easter Octave). Precentor follows the rule as the data states it.
+
+**Precedence (`ordo/calendar.py`):** `occasion_for_date()` now returns
+the day's celebration first, then anything kept alongside it, after
+working out the whole year: impeded days are left out and an impeded
+solemnity moves. Two flags support it. `is_proper_of_time` puts the
+seasons ahead of a saint's day of the same rank, and
+`shares_with_memorials` marks the one memorial (the Immaculate Heart
+of Mary) that keeps another memorial on its day.
+
+The design, its sources and the order of work are in
 [`calendar_plan.md`](calendar_plan.md).
 
 **Calendar use, and the reverse lookup:** `calendar_use` separates the

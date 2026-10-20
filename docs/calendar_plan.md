@@ -113,7 +113,8 @@ A new module, `ordo/calendar.py`, works out a whole year at a time:
      impeded moves to the nearest free day; a feast or memorial that's
      impeded is left out that year; a Sunday in Ordinary Time gives
      way to a feast of the Lord or a solemnity, but a Sunday of
-     Advent, Lent or Easter gives way to nothing.
+     Advent, Lent or Easter gives way to nothing. Built: see "The
+     Ordinary Form engine, as built" below.
    - **1962** (the rubrics of the 1960 Code): classes I to IV, where a
      Sunday of the first class beats any feast, a Sunday of the second
      class gives way only to feasts of the first class and feasts of
@@ -127,8 +128,56 @@ A new module, `ordo/calendar.py`, works out a whole year at a time:
 `occasion_for_date()` keeps its name and returns the same kind of
 list, now in that order. The service form already offers the first
 match as the occasion and the rest as additional occasions, so the
-suggestion becomes "this is the day, and this is also kept". The year
-is cached, so a lookup doesn't recompute 300 dates each time.
+suggestion becomes "this is the day, and this is also kept".
+
+### The Ordinary Form engine, as built
+
+`ordo/calendar.py` sorts each day by the Table of Liturgical Days: by
+level, then by the letter within it, then the Proper of Time ahead of
+a saint's day of the same rank (the Sacred Heart ahead of St John the
+Baptist in 2022). The first is the day's celebration. Kept alongside
+it:
+
+- on a privileged weekday (Lent, 17 to 24 December, the Christmas
+  Octave), any obligatory memorial, which becomes optional;
+- on a memorial that shares (only the Immaculate Heart of Mary),
+  another memorial; otherwise the first of two memorials prevails, as
+  Mary, Mother of the Church does by the 2018 notification on it;
+- on the first day of the Triduum, Thursday of Holy Week, since the
+  day is Lent until the evening Mass of the Lord's Supper;
+- nothing in Holy Week, where no memorial is kept (GIRM 355a). I check
+  this by date, because romcal's data ranks Monday to Wednesday of
+  Holy Week as privileged weekdays.
+
+A solemnity that's impeded, and that has no transfer of its own in
+the data, moves to the next day not taken by a day of levels 1 to 8.
+Anything else impeded is left out for the year. Occasions entered by
+hand have no precedence; they're listed after the resolved days, so
+they always appear.
+
+A lookup works out the whole year each time, in one query; at about
+250 occasions this is quick, so there's no cache to go stale when an
+occasion is edited.
+
+**Checked against romcal.** I compared the engine with romcal's
+resolved calendars for every day from 2020 to 2040, in all three
+calendars: about 12,400 days. They differ on 91, in four ways. In the
+first, the order is my choice; in the other three, Precentor follows
+the norms and romcal doesn't:
+
+| Difference | Days | Example |
+| --- | --- | --- |
+| romcal lists Holy Thursday's Lent weekday first; Precentor lists the Lord's Supper first, the Mass a choir sings | 63 | every year |
+| romcal drops an impeded solemnity; Precentor moves it (General Norms, no. 60) | 13 | St George on Monday 24 April 2023; St David on 2 March 2026 in Wales; St John the Baptist on 25 June 2033 |
+| romcal sorts a day that may share above everything, so a memorial beats a solemnity or feast | 7 | the Immaculate Heart over SS Peter and Paul on 29 June 2030 |
+| romcal's transfer bug from step 2 | 8 | St Joseph on 17 March 2035; St George on Monday 25 April 2022 |
+
+One known difference from what actually happened: in 2022 the
+Nativity of St John the Baptist, impeded by the Sacred Heart, was
+moved back to Thursday 23 June by a particular decision of the Holy
+See. The general rule moves it forward, to 25 June, which is what
+Precentor shows. A decision of that kind can't be derived from the
+norms, so a conductor would pick the occasion by hand that year.
 
 ## 5. What goes in
 

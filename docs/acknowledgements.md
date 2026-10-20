@@ -48,9 +48,18 @@ How I used it:
 - **National settings.** Which feasts move to a Sunday in England and
   Wales (Corpus Christi, and Epiphany when 6 January is a Saturday or a
   Monday) come from romcal's calendar settings for those countries.
+- **Precedence.** [`ordo/calendar.py`](../ordo/calendar.py) follows
+  romcal's way of deciding which celebration a day keeps (its
+  `generateCalendar`), with three changes: an impeded solemnity moves
+  instead of being dropped, a memorial is never kept in Holy Week, and
+  a day that may share with another memorial isn't sorted above
+  higher-ranking days.
 - **Checking.** I compared Precentor's dates with romcal's for every
   day in scope, in all three calendars, from 2020 to 2040: 14,448
   dates. Eight differed, all because of the transfer difference above.
+  I then compared the whole resolved calendars for the same years;
+  every difference is one of the cases listed in
+  [`calendar_plan.md`](calendar_plan.md), section 4.
 - **Seed data (planned).** A one-off export script will take each
   day's name, rank, precedence, colour and season from romcal's
   definitions into JSON files that a data migration loads. romcal
@@ -67,8 +76,19 @@ Table of Liturgical Days in its no. 59 orders every kind of day from
 the Paschal Triduum down to ordinary weekdays, and decides which
 celebration is kept when two fall on the same date. Its levels are
 the `precedence` choices on `LiturgicalOccasion`; the labels are my own
-short summaries. **Planned:** the precedence rules in the next step
-follow its nos. 59 to 61.
+short summaries. The precedence rules in
+[`ordo/calendar.py`](../ordo/calendar.py) follow its nos. 59 to 61:
+which day wins, and that an impeded solemnity moves to the nearest day
+not taken by a day of levels 1 to 8.
+
+### General Instruction of the Roman Missal, and a notification of 2018
+
+Two more Church documents settle details of the precedence rules. The
+General Instruction of the Roman Missal, no. 355, says when an
+obligatory memorial may still be kept on a privileged weekday, and
+that none is kept in Holy Week. The Congregation for Divine Worship's
+2018 notification on the memorial of Mary, Mother of the Church, says
+that memorial prevails over another memorial on the same day.
 
 ### Missalemeum (planned)
 
