@@ -1,28 +1,28 @@
-# Precentor — App Breakdown & Model Plan
+# Precentor: App Breakdown and Model Plan
 
-This document translates the [ERD](erd.mmd) into a concrete Django app
-structure and field-level model plan, ahead of scaffolding the project.
-See the main [README](../README.md) for the reasoning behind each
-domain concept.
+This document turns the [ERD](erd.mmd) into a Django app structure and
+a field-level model plan. I wrote it before scaffolding the project and
+have kept it up to date since. See the main [README](../README.md) for
+the reasoning behind each domain concept.
 
 ## App breakdown
 
 | App        | Owns                                                                      | Rationale                                                                                    |
 | ---------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `accounts` | User profile/role (conductor vs. librarian), `ConductorRequiredMixin`     | Keeps auth/permissions separate from domain logic; the mixin lives here so any app can gate a view by role without depending on `planning` |
-| `library`  | `Score`, plus copies/filing fields                                        | The reusable "what do we own" side, independent of any term                                  |
-| `ordo`     | `LiturgicalOccasion` (seasons, calendar use, moveable feast calculation)  | Self-contained calendar engine; conceivably reusable elsewhere                               |
-| `planning` | `Term`, `Service`, `TermMarker`, `ServiceRole`, `RolePiece`               | The core planning workflow — the spine of the MVP                                            |
-| `comments` | `Comment` (generic relation via `contenttypes`)                           | Cuts across `planning`, so it's cleanest as its own app rather than living inside `planning` |
-| `core`     | `SiteConfig` (church name, crest, house colour, layout toggles)           | Site-wide branding/print-layout preferences, not owned by any one term — doesn't belong inside `planning` |
+| `accounts` | User profile and role (conductor or librarian), `ConductorRequiredMixin`  | Keeps auth and permissions apart from domain logic. The mixin lives here so any app can gate a view by role without depending on `planning` |
+| `library`  | `Score`, with its copies and filing fields                                | The reusable "what do we own" side, independent of any term                                  |
+| `ordo`     | `LiturgicalOccasion` (seasons, calendar use, moveable feast calculation)  | A self-contained calendar engine that could be reused elsewhere                              |
+| `planning` | `Term`, `Service`, `TermMarker`, `ServiceRole`, `RolePiece`               | The core planning workflow: the spine of the MVP                                             |
+| `comments` | `Comment` (generic relation via `contenttypes`)                           | Cuts across `planning`, so it's cleaner as its own app than inside `planning`                |
+| `core`     | `SiteConfig` (church name, crest, house colour, layout options)           | Site-wide branding and print preferences, not owned by any one term, so not part of `planning` |
 
-Dependency direction is deliberately one-way: `planning` imports from
-`accounts`, `library`, `ordo`, and `core`, never the reverse. This
-avoids circular imports and keeps the "spine" app easy to reason about
-and test in isolation. `core` also imports `ConductorRequiredMixin`
-from `accounts` — it needed the same conductor-only gate as `planning`
-for its settings page, which is exactly why the mixin was moved out of
-`planning` and into `accounts` rather than duplicated.
+Dependencies run one way: `planning` imports from `accounts`,
+`library`, `ordo` and `core`, never the reverse. That avoids circular
+imports and keeps the spine app easy to reason about and test on its
+own. `core` also imports `ConductorRequiredMixin` from `accounts`. Its
+settings page needed the same conductor-only gate as `planning`, which
+is why I moved the mixin out of `planning` and into `accounts` instead
+of duplicating it.
 
 ## Labels and interface words
 
@@ -75,7 +75,7 @@ class Score(models.Model):
     @property
     def composer(self):
         """"{other_names} {surname}", or just the surname if no other
-        names were given — the display form used everywhere else."""
+        names were given. The display form used everywhere else."""
         ...
 
     @property
@@ -131,28 +131,50 @@ AND of ORs), and `with_voicing(voicing)` takes one voicing or `"mixed"`
 for scores with all four parts. The view stays thin and each piece is
 tested on its own.
 
-**Composer split, surname required:** `composer` was originally one free-text field; it's now `composer_surname` (required) and `composer_other_names` (optional), so cataloguing/searching by surname alone always works even when a full name isn't known. `composer` lives on as a read-only property for display and `__str__`, not a database column — admin `search_fields` and any filtering must target the two real fields instead.
+**Composer split, surname required:** `composer` started as one
+free-text field. It's now `composer_surname` (required) and
+`composer_other_names` (optional), so cataloguing and searching by
+surname always work, even when the full name isn't known. `composer`
+lives on as a read-only property for display and `__str__`, not a
+database column, so admin `search_fields` and any filtering have to
+use the two real fields.
 
-**`lead_time_tag` removed:** dropped as unnecessary micromanagement — the field added a rehearsal-scheduling axis nothing else in the app used or surfaced.
+**`lead_time_tag` removed:** I dropped it as micromanagement. It added
+a rehearsal-scheduling dimension that nothing else in the app used or
+showed.
 
-**Three-tier suitability tagging, ranking not filtering:** `suited_use_types` / `suited_seasons` / `suited_occasions` are three genuinely distinct kinds of fact (a service's structural type, a broad calendar season, a specific named day), not one generic tag concept. `Score.objects` uses a custom `ScoreQuerySet.ranked_by_suitability(occasion=, season=, use_type=)` that annotates an `is_suited` flag and sorts matching scores to the top — it never filters, since an untagged score might still be the right choice and the tool shouldn't claim to know otherwise. Each condition is a `pk__in` subquery ("is this score among those tagged X?"); an earlier version joined through the tags, which listed a score with several tags once per tag. Each field carries `help_text` with examples (e.g. "Mass, Vespers, General use") since the underlying `UseType`/`LiturgicalSeason` vocab is otherwise invisible until populated — `ordo`'s `0004_seed_use_types_and_seasons` data migration seeds a starter set of both, revised for the Catholic-only scope by `0008` to `0010` (real `LiturgicalOccasion` data remains the separate, larger content task noted below).
+**Three-tier suitability tagging, ranking not filtering:**
+`suited_use_types`, `suited_seasons` and `suited_occasions` are three
+different kinds of fact (the type of service, a broad season of the
+calendar, a specific named day), not one generic tag.
+`ScoreQuerySet.ranked_by_suitability(occasion=, season=, use_type=)`
+annotates an `is_suited` flag and sorts matching scores to the top. It
+never filters, because an untagged score might still be the right
+choice and the app has no way to know otherwise. Each condition is a
+`pk__in` subquery ("is this score among those tagged X?"); an earlier
+version joined through the tags, which listed a score with several
+tags once per tag. Each field has `help_text` with examples ("Mass,
+Vespers, General use"), since the `UseType` and `LiturgicalSeason`
+lists are otherwise invisible until they have entries. `ordo`'s
+`0004_seed_use_types_and_seasons` data migration seeds a starter set
+of both, revised for the Catholic-only scope by `0008` to `0010`. Full
+`LiturgicalOccasion` data is a separate, larger content task, noted
+below.
 
-**Voicing design decision:** an earlier version of this plan used a fixed
-`choices` list for `voicing` (SATB, SATTB, unison, etc.). This was
-dropped because real voicing notation isn't a small closed set — it's a
-compact notation with combinatorial possibilities (SSATB, SATB.SATB for
-double choir, and so on), which a fixed dropdown can't represent
-faithfully. Instead, `voicing` is kept as free text for accurate
-human-readable display, while `soprano_parts` / `alto_parts` /
-`tenor_parts` / `bass_parts` hold the actual part _counts_, enabling
-reliable filtering (e.g. "needs a tenor at all" or "exactly SSATB")
-without parsing free text.
+**Voicing as free text:** an earlier version of this plan gave
+`voicing` a fixed `choices` list (SATB, SATTB, unison and so on). I
+dropped it because voicing isn't a small closed set. It's a compact
+notation with endless combinations (SSATB, SATB.SATB for double choir),
+which a fixed dropdown can't represent. So `voicing` stays free text
+for accurate display, while `soprano_parts`, `alto_parts`,
+`tenor_parts` and `bass_parts` hold the part _counts_. Those make
+filtering reliable ("needs a tenor at all", "exactly SSATB") without
+parsing free text.
 
-**Deliberately out of scope:** precise double-choir modelling (e.g.
-distinguishing which parts belong to which of two choirs). The part
-counts describe a single choir's texture; double-choir pieces are
-recorded accurately in the free-text `voicing` field only. This is
-flagged in the README as a scope limit, not an oversight.
+**Out of scope:** precise double-choir modelling, such as recording
+which parts belong to which choir. The part counts describe a single
+choir's texture; double-choir pieces are recorded accurately only in
+the free-text `voicing` field. The README lists this as a scope limit.
 
 ### `ordo.LiturgicalOccasion`
 
@@ -196,19 +218,54 @@ def occasion_for_date(target_date, calendar_use):
     """Reverse lookup: which LiturgicalOccasion(s) fall on target_date.
     Scopes candidates by calendar_use, then evaluates
     date_for_year() in Python since it isn't a database column. Returns
-    a list — zero, one, or more occasions can share a date."""
+    a list, because zero, one or more occasions can share a date."""
     ...
 ```
 
-**Fixed-date design decision:** the original plan used a single `fixed_date = DateField()` for non-moveable occasions. This was wrong — a `DateField` stores one specific year's date, but Christmas Day recurs on the same month/day every year. Replaced with `fixed_month`/`fixed_day`, mirroring how moveable occasions already work via `easter_offset_days` — both resolve to an actual date only when `date_for_year(year)` is called, never stored as a fixed year.
+**Fixed dates as month and day:** the original plan used a single
+`fixed_date = DateField()` for non-moveable occasions. That was wrong:
+a `DateField` stores one year's date, but Christmas Day falls on the
+same month and day every year. I replaced it with `fixed_month` and
+`fixed_day`, mirroring how moveable occasions already work through
+`easter_offset_days`. Both resolve to a real date only when
+`date_for_year(year)` is called; no year is ever stored.
 
-**Colour design decision — the mirror image of the voicing decision above:** liturgical colour is a genuinely small, fixed, real-world vocabulary (violet/red/green/white/rose) — unlike voicing's combinatorial notation problem, there's no equivalent of "SATB.SATB" here needing free text. `choices` was added specifically so every stored value maps predictably onto a CSS design token name (see `docs/design_system.md`), rather than risking a typo like `"Purple"` vs `"violet"` silently breaking that mapping.
+**Colour as a fixed list, the opposite of voicing:** liturgical colour
+is a small, fixed vocabulary (violet, red, green, white, rose). There's
+nothing like "SATB.SATB" that would need free text. I added `choices`
+so every stored value maps predictably onto a CSS design token name
+(see `docs/design_system.md`), and a typo like `"Purple"` for
+`"violet"` can't quietly break that mapping.
 
-**Deliberately out of scope:** Ordo is strictly a naming/dating/colour-tagging engine for repertoire filtering and service labelling — it does not model readings, psalms, propers, or rubrical detail (e.g. whether the Gloria is said), even if it later covers other calendars. See the README's out-of-scope list.
+**Out of scope:** Ordo only names, dates and colours occasions, for
+repertoire suggestions and service labels. It doesn't model readings,
+psalms, propers or rubrics (such as whether the Gloria is said), and
+won't even if it later covers other calendars. See the README's
+out-of-scope list.
 
-**Catholic-only design decision:** an earlier version of this plan gave `LiturgicalSeason`, `LiturgicalOccasion`, `Term` and `Service` a `tradition` field (Catholic or Church of England), with `Service.effective_tradition()` resolving the override. This was removed in October 2026. Precentor is single-tenant, and one church follows one tradition, so a per-term choice added a field to every form, a second set of seed data and a second set of tests without helping any real user. `ordo/0005` deleted the Church of England rows while the column still identified them, then `ordo/0006` and `planning/0005` dropped the field; data and schema changes are separate migrations because Postgres can refuse to alter a table with pending trigger events in the same transaction. A second tradition is listed in the README as future work.
+**Catholic only:** an earlier version of this plan gave
+`LiturgicalSeason`, `LiturgicalOccasion`, `Term` and `Service` a
+`tradition` field (Catholic or Church of England), with
+`Service.effective_tradition()` resolving the override. I removed it in
+October 2026. Precentor is single-tenant, and one church follows one
+tradition, so a per-term choice added a field to every form, a second
+set of seed data and a second set of tests without helping any real
+user. `ordo/0005` deleted the Church of England rows while the column
+still identified them, then `ordo/0006` and `planning/0005` dropped the
+field. The data and schema changes are separate migrations because
+Postgres can refuse to alter a table with pending trigger events in
+the same transaction. The README lists a second tradition as future
+work.
 
-**Calendar use, and the reverse lookup:** `calendar_use` distinguishes the Ordinary Form (`current`) from the 1962 Extraordinary Form (`historic`); some churches (e.g. Catholic oratories) run both side by side. `LiturgicalSeason` and `UseType` exist to support three-tier `Score` suitability tagging (see below); `LiturgicalOccasion.season` is the link that lets a season-level tag (e.g. "Advent") and a day-level tag (e.g. "Advent Sunday 4") match each other. `occasion_for_date()` is the reverse of `date_for_year()` — given a date, which occasion(s) is it — used to auto-suggest a `Service`'s occasion from its date.
+**Calendar use, and the reverse lookup:** `calendar_use` separates the
+Ordinary Form (`current`) from the 1962 Extraordinary Form
+(`historic`); some churches, Catholic oratories for example, use both.
+`LiturgicalSeason` and `UseType` exist for the three-tier `Score`
+suitability tagging above. `LiturgicalOccasion.season` is the link that
+lets a season-level tag ("Advent") and a day-level tag ("Advent Sunday
+4") match each other. `occasion_for_date()` is the reverse of
+`date_for_year()`: given a date, which occasions fall on it. The
+service form uses it to suggest an occasion from the date.
 
 ### `planning.Term`
 
@@ -228,7 +285,7 @@ class Term(models.Model):
 
     def completion_summary(self):
         """Aggregates Service.status counts across this term's services,
-        for the dashboard/landing view. See README §3.3."""
+        for the Terms page. See README §3.3."""
         ...
 ```
 
@@ -268,25 +325,24 @@ class Service(models.Model):
         ...
 
     def music_list_rows(self, draft=False):
-        """Rows for music list rendering — N/A slots always skipped;
-        unconfirmed slots skipped in the public version, shown as TBC
-        in draft mode. See README §4."""
+        """Rows for the music list. N/A slots are always skipped;
+        unconfirmed slots are skipped in the public version and shown
+        as TBC in draft mode. See README §4."""
         ...
 ```
 
-**`hymns`/`psalm` as plain fields, not slots:** these were always
-intended as simple text/reference fields, separate from the
-Score-driven slots (`ServiceRole`/`RolePiece`) used for the Mass
-setting, motets and the like — a hymn number or psalm reference
-doesn't need a shortlist, a confirmation step, or a link to
-`library.Score`.
+**`hymns` and `psalm` as plain fields, not slots:** these were always
+meant as simple text fields, separate from the slots
+(`ServiceRole` and `RolePiece`) used for the Mass setting, motets and
+so on. A hymn number or psalm reference doesn't need a shortlist, a
+confirmation step or a link to `library.Score`.
 
 **Status labels:** `status` returns a raw value, which templates use
 for CSS classes (`badge--not_started`) and comparisons. Because it's
-derived rather than a field with `choices`, Django's
-`get_status_display()` doesn't exist for it, so `Service.STATUS_LABELS`
-and the `status_label` property do the same job by hand; templates
-show the label and never the raw value.
+derived, not a field with `choices`, Django's `get_status_display()`
+doesn't exist for it, so `Service.STATUS_LABELS` and the
+`status_label` property do the same job by hand. Templates show the
+label and never the raw value.
 
 **Dates in `__str__`:** `Service.__str__` ("Sung Mass — Sun 11 Jan
 2026") and `TermMarker.__str__` format their dates with Django's
@@ -295,7 +351,17 @@ module, `precentor_project/formats/en_GB/formats.py`. That module,
 found through `FORMAT_MODULE_PATH`, is the one place the app's date
 style is set; templates use a bare `|date` filter to follow it.
 
-**`GenericRelation` on the commentable models:** `Term`, `Service`, and `RolePiece` each carry a `comments = GenericRelation("comments.Comment")` field. This adds no database column and needs no migration — it's a query-time convenience (enabling `term.comments.all()`) that also makes Django cascade-delete a target's comments if the target itself is deleted, completing the `GenericForeignKey` relationship properly per Django's own recommended pattern. This technically means `planning` now references `comments`, a justified exception to the one-way dependency rule above, since `comments.models.Comment` still has zero knowledge of `planning`'s models in return.
+**`GenericRelation` on the commentable models:** `Term`, `Service` and
+`RolePiece` each have `comments = GenericRelation("comments.Comment")`.
+It adds no database column and needs no migration. It lets code write
+`term.comments.all()`, and it makes Django delete a target's comments
+when the target is deleted, which is the pattern Django's own docs
+recommend alongside a `GenericForeignKey`. It does mean `planning`
+refers to `comments`, an exception to the one-way rule above, but
+`comments.models.Comment` still knows nothing about `planning`'s
+models. The interface only offers comments on terms and services; a
+question about a piece goes in its service's thread, though the model
+would still accept one on a `RolePiece`.
 
 ### `planning.TermMarker`
 
@@ -309,15 +375,13 @@ class TermMarker(models.Model):
         ordering = ["date"]
 ```
 
-Shown in the interface as a **notice**. Lets a conductor drop a
-one-off free-text notice at a specific date in a
-term's timeline — half-term, a retreat, anything that isn't itself a
-Service — for the public music list (see README §4). The music list
-view merges `Term.services` and `Term.markers` into a single
-date-ordered sequence, tagging each item with its type so the template
-can branch on how to render it; there was no existing precedent in the
-codebase for merging two querysets like this, so it's built fresh
-rather than reusing another feature's merge logic.
+Shown in the interface as a **notice**. It lets a conductor put a
+one-off line of text at a date in a term (half-term, a retreat,
+anything that isn't a service) for the public music list (see README
+§4). The music list view merges `Term.services` and `Term.markers`
+into one sequence ordered by date, tagging each item with its type so
+the template knows how to render it. Nothing else in the codebase
+merged two querysets like this, so I wrote it from scratch.
 
 ### `planning.ServiceRole`
 
@@ -398,81 +462,77 @@ class SiteConfig(models.Model):
         return obj
 ```
 
-**Hand-rolled singleton, no new dependency:** a site only ever has one
-of these, so `pk` is pinned to `1` on every save and `get_solo()` is
-the one accessor every view uses — the same effect as a package like
-`django-solo` would give, without adding a dependency for something
-this small.
+**A singleton without a new dependency:** a site only ever has one of
+these, so `pk` is pinned to `1` on every save and `get_solo()` is the
+one accessor every view uses. A package like `django-solo` would do
+the same, but it isn't worth a dependency for something this small.
 
 **`crest_image` is the project's first uploaded file.** Nothing else
-in the app stores user-uploaded media, so this needed genuinely new
-infrastructure that no other model could reuse: `Pillow` as a
-dependency, `MEDIA_ROOT`/`MEDIA_URL` in settings, and dev-time media
-serving in the project urlconf. Uploads are validated and normalised
-server-side (format/resolution checks, then a centre-crop/resize to a
-fixed 4:1 banner slot) by a small `core/imaging.py` helper, called from
-`SiteConfigForm.clean_crest_image` rather than from `Model.save()`, so
-a bad upload surfaces as an ordinary form error. A hand-rolled
-in-browser crop tool (`crest-crop.js`) sits in front of this as
-progressive enhancement — pan/zoom onto a canvas, then hand the
-cropped result to the same server-side validation — but the server-side
-step is what actually guarantees a consistent result, since it also
-has to cope with the plain, uncropped upload a no-JS visitor submits.
+in the app stores uploaded media, so it needed new setup: `Pillow` as
+a dependency, `MEDIA_ROOT` and `MEDIA_URL` in settings, and media
+serving in the project urlconf during development. A small
+`core/imaging.py` helper validates and normalises uploads on the
+server (format and resolution checks, then a centre crop and resize to
+a fixed 4:1 banner). It's called from `SiteConfigForm.clean_crest_image`,
+not from `Model.save()`, so a bad upload shows up as an ordinary form
+error. An in-browser crop tool I wrote (`crest-crop.js`) sits in front
+of it as progressive enhancement: pan and zoom onto a canvas, then
+hand the cropped result to the same server-side checks. The server
+step is what guarantees a consistent result, since it also has to
+handle the plain, uncropped upload from a visitor without JavaScript.
 
 ## Template organisation
 
-Templates are kept **per-app** (e.g. `library/templates/library/`) rather
-than centralized under one project-level `templates/` folder, so each
-app remains self-contained — its templates travel with it, consistent
-with the one-way dependency structure above. The single exception is
-`templates/base.html` at the project root, which is intentionally
-shared across every app rather than owned by any one of them.
+Templates are kept **per app** (for example
+`library/templates/library/`), not centralised in one project-level
+`templates/` folder, so each app is self-contained and its templates
+travel with it, in line with the one-way dependencies above. The one
+exception is `templates/base.html` at the project root, which every
+app shares.
 
-## Decisions worth remembering when writing the real code
+## Decisions worth remembering when writing the code
 
-- `RolePiece.score` uses `on_delete=models.PROTECT` — a Score can't be
-  deleted while it's still referenced in planning history, since "last
-  sung" history depends on it.
-- `Service.status` is a `@property`, computed on the fly rather than
-  stored — this keeps it honestly "derived," per the design decision in
-  the README (§3.3), and avoids a stored field silently going stale.
-- `ServiceRole.is_not_applicable` being `True` counts as an active,
-  deliberate decision (equivalent to confirmation) for the purposes of
-  `Service.status` — not an absence of data.
-- `ScoreDeleteView` catches `ProtectedError` (raised by `RolePiece.score`'s
-  `on_delete=PROTECT`) and shows a friendly message rather than an
-  unhandled 500 — discovered as a real gap during the visual design
-  pass, not anticipated up front.
-- `Term.deletion` is intentionally _not_ given the same protection —
-  `Service.term` uses `on_delete=CASCADE`, so deleting a term correctly
-  takes its whole planning history with it, a deliberately different
-  choice from `RolePiece.score`.
-- `Comment` deletion is only permitted while `is_open` is `False` —
-  enforced server-side in `comments.views.delete_comment`, not just by
-  hiding the button — so a comment can't be silently discarded while
-  still an open query. Deleting a parent cascades to its replies via
-  the existing `on_delete=CASCADE` on `Comment.parent`.
-- `Term.calendar_use` is required (the common single-calendar case);
-  `Service.calendar_use` is an optional override, resolved by
-  `effective_calendar_use()`. This supports
-  churches that run more than one calendar within the same term (e.g.
-  Catholic oratories running both EF and NO Masses) without forcing every
-  church to set an override.
-- `Service.occasion` stays a single FK — driving the accent bar/badge/dot
-  exactly as before. `Service.additional_occasions` is a separate,
-  purely additive M2M for the case where more than one occasion
-  genuinely matches a date; this was chosen over converting `occasion`
-  itself to a many-to-many, which would have required re-testing every
-  already-built piece that reads `service.occasion` as a single value.
-  The public music list now also renders it — a second occasion is
-  shown as a stacked secondary label alongside the primary one, rather
-  than replacing it.
-- `ConductorRequiredMixin` lives in `accounts`, not `planning` — it
-  checks user/group membership, nothing term- or service-specific, and
-  `core`'s settings page needed the same conductor-only gate. Moving it
-  once avoided either duplicating the check or making `core` depend on
-  `planning` for something that was never really `planning`'s to own.
+- `RolePiece.score` uses `on_delete=models.PROTECT`: a Score can't be
+  deleted while planning history still refers to it, since "last
+  sung" depends on that history.
+- `Service.status` is a `@property`, computed on the fly, not stored.
+  It stays derived, as the README sets out (§3.3), and a stored field
+  can't go stale.
+- `ServiceRole.is_not_applicable` being `True` counts as a decision
+  (the same as a confirmation) for `Service.status`, not as missing
+  data.
+- `ScoreDeleteView` catches `ProtectedError` (raised by the
+  `on_delete=PROTECT` on `RolePiece.score`) and shows a friendly
+  message instead of a server error. I found that gap during the
+  visual design pass; I hadn't anticipated it.
+- `Term` deletion doesn't get the same protection. `Service.term` uses
+  `on_delete=CASCADE`, so deleting a term takes its whole planning
+  history with it, a different choice from `RolePiece.score` on
+  purpose.
+- A `Comment` can only be deleted once it's closed (`is_open` is
+  `False`). `comments.views.delete_comment` enforces this on the
+  server, not just by hiding the button, so a comment can't be thrown
+  away while its question is still open. Deleting a parent removes its
+  replies too, through `on_delete=CASCADE` on `Comment.parent`.
+- `Term.calendar_use` is required, which covers the usual case of one
+  calendar. `Service.calendar_use` is an optional override, resolved
+  by `effective_calendar_use()`. That supports churches that use more
+  than one calendar in the same term (Catholic oratories with both EF
+  and NO Masses, for example) without making every church set an
+  override.
+- `Service.occasion` stays a single foreign key, which drives the
+  occasion's colour accents as before. `Service.additional_occasions`
+  is a separate many-to-many for when more than one occasion falls on
+  a date. I chose it over turning `occasion` itself into a
+  many-to-many, which would have meant re-testing everything that
+  reads `service.occasion` as a single value. The public music list
+  shows a second occasion as a smaller label under the main one.
+- `ConductorRequiredMixin` lives in `accounts`, not `planning`. It
+  checks group membership, nothing to do with terms or services, and
+  `core`'s settings page needed the same gate. Moving it once avoided
+  duplicating the check or making `core` depend on `planning` for
+  something that never belonged there.
 - `SiteConfig.layout_style` only changes the **public** music list.
-  Draft mode always renders the plain single-column list regardless of
-  that setting, since draft is for a conductor to quickly scan what's
-  still TBC, not to preview the final printed shape.
+  Draft mode always shows the plain single-column list, since draft
+  is for a conductor to scan what's still TBC, not to preview the
+  printed layout.
