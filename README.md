@@ -2,17 +2,17 @@
 
 _A repertoire and service-planning tool for church musicians._
 
-_Milestone 3 Project — Code Institute_
+_Milestone 3 project, Code Institute_
 
 > **Status:** All five Django apps (`library`, `ordo`, `planning`,
 > `comments`, `core`) are built, tested and permission-gated. Before
 > deploying, I'm working through an overhaul, tracked phase by phase in
 > [`docs/overhaul_plan.md`](docs/overhaul_plan.md). So far I've narrowed
 > the calendar to the Catholic one, rebuilt the type and spacing scales,
-> fixed the gaps in dark mode and keyboard access, and settled the
-> wording the app uses. Still to come are the components and page
-> layouts, performance work, the liturgical calendar data, deployment
-> and the final documentation.
+> fixed the gaps in dark mode and keyboard access, settled the wording
+> the app uses, built a consistent set of components, and reworked every
+> page. Still to come are performance work, the liturgical calendar
+> data, deployment and the final documentation.
 >
 > The rest of this document keeps its original concept-and-reasoning
 > framing, because that reasoning is what the build followed. Where the
@@ -21,54 +21,54 @@ _Milestone 3 Project — Code Institute_
 > [`docs/models_plan.md`](docs/models_plan.md) says so instead of
 > editing the history away.
 
-A **precentor** is the traditional title for the person responsible for
-directing a church's music — the role this tool is built around. Its
-liturgical calendar engine is named **Ordo**, after the traditional
-document/book setting out a church's calendar of observances for the
-year — the same term used within this project for the feature that
-tracks liturgical seasons and feast days.
+A **precentor** is the traditional title for the person who directs a
+church's music, and that's the role this tool is built around. Its
+liturgical calendar engine is named **Ordo**, after the book that sets
+out a church's calendar of observances for the year; in this project
+the name covers the feature that tracks liturgical seasons and feast
+days.
 
 ---
 
 ## 1. The Problem
 
-Choral conductors working in a church context (Precentor is built for
-Catholic choirs, though the pattern holds across traditions) are
-responsible for planning music across a
-term made up of multiple weekly services — typically a midweek service
-and one or two Sunday services. This involves:
+Choral conductors working in a church (Precentor is built for Catholic
+choirs, though the pattern holds across traditions) plan music across a
+term of several services a week, typically a midweek service and one or
+two on Sunday. That involves:
 
-- Knowing what music is available, and whether it's currently _singable_
-  by the choir (right voicing, right forces).
-- Avoiding over-repetition, while still allowing deliberate repeats.
-- Matching music to the liturgical calendar — some pieces are general,
-  others are written for, or traditionally associated with, a specific
-  season or feast day.
-- Producing a clean, public-facing "music list" for the congregation —
-  currently a manual, repetitive typing/formatting task every term.
-- Coordinating with a librarian or music administrator who manages the
-  physical copies, separately from the conductor's musical decisions.
+- Knowing what music is available, and whether the choir can sing it
+  now (the right voicing, the right forces).
+- Avoiding over-repetition, while still allowing repeats on purpose.
+- Matching music to the liturgical calendar. Some pieces are general;
+  others are written for, or associated with, a particular season or
+  feast day.
+- Producing a clean, public "music list" for the congregation, which is
+  currently a manual typing and formatting job every term.
+- Coordinating with a librarian or music administrator who looks after
+  the physical copies, separately from the conductor's musical
+  decisions.
 
-None of this is well served by a spreadsheet, which can't easily encode
-relationships (which piece was sung when, in what role, for which
-service), and can't distinguish between "still deciding" and "deliberately
-nothing planned here."
+A spreadsheet serves this badly. It can't easily record relationships
+(which piece was sung when, in what slot, for which service), and it
+can't tell "still deciding" apart from "nothing planned here, on
+purpose".
 
 ## 2. Who This Is For
 
-This is a **single-tenant** tool: built for one church's choir/music
-department, not a multi-church platform. (Benefices with several choirs
-under one director are a real and interesting edge case, but explicitly
-out of scope for this project.)
+This is a **single-tenant** tool, built for one church's choir or music
+department, not a multi-church platform. (A benefice with several
+choirs under one director is an interesting edge case, but it's out of
+scope for this project.)
 
-Two user roles, reflecting a genuine division of labour:
+There are two user roles, reflecting how the work is actually divided:
 
 | Role                        | Owns                                                                         | Can see                                               |
 | --------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------- |
 | **Conductor**               | Repertoire planning: proposing, confirming, unconfirming, marking slots N/A | Everything                                            |
-| **Librarian / Music Admin** | Physical library data: copies owned, filing location, condition              | Repertoire (read-only), physical library (read/write) |
+| **Librarian / Music Admin** | Physical library data: copies owned, filing location                         | Repertoire (read-only), physical library (read/write) |
 
-Both roles participate in a shared comment/query thread system (see §7).
+Both roles take part in shared comment threads (see §6).
 
 ## 3. Core Domain Concepts
 
@@ -87,28 +87,29 @@ forms and the admin both show the interface word.
 
 ### 3.1 Score
 
-A piece of music in the library. Fields include title, composer/arranger,
-voicing (SATB, SATTB, unison, etc.), **language**, publisher, filing
-location, number of copies owned, and an optional **rehearsal lead-time
-tag** (see §3.5). Scores can be tagged with liturgical seasons/occasions
-they suit.
+A piece of music in the library. Its fields cover the title, the
+composer (surname and other names), any arranger and editor, the
+voicing as printed (SATB, SSATB, unison and so on) with a count of each
+voice part, the **language**, the number of copies owned and where
+they're filed, the duration, background and interpretation notes, and
+a vocal range for each part. Scores can be tagged with the uses,
+seasons and occasions they suit.
 
 ### 3.2 Term, Service, and Slots
 
-A **Term** is simply a named container with a date range (e.g. "Lent
-2027"). Any number of terms can be open at once — the app makes no
-assumption about which one is "current"; a chronological list of all open
-terms is the natural landing view for every user, and today's date makes
-it obvious at a glance which term(s) matter right now. (An earlier idea
-of an explicit "active term" flag was deliberately dropped — it would
-have duplicated information the date already provides.)
+A **Term** is a named container with a date range (e.g. "Lent 2027").
+Any number of terms can be open at once, and the app makes no
+assumption about which one is "current": the Terms page shows them by
+date, and today's date makes it obvious which ones matter now. (An
+earlier idea of an explicit "active term" flag was dropped, because it
+would have duplicated information the dates already provide.)
 
-A **Service** belongs to a Term, has a date, a type (Sung Mass,
-Vespers, etc.), and a liturgical occasion (see §3.4). It also
-carries optional free-text **hymns** and **psalm** fields — genuinely
-simple reference fields, deliberately kept outside the propose/confirm
-workflow that governs slots such as the Mass setting, since hymn numbers
-and a psalm reference don't need a shortlist or a confirmation step.
+A **Service** belongs to a Term and has a date, a type (Sung Mass,
+Vespers, etc.) and a liturgical occasion (see §3.4). It also carries
+optional free-text **hymns** and **psalm** fields. These are simple
+reference fields, kept outside the propose-and-confirm workflow that
+governs slots such as the Mass setting, because hymn numbers and a
+psalm reference don't need a shortlist or a confirmation step.
 
 Each service is made up of musical **slots**, added per service:
 a Sung Mass might have a _Mass setting_, an _Introit_, an _Offertory
@@ -117,35 +118,34 @@ Slot names are free text, because practice varies from church to
 church. One choir sings the Propers, another sings a hymn in place of
 some of them, and another adds a motet at the Offertory, or sings one
 in place of the Responsorial Psalm when the text is the same. Slots can
-be added, removed, or marked **N/A** on a service-by-service basis (a
-special day might need an extra motet, or have no setting at all, as on
-Good Friday).
+be added, removed, or marked **N/A** service by service (a special day
+might need an extra motet, or have no setting at all, as on Good
+Friday).
 
 Templates per service type, so that a new Sung Mass starts with its
 usual slots, are **not built**: slots are added by hand on each
-service. They're a natural "future development".
+service. They're a natural piece of future work.
 
 ### 3.3 Proposing and Confirming
 
 Each slot holds a **shortlist of proposed pieces** (e.g. two motets
 still being weighed up). Confirmation happens **per piece**, not per
-slot or per service — this allows realistic cases like two motets in
-one service, or a mixed setting. A confirmed piece can always be
-**unconfirmed** again; nothing is a one-way door.
+slot or per service, which allows cases like two motets in one service,
+or a mixed setting. A confirmed piece can always be **unconfirmed**
+again; nothing is a one-way door.
 
-Marking a slot **N/A** is itself treated as an active planning decision,
-equivalent to confirming — it means "I've considered this and there's
-deliberately nothing here," not "nothing has happened yet."
+Marking a slot **N/A** counts as a planning decision, just as
+confirming does. It means "I've considered this and there's nothing
+here on purpose", not "nothing has happened yet".
 
-A service's overall status is **derived**, not stored directly:
+A service's overall status is **derived**, not stored:
 
-- **Not started** — no candidates anywhere
-- **In progress** — some slots still only have proposed (unconfirmed) pieces
-- **Complete** — every slot is either confirmed or marked N/A
+- **Not started**: no candidates anywhere
+- **In progress**: some slots still only have proposed (unconfirmed) pieces
+- **Complete**: every slot is either confirmed or marked N/A
 
-This derived status is what powers the term-level "at a glance" view,
-letting a conductor scan a term and instantly see which services still
-need attention.
+This status powers the Terms page's overview, so a conductor can scan a
+term and see at once which services still need attention.
 
 ### 3.4 Ordo (the Liturgical Calendar)
 
@@ -157,17 +157,16 @@ calculated relative to Easter (Ash Wednesday, Palm Sunday, Pentecost).
 Each term follows either the Ordinary Form or the 1962 Extraordinary
 Form calendar, and a single service can override its term's choice,
 since some choirs sing both. Services carry a liturgical occasion drawn
-from Ordo, which drives both automatic tagging/filtering of suitable
-Scores and the seasonal colour context used in the UI.
+from Ordo, which drives both the ranking of suitable scores and the
+seasonal colour used in the interface.
 
-### 3.5 Rehearsal Lead-Time (not "difficulty")
+### 3.5 Rehearsal Lead-Time (dropped)
 
-Rather than an inherently subjective "difficulty rating," Scores carry
-an **optional rehearsal lead-time tag**, entirely at the conductor's
-discretion — a signal of how far in advance a piece typically needs to
-enter rehearsal planning, rather than a contested judgement of how hard
-it "is." This makes the tag directly actionable for term planning rather
-than just descriptive.
+An early plan gave each score an optional rehearsal lead-time tag: how
+far ahead a piece needs to go into rehearsal, as a more useful signal
+than a subjective "difficulty" rating. I dropped it before the build
+was finished, because nothing else in the app used or showed it, and it
+added a rehearsal-scheduling question the tool doesn't otherwise ask.
 
 ### 3.6 "Last Sung"
 
@@ -181,107 +180,100 @@ A choir's history starts long before it begins using Precentor, so
 each score can also carry a manual "last sung" date for older records;
 the library shows whichever date is later. The library table shows it
 as a date with a rough interval ("Sun 4 Oct 2026, 3 weeks ago"), or
-"Never". Clicking through reveals the **complete history** of every
-occasion the piece has been sung — useful for a librarian or conductor
-checking how often something has been repeated over time. The same
+"Never". The score's own page lists its **complete history**, every
+service it has been proposed or confirmed for, which helps a librarian
+or conductor check how often something has been repeated. The same
 piece can fill several slots, or repeat across different services and
 terms.
 
 ## 4. The Public Music List
 
-Modelled directly on a real example (a termly printed list from a parish
-church), the tool can generate a formatted document from a term's
-current state:
+Modelled on a real example (a termly printed list from a parish
+church), the tool produces a formatted document from a term's current
+state:
 
-- **Snapshot, not live** — "print music list" captures the state _as of
-  that moment_. If things change afterwards (as they sometimes do, right
-  up to the day), the printed/shared version simply reflects what was
-  true when it was generated — deliberately not something the app tries
-  to keep in sync after the fact.
-- **Latest version only** — the app doesn't archive every past
-  generation. Once a list has been shared or printed, its lifecycle
-  belongs to whoever received it; the app is only concerned with "now."
-- **Partial generation is allowed** — a still-in-progress term can still
-  produce a useful internal document. Unconfirmed/proposed slots render
-  as a visible **blank**, clearly marked with a **"TBC" watermark**,
-  removing any ambiguity about whether something is deliberately absent
-  (N/A) or simply not yet decided. This distinction matters: a public
-  document should never accidentally expose an undecided tentative
-  choice as if it were settled.
-- **Newspaper-column layout by default** — modelled directly on the
-  same real example, the public list flows its entries down one column
-  and continues at the top of the next (CSS `columns`, not a
-  hand-built grid), with each service's occasion, hymns, and psalm set
-  alongside it rather than stacked below. A per-site layout toggle (see
-  below) can switch this to a plain single-column list instead; the
-  internal draft view always uses the simple layout regardless of that
-  setting, since draft mode is for quickly spotting what's still TBC,
-  not for final presentation.
-- **One-off notices alongside services** — a **notice** lets a
-  conductor drop free text at a specific date (e.g. "Choir resumes
-  services on 22nd February") into the same timeline as services, for
-  the odd occasion — half-term, a retreat — that isn't itself a
-  service needing its own slots.
-- **Site-wide branding, set once** — a single site-configuration record
-  (church name, crest image, house accent colour, plus the layout and
-  hymns/psalm-visibility toggles above) is set once via a
-  conductor-only settings page and applied to every music list, rather
-  than requiring the same details to be re-entered per term. The crest
-  can be cropped to a fixed banner shape in the browser before upload;
-  anyone without JavaScript can still upload the raw image, which the
-  server centre-crops to the same shape instead of rejecting it.
-- **The existing liturgical accent, reapplied** — each entry's
-  left-hand colour stripe reuses `Service.occasion.colour` exactly as
-  `service_detail.html` already does (see §3.4, §5 of
-  [`docs/design_system.md`](docs/design_system.md)), falling back to
-  the site's house accent colour when a service carries no occasion of
-  its own.
+- **Snapshot, not live.** The printed list shows the state at the
+  moment it was printed. If things change afterwards (as they sometimes
+  do, right up to the day), the printed or shared copy reflects what
+  was true then; the app doesn't try to keep copies in step after the
+  fact.
+- **Latest version only.** The app doesn't archive past versions. Once
+  a list has been shared or printed, its life belongs to whoever
+  received it; the app is only concerned with "now".
+- **Partial lists are allowed.** A term still in progress can produce a
+  useful internal draft. In the draft, a slot without a confirmed piece
+  is marked **TBC**, so nobody confuses something left out on purpose
+  (N/A) with something not yet decided. The distinction matters,
+  because a public document should never show an undecided choice as
+  if it were settled; the public version leaves those slots out.
+- **Newspaper columns by default.** Following the same real example,
+  the public list flows its entries down one column and on to the top
+  of the next (CSS `columns`, not a hand-built grid), with each
+  service's occasion, hymns and psalm alongside it. A site-wide setting
+  can switch this to a plain single column instead. The draft always
+  uses the simple layout, since it's for spotting what's still TBC, not
+  for final presentation.
+- **Notices alongside services.** A **notice** puts free text on a
+  given date (e.g. "Choir resumes services on 22nd February") in the
+  same timeline as the services, for something like half term or a
+  retreat that isn't a service with slots of its own.
+- **Branding set once.** A single site-settings record (church name,
+  crest, house accent colour, and the layout and hymns-and-psalm
+  settings above) is set on a conductor-only page and applied to every
+  music list, so the details aren't re-entered each term. The crest can
+  be cropped to a banner shape in the browser before upload; without
+  JavaScript, the raw image can still be uploaded, and the server crops
+  it to the same shape instead of rejecting it.
+- **The liturgical accent, reused.** Each entry's left-hand colour
+  stripe uses `Service.occasion.colour` in the same way as the service
+  page (see §3.4, and the liturgical accent section of
+  [`docs/design_system.md`](docs/design_system.md)), falling back to the
+  house accent colour when a service has no occasion of its own.
 
 ## 5. Roles and Permissions, Revisited
 
-The conductor/librarian split isn't just about visibility — it mirrors
-a real division of labour: **the conductor decides, the librarian
-fulfils.** The librarian has genuine ownership of the physical library
-side (which the conductor generally doesn't touch), while repertoire
-decisions (propose/confirm/unconfirm/N/A) remain the conductor's alone,
-with the librarian able to see everything but change none of it.
+The conductor and librarian roles don't only differ in what they can
+see; they mirror how the work is divided: **the conductor decides, the
+librarian fulfils.** The librarian owns the physical library (which the
+conductor generally doesn't touch), while repertoire decisions
+(propose, confirm, unconfirm, N/A) stay with the conductor alone. The
+librarian can see all of it but change none of it.
 
-## 6. Comment/Query Threads
+## 6. Comment Threads
 
-A lightweight, deliberately bounded feature allowing the librarian and
-conductor to discuss specific items without leaving the app:
+A small, bounded feature that lets the librarian and conductor discuss
+things without leaving the app:
 
-- **Flat structure** — one layer of comments with replies appended
-  underneath; no arbitrary nested threading.
-- **Authored** — shown with the commenting user's initials.
-- **Open/closed**, closeable by either party.
-- **Three colour states**: open / open-with-replies / closed.
-- **Targets**: each service and each term has a comment thread
-  ("is this service's shape right?" vs. "how's this term looking
+- **Flat structure:** one layer of comments, with replies underneath and
+  no nested threading.
+- **Authored:** each comment shows its author's name.
+- **Open or closed,** and either person can close a thread.
+- **Three colour states:** open, open with replies, and closed.
+- **Targets:** each service and each term has a comment thread ("is
+  this service's shape right?" against "how's this term looking
   overall?"). A question about a particular piece ("do we have enough
   copies of this?") goes in its service's thread; I decided a separate
   thread per piece would be more granular than the conversation needs.
   The link is a single polymorphic relationship (Django's
-  `GenericForeignKey`, via `contenttypes`) rather than separate
-  optional foreign keys — a deliberate choice to keep the `Comment`
-  model itself clean, at the cost of losing database-level JOIN
-  optimisation, which is an acceptable trade-off for a "should have"
-  feature. The model would still accept a comment on a piece if that
-  were ever wanted.
-- **Inbox** — simply every open comment, with no read-receipts or
-  @mentions. In a close-knit two/three-person working relationship,
-  attention-routing logic would be unnecessary complexity.
-- Comments are tied to their subject's lifecycle — if a service is
-  deleted, its comments go with it. This is a deliberate, simple
-  default rather than an oversight.
+  `GenericForeignKey`, via `contenttypes`) instead of separate optional
+  foreign keys. That keeps the `Comment` model clean, at the cost of
+  database-level joins, which is an acceptable trade-off for a "should
+  have" feature. The model would still accept a comment on a piece if
+  that were ever wanted.
+- **Inbox:** every open comment, with no read receipts or @mentions. In
+  a close-knit working relationship of two or three people, routing
+  attention would be needless complexity.
+- Comments share their subject's lifecycle: if a service is deleted,
+  its comments go with it. That's a simple default chosen on purpose,
+  not an oversight.
 
-This remains a **"should have,"** not core to MVP.
+This remains a **"should have"**, not core to the MVP.
 
 ## 7. Scope Discipline (MoSCoW)
 
 **Must have (the spine)**
 
-- Score CRUD (title, composer/arranger, voicing, language, difficulty/lead-time, duration)
+- Score CRUD (title, composer, arranger, voicing, language, duration)
 - Term → Service structure, with slots per service
 - Filter scores by voicing
 - "Last sung" derived from service history
@@ -293,7 +285,7 @@ This remains a **"should have,"** not core to MVP.
 - Filter by language
 - Physical copy tracking (copies owned, filing location)
 - Conductor vs. Librarian roles with distinct permissions
-- Comment/query threads
+- Comment threads
 
 **Nice to have**
 
@@ -302,92 +294,85 @@ This remains a **"should have,"** not core to MVP.
 - Smart repertoire suggestions (voicing + season + not-sung-recently)
 - Bulk CSV import of a legacy library
 
-## 8. Deliberately Out of Scope
+## 8. Out of Scope
 
-- Multi-tenancy (multiple churches/choirs in one instance)
+- Multi-tenancy (several churches or choirs in one installation).
 - Calendars other than the Roman one, such as the Church of England's
   Common Worship and Book of Common Prayer. Precentor originally
   modelled the Catholic and Church of England calendars side by side,
   with a tradition chosen per term. I narrowed it to the Catholic
-  calendar because Precentor is single-tenant: one installation
-  serves one church, and one church follows one tradition, so a
-  per-term choice added a field to every form, a second set of seed
-  data and a second set of tests without helping any real user. A
-  second tradition remains possible future work, most simply as a
-  site-wide setting, not a per-term choice.
-- Service-type templates (slots are added per service, see §3.2)
-- Snapshot history/archive of past generated music lists
-- An "active term" flag (superseded by a simple chronological list)
-- Threaded (nested) comment replies
-- Precise double-choir voicing modelling (e.g. distinguishing which
-  parts belong to which of two choirs) — captured accurately in the
-  free-text voicing field only, not as structured, queryable data
-- Per-slot permissions (e.g. a distinct user, such as a parish
-  secretary, who can edit only a "Hymns" slot while the conductor
-  controls the Mass setting and motets). In some real churches, hymn
-  selection genuinely sits outside the conductor's remit — but
-  modelling that would mean permission checks keyed to individual
-  slot names rather than a fixed Conductor/Librarian split, a
-  meaningfully bigger structural change than MVP calls for. The
-  current two-role split (Conductor: full access; Librarian: full
-  access to the Score library, read-only on repertoire planning)
-  covers the common case.
-- Ordo as a liturgical reference tool. Ordo's job is strictly to
-  name, date, and colour-tag occasions, for repertoire filtering and
-  service labelling — it deliberately does not model readings,
-  psalms, propers, or rubrical detail (e.g. whether the Gloria is
-  said), even if it later covers other calendars. That's a separate,
-  mature application domain with
-  existing, authoritative tools already serving it well; duplicating
-  it would mean building an entirely different application inside
-  Precentor, not extending its actual purpose.
-- Fully customisable music list layouts (drag-and-drop design,
-  arbitrary field ordering or typography). Precentor ships one
-  well-designed default layout plus a small, deliberately bounded set
-  of genuinely high-value toggles (column style, house accent colour,
-  crest/banner, hymns/psalm visibility) — not an open-ended design
-  surface. A church whose house style diverges further still has full
-  access to their underlying planned data; the constraint is on the
-  built-in print output only, never on the data itself.
+  calendar because Precentor is single-tenant: one installation serves
+  one church, and one church follows one tradition, so a per-term
+  choice added a field to every form, a second set of seed data and a
+  second set of tests without helping any real user. A second tradition
+  remains possible future work, most simply as a site-wide setting, not
+  a per-term choice.
+- Service-type templates (slots are added per service, see §3.2).
+- A history or archive of past music lists.
+- An "active term" flag (the dates already show which term is current).
+- Nested comment replies.
+- Precise double-choir voicing (e.g. which parts belong to which of two
+  choirs). It's recorded accurately in the free-text voicing field, but
+  not as structured data that can be searched.
+- Per-slot permissions, e.g. a parish secretary who can edit only a
+  "Hymns" slot while the conductor controls the Mass setting and
+  motets. In some churches hymn choice does sit outside the conductor's
+  remit, but modelling that would mean permission checks keyed to
+  individual slot names instead of a fixed Conductor and Librarian
+  split, a much bigger structural change than the MVP calls for. The
+  current two roles (Conductor: full access; Librarian: full access to
+  the library, read-only on planning) cover the common case.
+- Ordo as a liturgical reference tool. Ordo's job is to name, date and
+  colour occasions, for ranking repertoire and labelling services. It
+  doesn't model readings, psalms, propers or rubrical detail (e.g.
+  whether the Gloria is said), even if it later covers other calendars.
+  That's a separate, mature domain with authoritative tools already
+  serving it well, and duplicating it would mean building a different
+  application inside Precentor.
+- Fully customisable music list layouts (drag-and-drop design, arbitrary
+  field order or typography). Precentor ships one default layout and a
+  small set of high-value settings (column style, house accent colour,
+  crest, hymns and psalm), not an open-ended design tool. A church whose
+  house style differs further still has full access to its planning
+  data; the limit is only on the built-in printed output.
 
-Each of these is noted here so that scope decisions read as deliberate
-choices, not oversights, when this document is read by an assessor.
+Each of these is noted here so that scope decisions read as choices,
+not oversights, when an assessor reads this document.
 
 ## 9. Supporting Documents
 
-- [`docs/user_stories.md`](docs/user_stories.md) — formal user stories
-  for the conductor, librarian, and site owner (the church), used to
-  validate the finished application against its original intent.
-- [`docs/erd.mmd`](docs/erd.mmd) (Mermaid source, renders directly on
-  GitHub) — the entity relationship diagram covering Score, Term,
-  Service, Service Role, Role Piece, Ordo (Liturgical Occasion), User,
-  and Comment, along with notes on a couple of deliberate
-  simplifications — notably that slots are added per service
-  with no template table, and that Comment's polymorphic
-  relationship is drawn as three edges there for readability, though
-  it's implemented as a single Django `GenericForeignKey` relationship.
-- [`docs/models_plan.md`](docs/models_plan.md) — the Django app
-  breakdown and field-level model plan translating the ERD into code,
-  written ahead of scaffolding the project, and updated as
-  implementation revealed corrections (e.g. the fixed-date fix, the
-  colour `choices` decision).
-- [`docs/design_system.md`](docs/design_system.md) — the visual design
-  system: CUBE CSS methodology, cascade layers (not `@import`), design
-  tokens, self-hosted typography, and the liturgical accent system.
-- [`docs/blocks_backlog.md`](docs/blocks_backlog.md) — the running log
-  of Blocks identified during the Compositions sweep across every
-  page, deliberately built only after real repetition was observed
-  rather than guessed at up front.
+- [`docs/user_stories.md`](docs/user_stories.md): user stories for the
+  conductor, the librarian and the site owner (the church), used to
+  check the finished application against its original intent.
+- [`docs/erd.mmd`](docs/erd.mmd) (Mermaid source, which GitHub renders):
+  the entity relationship diagram for Score, Term, Service, Service
+  Role, Role Piece, Ordo (Liturgical Occasion), User and Comment. Its
+  notes cover two simplifications: slots are added per service with no
+  template table, and Comment's polymorphic relationship is drawn as
+  three edges for readability, though it's a single Django
+  `GenericForeignKey` in the code.
+- [`docs/models_plan.md`](docs/models_plan.md): the Django app breakdown
+  and field-level model plan that turned the ERD into code. I wrote it
+  before scaffolding the project and updated it as the build turned up
+  corrections (the fixed-date fix and the colour `choices` decision, for
+  example).
+- [`docs/design_system.md`](docs/design_system.md): the visual design
+  system, covering CUBE CSS, cascade layers (not `@import`), design
+  tokens, self-hosted typography and the liturgical accent.
+- [`docs/blocks_backlog.md`](docs/blocks_backlog.md): the running log of
+  Blocks found while laying out every page, each built only once the
+  same pattern had appeared more than once, instead of being guessed at
+  up front.
 
 ## 10. Why This Project
 
-Precentor is grounded in real, lived experience as a church choral
-conductor, addressing a genuine and specific pain point (the manual,
-repetitive work of planning repertoire and producing music lists) for a
-real, identifiable audience (a conductor, working alongside a librarian
-or music administrator). Every design decision above has a concrete
-"why" behind it, arising from how church music planning actually works,
-rather than a generic "library system" template.
+Precentor comes from my own experience as a church choral conductor. It
+addresses a specific, recurring chore (planning repertoire and
+producing music lists by hand) for a clear audience: a conductor working
+alongside a librarian or music administrator. Each design decision
+above has a concrete reason behind it, drawn from how church music
+planning actually works, instead of a generic "library system"
+template.
 
 ---
 
