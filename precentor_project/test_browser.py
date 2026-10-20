@@ -128,6 +128,24 @@ class SettingsFormBrowserTest(PlaywrightTestCase):
         swatch = self.page.locator("#id_house_accent_colour").bounding_box()
         assert swatch["width"] <= 80, swatch
 
+    def test_choosing_a_crest_opens_the_crop_frame(self):
+        # Settings loads crest-crop.js through its own extra_js block, so
+        # this also checks the page still asks for the script.
+        from io import BytesIO
+
+        from PIL import Image
+
+        image = BytesIO()
+        Image.new("RGB", (1600, 800), "navy").save(image, "PNG")
+
+        self.login_as_conductor()
+        self.page.goto("/settings/")
+        self.page.set_input_files(
+            "#id_crest_image",
+            {"name": "crest.png", "mimeType": "image/png", "buffer": image.getvalue()},
+        )
+        self.page.wait_for_selector(".crest-crop__frame")
+
 
 class ListRowWidthBrowserTest(PlaywrightTestCase):
     def test_list_row_spans_its_list_not_the_reading_measure(self):
