@@ -69,12 +69,16 @@ single diocese or church, which the Ordo also lists, are out of scope.
   (Ordinary Form, levels 1 to 13 with lettered sub-levels such as 4a
   and 8c) or the 1962 table, stored as a number that sorts correctly
   plus its code for display.
-- **`date_rule`:** either a fixed month and day (as now), or a named
-  rule with arguments: `easter`, `ordinary_time_sunday(5)`,
-  `advent_sunday(2)`, `baptism_of_the_lord`, and so on. romcal uses 25
-  such rules in the calendars above, and most are a line from Easter,
-  Christmas or the first Sunday of Advent. The existing
-  `easter_offset_days` becomes one case of this.
+- **`date_rule`, `date_rule_args` and `date_offset_days`:** either a
+  fixed month and day (as now), or a named rule with its arguments and
+  a number of days to add. The 5th Sunday of Ordinary Time is
+  `date_of_ordinary_time` with `[0, 5]`, and the Thursday after Ash
+  Wednesday is `ash_wednesday` plus one day. The rules live in
+  `ordo/dates.py`, and their names are romcal's in snake case, so its
+  data converts without a hand-kept mapping. The days in scope use 34
+  rules; most are a line from Easter, Christmas or the first Sunday of
+  Advent, and the longest is the numbering of Ordinary Time. The
+  existing `easter_offset_days` stays for occasions entered by hand.
 - **`transfers`:** the moves a day makes in particular years, stored as
   JSON. romcal uses only four shapes: "if it falls on a Sunday, move
   it a day later", "if it falls on a Saturday, move it a day earlier",
@@ -127,8 +131,13 @@ is cached, so a lookup doesn't recompute 300 dates each time.
 
 | | Included | Left out for now |
 | --- | --- | --- |
-| Ordinary Form | Sundays, solemnities, feasts, obligatory memorials, and the privileged weekdays a choir sings for (Ash Wednesday, Holy Week, the Easter Octave, 17 to 24 December, the Christmas Octave) | Optional memorials and ordinary weekdays |
+| Ordinary Form | Sundays, solemnities, feasts, obligatory memorials, and the privileged weekdays (Ash Wednesday, the weekdays of Lent, Holy Week, the Easter Octave, 17 to 24 December, the Christmas Octave) | Optional memorials and ordinary weekdays |
 | 1962 | Sundays, feasts of the first, second and third class, first-class ferias (Ash Wednesday, Holy Week), and the Christmas and Easter octaves | Fourth-class commemorations and ordinary ferias |
+
+The weekdays of Lent are in because of precedence, not because a
+choir sings on them: without them, the engine would take a memorial
+that falls in Lent for the day's celebration, when in Lent it's only
+commemorated.
 
 Third-class feasts are the nearest 1962 equivalent of obligatory
 memorials. Optional memorials are future development (section 1); the

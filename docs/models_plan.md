@@ -212,8 +212,9 @@ class LiturgicalOccasion(models.Model):
     calendar = models.CharField(max_length=20, choices=NATIONAL_CALENDAR_CHOICES, default="general_roman")
     rank = models.CharField(max_length=20, choices=RANK_CHOICES, blank=True)  # solemnity ... class_4
     precedence = models.CharField(max_length=4, choices=OF_PRECEDENCE_CHOICES, blank=True)  # "1" to "13"
-    date_rule = models.CharField(max_length=50, blank=True)  # e.g. "ordinary_time_sunday"
-    date_rule_args = models.JSONField(default=list, blank=True)  # e.g. [5]
+    date_rule = models.CharField(max_length=50, blank=True)  # e.g. "date_of_ordinary_time"
+    date_rule_args = models.JSONField(default=list, blank=True)  # e.g. [0, 5]
+    date_offset_days = models.SmallIntegerField(default=0)
     transfers = models.JSONField(default=list, blank=True)
     is_moveable = models.BooleanField(default=False)
     fixed_month = models.PositiveSmallIntegerField(blank=True, null=True)
@@ -272,14 +273,27 @@ the same transaction. The README lists a second tradition as future
 work.
 
 **Real calendars, and precedence (October 2026):** the fields `key`,
-`calendar`, `rank`, `precedence`, `date_rule`, `date_rule_args` and
-`transfers` let `ordo` hold the real Ordinary Form and 1962 calendars,
+`calendar`, `rank`, `precedence`, `date_rule`, `date_rule_args`,
+`date_offset_days` and `transfers` let `ordo` hold the real Ordinary Form and 1962 calendars,
 with national calendars (England, Wales) that add days to the general
 calendar or override its days by sharing their `key`. A key is unique
 within one calendar and form; occasions entered by hand have none.
 `precedence` is the level in the Table of Liturgical Days, which
 decides what's celebrated when two days fall together. Black joins the
-colours for 1962. The design, its sources and the order of work are in
+colours for 1962.
+
+**Date rules (`ordo/dates.py`):** `date_for_year()` now works out a
+named rule (ported from romcal) and applies the occasion's transfers.
+Some rules depend on the national calendar, so it takes one; a general
+day such as Corpus Christi falls on the Thursday in the General Roman
+Calendar and on the Sunday in England. `date_in()` takes a prepared
+`YearDates`, so working out a whole year can share one. I compared the
+port with romcal's own dates for every day in scope, in three
+calendars, from 2020 to 2040: 14,448 dates, eight different. All eight
+are moves "to the day after Divine Mercy Sunday" or "to the day before
+Palm Sunday", where romcal counts the day from the original date (so
+St George in 2022 lands on Divine Mercy Sunday itself, still inside
+the Easter Octave). Precentor follows the rule as the data states it. The design, its sources and the order of work are in
 [`calendar_plan.md`](calendar_plan.md).
 
 **Calendar use, and the reverse lookup:** `calendar_use` separates the
