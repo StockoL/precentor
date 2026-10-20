@@ -118,9 +118,10 @@ A new module, `ordo/calendar.py`, works out a whole year at a time:
    - **1962** (the rubrics of the 1960 Code): classes I to IV, where a
      Sunday of the first class beats any feast, a Sunday of the second
      class gives way only to feasts of the first class and feasts of
-     the Lord, and a defeated feast is often commemorated. I'll port
-     these from Missalemeum's rules, keeping only what decides the
-     day's name: no propers, prefaces or Office.
+     the Lord, and a defeated feast is often commemorated. Ported
+     from Missalemeum's rules, keeping only what decides the day's
+     name: no propers, prefaces or Office. Built: see "The 1962
+     engine, as built" below.
 5. Return each date's celebration first, then anything still observed
    alongside it (a commemoration in 1962, a memorial that becomes a
    commemoration in Lent).
@@ -179,12 +180,56 @@ See. The general rule moves it forward, to 25 June, which is what
 Precentor shows. A decision of that kind can't be derived from the
 norms, so a conductor would pick the occasion by hand that year.
 
+### The 1962 engine, as built
+
+`ordo/calendar_1962.py` is a port of Missalemeum's calendar factory and
+rules, which work differently from romcal's. The Proper of Time isn't a
+formula per day but a set of blocks laid out each year: the Sundays
+after Epiphany run until Septuagesima, and any it cuts short are
+resumed in November before the last Sunday after Pentecost (in 2024,
+after an early Easter, the Fifth and Sixth Sundays after Epiphany fell
+on 10 and 17 November). The blocks are data, in
+`ordo/data/missalemeum/blocks_1962.json`; the layout and the Proper of
+Time's one date rule, `tempora_1962`, are code. The saints are added on
+their dates, and the year is then gone through a day at a time,
+applying Missalemeum's twenty-odd rules in its order: the Vigil of
+Christmas on a Sunday, All Souls moving off a Sunday, two first-class
+feasts (the lower moves to the first free day), a second-class Sunday
+with a second-class feast (commemorated), Lent weekdays with saints,
+and so on.
+
+Two changes from Missalemeum:
+
+- **Fields, not IDs.** Missalemeum's rules match patterns against IDs
+  such as `sancti:12-08:1:w`, with the class and colour inside them.
+  Precentor's rows have a key (`sancti:12-08`) and the class and colour
+  as fields, so a national calendar can override a day by key, and the
+  rules test the fields.
+- **Fourth-class days aren't listed.** They take part in the rules, so
+  commemorations come out right, but like optional memorials in the
+  Ordinary Form they're left out of what Precentor shows. Missalemeum's
+  rule for the Saturday Office of Our Lady is left out for the same
+  reason: it only ever produces a fourth-class day.
+
+**Checked against Missalemeum.** For every day from 2020 to 2040
+(about 6,100 days with a listed celebration), Precentor and
+Missalemeum agree on all but two: Palm Sunday 2030 and Laetare Sunday
+2035, where Missalemeum also keeps a third-class saint. Both Sundays
+have two colour letters in Missalemeum's IDs (red and violet, rose and
+violet), which its "first class" pattern doesn't match, so the day
+falls through to a rule meant for fourth-class days. Under the 1960
+rubrics a third-class feast on a first-class Sunday is left out, as
+Precentor shows. The first run of the comparison also found two keys I
+had written from memory without their suffixes (`sancti:08-09t`, the
+Vigil of St Lawrence, and `sancti:06-28r`, the Vigil of SS Peter and
+Paul); the rules now take every key from Missalemeum's constants.
+
 ## 5. What goes in
 
 | | Included | Left out for now |
 | --- | --- | --- |
 | Ordinary Form | Sundays, solemnities, feasts, obligatory memorials, and the privileged weekdays (Ash Wednesday, the weekdays of Lent, Holy Week, the Easter Octave, 17 to 24 December, the Christmas Octave) | Optional memorials and ordinary weekdays |
-| 1962 | Sundays, feasts of the first, second and third class, first-class ferias (Ash Wednesday, Holy Week), and the Christmas and Easter octaves | Fourth-class commemorations and ordinary ferias |
+| 1962 | Days of the first, second and third class: Sundays, feasts, vigils, Ember Days, the weekdays of Advent and Lent, and the octaves of Christmas, Easter and Pentecost | Fourth-class days: ordinary ferias, commemorations and the Saturday Office of Our Lady |
 
 The weekdays of Lent are in because of precedence, not because a
 choir sings on them: without them, the engine would take a memorial

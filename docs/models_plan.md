@@ -307,12 +307,23 @@ of Mary) that keeps another memorial on its day.
 
 **Where the rows come from:** `manage.py load_calendar`
 (`ordo/calendar_data.py`) loads the General Roman, England and Wales
-calendars from `ordo/data/romcal/`, matching each row by form, calendar
-and key, so it can be run again safely. Occasions a conductor enters
+calendars from `ordo/data/romcal/`, and the 1962 calendar from
+`ordo/data/missalemeum/`, matching each row by form, calendar and key,
+so it can be run again safely. Occasions a conductor enters
 by hand have no key, take no part in precedence and are never touched
 by a load. Precedence level 12 (optional memorial) exists only so a
 national row can make a general memorial optional; the engine leaves
 level 12 out.
+
+**The 1962 rows** use the same model. Their `rank` is `class_1` to
+`class_4`; `precedence` stays blank, because the 1962 rules
+(`ordo/calendar_1962.py`) work it out from Missalemeum's Table of
+Precedence. A saint's day has a fixed month and day; the Proper of
+Time uses one date rule, `tempora_1962`, which finds the day in that
+year's layout of the season's blocks; and Christ the King uses
+`christ_the_king_1962`, the last Sunday of October.
+`occasion_for_date()` chooses the Ordinary Form or the 1962 engine by
+`calendar_use`.
 
 The design, its sources and the order of work are in
 [`calendar_plan.md`](calendar_plan.md).

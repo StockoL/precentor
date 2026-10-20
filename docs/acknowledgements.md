@@ -98,14 +98,35 @@ that none is kept in Holy Week. The Congregation for Divine Worship's
 2018 notification on the memorial of Mary, Mother of the Church, says
 that memorial prevails over another memorial on the same day.
 
-### Missalemeum (planned)
+### Missalemeum
 
 [Missalemeum](https://github.com/mmolenda/Missalemeum) is a Python
 application for the 1962 Missal. Copyright 2022 Marcin Molenda, MIT
-licence. **Planned:** the 1962 calendar's names, classes and colours,
-its rules for which celebration wins (ported, as with romcal), and a
-reference to check Precentor's 1962 dates against. My thanks to
-Marcin Molenda for making it open source.
+licence. I used its repository at commit `75adfbb`. Working out the
+1962 calendar's precedence is intricate, and Missalemeum's careful,
+well-commented rules made the port possible; my thanks to Marcin
+Molenda for making it open source.
+
+How I used it:
+
+- **The calendar rules.** [`ordo/calendar_1962.py`](../ordo/calendar_1962.py)
+  is a port of its calendar factory and rules (`api/kalendar/factory.py`
+  and `rules.py`) and of its Table of Precedence, in its order. The
+  rules test a day's class and kind as fields instead of matching
+  patterns against IDs; the reasons, and the two days where the results
+  differ, are in [`calendar_plan.md`](calendar_plan.md), section 4.
+- **The calendar data.** A one-off script,
+  [`tools/calendar_export/export_missalemeum.py`](../tools/calendar_export/export_missalemeum.py),
+  takes every day's English name, class and colour, and the blocks of
+  the Proper of Time, into `ordo/data/missalemeum/`, which
+  `manage.py load_calendar` loads. I made no changes to its data.
+- **Checking.** The same script saves Missalemeum's resolved calendars
+  for 2020 to 2040, and `ordo/test_reference.py` checks Precentor
+  against them on every test run.
+
+Missalemeum's licence notice is in
+[`ordo/MISSALEMEUM_LICENSE.txt`](../ordo/MISSALEMEUM_LICENSE.txt), beside
+the code ported from it.
 
 ### The Ordo 2025-2026, Latin Mass Society (planned)
 
