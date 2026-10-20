@@ -216,6 +216,17 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
             role.piece_form.fields["score"].queryset = ranked_scores
         context["roles"] = roles
         context["role_form"] = ServiceRoleForm()
+
+        # The services either side of this one in its term, for Previous
+        # and Next links. Date, then id, so two services on one day keep a
+        # fixed order.
+        siblings = list(
+            self.object.term.services.order_by("date", "pk").only("pk", "date", "service_type")
+        )
+        position = next(i for i, s in enumerate(siblings) if s.pk == self.object.pk)
+        context["previous_service"] = siblings[position - 1] if position > 0 else None
+        context["next_service"] = siblings[position + 1] if position + 1 < len(siblings) else None
+
         context["content_type_id"] = ContentType.objects.get_for_model(Service).id
         context["comments"] = attach_reply_forms(
             self.object.comments.filter(parent__isnull=True).order_by("created_at")

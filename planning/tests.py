@@ -483,6 +483,39 @@ class RolePieceHistoryStateTests(TestCase):
                 self.assertEqual(rolepiece.history_label, label)
 
 
+class ServiceNeighbourLinkTests(TestCase):
+    def setUp(self):
+        self.client.force_login(
+            User.objects.create_superuser(username="admin", password="testpass123")
+        )
+        term = Term.objects.create(
+            name="Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+        other = Term.objects.create(
+            name="Other", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+        make = lambda t, d, kind: Service.objects.create(term=t, date=d, service_type=kind)
+        self.first = make(term, date(2026, 1, 4), "Sung Mass")
+        self.middle = make(term, date(2026, 1, 11), "Sung Mass")
+        self.last = make(term, date(2026, 1, 11), "Vespers")  # same day, later id
+        make(other, date(2026, 1, 7), "Sung Mass")  # another term: never a neighbour
+
+    def test_middle_service_links_both_ways(self):
+        response = self.client.get(self.middle.get_absolute_url())
+        self.assertContains(response, f'rel="prev" href="{self.first.get_absolute_url()}"')
+        self.assertContains(response, f'rel="next" href="{self.last.get_absolute_url()}"')
+
+    def test_ends_link_one_way(self):
+        first = self.client.get(self.first.get_absolute_url())
+        self.assertNotContains(first, 'rel="prev"')
+        self.assertContains(first, f'rel="next" href="{self.middle.get_absolute_url()}"')
+        last = self.client.get(self.last.get_absolute_url())
+        self.assertContains(last, f'rel="prev" href="{self.middle.get_absolute_url()}"')
+        self.assertNotContains(last, 'rel="next"')
+
+
 class ServiceDetailListTests(TestCase):
     def test_facts_are_a_description_list_including_hymns_and_psalm(self):
         self.client.force_login(

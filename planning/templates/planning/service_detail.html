@@ -39,6 +39,17 @@
         {% endif %}
     </dl>
 
+    {% if previous_service or next_service %}
+    <nav class="cluster" style="--cluster-justify: space-between;" aria-label="Other services in this term">
+        {% if previous_service %}
+        <a rel="prev" href="{{ previous_service.get_absolute_url }}"><span aria-hidden="true">← </span>Previous: {{ previous_service }}</a>
+        {% else %}<span></span>{% endif %}
+        {% if next_service %}
+        <a rel="next" href="{{ next_service.get_absolute_url }}">Next: {{ next_service }}<span aria-hidden="true"> →</span></a>
+        {% endif %}
+    </nav>
+    {% endif %}
+
     <div class="flow">
         <h2>Slots</h2>
         <div id="roles-list" class="flow">
