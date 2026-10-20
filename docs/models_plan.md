@@ -445,7 +445,7 @@ LAYOUT_STYLE_CHOICES = [
 class SiteConfig(models.Model):
     church_name = models.CharField(max_length=200, blank=True)
     crest_image = models.ImageField(upload_to="site_config/", blank=True)
-    house_accent_colour = models.CharField(max_length=7, default="#8b1a2b")
+    house_accent_colour = models.CharField(max_length=7, default="#8b1a2b", validators=[validate_hex_colour])
     layout_style = models.CharField(max_length=20, choices=LAYOUT_STYLE_CHOICES, default="columns")
     show_hymns_psalm = models.BooleanField(default=True)
 
@@ -466,6 +466,13 @@ class SiteConfig(models.Model):
 these, so `pk` is pinned to `1` on every save and `get_solo()` is the
 one accessor every view uses. A package like `django-solo` would do
 the same, but it isn't worth a dependency for something this small.
+
+**The accent colour is checked as hex.** `validate_hex_colour` only
+accepts `#` and six hex digits. The value goes into an inline `style`
+on the music list, and autoescaping stops HTML but not extra CSS, so a
+value like `red; background: url(...)` must never be saved. The colour
+picker can only send hex anyway; the validator covers the admin and
+anything posted by hand.
 
 **`crest_image` is the project's first uploaded file.** Nothing else
 in the app stores uploaded media, so it needed new setup: `Pillow` as
