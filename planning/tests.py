@@ -339,10 +339,36 @@ class ServiceDetailProposePieceRankingTests(TestCase):
 
     def test_score_options_ordered_with_suited_score_first(self):
         response = self.client.get(self.service.get_absolute_url())
-        role = self.service.roles.get()
-        queryset = list(response.context["roles"][0].piece_form.fields["score"].queryset)
-        self.assertEqual(queryset[0], self.matching)
-        self.assertIn(self.untagged, queryset)
+        values = [option["value"] for option in response.context["score_options"]]
+        self.assertEqual(values, [str(self.matching.pk), str(self.untagged.pk)])
+
+    def test_scores_are_sent_once_not_once_per_slot(self):
+        ServiceRole.objects.create(service=self.service, role_name="Offertory")
+
+        response = self.client.get(self.service.get_absolute_url())
+
+        self.assertContains(response, 'id="score-options"', count=1)
+        self.assertContains(response, "Zzz Untagged", count=1)
+        self.assertNotContains(response, "<select")
+        # Each slot links to its own propose page for when JavaScript is off.
+        for role in self.service.roles.all():
+            self.assertContains(response, reverse("planning:add_piece", args=[role.pk]))
+
+    def test_query_count_does_not_grow_with_slots(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        def count():
+            url = self.service.get_absolute_url()
+            self.client.get(url)
+            with CaptureQueriesContext(connection) as captured:
+                self.client.get(url)
+            return len(captured)
+
+        before = count()
+        for name in ("Introit", "Offertory", "Communion"):
+            ServiceRole.objects.create(service=self.service, role_name=name)
+        self.assertEqual(count(), before)
 
 
 class TermPageMixin:

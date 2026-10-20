@@ -7,10 +7,6 @@
     position: relative;
   }
 
-  .score-combobox__native-select--hidden {
-    display: none;
-  }
-
   .score-combobox__input {
     width: 100%;
   }

@@ -194,22 +194,22 @@ class ServiceCreateView(ConductorRequiredMixin, CreateView):
 
 class ServiceDetailView(LoginRequiredMixin, DetailView):
     model = Service
+    # The slots and pieces come with the service, so the status badge and
+    # every slot read the same rows: a fixed number of queries however
+    # many slots there are.
+    queryset = Service.objects.select_related("term", "occasion__season").prefetch_related(
+        "roles__pieces__score"
+    )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        ranked_scores = self.object.suggested_scores()
-
-        roles = list(self.object.roles.prefetch_related("pieces__score"))
-        for role in roles:
-            # Each role renders its own propose-piece form on the same page,
-            # so each needs a distinct auto_id — Django's default auto_id
-            # ("id_score") would otherwise be duplicated once per role,
-            # which is invalid HTML and breaks getElementById-based lookups.
-            role.piece_form = RolePieceForm(auto_id=f"id_role_{role.pk}_%s")
-            # Suited-first ordering is felt here, not just stored — the
-            # combobox's option order comes straight from this queryset.
-            role.piece_form.fields["score"].queryset = ranked_scores
-        context["roles"] = roles
+        context["roles"] = self.object.roles.all()
+        # One list for every slot's search box, sent once as JSON, in the
+        # ranked order (score-picker.js).
+        context["score_options"] = [
+            {"value": str(score.pk), "label": str(score)}
+            for score in self.object.suggested_scores()
+        ]
         context["role_form"] = ServiceRoleForm()
 
         # The services either side of this one in its term, for Previous
@@ -261,7 +261,6 @@ def add_role(request, service_pk):
         role = form.save(commit=False)
         role.service = service
         role.save()
-        role.piece_form = RolePieceForm(auto_id=f"id_role_{role.pk}_%s")
         fragments = {
             f"role-block-{role.pk}": render_to_string(
                 "planning/_role_block.html", {"role": role}, request=request
@@ -300,7 +299,7 @@ def add_piece(request, role_pk):
         form.fields["score"].queryset = role.service.suggested_scores()
         return render(request, "planning/add_piece.html", {"role": role, "form": form})
 
-    form = RolePieceForm(request.POST, auto_id=f"id_role_{role.pk}_%s")
+    form = RolePieceForm(request.POST)
 
     if not form.is_valid() and not is_ajax:
         form.fields["score"].queryset = role.service.suggested_scores()

@@ -3,7 +3,7 @@
 {% block content %}
 <div class="flow">
     <h1>Propose a piece</h1>
-    <p>For the {{ role.role_name }} at <a href="{{ role.service.get_absolute_url }}">{{ role.service }}</a>. Scores suited to the occasion are listed first.</p>
+    <p>For the {{ role.role_name }} at <a href="{{ role.service.get_absolute_url }}">{{ role.service }}</a>.{% if role.service.occasion %} Scores suited to {{ role.service.occasion }} are listed first.{% endif %}</p>
     <form method="post" class="flow">
         {% csrf_token %}
         {{ form.as_p }}

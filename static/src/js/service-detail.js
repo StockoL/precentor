@@ -61,9 +61,8 @@ function initServiceDetail() {
           document.getElementById("roles-list-empty")?.remove();
           list.appendChild(fragmentToElement(html));
         });
-        // The newly appended role block carries its own fresh score
-        // <select> — .dataset.enhanced guards against double-wrapping
-        // the role blocks that were already there.
+        // The new slot needs its search box built; .dataset.enhanced
+        // stops the slots already there being built twice.
         initScorePickers(list);
         form.reset();
         showToast("Slot added.", "success");

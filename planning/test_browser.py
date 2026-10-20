@@ -89,8 +89,7 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
 
         self.page.evaluate("window.__browser_test_marker = true")
 
-        # The native <select> is now hidden behind the score-picker
-        # combobox — drive the real, visible control a user would.
+        # Drive the visible search box, as a person would.
         self.page.fill(f"{form} .score-combobox__input", "Browser Anthem")
         self.page.click(f"{form} .score-combobox__listbox li")
         self.page.click(f"{form} button[type=submit]")
@@ -144,6 +143,8 @@ class AddRoleBrowserTest(PlaywrightTestCase):
         assert self.page.is_visible(f"#role-block-{role.pk}")
         assert not self.page.is_visible(empty_state)
         assert "Anthem" in self.page.inner_text(f"#role-block-{role.pk}")
+        # The new slot's search box is built from the list already on the page.
+        assert self.page.is_visible(f"#add-piece-form-{role.pk} .score-combobox__input")
 
         self.page.wait_for_selector(".toast--success")
         assert "Slot added" in self.page.inner_text(".toast--success")
@@ -170,17 +171,18 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
         form = f"#add-piece-form-{self.role.pk}"
         input_sel = f"{form} .score-combobox__input"
         listbox_sel = f"{form} .score-combobox__listbox"
-        select_sel = f"#id_role_{self.role.pk}_score"
+        value_sel = f"{form} input[name=score]"
         count_js = f"document.querySelectorAll('{listbox_sel} li').length"
         open_js = f"!document.querySelector('{listbox_sel}').hidden"
 
         self.page.goto(f"/services/{self.service.pk}/")
         self.page.wait_for_selector(input_sel)
 
-        # The native <select> is hidden behind the combobox once enhanced —
-        # it's still in the DOM (the fallback if JS had failed), just not
-        # what a sighted user interacts with.
-        assert not self.page.is_visible(select_sel)
+        # Once the search box is built, the form takes the place of the
+        # link that serves visitors without JavaScript.
+        assert self.page.is_visible(form)
+        assert not self.page.is_visible(f"[data-fallback-for=add-piece-form-{self.role.pk}]")
+        assert self.page.get_attribute(input_sel, "aria-label") == "Score for the Anthem"
 
         # Typing filters down to only the matching result. Polled via a
         # plain JS predicate (wait_for_function) rather than a selector-
@@ -206,7 +208,7 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
         self.page.keyboard.press("Enter")
 
         assert self.page.input_value(input_sel) == f"{self.score_b.title} ({self.score_b.composer})"
-        assert self.page.eval_on_selector(select_sel, "el => el.value") == str(self.score_b.pk)
+        assert self.page.eval_on_selector(value_sel, "el => el.value") == str(self.score_b.pk)
         self.page.wait_for_function(f"!({open_js})")
 
         # Escape closes the list without altering the selection.
@@ -214,7 +216,7 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
         self.page.wait_for_function(f"{open_js} && {count_js} === 2")
         self.page.keyboard.press("Escape")
         self.page.wait_for_function(f"!({open_js})")
-        assert self.page.eval_on_selector(select_sel, "el => el.value") == str(self.score_b.pk)
+        assert self.page.eval_on_selector(value_sel, "el => el.value") == str(self.score_b.pk)
 
         # Clicking outside the combobox also closes it.
         self.page.click(input_sel)

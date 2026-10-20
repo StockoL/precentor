@@ -1,22 +1,30 @@
-// Pure progressive enhancement over RolePieceForm's existing <select> —
-// the form/select itself is never changed. Each role's form already has
-// a distinct id (see RolePieceForm(auto_id=...) in planning/views.py),
-// so this reads that real id straight from data-target rather than
-// generating or rewriting ids itself.
+// The service page sends its scores once, as JSON (Django's json_script),
+// already ranked with the ones suited to the service first. Every slot's
+// search box reads that one list, so the page doesn't carry a full
+// <select> for each slot. Without JavaScript, each slot links to a page
+// with the list instead (planning/_add_piece_form.html).
+let scoreOptions;
+
+function getScoreOptions() {
+  if (scoreOptions === undefined) {
+    const source = document.getElementById("score-options");
+    scoreOptions = source ? JSON.parse(source.textContent) : null;
+  }
+  return scoreOptions;
+}
+
 function buildCombobox(container) {
-  const targetId = container.dataset.target;
-  const select = document.getElementById(targetId);
-  if (!select) return;
+  const options = getScoreOptions();
+  const form = container.closest("form");
+  const valueInput = container.querySelector("input[name='score']");
+  if (!options || !form || !valueInput) return;
 
-  const options = Array.from(select.options)
-    .filter((option) => option.value)
-    .map((option) => ({ value: option.value, label: option.textContent }));
-
-  const listboxId = `${targetId}-listbox`;
+  const listboxId = `${form.id}-listbox`;
 
   const input = document.createElement("input");
   input.type = "text";
   input.className = "score-combobox__input";
+  input.setAttribute("aria-label", container.dataset.label);
   input.setAttribute("role", "combobox");
   input.setAttribute("aria-expanded", "false");
   input.setAttribute("aria-controls", listboxId);
@@ -62,7 +70,7 @@ function buildCombobox(container) {
   }
 
   function choose(option) {
-    select.value = option.value;
+    valueInput.value = option.value;
     input.value = option.label;
     closeList();
   }
@@ -126,13 +134,16 @@ function buildCombobox(container) {
     if (!container.contains(event.target)) closeList();
   });
 
-  const preselected = options.find((option) => option.value === select.value);
-  if (preselected) input.value = preselected.label;
+  // Typing a new search clears the earlier choice, so the form can't
+  // submit a score the box no longer shows.
+  input.addEventListener("input", () => {
+    valueInput.value = "";
+  });
 
-  // Only hide the native control's wrapping <p> (label + select) once
-  // the enhancement is fully built — if anything above throws, this
-  // line never runs and the real <select> stays visible and usable.
-  (select.closest("p") || select).classList.add("score-combobox__native-select--hidden");
+  // Swap the link for the form only once the widget is fully built; if
+  // anything above throws, the link stays and still works.
+  form.hidden = false;
+  document.querySelector(`[data-fallback-for="${form.id}"]`)?.setAttribute("hidden", "");
 }
 
 export function initScorePickers(root = document) {
