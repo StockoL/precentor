@@ -1,0 +1,194 @@
+# Precentor: Calendar Data and Precedence
+
+A design document for Phase 6, item 1 of [`overhaul_plan.md`](overhaul_plan.md):
+filling `ordo` with the real calendars, and teaching it which
+celebration wins when two fall on the same day. I've written it before
+any code, because the decisions here shape the model, the data and
+the tests.
+
+## 1. What I decided before writing this (20 Oct 2026)
+
+- **Both forms of the Roman Rite:** the Ordinary Form and the 1962
+  Extraordinary Form, as `calendar_use` already allows.
+- **Obligatory memorials included,** not just Sundays, solemnities and
+  feasts. Optional memorials are left out: a choir is very unlikely to
+  sing for one, so they're future development.
+- **Precedence worked out by Precentor itself:** each occasion stores
+  its rank and a date rule, and Precentor applies the tables of
+  precedence for any year. Published libraries supply the seed data
+  and serve as test references, but nothing at runtime depends on
+  them.
+- **The national calendar is the user's choice:** the General Roman
+  Calendar, England or Wales to begin with, with room for the United
+  States and others later.
+
+## 2. Sources
+
+| Form | Source | Licence | Used for |
+| --- | --- | --- | --- |
+| Ordinary Form | [romcal](https://github.com/romcal/romcal) 3 (core and calendar packages, version `3.0.0-dev.140`) | MIT | Definitions (names, ranks, date rules, transfer rules, colours, seasons) and a reference calendar for each year |
+| 1962 | [Missalemeum](https://github.com/mmolenda/Missalemeum) | MIT | Names, classes and colours, and a reference calendar for each year |
+| 1962, England and Wales | [The Ordo 2025-2026](https://lms.org.uk/sites/default/files/u5374/final_ordo_1.42_2025-2026.pdf), Latin Mass Society | Copyright; facts only | Which feasts England and Wales add or rank differently, and a reference for the 2025-26 year |
+
+romcal splits England and Wales into two calendars. They differ in
+places such as St David, a solemnity in Wales. So the choices are
+General Roman, England and Wales, and each national calendar is
+romcal's own list of additions and overrides on top of the general
+one (England has 46, Wales 25, the United States 26).
+
+What I checked against romcal's England data, and not my own
+memory: since the bishops' 2016 decision, Epiphany and the Ascension
+stay on 6 January and the Thursday. Corpus Christi moves to the
+Sunday, and so does SS Peter and Paul when 29 June is a Saturday or a
+Monday (in 2026 it's kept on Sunday 28 June). St George is a
+solemnity in England and an optional memorial in the general
+calendar.
+
+Missalemeum has no supplement for England (its local calendar is
+Polish). For that I'm using the Latin Mass Society's annual Ordo, which
+gives the rank of each day separately for the dioceses of England and
+of Wales. On 23 April, for example, St George is a feast of the first
+class in England and of the third class in Wales; and St Thomas of
+Canterbury, on 29 December, is first class in both. The Ordo is
+copyright, so I take only facts from it (which days, on which dates,
+of which class and colour) and never its wording. Feasts proper to a
+single diocese or church, which the Ordo also lists, are out of scope.
+
+## 3. The model
+
+`LiturgicalOccasion` gains:
+
+- **`key`:** a stable identifier from the source (`george_of_lydda_martyr`).
+  A national calendar overrides a general day by using the same key.
+- **`calendar`:** which calendar the row belongs to (`general_roman`,
+  `england`, `wales`; later `united_states`). Together with
+  `calendar_use` and `key` it's unique.
+- **`rank`:** for the Ordinary Form, solemnity, Sunday, feast,
+  memorial or weekday; for 1962, class I to IV.
+- **`precedence`:** the row's place in the Table of Liturgical Days
+  (Ordinary Form, levels 1 to 13 with lettered sub-levels such as 4a
+  and 8c) or the 1962 table, stored as a number that sorts correctly
+  plus its code for display.
+- **`date_rule`:** either a fixed month and day (as now), or a named
+  rule with arguments: `easter`, `ordinary_time_sunday(5)`,
+  `advent_sunday(2)`, `baptism_of_the_lord`, and so on. romcal uses 25
+  such rules in the calendars above, and most are a line from Easter,
+  Christmas or the first Sunday of Advent. The existing
+  `easter_offset_days` becomes one case of this.
+- **`transfers`:** the moves a day makes in particular years, stored as
+  JSON. romcal uses only four shapes: "if it falls on a Sunday, move
+  it a day later", "if it falls on a Saturday, move it a day earlier",
+  "if it falls between Palm Sunday and Divine Mercy Sunday, move it to
+  the Monday after" and "... move it to the Saturday before". A JSON
+  field keeps those four shapes in one column that both SQLite and
+  Postgres support, without a table for something this small.
+
+`SiteConfig` gains **`national_calendar`**, chosen on Settings by a
+conductor. I put it on `SiteConfig` because the calendar belongs to the
+church, the same as its name and crest, and one church follows one
+national calendar. A term or service doesn't need its own.
+
+`COLOUR_CHOICES` gains **black**: 1962 uses it on Good Friday and at
+Requiem Masses. It needs a `liturgical-black` token in both themes.
+
+## 4. The engine
+
+A new module, `ordo/calendar.py`, works out a whole year at a time:
+
+1. Take the general calendar's occasions for the chosen form, and
+   replace or add the national calendar's rows by key.
+2. Give each occasion its date for the year from its `date_rule`, then
+   apply its `transfers`.
+3. Group the occasions by date and sort each day by precedence.
+4. Apply the rules of the form:
+   - **Ordinary Form** (the General Norms for the Liturgical Year,
+     nos. 59 to 61): the highest celebration wins. A solemnity that's
+     impeded moves to the nearest free day; a feast or memorial that's
+     impeded is left out that year; a Sunday in Ordinary Time gives
+     way to a feast of the Lord or a solemnity, but a Sunday of
+     Advent, Lent or Easter gives way to nothing.
+   - **1962** (the rubrics of the 1960 Code): classes I to IV, where a
+     Sunday of the first class beats any feast, a Sunday of the second
+     class gives way only to feasts of the first class and feasts of
+     the Lord, and a defeated feast is often commemorated. I'll port
+     these from Missalemeum's rules, keeping only what decides the
+     day's name: no propers, prefaces or Office.
+5. Return each date's celebration first, then anything still observed
+   alongside it (a commemoration in 1962, a memorial that becomes a
+   commemoration in Lent).
+
+`occasion_for_date()` keeps its name and returns the same kind of
+list, now in that order. The service form already offers the first
+match as the occasion and the rest as additional occasions, so the
+suggestion becomes "this is the day, and this is also kept". The year
+is cached, so a lookup doesn't recompute 300 dates each time.
+
+## 5. What goes in
+
+| | Included | Left out for now |
+| --- | --- | --- |
+| Ordinary Form | Sundays, solemnities, feasts, obligatory memorials, and the privileged weekdays a choir sings for (Ash Wednesday, Holy Week, the Easter Octave, 17 to 24 December, the Christmas Octave) | Optional memorials and ordinary weekdays |
+| 1962 | Sundays, feasts of the first, second and third class, first-class ferias (Ash Wednesday, Holy Week), and the Christmas and Easter octaves | Fourth-class commemorations and ordinary ferias |
+
+Third-class feasts are the nearest 1962 equivalent of obligatory
+memorials. Optional memorials are future development (section 1); the
+model doesn't need to change for them.
+
+## 6. Getting the data in
+
+Two small export scripts, kept in `tools/calendar_export/` with a
+README crediting both sources:
+
+- a Node script that reads romcal's definitions and writes one JSON
+  file per calendar;
+- a Python script that reads Missalemeum's tables and writes the 1962
+  file.
+
+The JSON files are committed in `ordo/data/`, and a data migration
+loads them. Neither library is installed in the project: a fresh
+clone, a test run and the Heroku deploy need neither Node nor
+Missalemeum. Existing occasions that services already point to are
+kept, so no service loses its occasion.
+
+## 7. Testing
+
+- **Unit tests** for each date rule (the 5th Sunday of Ordinary Time,
+  Christ the King, Baptism of the Lord when Epiphany falls on 7 or 8
+  January, and so on) and each precedence rule, using years chosen
+  for their clashes: St Joseph in Holy Week, the Immaculate Conception
+  on an Advent Sunday, the Annunciation in the Easter Octave, All
+  Souls on a Sunday.
+- **Reference tests:** the export scripts also write, for every day
+  from 2020 to 2040, the celebration romcal or Missalemeum gives for
+  each calendar. A test runs Precentor's engine over the same days and
+  compares, for the occasions in scope. Any disagreement is either a
+  bug in my code or a case I'll document with the reason.
+- **The 2025-26 Ordo as a check on England and Wales in 1962:** the
+  class of each day's celebration in England and in Wales, taken from
+  the Ordo, compared with the engine for that liturgical year.
+
+## 8. Order of work
+
+Each step ends with the tests passing and the changes left for me to
+review and commit.
+
+1. Model fields, the `national_calendar` setting and the black colour.
+2. Ordinary Form date rules, with unit tests.
+3. Ordinary Form precedence, with unit tests.
+4. romcal export, data files and the data migration for General
+   Roman, England and Wales, with reference tests.
+5. 1962 date rules and precedence, with unit tests.
+6. Missalemeum export, the England and Wales supplements from the
+   Ordo, data and reference tests.
+7. The service form's suggestions in precedence order, and the choice
+   on Settings.
+8. README and `models_plan.md`.
+
+Adding the United States later is then one more run of the export
+script and one more choice on Settings.
+
+## 9. Questions settled (20 Oct 2026)
+
+- **Optional memorials:** left out, as future development.
+- **1962 in England and Wales:** taken from the Latin Mass Society's
+  Ordo (section 2), not left universal.
