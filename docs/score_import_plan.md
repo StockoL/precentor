@@ -1,66 +1,70 @@
-# Precentor — Score Import Feature: Design Document
+# Precentor: Score Import
 
-A design document for the bulk Score import feature and its
-related Compilation cataloguing tools. Reasoning worked out before
-code is written — because this feature has grown genuinely complex enough
-to need it.
+A design document for importing scores in bulk and the related tools
+for cataloguing compilations. I worked the reasoning out before
+writing any code, because the feature had grown complex enough to
+need it.
 
-This is the third architecture this feature has gone through.
-Earlier approaches are kept below, clearly marked superseded, rather
-than deleted — the same "why I didn't do X" discipline as the
-README's out-of-scope list. It reflects the feature genuinely being more
-complex than it first looked, which is worth being honest about rather than
-pretending the design arrived fully-formed.
+> **Status, October 2026:** not built. Bulk import is listed as
+> future work in the README. This document records the design so it's
+> ready when I come back to it. It has been updated for model changes
+> made since it was written: the composer is now split into
+> `composer_surname` and `composer_other_names`, and the rehearsal
+> lead-time tag has been dropped.
+
+This is the third design the feature has been through. I've kept the
+earlier ones below, marked as superseded, in the same spirit as the
+README's out-of-scope list: it's useful to record why I didn't do
+something. The feature turned out more complex than it first looked,
+and I'd rather show that than pretend the design arrived finished.
 
 ---
 
 ## 1. Problem statement
 
-A conductor or librarian migrating from an existing spreadsheet needs
-to bulk-import their score library into Precentor. Real spreadsheets
-are inconsistently structured (arbitrary column order/naming, missing
-fields, occasional bad data), so the feature must never silently
-guess-and-commit — every step must be genuinely correctable by a human
-before anything is treated as finished. The feature must save real
-time over manual entry, not merely relocate the same amount of effort
-into a different shape. Review realistically happens across multiple
-sessions, "when the user has time," not necessarily in one sitting.
+A conductor or librarian moving from a spreadsheet needs to import
+their score library into Precentor in bulk. Real spreadsheets are
+inconsistent (columns in any order and under any name, missing fields,
+the odd bad value), so the feature must never guess and save without
+asking. A person has to be able to correct every step before anything
+counts as finished. The import has to save real time over entering
+scores by hand, not just move the same effort somewhere else. And
+review will happen over several sessions, whenever the person has
+time, not necessarily in one sitting.
 
-A related, adjacent problem: real libraries contain **compilations**
-(anthologies such as the _Chester Book of Motets_) holding many individual
-works. A CSV import will typically list a compilation as a single row
-(the physical book), with no breakdown of its contents — that
-breakdown is inherently manual work the tool can make faster, but
-never fully automate.
+A related problem: real libraries contain **compilations**, anthologies
+such as the _Chester Book of Motets_ that hold many individual works. A
+CSV will usually list a compilation as one row (the physical book) with
+no breakdown of its contents. That breakdown is manual work the tool
+can speed up but never fully automate.
 
 ---
 
-## 2. Confirmed architecture (current)
+## 2. Current design
 
-### 2.1 Why this needs persisted rows, not an ephemeral review page
+### 2.1 Why the rows have to be saved
 
-Because review happens when the person has time — across sessions,
-in any order, one row at a time, sometimes long after the upload — the
-list and its status must survive between page loads. This rules out a
-single-page, all-rows-at-once review entirely: nothing in that
-design outlives one request/response cycle.
+Because review happens whenever the person has time (across sessions,
+in any order, one row at a time, sometimes long after the upload), the
+list and each row's status must survive between page loads. That rules
+out reviewing every row at once on a single page: nothing in that
+design outlives one request.
 
 ### 2.2 The staging model
 
-`Score.title`/`Score.composer` are genuinely required fields, and a
-badly-parsed CSV row might have neither. Rather than weakening those
-requirements for every hand-entered Score too (a real integrity cost
-paid everywhere, just to make imports marginally easier — a trade-off
-this project has consistently refused elsewhere), a dedicated,
-deliberately lightweight staging model holds whatever was parsed,
-however incomplete:
+`Score.title` and `Score.composer_surname` are required, and a badly
+parsed CSV row might have neither. I don't want to loosen those
+requirements for every hand-entered score just to make imports a
+little easier; that would cost integrity everywhere, a trade-off I've
+refused elsewhere in the project. Instead, a separate, lightweight
+staging model holds whatever was parsed, however incomplete:
 
 ```python
 class PendingScoreImport(models.Model):
     STATUS_CHOICES = [
-        ("error", "Error"),                 # red — no usable Score yet
-        ("needs_review", "Needs review"),   # amber — Score exists, not yet confirmed
-        ("complete", "Complete"),           # green — explicitly confirmed
+        ("error", "Error"),                 # red: no usable Score yet
+        ("needs_review", "Needs review"),   # amber: Score exists, not yet confirmed
+        ("complete", "Complete"),           # green: explicitly confirmed
     ]
     raw_data = models.JSONField()
     score = models.OneToOneField(
@@ -72,209 +76,198 @@ class PendingScoreImport(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 ```
 
-**Promotion threshold (red → amber):** a row graduates from
-"no Score yet" to "a real Score exists, needs review" only once **both
-Title and Composer** are present. Everything else on `Score` may remain
-blank at this point.
+**From red to amber:** a row moves from "no score yet" to "a real
+score exists and needs review" only once it has **both a title and a
+composer's surname**. Every other field on `Score` can still be blank
+at that point.
 
 ### 2.3 The list view
 
-A colour-coded list, one row per `PendingScoreImport`, reusing the
-existing `badge` colour tokens exactly (no new colour system):
-red = `danger` (no `score` yet), amber = `warning` (`score` exists,
-`status="needs_review"`), green = `success` (`status="complete"`).
+A colour-coded list, one row per `PendingScoreImport`, using the
+existing `badge` colour tokens with no new colour system: red is
+`danger` (no `score` yet), amber is `warning` (`score` exists,
+`status="needs_review"`) and green is `success`
+(`status="complete"`).
 
-**Default sort: status severity first** — red rows before amber before
-green, so what most needs attention surfaces at the top rather than
-requiring the person to hunt for it. This also resolves what would
-otherwise be a real page-scale concern: since each row is reviewed on
-its _own_ page, not all together, the list itself just needs
-ordinary list-view scale, not "thousands of form fields on one
-request" — the earlier formset design's scale worry doesn't apply to
-this architecture at all.
+**Sorted by status first:** red rows before amber before green, so what
+most needs attention is at the top and nobody has to hunt for it. This
+also removes a worry about page size. Each row is reviewed on its
+_own_ page, so the list only needs to cope with ordinary list sizes,
+not thousands of form fields in one request, which was the problem
+with the earlier formset design.
 
-### 2.4 Reusing the existing Score forms — not a parallel form stack
+### 2.4 Reusing the existing score forms
 
-- **Red row** (no `Score` yet) → links to `ScoreCreateView`, pre-filled
-  from `raw_data`. Saving it for the first time creates the `Score` and
-  promotes the row to amber.
-- **Amber row** (a real `Score` already exists) → links to the ordinary
-  `ScoreUpdateView` for that `Score`, with one addition: a **"Mark
-  complete"** action alongside the normal save, setting
+- **A red row** (no `Score` yet) links to `ScoreCreateView`, filled in
+  from `raw_data`. Saving it creates the `Score` and turns the row
+  amber.
+- **An amber row** (a real `Score` exists) links to the ordinary
+  `ScoreUpdateView` for that score, with one addition: a **Mark
+  complete** action beside the normal save, which sets
   `PendingScoreImport.status = "complete"` (green).
-- Both views stay almost entirely as they already are — a small
-  wrapper around existing, working machinery.
+- Both views stay almost exactly as they are, with a small wrapper
+  around code that already works.
 
 ### 2.5 The "belongs to a compilation" checkbox
 
-Distinct from "this row _is_ a compilation": this means "this
-individual piece lives inside a book the library already owns (or is
-also being imported)." Revealed by a checkbox, behaving as a
-search-or-create combobox.
+This is different from "this row _is_ a compilation". It means "this
+piece is in a book the library already owns, or that's also being
+imported". Ticking the checkbox reveals a combobox that searches or
+creates.
 
-Typed text searches existing `Compilation` records and
-suggests matches; if nothing matches, offers to create a new
-`Compilation` from the typed name on the spot. This ties the checkbox
-directly to the same `Compilation` records created via "is a
-compilation" flag, rather than being two disconnected mechanisms.
+Typing searches existing `Compilation` records and suggests matches.
+If nothing matches, it offers to create a new `Compilation` with the
+typed name there and then. That ties the checkbox to the same
+`Compilation` records the "is a compilation" flag creates, so the two
+aren't separate mechanisms.
 
 ---
 
 ## 3. Compilations
 
-- **A compilation piece is a `Score`, not a separate model** — a
-  nullable `Score.compilation` FK to a new `Compilation` model (title,
-  editor, publisher, `copies_owned`, `filing_location`),
-  `on_delete=SET_NULL`. Keeps every piece searchable/filterable through
-  the exact same mechanisms as a standalone octavo.
-- **Cataloguing a compilation's actual contents is manual, irreducible
-  work** — no import can invent a breakdown that doesn't exist in the
-  source data. The tool's job is to make this fast, not automatic.
-- **Where compilation-flagged rows go:** ticking "this row
-  _is_ a compilation" (on a `PendingScoreImport`, during the main
-  import review) creates a `Compilation` stub and removes that row
-  from the main Score-review list entirely. It instead appears on a
-  **separate, persistent "Compilations to catalogue" list, reachable
-  from the dashboard** — exactly the person's own description: "stored
+- **A piece in a compilation is a `Score`, not a separate model.** A
+  nullable `Score.compilation` foreign key points to a new
+  `Compilation` model (title, editor, publisher, `copies_owned`,
+  `filing_location`), with `on_delete=SET_NULL`. Every piece can then
+  be searched and filtered exactly like a standalone octavo.
+- **Cataloguing a compilation's contents is manual work that can't be
+  avoided.** No import can invent a breakdown that isn't in the source
+  data. The tool's job is to make it quick, not automatic.
+- **Where compilation rows go:** ticking "this row _is_ a compilation"
+  on a `PendingScoreImport` during review creates a `Compilation` stub
+  and takes the row off the main review list. It appears instead on a
+  separate, lasting **Compilations to catalogue** list, reachable from
+  the Terms page. That matches what I wanted in my own words: "stored
   as a simple list... allowing the user to visit it when they have
   time."
-- **The Compilation list view mirrors the import review list** — same
-  list-view pattern, clicking an entry goes to that compilation's own
-  detail page, which offers ways to add its contents: both the
-  previously-designed **paste-parse bulk entry** (for transcribing a
-  whole table of contents at once) and a **quick single "add a piece"
-  link** (the ordinary `ScoreCreateView`, pre-filled with
-  `compilation=this`) — not mutually exclusive; the bulk tool serves
-  "I have the whole contents list to hand," the single-add link serves
-  "I just noticed one more piece."
-- **CPDL is at most a convenience link**, never a data source Precentor
-  queries or scrapes — reasoning already established: coverage of
-  any given physical anthology can't be relied upon; CPDL skews toward
-  public-domain works, while a modern anthology usually mixes in
-  actively copyrighted content CPDL won't have at all.
+- **The compilation list works like the import list.** Clicking an
+  entry opens that compilation's page, which offers two ways to add
+  its contents: **paste and parse** for transcribing a whole table of
+  contents at once, and a single **Add a piece** link (the ordinary
+  `ScoreCreateView`, with `compilation` already set). They work
+  together: the first is for when the whole contents list is to hand,
+  the second for when I notice one more piece.
+- **CPDL is at most a convenience link,** never a source Precentor
+  queries or scrapes. Its coverage of any particular anthology can't
+  be relied on: CPDL leans towards public-domain works, while a modern
+  anthology usually includes music still in copyright that CPDL won't
+  have.
 
 ---
 
-## 4. Confirmed sub-decisions (summary)
+## 4. Decisions in brief
 
-- Row-level validation failures are never all-or-nothing; a row stays
-  reviewable/editable indefinitely rather than forcing a re-upload.
-- Promotion threshold red→amber: Title **and** Composer both present.
-- "Belongs to a compilation": search existing `Compilation`s, offer
-  create-new if no match.
-- Compilation-flagged rows leave the main list entirely and populate a
-  separate dashboard-level "Compilations to catalogue" list.
-- List views default-sort by status severity (red, then amber, then
-  green).
+- A row that fails validation never fails the whole import. It stays
+  open for review and editing indefinitely, with no need to upload
+  again.
+- A row turns from red to amber once it has a title **and** a
+  composer's surname.
+- "Belongs to a compilation" searches existing `Compilation`s and
+  offers to create a new one if nothing matches.
+- Compilation rows leave the main list and go on a separate
+  Compilations to catalogue list.
+- Lists sort by status first: red, then amber, then green.
 
-## 5. Superseded approaches (kept for the record, not in use)
+## 5. Superseded designs (kept for the record)
 
-### 5.1 Formset-based single-page review (second architecture)
+### 5.1 Reviewing every row on one page with a formset (second design)
 
-A `modelformset_factory`-based single page showing every imported row
-as an editable form simultaneously, committed together. Superseded
-because it can't survive across the multi-session review pattern the
-person actually wants ("visit it when they have time") — everything
-lived only for the duration of one page/request. Its scale concern
-(potentially thousands of form fields on one page) is moot under the
-current architecture, since each row now gets its own ordinary page.
+A single page built with `modelformset_factory`, showing every
+imported row as an editable form at once and saving them together. I
+dropped it because it couldn't support review over several sessions:
+everything lived only as long as one page. Its size problem (possibly
+thousands of form fields on one page) doesn't arise in the current
+design, since each row gets its own page.
 
-### 5.2 Batch `fetch()`-loop progress bar (first architecture)
+### 5.2 A progress bar driven by a `fetch()` loop (first design)
 
-A JS-driven progress bar processing the import in small batches behind
-the scenes. Superseded because the design direction moved to
-"everything visible and individually reviewable," not "processed
-invisibly with a progress indicator." `score-import.js` and the
-`score_import_batch`/`score_import_progress` views built for this
-should be removed, not left dormant.
+A JavaScript progress bar that processed the import in small batches
+behind the scenes. I dropped it once the design moved to "everything
+visible and reviewable one by one" instead of "processed out of sight
+with a progress bar". The prototype's `score-import.js` and its
+`score_import_batch` and `score_import_progress` views are no longer
+in the codebase.
 
-What _does_ carry forward unchanged from both earlier passes:
-`ScoreForm` as the single source of validation truth, the
-synonym-based column-mapping step, and the staged-upload mechanism for
-the initial CSV parse.
+What carries forward from both earlier designs: `ScoreForm` as the one
+place validation happens, the column-mapping step based on synonyms,
+and staging the upload for the first CSV parse.
 
 ---
 
-## 6. Other Considerations
+## 6. Other considerations
 
-### Data transfer from a raw row to a new Compilation stub
+### What a raw row passes to a new compilation stub
 
-`title`, `copies_owned`, `filing_location` transfer directly when
-present in the source row. `editor`/`publisher` — genuine `Compilation`
-fields, but a Score-shaped CSV mapping never captures them — start
-blank, filled in later. `composer`/`voicing`/`language`/
-`duration_minutes`/`lead_time_tag` are silently discarded: not
-surprising data loss requiring a warning, just fields that have no
-meaningful equivalent on a whole compilation (there is no single
-"composer" of an anthology).
+`title`, `copies_owned` and `filing_location` carry over directly when
+the row has them. `editor` and `publisher` are real `Compilation`
+fields, but a CSV laid out for scores never has them, so they start
+blank and are filled in later. The composer, `voicing`, `language` and
+`duration_minutes` are dropped without a warning. That isn't a loss
+anyone needs telling about: those fields mean nothing for a whole
+compilation, which has no single composer.
 
-### Compilations are a first-class, browsable part of the library
+### Compilations are part of the library, with their own pages
 
-Not just an import-adjacent "to catalogue" queue: a proper
-**Compilation list view** (`library:compilation_list`), mirroring
-`score_list.html`'s pattern, with its own nav entry alongside the
-Score library. Each Compilation's detail page shows its contents as a
-**filtered Score list** — `Score.objects.filter(compilation=this)`,
-reusing the existing list-row markup rather than inventing new display
-logic. A direct payoff of the original "a compilation piece is a
-Score, not a separate model" decision — the "mini library list" needs
-no new machinery, just the existing one, scoped.
+They're not just a queue of things to catalogue after an import. A
+**compilation list** (`library:compilation_list`) follows the pattern
+of the Library page and has its own nav entry beside it. Each
+compilation's page lists its contents as a **filtered score list**,
+`Score.objects.filter(compilation=this)`, using the existing list
+markup. This pays off the decision that a piece in a compilation is a
+`Score`: the small library list for a compilation needs nothing new,
+just the existing list narrowed down.
 
-### Duplicate detection: informational, never blocking; multiple genuine entries allowed
+### Duplicates: a note, never a block, and real duplicates allowed
 
-Real choir libraries legitimately hold the same nominal piece more than
-once — perhaps most commonly the same setting transposed into a different key
-for a particular choir's range. Duplicate handling must not prevent this.
+Choir libraries often hold the same piece more than once, most
+commonly the same setting in a different key to suit a choir's range.
+Handling duplicates mustn't prevent that.
 
 - **A new field, `Score.key`** (`CharField(max_length=50, blank=True)`),
-  free text — mirroring the voicing decision, not the liturgical-colour
-  one: early music repertoire (Byrd, Tallis, Palestrina-era settings —
-  exactly the kind of repertoire in this project's own reference music
-  list) is often in a church mode, not a conventional major/minor key,
-  so a closed choice set would be the wrong fit here.
-- **Displayed distinctly wherever a piece's title appears** — e.g.
-  "Byrd, Ave verum (in G)" — in `score_list.html`, service role rows,
-  and the music list. **Caveat:** this can't be styled (italics) inside
-  a native `<select>` `<option>` in the propose-piece dropdown — the
-  key still shows there, just as plain parenthetical text, a real,
-  accepted limitation of native `<option>` rendering, not a bug to fix.
-- **Duplicate check**: `Score.objects.filter(title__iexact=title,
-composer__iexact=composer)` (case-insensitive, same reasoning as the
-  existing language filter's `__iexact`). A match produces a
-  **non-blocking, informational note** (via Django messages) with a
-  link to the existing entry/entries — shown _after_ saving, never
-  preventing it. The person decides whether it's a genuine accidental
-  duplicate worth tidying up, or a legitimately distinct entry (a
-  different key being the flagship reason, though a different edition
-  or voicing arrangement is equally valid).
-- Since the import-review promotion flow (red → amber) reuses
-  `ScoreCreateView` directly, this check applies to imported rows
-  automatically, at no extra cost — a direct payoff of insisting on one
-  real, reused form rather than a parallel import-specific path.
-- Note for implementation: this adds a migration to `Score`, and
-  `docs/models_plan.md` will need updating to reflect the new field
-  when this is actually built.
+  free text. It follows the voicing decision, not the liturgical
+  colour one: early repertoire (Byrd, Tallis, Palestrina, exactly what
+  my own sample music list contains) is often in a church mode, not a
+  major or minor key, so a fixed list of choices would be wrong here.
+- **Shown wherever a piece's title appears,** for example "Byrd, Ave
+  verum (in G)", on the Library page, in service slots and on the
+  music list. One limitation: it can't be styled (in italics, say)
+  inside a native `<option>` in the propose-piece dropdown. The key
+  still shows there as plain text in brackets, which I accept as a
+  limit of native `<option>` rendering.
+- **The check:** `Score.objects.filter(title__iexact=title,
+  composer_surname__iexact=surname)`, case-insensitive like the
+  existing language filter. A match produces an **informational
+  note** (through Django messages) linking to the existing entries,
+  shown _after_ saving and never preventing it. The person decides
+  whether it's an accidental duplicate to tidy up or a separate entry
+  (a different key being the main reason, though a different edition
+  or arrangement counts too).
+- Because a row turning from red to amber goes through
+  `ScoreCreateView`, imported rows get this check automatically. That
+  comes from insisting on one shared form, with no separate path for
+  imports.
+- When this is built, it adds a migration to `Score`, and
+  `docs/models_plan.md` needs the new field.
 
-### Re-running the upload/mapping step
+### Uploading the same file again
 
-Two complementary, deliberately cheap layers, rather than one clever
-mechanism trying to do both jobs:
+Two simple layers, each doing one job, instead of one clever mechanism
+trying to do both:
 
-1. **File-level exact-duplicate check.** `ImportBatch.file_hash` (a
-   SHA-256 of the uploaded file's content) is checked against prior
-   batches at upload time, _before_ any processing happens. A match
-   stops the upload and offers a choice: continue anyway (a new,
-   separate batch), or go review the existing matching batch instead.
-   Catches the common, lazy case — an accidental double-upload, or
-   re-uploading because the first attempt's outcome wasn't clear.
-2. **Row-level check (resolved above).** A genuinely edited
-   re-upload (some rows fixed, file hash now different) won't be
-   caught by the file-hash check — but doesn't need to be: the
-   Score-level title+composer duplicate check, surfaced when a row
-   promotes from red to amber, independently catches individual
-   duplicate rows regardless of whether the whole file matches.
+1. **A check for the exact same file.** `ImportBatch.file_hash` (a
+   SHA-256 of the file's contents) is compared with earlier batches at
+   upload time, _before_ any processing. A match stops the upload and
+   offers a choice: continue anyway as a new batch, or go to the
+   matching batch instead. That catches the common case: uploading
+   twice by accident, or again because the first attempt's outcome
+   wasn't clear.
+2. **A check on each row (above).** An edited file (some rows fixed,
+   so a different hash) gets past the file check, and doesn't need to
+   be caught there: the title and surname check, run when a row turns
+   from red to amber, catches each duplicate row whether or not the
+   whole file matches.
 
-### `PendingScoreImport` batch grouping
+### Grouping rows into batches
 
 ```python
 class ImportBatch(models.Model):
@@ -284,17 +277,16 @@ class ImportBatch(models.Model):
 ```
 
 `PendingScoreImport` gains `batch = models.ForeignKey(ImportBatch,
-on_delete=models.CASCADE, related_name="pending_items")`. Worth naming
-the structural echo explicitly: **an `ImportBatch` is, to the
-dashboard, exactly like a `Term`** — a container with its own
-completion summary (red/amber/green counts), shown as a list of
-batches rather than one permanently flat list of every pending item
-ever uploaded. Same shape as `Term.completion_summary()`, just
-counting import statuses instead of service statuses.
+on_delete=models.CASCADE, related_name="pending_items")`. The shape is
+worth pointing out: **an `ImportBatch` works like a `Term`**, a
+container with its own completion summary (red, amber and green
+counts), listed as batches instead of one flat list of every row ever
+uploaded. It's the same shape as `Term.completion_summary()`, counting
+import statuses instead of service statuses.
 
-### Downloadable template CSV
+### A template CSV to download
 
-A static download (columns: Title, Composer, Arranger, Voicing,
-Language, Copies Owned, Filing Location, Duration, Rehearsal Lead
-Time; one example row), linked from the upload guidance page. No open
-design questions remain here — straightforward to build.
+A static file (columns: Title, Composer Surname, Composer Other Names,
+Arranger, Editor, Voicing, Language, Copies Owned, Filing Location,
+Duration; one example row), linked from the upload instructions. No
+design questions remain here.
