@@ -43,3 +43,5 @@ htmlcov/
 
 # --- Heroku ---
 .python-version
+# --- Node (the one-off calendar export in tools/) ---
+node_modules/
