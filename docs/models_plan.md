@@ -185,6 +185,7 @@ COLOUR_CHOICES = [
     ("green", "Green"),
     ("white", "White/Gold"),
     ("rose", "Rose"),
+    ("black", "Black"),
 ]
 
 CALENDAR_USE_CHOICES = [
@@ -198,9 +199,22 @@ class LiturgicalSeason(models.Model):
 class UseType(models.Model):
     name = models.CharField(max_length=50)
 
+NATIONAL_CALENDAR_CHOICES = [
+    ("general_roman", "General Roman Calendar"),
+    ("england", "England"),
+    ("wales", "Wales"),
+]
+
 class LiturgicalOccasion(models.Model):
     name = models.CharField(max_length=100)
+    key = models.CharField(max_length=100, blank=True)  # e.g. "george_of_lydda_martyr"
     calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES, default="current")
+    calendar = models.CharField(max_length=20, choices=NATIONAL_CALENDAR_CHOICES, default="general_roman")
+    rank = models.CharField(max_length=20, choices=RANK_CHOICES, blank=True)  # solemnity ... class_4
+    precedence = models.CharField(max_length=4, choices=OF_PRECEDENCE_CHOICES, blank=True)  # "1" to "13"
+    date_rule = models.CharField(max_length=50, blank=True)  # e.g. "ordinary_time_sunday"
+    date_rule_args = models.JSONField(default=list, blank=True)  # e.g. [5]
+    transfers = models.JSONField(default=list, blank=True)
     is_moveable = models.BooleanField(default=False)
     fixed_month = models.PositiveSmallIntegerField(blank=True, null=True)
     fixed_day = models.PositiveSmallIntegerField(blank=True, null=True)
@@ -256,6 +270,17 @@ field. The data and schema changes are separate migrations because
 Postgres can refuse to alter a table with pending trigger events in
 the same transaction. The README lists a second tradition as future
 work.
+
+**Real calendars, and precedence (October 2026):** the fields `key`,
+`calendar`, `rank`, `precedence`, `date_rule`, `date_rule_args` and
+`transfers` let `ordo` hold the real Ordinary Form and 1962 calendars,
+with national calendars (England, Wales) that add days to the general
+calendar or override its days by sharing their `key`. A key is unique
+within one calendar and form; occasions entered by hand have none.
+`precedence` is the level in the Table of Liturgical Days, which
+decides what's celebrated when two days fall together. Black joins the
+colours for 1962. The design, its sources and the order of work are in
+[`calendar_plan.md`](calendar_plan.md).
 
 **Calendar use, and the reverse lookup:** `calendar_use` separates the
 Ordinary Form (`current`) from the 1962 Extraordinary Form
@@ -446,6 +471,7 @@ class SiteConfig(models.Model):
     church_name = models.CharField(max_length=200, blank=True)
     crest_image = models.ImageField(upload_to="site_config/", blank=True)
     house_accent_colour = models.CharField(max_length=7, default="#8b1a2b", validators=[validate_hex_colour])
+    national_calendar = models.CharField(max_length=20, choices=NATIONAL_CALENDAR_CHOICES, default="general_roman")
     layout_style = models.CharField(max_length=20, choices=LAYOUT_STYLE_CHOICES, default="columns")
     show_hymns_psalm = models.BooleanField(default=True)
 
@@ -466,6 +492,11 @@ class SiteConfig(models.Model):
 these, so `pk` is pinned to `1` on every save and `get_solo()` is the
 one accessor every view uses. A package like `django-solo` would do
 the same, but it isn't worth a dependency for something this small.
+
+**The national calendar is a site setting.** It belongs to the church,
+like its name and crest, and one church follows one national calendar,
+so it lives on `SiteConfig` and not on a term or service. `core`
+imports the choices from `ordo`; `ordo` imports nothing from `core`.
 
 **The accent colour is checked as hex.** `validate_hex_colour` only
 accepts `#` and six hex digits. The value goes into an inline `style`
