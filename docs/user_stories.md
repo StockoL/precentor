@@ -35,9 +35,9 @@ These user stories drive the design and functionality of Precentor.
 - As a conductor, I want to generate a partial/internal version of the
   list with clearly marked "TBC" placeholders, so my team can see
   progress even before everything's confirmed.
-- As a conductor, I want to open a comment thread on a piece, service,
-  or term, so I can discuss a query with my librarian without leaving
-  the app.
+- As a conductor, I want to open a comment thread on a service or
+  term, so I can discuss a query with my librarian without leaving the
+  app.
 
 ## Librarian / Music Administrator
 
@@ -46,9 +46,9 @@ These user stories drive the design and functionality of Precentor.
 - As a librarian, I want to record and update how many copies of a
   score we own and where they're filed, so the physical library stays
   organised.
-- As a librarian, I want to raise a comment on a specific piece (e.g.
-  "do we have enough copies?"), so I can flag a concern directly to the
-  conductor.
+- As a librarian, I want to raise a comment about a specific piece in
+  its service's thread (e.g. "do we have enough copies?"), so I can flag
+  a concern directly to the conductor.
 - As a librarian, I want to see a simple inbox of all open comments, so
   I know at a glance what still needs attention.
 

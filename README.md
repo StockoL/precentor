@@ -256,22 +256,24 @@ conductor to discuss specific items without leaving the app:
 - **Authored** — shown with the commenting user's initials.
 - **Open/closed**, closeable by either party.
 - **Three colour states**: open / open-with-replies / closed.
-- **Targets**: a comment thread can attach to an individual piece, a
-  whole service, or an entire term — since real queries arise at all
-  three levels ("do we have enough copies of this?" vs. "is this
-  service's shape right?" vs. "how's this term looking overall?"). This
-  is implemented as a single polymorphic relationship (Django's
-  `GenericForeignKey`, via `contenttypes`) rather than three separate
+- **Targets**: each service and each term has a comment thread
+  ("is this service's shape right?" vs. "how's this term looking
+  overall?"). A question about a particular piece ("do we have enough
+  copies of this?") goes in its service's thread; I decided a separate
+  thread per piece would be more granular than the conversation needs.
+  The link is a single polymorphic relationship (Django's
+  `GenericForeignKey`, via `contenttypes`) rather than separate
   optional foreign keys — a deliberate choice to keep the `Comment`
   model itself clean, at the cost of losing database-level JOIN
   optimisation, which is an acceptable trade-off for a "should have"
-  feature.
+  feature. The model would still accept a comment on a piece if that
+  were ever wanted.
 - **Inbox** — simply every open comment, with no read-receipts or
   @mentions. In a close-knit two/three-person working relationship,
   attention-routing logic would be unnecessary complexity.
-- Comments are tied to their subject's lifecycle — if a piece is dropped
-  from a shortlist entirely, its comments go with it. This is a
-  deliberate, simple default rather than an oversight.
+- Comments are tied to their subject's lifecycle — if a service is
+  deleted, its comments go with it. This is a deliberate, simple
+  default rather than an oversight.
 
 This remains a **"should have,"** not core to MVP.
 
