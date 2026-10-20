@@ -60,10 +60,18 @@ How I used it:
   I then compared the whole resolved calendars for the same years;
   every difference is one of the cases listed in
   [`calendar_plan.md`](calendar_plan.md), section 4.
-- **Seed data (planned).** A one-off export script will take each
-  day's name, rank, precedence, colour and season from romcal's
-  definitions into JSON files that a data migration loads. romcal
+- **The calendar data.** A one-off export script,
+  [`tools/calendar_export/export_romcal.js`](../tools/calendar_export/export_romcal.js),
+  takes each day's name, rank, precedence, date rule, transfers,
+  colour and season from romcal's definitions (version
+  `3.0.0-dev.140`, British English names) into the JSON files in
+  `ordo/data/romcal/`, which `manage.py load_calendar` loads. The only
+  changes I made are to names: capitalisation, and one typo. romcal
   isn't installed in the project and nothing depends on it at runtime.
+- **The reference calendars.** The same script saves romcal's resolved
+  calendars for 2020 to 2040 in `ordo/data/romcal/reference/`, and
+  [`ordo/test_reference.py`](../ordo/test_reference.py) checks
+  Precentor against them on every test run.
 
 romcal's licence notice is in
 [`ordo/ROMCAL_LICENSE.txt`](../ordo/ROMCAL_LICENSE.txt), beside the

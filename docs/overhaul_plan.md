@@ -235,7 +235,7 @@ Progress:
 
 1. `Procfile`, `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` from the environment, `SECURE_*` and secure cookie settings, `DEBUG` off.
 2. Crest stored in the database (section 4, item 2).
-3. Heroku Postgres, `collectstatic`, migrations and seed data on deploy, and `check --deploy` clean.
+3. Heroku Postgres, `collectstatic`, migrations and seed data on deploy (`migrate`, then `load_calendar`), and `check --deploy` clean.
 4. A fresh deploy from scratch, with the steps written down.
 
 ### Phase 8: submission readiness (about a day)

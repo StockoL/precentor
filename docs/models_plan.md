@@ -305,6 +305,15 @@ seasons ahead of a saint's day of the same rank, and
 `shares_with_memorials` marks the one memorial (the Immaculate Heart
 of Mary) that keeps another memorial on its day.
 
+**Where the rows come from:** `manage.py load_calendar`
+(`ordo/calendar_data.py`) loads the General Roman, England and Wales
+calendars from `ordo/data/romcal/`, matching each row by form, calendar
+and key, so it can be run again safely. Occasions a conductor enters
+by hand have no key, take no part in precedence and are never touched
+by a load. Precedence level 12 (optional memorial) exists only so a
+national row can make a general memorial optional; the engine leaves
+level 12 out.
+
 The design, its sources and the order of work are in
 [`calendar_plan.md`](calendar_plan.md).
 

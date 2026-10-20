@@ -205,11 +205,41 @@ README crediting both sources:
 - a Python script that reads Missalemeum's tables and writes the 1962
   file.
 
-The JSON files are committed in `ordo/data/`, and a data migration
-loads them. Neither library is installed in the project: a fresh
-clone, a test run and the Heroku deploy need neither Node nor
-Missalemeum. Existing occasions that services already point to are
-kept, so no service loses its occasion.
+The JSON files are committed in `ordo/data/`. Neither library is
+installed in the project: a fresh clone, a test run and the Heroku
+deploy need neither Node nor Missalemeum.
+
+### As built (Ordinary Form)
+
+`tools/calendar_export/export_romcal.js` writes `general_roman.json`,
+`england.json` and `wales.json` into `ordo/data/romcal/`, with romcal's
+resolved calendars for 2020 to 2040 beside them in `reference/` for the
+tests. Its README lists the only changes made to romcal's data, all in
+names: a capital first letter, a capital "Week" as in the English
+Missal, and one typo.
+
+Two things turned up in the data:
+
+- England and Wales extend a Europe calendar in romcal, whose patrons
+  (St Benedict, St Bridget, St Catherine of Siena and others) are
+  feasts, so a national file takes every row that doesn't come from
+  the general calendar, not only the country's own.
+- England makes one general memorial optional (St Elizabeth of
+  Hungary). Its row is kept, at precedence level 12, so it overrides
+  the general one; the engine then leaves it out like any optional
+  memorial.
+
+**A command, not a data migration.** I planned a data migration, but
+loading is a management command instead: `python manage.py
+load_calendar` (`ordo/calendar_data.py`). A data migration runs once,
+so every update to the data would need another migration; it would
+also put about 260 occasions into every test database, under tests
+that build small calendars of their own. The command can be run again
+at any time: it matches each occasion by form, calendar and key,
+creates or updates it, and never touches an occasion entered by hand
+(which has no key). The cost is that a deploy has to run it after
+`migrate`, which Phase 7 of [`overhaul_plan.md`](overhaul_plan.md) now
+says.
 
 ## 7. Testing
 
