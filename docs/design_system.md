@@ -254,7 +254,8 @@ static/src/
 └── js/
     ├── ajax.js / toast.js / user-menu.js / theme-choice.js
     ├── comments.js / service-detail.js / score-picker.js
-    └── occasion-suggest.js / tag-input.js / crest-crop.js
+    ├── occasion-suggest.js / tag-input.js / crest-crop.js
+    └── print-button.js
 ```
 
 **`cover.css`** isn't part of the original `looseleaf-ui` Composition
@@ -528,6 +529,23 @@ once the search box is fully built, so if anything fails first, the
 link still works. I chose a link over keeping a `<select>` per slot
 because the fallback should cost the page nothing when JavaScript is
 on, and proposing a piece is one step whichever way it's done.
+
+## Scripts per page
+
+`base.html` loads only the scripts every page needs: the theme choice,
+the user menu and toasts. Everything else comes from the page that uses
+it, through a `{% block extra_js %}`: the service page loads
+`service-detail.js` (which brings in `score-picker.js`) and
+`comments.js`, the term page `comments.js`, the service form
+`occasion-suggest.js`, the score form `tag-input.js`, Settings
+`crest-crop.js`, and the music list `print-button.js`. They're all
+`type="module"` scripts, which never block the page from rendering.
+
+There are no inline event handlers. The music list's Print button used
+`onclick="window.print()"`; `print-button.js` now attaches the handler.
+The button is `hidden` in the HTML and the script shows it, since it
+does nothing without JavaScript; the browser's own Print command still
+prints the list with the same print styles.
 
 ## Page transitions
 
