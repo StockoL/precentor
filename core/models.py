@@ -1,4 +1,12 @@
+from django.core.validators import RegexValidator
 from django.db import models
+
+# The colour is written into an inline style on the music list, so it
+# must be exactly a hex colour: autoescaping stops HTML, not extra CSS.
+validate_hex_colour = RegexValidator(
+    r"^#[0-9a-fA-F]{6}$",
+    "Enter a colour as # and six hex digits, for example #8b1a2b.",
+)
 
 LAYOUT_STYLE_CHOICES = [
     ("columns", "Newspaper columns"),
@@ -20,6 +28,7 @@ class SiteConfig(models.Model):
         "accent colour",
         max_length=7,
         default="#8b1a2b",
+        validators=[validate_hex_colour],
         help_text="Used for services without an occasion colour.",
     )
     layout_style = models.CharField(
