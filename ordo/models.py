@@ -160,6 +160,10 @@ class LiturgicalOccasion(models.Model):
         Christi on a Sunday, for one); without one given, the occasion's
         own calendar's settings apply.
         """
+        if self.calendar_use == "historic":
+            from .calendar_1962 import YearDates1962
+
+            return self.date_in(YearDates1962(year))
         settings = NATIONAL_SETTINGS[national_calendar or self.calendar]
         return self.date_in(YearDates(year, settings))
 
@@ -183,6 +187,10 @@ def occasion_for_date(target_date, calendar_use, national_calendar="general_roma
     whole year is worked out in Python (ordo/calendar.py), which is also
     what lets precedence and transferred solemnities be applied.
     """
+    if calendar_use == "historic":
+        from .calendar_1962 import resolve_year_1962
+
+        return resolve_year_1962(target_date.year, national_calendar).get(target_date, [])
     from .calendar import resolve_year
 
     return resolve_year(target_date.year, calendar_use, national_calendar).get(target_date, [])
