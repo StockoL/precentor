@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{{ term }} — Precentor{% endblock %}
+{% block extra_js %}
+<script type="module" src="{% static 'src/js/comments.js' %}"></script>
+{% endblock %}
 {% block content %}
 <div class="flow">
     <header class="page-header">

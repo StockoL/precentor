@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Settings — Precentor{% endblock %}
+{% block extra_js %}
+<script type="module" src="{% static 'src/js/crest-crop.js' %}"></script>
+{% endblock %}
 {% block content %}
 <div class="flow">
     <h1>Settings</h1>

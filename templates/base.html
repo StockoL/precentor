@@ -57,12 +57,8 @@
     <script type="module" src="{% static 'src/js/theme-choice.js' %}"></script>
     <script type="module" src="{% static 'src/js/user-menu.js' %}"></script>
     <script type="module" src="{% static 'src/js/toast.js' %}"></script>
-    <script type="module" src="{% static 'src/js/service-detail.js' %}"></script>
-    <script type="module" src="{% static 'src/js/comments.js' %}"></script>
-    <script type="module" src="{% static 'src/js/score-picker.js' %}"></script>
-    <script type="module" src="{% static 'src/js/occasion-suggest.js' %}"></script>
-    <script type="module" src="{% static 'src/js/crest-crop.js' %}"></script>
-    <script type="module" src="{% static 'src/js/tag-input.js' %}"></script>
+    {# Scripts only some pages need; each page adds its own here. #}
+    {% block extra_js %}{% endblock %}
     {% block extra_head %}{% endblock %}
 </head>
 <body>

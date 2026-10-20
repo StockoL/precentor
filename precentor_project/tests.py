@@ -40,6 +40,19 @@ class BaseTemplateTests(TestCase):
         )
         self.assertContains(self.response, '<main id="main"')
 
+    def test_only_site_wide_scripts_load_everywhere(self):
+        # Page scripts come through each page's extra_js block, so a page
+        # without those features doesn't download them.
+        for name in ("theme-choice.js", "user-menu.js", "toast.js"):
+            with self.subTest(name=name):
+                self.assertContains(self.response, f"src/js/{name}")
+        for name in (
+            "service-detail.js", "comments.js", "score-picker.js",
+            "occasion-suggest.js", "crest-crop.js", "tag-input.js",
+        ):
+            with self.subTest(name=name):
+                self.assertNotContains(self.response, f"src/js/{name}")
+
 
 class NavWordingTests(TestCase):
     def setUp(self):

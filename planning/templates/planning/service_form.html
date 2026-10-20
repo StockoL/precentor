@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{% if form.instance.pk %}Edit service{% else %}New service{% endif %} — Precentor{% endblock %}
+{% block extra_js %}
+<script type="module" src="{% static 'src/js/occasion-suggest.js' %}"></script>
+{% endblock %}
 {% block content %}
 <div class="flow">
     <h1>{% if form.instance.pk %}Edit service{% else %}New service{% if term %} in {{ term }}{% endif %}{% endif %}</h1>

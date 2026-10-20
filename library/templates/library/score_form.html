@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{% if form.instance.pk %}Edit score{% else %}New score{% endif %} — Precentor{% endblock %}
+{% block extra_js %}
+<script type="module" src="{% static 'src/js/tag-input.js' %}"></script>
+{% endblock %}
 {% block content %}
 <div class="flow">
     <h1>{% if form.instance.pk %}Edit score{% else %}New score{% endif %}</h1>

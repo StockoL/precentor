@@ -1,5 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{{ service }} — Precentor{% endblock %}
+{% block extra_js %}
+<script type="module" src="{% static 'src/js/service-detail.js' %}"></script>
+<script type="module" src="{% static 'src/js/comments.js' %}"></script>
+{% endblock %}
 {% block content %}
 <div class="flow">
     {% if service.occasion and service.occasion.colour %}
