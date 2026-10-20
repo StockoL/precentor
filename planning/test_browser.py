@@ -293,6 +293,12 @@ class MusicListLayoutBrowserTest(PlaywrightTestCase):
         self.page.set_viewport_size({"width": 1280, "height": 800})
         self.page.goto(f"/terms/{self.term.pk}/music-list/")
 
+    def test_print_button_appears_and_prints(self):
+        # Stand in for the print dialog, which would block the test.
+        self.page.evaluate("window.print = () => { window.__printed = true; }")
+        self.page.click("[data-print]")
+        assert self.page.evaluate("window.__printed") is True
+
     def test_narrow_columns_put_hymns_under_the_pieces(self):
         entry = self.page.locator(".service-entry").first
         main = entry.locator(".service-entry-main").bounding_box()

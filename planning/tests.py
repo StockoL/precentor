@@ -856,6 +856,16 @@ class MusicListTests(TestCase):
         )
         self.score = Score.objects.create(title="Test Anthem", composer_surname="Test Composer")
 
+    def test_print_button_has_no_inline_handler(self):
+        response = self.client.get(f"/terms/{self.term.pk}/music-list/")
+        self.assertNotContains(response, "onclick")
+        self.assertContains(
+            response,
+            '<button type="button" class="btn-primary" data-print hidden>Print</button>',
+            html=True,
+        )
+        self.assertContains(response, "src/js/print-button.js")
+
     def test_version_toggle_marks_the_version_being_viewed(self):
         url = f"/terms/{self.term.pk}/music-list/"
         public = self.client.get(url)

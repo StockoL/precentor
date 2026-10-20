@@ -1,6 +1,10 @@
 <!-- planning/templates/planning/music_list.html -->
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Music list — {{ term }} — Precentor{% endblock %}
+{% block extra_js %}
+<script type="module" src="{% static 'src/js/print-button.js' %}"></script>
+{% endblock %}
 {% block content %}
 <div class="music-list center flow"
      style="--center-max-width: {% if draft %}65ch{% else %}60rem{% endif %}; --accent: {{ site_config.house_accent_colour }};">
@@ -34,7 +38,7 @@
             <a href="?"{% if not draft %} aria-current="page"{% endif %}>Public</a>
             <a href="?draft=1"{% if draft %} aria-current="page"{% endif %}>Draft</a>
         </nav>
-        <button class="btn-primary" onclick="window.print()">Print</button>
+        <button type="button" class="btn-primary" data-print hidden>Print</button>
     </div>
 </div>
 {% endblock %}
