@@ -1,0 +1,15 @@
+{
+  "name": "precentor-calendar-export",
+  "private": true,
+  "description": "One-off export of romcal's calendar data into ordo/data/romcal/. Not part of the app.",
+  "license": "MIT",
+  "scripts": {
+    "export": "node export_romcal.js"
+  },
+  "dependencies": {
+    "romcal": "3.0.0-dev.140",
+    "@romcal/calendar.general-roman": "3.0.0-dev.140",
+    "@romcal/calendar.england": "3.0.0-dev.140",
+    "@romcal/calendar.wales": "3.0.0-dev.140"
+  }
+}
