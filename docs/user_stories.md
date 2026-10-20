@@ -1,4 +1,4 @@
-# Precentor — User Stories
+# Precentor: User Stories
 
 These user stories drive the design and functionality of Precentor.
 
@@ -13,7 +13,7 @@ These user stories drive the design and functionality of Precentor.
   actually sing right now.
 - As a conductor, I want to see how long it's been since a piece was
   last sung (with full history available on demand), so I can avoid
-  over-repeating it — or deliberately repeat it.
+  repeating it too often, or repeat it on purpose.
 - As a conductor, I want to propose a shortlist of pieces for a slot
   (e.g. two motets for the Offertory), so I can weigh choices before
   deciding.
@@ -22,7 +22,7 @@ These user stories drive the design and functionality of Precentor.
   being forced to decide everything at once.
 - As a conductor, I want to mark a slot as not needed for a specific
   service (e.g. no setting on Good Friday), so the system doesn't treat
-  a deliberate absence as unfinished work.
+  an intended gap as unfinished work.
 - As a conductor, I want to add or remove slots on a specific service,
   so I can handle exceptions (an extra motet, a hymn sung in place of a
   Proper) without fighting a fixed template.
