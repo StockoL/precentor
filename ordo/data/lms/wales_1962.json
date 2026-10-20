@@ -1,0 +1,138 @@
+{
+ "source": "The Ordo 2025-2026, compiled by Peter Day-Milne, copyright The Latin Mass Society 2025 (https://lms.org.uk). Facts only: the days, dates, classes and colours of the dioceses of Wales, taken by hand; the names are in Missalemeum's style. Feasts of single dioceses are left out.",
+ "calendar": "wales",
+ "occasions": [
+  {
+   "key": "sancti:12-29",
+   "name": "St. Thomas of Canterbury, Bishop & Martyr",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 12,
+   "fixed_day": 29,
+   "note": "29 December 2025: In all dioceses of England and Wales, St Thomas of Canterbury B M, I Cl, R. Replaces the universal commemoration of St Thomas Becket."
+  },
+  {
+   "key": "sancti:03-01wa",
+   "name": "St. David, Bishop & Confessor, Patron of Wales",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 3,
+   "fixed_day": 1,
+   "note": "2 March 2026: In both dioceses of Wales, St David B C, I Cl, W, moved from 1 March, the Second Sunday of Lent."
+  },
+  {
+   "key": "sancti:04-23",
+   "name": "St. George, Martyr",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 4,
+   "fixed_day": 23,
+   "note": "23 April 2026: In both dioceses of Wales, St George M, III Cl, R. Universally a commemoration."
+  },
+  {
+   "key": "sancti:05-04ew",
+   "name": "Holy Martyrs of England & Wales",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 4,
+   "note": "4 May 2026: In all dioceses of England and Wales, The Holy Martyrs of England and Wales, III Cl, R."
+  },
+  {
+   "key": "sancti:05-16",
+   "name": "St. Ubaldus",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 5,
+   "fixed_day": 16,
+   "note": "16 May 2026: St Ubaldus B C, III Cl, W, on the Ordo's main line. Missalemeum has a commemoration."
+  },
+  {
+   "key": "sancti:06-22ew",
+   "name": "St. Alban, Martyr",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 6,
+   "fixed_day": 22,
+   "note": "22 June 2026: In all dioceses of England and Wales, St Alban M, III Cl, R."
+  },
+  {
+   "key": "sancti:07-09ew",
+   "name": "Sts. John Fisher, Bishop, & Thomas More, Martyrs",
+   "rank": "class_1",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 9,
+   "note": "9 July 2026: In all dioceses of England and Wales, SS John Fisher B & Thomas More MM, I Cl, R."
+  },
+  {
+   "key": "sancti:07-17wa",
+   "name": "Our Lady in Porticu",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 17,
+   "note": "17 July 2026: In both dioceses of Wales, Our Lady in Porticu, III Cl, W."
+  },
+  {
+   "key": "sancti:07-30wa",
+   "name": "Bl. Edward Powell, Richard Featherstone & Companions, Martyrs",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 7,
+   "fixed_day": 30,
+   "note": "30 July 2026: In both dioceses of Wales, BB Edward Powell, Richard Featherstone & Comps MM, III Cl, R."
+  },
+  {
+   "key": "sancti:08-03wa",
+   "name": "St. Germanus, Bishop & Confessor",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 8,
+   "fixed_day": 3,
+   "note": "3 August 2026: In both dioceses of Wales, St Germanus B C, III Cl, W."
+  },
+  {
+   "key": "sancti:10-13",
+   "name": "St. Edward the Confessor, King",
+   "rank": "class_2",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 10,
+   "fixed_day": 13,
+   "note": "13 October 2026: In all dioceses of England and Wales, St Edward K C, II Cl, W. Universally III Cl."
+  },
+  {
+   "key": "sancti:11-13",
+   "name": "St. Didacus",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "white",
+   "season": null,
+   "fixed_month": 11,
+   "fixed_day": 13,
+   "note": "13 November 2026: St Didacus C, III Cl, W, on the Ordo's main line. Missalemeum has a commemoration."
+  }
+ ]
+}
