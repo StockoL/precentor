@@ -504,6 +504,31 @@ Building this showed up a cascade problem worth recording. The
 it. A `[hidden] { display: none; }` rule in the utilities layer, the
 last layer, now makes `hidden` mean hidden everywhere.
 
+## Proposing a piece
+
+Each slot on the service page has a search box for proposing a piece
+(`score-picker.js`, `score-combobox.css`). It's an ARIA combobox like
+the chip inputs: type to filter, arrow keys to move, Enter or a click
+to choose, Escape to close.
+
+The search boxes used to sit over a full `<select>` of the library in
+every slot, so the page grew with slots times scores, and Django ran
+the score query once per slot. Now the service page sends the ranked
+list once, as JSON through Django's `json_script` filter, and every
+slot's search box reads that one list. A chosen score goes into a
+hidden `score` input, and typing a new search clears it, so the form
+never submits a score the box no longer shows.
+
+Without JavaScript there's nothing to read the JSON, so each slot
+shows a "Propose a piece" link instead. It goes to a short page at the
+same address the form posts to, with one ordinary `<select>` in the
+same ranked order, and a Propose piece button. The form in each slot
+is `hidden` in the HTML; the script shows it and hides the link only
+once the search box is fully built, so if anything fails first, the
+link still works. I chose a link over keeping a `<select>` per slot
+because the fallback should cost the page nothing when JavaScript is
+on, and proposing a piece is one step whichever way it's done.
+
 ## Page transitions
 
 Moving between pages fades the content in about 180ms, using
@@ -527,7 +552,7 @@ run smoothly.
 ## `crest-crop.js`: a hand-built image crop tool
 
 This is progressive enhancement over a plain `crest_image` file input,
-in the same spirit as the score combobox in `score-picker.js`: a real,
+in the same spirit as the chip inputs in `tag-input.js`: a real,
 working control underneath (the file input still submits normally),
 improved with my own JavaScript instead of a third-party cropping
 library, since building this kind of widget is part of what the

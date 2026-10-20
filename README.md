@@ -134,6 +134,13 @@ slot or per service, which allows cases like two motets in one service,
 or a mixed setting. A confirmed piece can always be **unconfirmed**
 again; nothing is a one-way door.
 
+Pieces are proposed from a search box in each slot, with the scores
+suited to the service's occasion or season listed first. Without
+JavaScript, each slot has a "Propose a piece" link instead, which
+opens a short page with one list of scores in the same order. That
+keeps the service page small: it carries the library once, not once
+for every slot.
+
 Marking a slot **N/A** counts as a planning decision, just as
 confirming does. It means "I've considered this and there's nothing
 here on purpose", not "nothing has happened yet".
