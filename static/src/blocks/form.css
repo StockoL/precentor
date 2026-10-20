@@ -80,6 +80,24 @@
     accent-color: var(--colors-action-primary);
   }
 
+  /*
+   * A checkbox goes before its label on the same line, the usual
+   * pattern, rather than on a line of its own under it. Django's as_p
+   * puts the label first, so row-reverse swaps them visually; the label
+   * is still tied to its box by for/id.
+   */
+  form p:has(> input[type="checkbox"]) {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--spacing-2xs);
+  }
+
+  form p:has(> input[type="checkbox"]) label {
+    margin-block-end: 0;
+  }
+
   /* Django marks a field with errors aria-invalid="true", which screen
      readers announce; the same attribute gives it a red border. */
   form [aria-invalid="true"] {

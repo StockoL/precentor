@@ -107,8 +107,13 @@ class CheckboxBrowserTest(PlaywrightTestCase):
             term=term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
         self.page.goto(service.get_absolute_url())
-        width = self.page.locator("#id_is_not_applicable").bounding_box()["width"]
-        assert width < 30, width  # not stretched across the form
+        box = self.page.locator("#id_is_not_applicable").bounding_box()
+        assert box["width"] < 30, box  # not stretched across the form
+
+        # Before its label, on the same line.
+        label = self.page.locator("label[for='id_is_not_applicable']").bounding_box()
+        assert box["x"] < label["x"], (box, label)
+        assert abs((box["y"] + box["height"] / 2) - (label["y"] + label["height"] / 2)) < 4
 
 
 class ListRowWidthBrowserTest(PlaywrightTestCase):
