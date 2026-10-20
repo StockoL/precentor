@@ -4,7 +4,8 @@ Loading the published calendars in ordo/data/ into the database.
 The files are exported once by the scripts in tools/calendar_export/
 (see its README and docs/acknowledgements.md): the Ordinary Form from
 romcal into ordo/data/romcal/, and the 1962 calendar from Missalemeum
-into ordo/data/missalemeum/. Each holds one calendar's occasions; a
+into ordo/data/missalemeum/. England's and Wales's 1962 days, in
+ordo/data/lms/, I wrote by hand from the Latin Mass Society's Ordo. Each holds one calendar's occasions; a
 national calendar holds only the days it adds or changes.
 
 Loading is repeatable: each occasion is matched by its form, calendar
@@ -22,8 +23,11 @@ from django.db import transaction
 DATA_DIR = Path(__file__).resolve().parent / "data"
 ROMCAL_DIR = DATA_DIR / "romcal"
 MISSALEMEUM_DIR = DATA_DIR / "missalemeum"
+# England and Wales in 1962, taken by hand from the Latin Mass Society's
+# Ordo (facts only; see the "source" in each file).
+LMS_DIR = DATA_DIR / "lms"
 # Each folder of data files, and the form its occasions belong to.
-SOURCES = ((ROMCAL_DIR, "current"), (MISSALEMEUM_DIR, "historic"))
+SOURCES = ((ROMCAL_DIR, "current"), (MISSALEMEUM_DIR, "historic"), (LMS_DIR, "historic"))
 
 
 def occasion_fields(item):
