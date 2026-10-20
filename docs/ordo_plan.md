@@ -1,9 +1,9 @@
-# Precentor — Ordo Calendar Features: Design Document
+# Precentor: Ordo Calendar Features
 
-A design/planning document: reasoning worked out and written down
-before code is written. Covers two related but separable features that
-give the existing computus algorithm/`Ordo` work a genuine payoff, rather
-than leaving it as correct-but-underused machinery.
+A design document: the reasoning I worked out and wrote down before
+writing the code. It covers two related but separable features that
+put the computus algorithm and the `ordo` app to real use, instead of
+leaving them as correct machinery that hardly anything calls.
 
 > **Update, 19 October 2026: Catholic only.** Both features were first
 > designed for two traditions (Catholic and Church of England), chosen
@@ -20,28 +20,28 @@ than leaving it as correct-but-underused machinery.
 
 ## 1. Problem statement
 
-`LiturgicalOccasion.date_for_year(year)` (built on the tested computus
-algorithm) currently only answers "given a specific, already-known
-occasion, what date does it fall on this year" — which only gets used
-when a conductor already knows which occasion to pick from a dropdown.
-Nothing in the app currently asks the more useful reverse question:
-"given a date, what occasion is this?" And `Score.suited_occasions` —
-the feature `Ordo` for which it was originally built, per the project's
-own earliest MoSCoW — has not been implemented. Two features close both gaps:
+`LiturgicalOccasion.date_for_year(year)`, built on the tested computus
+algorithm, only answered one question: "given an occasion I already
+know, what date does it fall on this year?" That's only useful once a
+conductor has already picked the occasion from a dropdown. Nothing in
+the app asked the more useful reverse question: "given a date, which
+occasion is it?" And `Score.suited_occasions`, the feature `ordo` was
+originally built for in my earliest MoSCoW list, hadn't been
+implemented. Two features close both gaps:
 
-1. **Occasion auto-suggest** when creating/editing a Service, based on
-   its date.
-2. **`Score.suited_occasions`** tagging and filtering — repertoire
-   suitable for a season/occasion, surfaced when proposing pieces.
+1. **Occasion suggestions** when creating or editing a service, based
+   on its date.
+2. **Suitability tagging** on scores: repertoire suited to a season or
+   occasion, brought forward when proposing pieces.
 
 ---
 
-## 2. Feature 1: Occasion auto-suggest
+## 2. Feature 1: occasion suggestions
 
-### Confirmed
+### Settled
 
-- A reverse-lookup function, checking a candidate date against every
-  named `LiturgicalOccasion`'s `date_for_year(year)`:
+- A reverse lookup that checks a date against every named
+  `LiturgicalOccasion`'s `date_for_year(year)`:
 
 ```python
 def occasion_for_date(target_date, calendar_use):
@@ -56,23 +56,20 @@ def occasion_for_date(target_date, calendar_use):
 It returns a list, because more than one occasion can fall on a date
 (see "Multiple matching occasions" below).
 
-- This is deliberately lighter than, and different from, a
-  previously-descoped idea of modelling continuous season date-ranges — it
-  only ever checks against specific, already-modelled named occasions, never
-  invents coverage for days for which nothing was entered.
-- Suggestion, never silent enforcement — the conductor can always
-  override or ignore it.
+- This is lighter than, and different from, an idea I'd already
+  dropped: modelling seasons as continuous date ranges. The lookup only
+  checks the named occasions that have been entered, and never claims
+  to know about a day nobody entered.
+- It's a suggestion, never enforced. The conductor can always choose
+  something else or ignore it.
 
-### Open questions
+### Calendar use: term default, service override
 
-### Calendar-use selection: Term default, Service override
+I settled this from how churches actually work. Most use one calendar
+throughout, but some (Catholic oratories with both EF and NO Masses,
+for example) need to override it for single services within a term.
 
-Resolved via real usage patterns rather than a hypothetical: most
-churches use one calendar throughout, but some (e.g. Catholic
-oratories running both EF and NO Masses) need per-service override
-within the same term.
-
-`LiturgicalOccasion` carries the calendar it belongs to:
+`LiturgicalOccasion` records the calendar it belongs to:
 
 ```python
 CALENDAR_USE_CHOICES = [
@@ -82,37 +79,36 @@ CALENDAR_USE_CHOICES = [
 calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES, default="current")
 ```
 
-`Term.calendar_use` is **required** (the sensible default for the
-common single-calendar case). `Service.calendar_use` is **optional**
-(`null=True, blank=True`), set only when a specific service genuinely
-differs from its term. A fat-model helper (matching `Service.status`'s
-own convention) resolves "override if set, else inherit from Term" in
-one place:
+`Term.calendar_use` is **required**, which covers the usual case of a
+single calendar. `Service.calendar_use` is **optional**
+(`null=True, blank=True`), set only when one service differs from its
+term. A model method, following the same convention as
+`Service.status`, resolves "the override if set, otherwise the term's"
+in one place:
 
 ```python
 def effective_calendar_use(self):
     return self.calendar_use or self.term.calendar_use
 ```
 
-This directly answers the "which calendar does the lookup run against"
-question: `occasion_for_date(date, service.effective_calendar_use())`.
+That answers which calendar the lookup runs against:
+`occasion_for_date(date, service.effective_calendar_use())`.
 
-**Explicitly not committed to by this:** populating real Extraordinary
-Form occasion data remains a separate, large content task, unchanged
-from when it was first raised in planning. This resolves the
-_selection mechanism_ only; only calendars with real data behind them
-need to be usable in practice.
+**Not covered by this:** entering real Extraordinary Form occasions is
+still a separate, large content task, as it was when I first raised
+it. This settles how the calendar is chosen, nothing more; in practice
+only calendars with real data behind them are worth choosing.
 
-### Multiple matching occasions: present as choices, additive model change only
+### Multiple matching occasions: offered as choices
 
-When more than one occasion matches a date, present both
-as options — the conductor may attach one, or both, or neither - not have
-the system silently pick or encode precedence rules.
+When more than one occasion matches a date, the form offers them all.
+The conductor may attach one, several or none; the app doesn't pick
+one silently or encode rules of precedence.
 
-**Structural consequence, resolved to be purely additive:** `Service.
-occasion` stays exactly as it is — a single FK, the _primary_ occasion,
-driving the already-built accent bar/badge/dot without any changes to
-that working code. A new, separate field holds anything else relevant:
+**Only an additive model change:** `Service.occasion` stays as it is, a
+single foreign key for the _main_ occasion, which drives the occasion
+colour accents already built, with no change to that working code. A
+new, separate field holds any others:
 
 ```python
 additional_occasions = models.ManyToManyField(
@@ -120,55 +116,53 @@ additional_occasions = models.ManyToManyField(
 )
 ```
 
-This was deliberately chosen over converting `occasion` itself to a
-many-to-many, which would have required revisiting and re-testing
-every already-built piece that currently reads `service.occasion` as a
-single value.
+I chose this over turning `occasion` itself into a many-to-many, which
+would have meant revisiting and re-testing everything that reads
+`service.occasion` as a single value.
 
-**Aside, worth a brief clarification:** the EF calendar's 1-year cycle
-vs. the Novus Ordo's 3-year lectionary cycle (Year A/B/C) doesn't
-actually add complexity to `Ordo`'s own job — the lectionary cycle
-governs which _readings_ are assigned to an already-named,
-already-dated Sunday, and `Ordo` deliberately never models readings at
-all (see the README's scope boundary). Where EF may genuinely be
-simpler to enter is a different, real reason: it's long-stable with no
-ongoing modern additions, versus the Ordinary Form's growing set of
-optional memorials — a smaller dataset, not a structurally simpler
-one.
+**A side note on lectionary cycles:** the EF's one-year cycle and the
+Ordinary Form's three-year lectionary (Years A, B and C) don't make
+`ordo`'s job any harder. The lectionary cycle decides which _readings_
+belong to a Sunday that already has a name and a date, and `ordo`
+never models readings (see the README's scope boundary). The EF may
+still be quicker to enter, for a different reason: it's long settled,
+with nothing new being added, whereas the Ordinary Form keeps gaining
+optional memorials. That's a smaller dataset, not a simpler structure.
 
-### Mechanism: live JS suggestion
+### Mechanism: a live suggestion in JavaScript
 
-Confirmed: a live `fetch()`-based suggestion as the date field changes,
-consistent with the confirm-toggle/comment interactions already built,
-over a simpler reload-based alternative.
+Settled: a live suggestion fetched with `fetch()` whenever the date
+changes, in keeping with the confirm and comment interactions already
+built, over a simpler version that reloads the page.
 
 ---
 
-## 3. Feature 2: `Score.suited_occasions`
+## 3. Feature 2: suitability tagging on scores
 
 - `Score.suited_occasions = models.ManyToManyField("ordo.LiturgicalOccasion", blank=True, related_name="suited_scores")`
 - Added to `ScoreForm`.
-- `ScoreListView.get_queryset()` gains a `suited_for` filter param,
-  following the existing voicing/language `GET`-param filtering
-  pattern.
-- The propose-piece picker on `service_detail.html` can default-filter
-  to "suited for this service's occasion" — the actual payoff moment:
-  the library narrows to appropriate music automatically when
-  proposing, rather than showing everything.
+- The library list takes `suited_occasion`, `suited_season` and
+  `suited_use_type` in the query string, alongside the existing
+  search and filters.
+- The propose-piece picker on `service_detail.html` puts the pieces
+  suited to the service first. That's where the feature pays off: the
+  library leans towards the right music when proposing, instead of
+  showing everything in title order.
 
-### Three-tier suitability, not one generic tag
+### Three tiers, not one generic tag
 
-Confirmed as three genuinely distinct things, not unified into one
-generic tag concept (unlike the comment `GenericForeignKey`
-unification — those were the _same_ relationship to different target
-types; these are three _different_ kinds of fact that happen to serve
-the same filtering goal):
+These are three different things, and I didn't merge them into one
+generic tag. That's unlike comments, which use a single
+`GenericForeignKey`: comments are the _same_ relationship to different
+kinds of target, whereas these are three _different_ kinds of fact
+that happen to serve the same purpose.
 
-1. **Use-type** — a structural property of the service itself
-   (Mass / Vespers / General use), independent of the calendar.
-2. **Season** — a broad calendar category (Advent, Christmas, Lent...).
-3. **Specific occasion** — an individual named day (Advent Sunday 4,
-   the Seventh Sunday in Ordinary Time, SS Peter & Paul).
+1. **Use type:** a property of the service itself (Mass, Vespers,
+   General use), independent of the calendar.
+2. **Season:** a broad part of the calendar (Advent, Christmas,
+   Lent and so on).
+3. **Specific occasion:** a single named day (Advent Sunday 4, the
+   Seventh Sunday in Ordinary Time, SS Peter & Paul).
 
 ```python
 class UseType(models.Model):
@@ -178,37 +172,39 @@ class LiturgicalSeason(models.Model):
     name = models.CharField(max_length=50)
 ```
 
-`Score` gains three separate M2M fields:
-`suited_use_types`, `suited_seasons`, `suited_occasions` (the last
-already planned).
+`Score` gains three separate many-to-many fields: `suited_use_types`,
+`suited_seasons` and `suited_occasions`.
 
-**A necessary addition this implies, not optional:** for the tiers to
-actually connect — so a piece tagged broadly "suitable for Advent"
-gets surfaced for a service specifically on "Advent Sunday 4" —
-`LiturgicalOccasion` needs `season = models.ForeignKey(LiturgicalSeason,
-null=True, blank=True, on_delete=models.SET_NULL)`. Without it, a
-season-level tag and a day-level tag never meet.
+**This needs one more field:** for the tiers to connect, so that a
+piece tagged "suitable for Advent" comes forward for a service on
+"Advent Sunday 4", `LiturgicalOccasion` needs
+`season = models.ForeignKey(LiturgicalSeason, null=True, blank=True,
+on_delete=models.SET_NULL)`. Without it, a season tag and a day tag
+never meet.
 
 ### Untagged scores: ranking, not filtering
 
-Removing untagged scores from results entirely would be a
-real mistake — they might still be relevant, and the tool shouldn't
-claim to know otherwise. This changes the actual mechanism: rather
-than `Score.objects.filter(suited_occasions=...)` (which would hide
-everything untagged), the query becomes an **annotated sort** — every
-score stays in the results; ones matching the current service's
-occasion, season, or use-type are bubbled to the top:
+Removing untagged scores from the results would be a mistake: they
+might still be the right choice, and the app has no way of knowing
+otherwise. So the query doesn't use
+`Score.objects.filter(suited_occasions=...)`, which would hide
+everything untagged. It's an **annotated sort** instead: every score
+stays in the results, and those matching the service's occasion,
+season or use type move to the top.
+
+My first version joined through the tags, which listed a score with
+several tags once for each tag. The version I built,
+`ScoreQuerySet.ranked_by_suitability()`, asks of each tier whether the
+score is among those tagged with it, so each score appears once:
 
 ```python
-from django.db.models import Case, When, BooleanField
+conditions = []
+if occasion is not None:
+    tagged = Score.objects.filter(suited_occasions=occasion).values("pk")
+    conditions.append(When(pk__in=tagged, then=True))
+# ... the same for season and use_type
 
-scores = Score.objects.annotate(
-    is_suited=Case(
-        When(suited_occasions=service.occasion, then=True),
-        When(suited_seasons=service.occasion.season, then=True),
-        When(suited_use_types__name__iexact=service_use_type, then=True),
-        default=False,
-        output_field=BooleanField(),
-    )
+return self.annotate(
+    is_suited=Case(*conditions, default=False, output_field=BooleanField())
 ).order_by("-is_suited", "title")
 ```
