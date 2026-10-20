@@ -6,23 +6,7 @@
     </div>
     <p class="term-card__meta">{{ term.card_timing }} · {{ term.start_date|date }} to {{ term.end_date|date }}</p>
 
-    {% if term.summary.total %}
-    <div class="status-bar" aria-hidden="true"
-         style="--complete: {{ term.summary.complete }}; --in-progress: {{ term.summary.in_progress }}; --not-started: {{ term.summary.not_started }};">
-        <span class="status-bar__complete"></span>
-        <span class="status-bar__in-progress"></span>
-        <span class="status-bar__not-started"></span>
-    </div>
-    <p class="term-summary">
-        {{ term.summary.complete }} of {{ term.summary.total }} service{{ term.summary.total|pluralize }} complete{% if term.summary.in_progress %}, {{ term.summary.in_progress }} in progress{% endif %}{% if term.summary.not_started %}, {{ term.summary.not_started }} not started{% endif %}
-    </p>
-    {% else %}
-    <p class="term-summary">No services yet</p>
-    {% endif %}
-
-    {% if term.ready_to_publish %}
-    <p class="term-card__ready">Ready to publish</p>
-    {% endif %}
+    {% include "planning/_term_status.html" %}
 
     {% if term.next_service %}
     <p class="term-card__next"{% if term.next_is_soon and term.outstanding %} data-soon{% endif %}>

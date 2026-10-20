@@ -12,14 +12,26 @@
             <a class="btn-danger" href="{% url 'planning:term_delete' term.pk %}">Delete term</a>
         </div>
     </header>
-    <p>{{ term.start_date|date }} to {{ term.end_date|date }}</p>
+    <p class="term-card__meta">
+        <span class="badge badge--{{ term.card_phase }}">{{ term.card_phase_label }}</span>
+        {{ term.card_timing }} · {{ term.start_date|date }} to {{ term.end_date|date }}
+    </p>
+    <div class="flow" style="--flow-space: var(--spacing-2xs);">
+        {% include "planning/_term_status.html" %}
+    </div>
 
     <div class="flow">
         <h2>Services</h2>
         <ul role="list" class="flow">
             {% for service in services %}
             <li class="list-row">
-                <a href="{{ service.get_absolute_url }}">{{ service.date|date }} — {{ service.service_type }}</a>
+                <div>
+                    <a href="{{ service.get_absolute_url }}">{{ service.date|date }} — {{ service.service_type }}</a>
+                    <span class="list-row__meta">
+                        {% if service.occasion %}{% if service.occasion.colour %}<span class="occasion-dot" style="--accent: var(--colors-liturgical-{{ service.occasion.colour }});"></span>{% endif %}{{ service.occasion }}{% endif %}
+                        {% with unsettled=service.unsettled_slots %}{% if unsettled %}{% if service.occasion %} · {% endif %}{{ unsettled|length }} slot{{ unsettled|length|pluralize }} to settle{% endif %}{% endwith %}
+                    </span>
+                </div>
                 <span class="badge badge--{{ service.status }}">{{ service.status_label }}</span>
             </li>
             {% empty %}

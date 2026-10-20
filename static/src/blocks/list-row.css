@@ -23,6 +23,14 @@
     border-top: 1px solid var(--colors-border-subtle);
   }
 
+  /* A muted second line under a row's main link (occasion, what's left
+     to do). */
+  .list-row__meta {
+    display: block;
+    color: var(--colors-text-muted);
+    font-size: var(--typography-step--1);
+  }
+
   .list-row:first-of-type {
     border-top: none;
   }

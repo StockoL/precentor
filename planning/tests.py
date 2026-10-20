@@ -289,7 +289,9 @@ class ServiceDetailProposePieceRankingTests(TestCase):
         self.assertIn(self.untagged, queryset)
 
 
-class TermListPageTests(TestCase):
+class TermPageMixin:
+    """Set-up shared by the Terms page and term page tests."""
+
     def setUp(self):
         from datetime import timedelta
 
@@ -317,6 +319,21 @@ class TermListPageTests(TestCase):
                 RolePiece.objects.create(service_role=role, score=self.score, is_confirmed=confirmed)
             made.append(service)
         return term, made
+
+    def count_queries(self, url):
+        """Queries for one request to url, after a warm-up request: the
+        first request in a test also loads the session and fills
+        Django's content-type cache, which later ones don't repeat."""
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        self.client.get(url)
+        with CaptureQueriesContext(connection) as captured:
+            self.client.get(url)
+        return len(captured)
+
+
+class TermListPageTests(TermPageMixin, TestCase):
 
     def test_card_shows_phase_progress_and_next_service(self):
         from comments.models import Comment
@@ -357,20 +374,39 @@ class TermListPageTests(TestCase):
         self.assertContains(response, "<summary>Past terms (1)</summary>", html=True)
 
     def test_query_count_does_not_grow_with_more_terms(self):
-        from django.db import connection
-        from django.test.utils import CaptureQueriesContext
-
-        def queries():
-            with CaptureQueriesContext(connection) as captured:
-                self.client.get("/")
-            return len(captured)
-
         services = [(-7, [("Setting", True), ("Motet", False)]), (7, [("Setting", False)])]
         self.make_term("One", -20, 60, services=services)
-        one_term = queries()
+        one_term = self.count_queries("/")
         self.make_term("Two", 70, 120, services=services)
         self.make_term("Three", -200, -120, services=services)
-        self.assertEqual(queries(), one_term)
+        self.assertEqual(self.count_queries("/"), one_term)
+
+
+class TermDetailPageTests(TermPageMixin, TestCase):
+    def test_shows_status_and_each_services_details(self):
+        occasion = LiturgicalOccasion.objects.create(name="Christ the King", colour="white")
+        term, services = self.make_term("Michaelmas", -20, 60, services=[
+            (-7, [("Setting", True)]),
+            (5, [("Setting", True), ("Offertory motet", False), ("Communion", False)]),
+        ])
+        services[1].occasion = occasion
+        services[1].save()
+        response = self.client.get(term.get_absolute_url())
+        self.assertContains(response, '<span class="badge badge--current">Current</span>', html=True)
+        self.assertContains(response, "1 of 2 services complete, 1 in progress")
+        self.assertContains(response, "Christ the King")
+        self.assertContains(response, "2 slots to settle")
+
+    def test_query_count_does_not_grow_with_more_services(self):
+        term, _ = self.make_term("Michaelmas", -20, 60, services=[(-7, [("Setting", True)])])
+        one_service = self.count_queries(term.get_absolute_url())
+        for offset in (1, 8, 15):
+            service = Service.objects.create(
+                term=term, date=self.days(offset), service_type="Vespers"
+            )
+            role = ServiceRole.objects.create(service=service, role_name="Magnificat")
+            RolePiece.objects.create(service_role=role, score=self.score)
+        self.assertEqual(self.count_queries(term.get_absolute_url()), one_service)
 
 
 class TermTimingTests(TestCase):
