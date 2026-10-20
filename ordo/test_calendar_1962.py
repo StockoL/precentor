@@ -86,3 +86,50 @@ class RulesOf1962Tests(TestCase):
     def test_a_1962_occasion_knows_its_date(self):
         septuagesima = LiturgicalOccasion.objects.get(calendar_use="historic", key="tempora:Quadp1-0")
         self.assertEqual(septuagesima.date_for_year(2026), date(2026, 2, 1))
+
+
+class EnglandAndWales1962Tests(TestCase):
+    """England's and Wales's 1962 days, checked against the Latin Mass
+    Society's Ordo for 2025-26, from which they were taken."""
+
+    @classmethod
+    def setUpTestData(cls):
+        load_calendar_files()
+
+    def on(self, day, country):
+        return [o.key for o in occasion_for_date(day, "historic", country)]
+
+    def test_st_thomas_of_canterbury_is_first_class_in_both(self):
+        for country in ("england", "wales"):
+            with self.subTest(country=country):
+                self.assertEqual(self.on(date(2025, 12, 29), country)[0], "sancti:12-29")
+        self.assertNotEqual(keys(date(2025, 12, 29))[:1], ["sancti:12-29"])
+
+    def test_st_george_is_first_class_in_england_and_third_in_wales(self):
+        england = occasion_for_date(date(2026, 4, 23), "historic", "england")
+        wales = occasion_for_date(date(2026, 4, 23), "historic", "wales")
+        self.assertEqual([(o.key, o.rank) for o in england][:1], [("sancti:04-23", "class_1")])
+        self.assertEqual([(o.key, o.rank) for o in wales][:1], [("sancti:04-23", "class_3")])
+        self.assertEqual(keys(date(2026, 4, 23)), [])
+
+    def test_st_david_moves_off_the_second_sunday_of_lent_in_wales(self):
+        self.assertEqual(self.on(date(2026, 3, 1), "wales"), ["tempora:Quad2-0"])
+        # With a commemoration of the Lent weekday, "at all Masses".
+        self.assertEqual(self.on(date(2026, 3, 2), "wales"), ["sancti:03-01wa", "tempora:Quad2-1"])
+        self.assertNotIn("sancti:03-01wa", self.on(date(2026, 3, 2), "england"))
+
+    def test_a_national_saint_is_celebrated_and_the_universal_one_commemorated(self):
+        self.assertEqual(self.on(date(2026, 5, 4), "england"), ["sancti:05-04ew", "sancti:05-04"])
+        self.assertEqual(self.on(date(2026, 6, 22), "wales"), ["sancti:06-22ew", "sancti:06-22"])
+
+    def test_fisher_and_more_and_st_edward(self):
+        self.assertEqual(self.on(date(2026, 7, 9), "england"), ["sancti:07-09ew"])
+        edward = occasion_for_date(date(2026, 10, 13), "historic", "england")
+        self.assertEqual([(o.key, o.rank) for o in edward], [("sancti:10-13", "class_2")])
+
+    def test_welsh_days_are_only_in_wales(self):
+        for day, key in ((date(2026, 7, 17), "sancti:07-17wa"), (date(2026, 7, 30), "sancti:07-30wa"),
+                         (date(2026, 8, 3), "sancti:08-03wa")):
+            with self.subTest(key=key):
+                self.assertEqual(self.on(day, "wales")[:1], [key])
+                self.assertNotIn(key, self.on(day, "england"))
