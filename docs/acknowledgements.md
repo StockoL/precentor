@@ -128,17 +128,30 @@ Missalemeum's licence notice is in
 [`ordo/MISSALEMEUM_LICENSE.txt`](../ordo/MISSALEMEUM_LICENSE.txt), beside
 the code ported from it.
 
-### The Ordo 2025-2026, Latin Mass Society (planned)
+### The Ordo 2025-2026, Latin Mass Society
 
 [The Ordo 2025-2026](https://lms.org.uk/sites/default/files/u5374/final_ordo_1.42_2025-2026.pdf),
 compiled by Peter Day-Milne, copyright The Latin Mass Society 2025.
 It gives the rank of each day of the 1962 calendar separately for the
-dioceses of England and of Wales. **Planned:** I'll take facts only
-from it (which feasts England and Wales add or rank differently, on
-which dates, of which class and colour) and never its wording. I'll
-also check the 2025-26 year against it. I'm grateful to the Latin
-Mass Society for publishing it freely, and to Peter Day-Milne for the
-work of compiling it each year.
+dioceses of England and of Wales. I'm grateful to the Latin Mass
+Society for publishing it freely, and to Peter Day-Milne for the work
+of compiling it each year.
+
+How I used it:
+
+- **England's and Wales's 1962 days.** I read the Ordo's national
+  entries ("In all dioceses of England", "In both dioceses of Wales")
+  and wrote the days into
+  [`ordo/data/lms/england_1962.json`](../ordo/data/lms/england_1962.json)
+  and [`wales_1962.json`](../ordo/data/lms/wales_1962.json) by hand.
+  They're facts only: which day, on which date, of which class and
+  colour. The names are written in Missalemeum's style, not taken from
+  the Ordo, and each row has a note saying which entry it comes from.
+- **Checking.** I compared Precentor's 1962 calendars for England and
+  for Wales with the Ordo's, by class, for every day of the 2025-26
+  year. The details are in [`calendar_plan.md`](calendar_plan.md),
+  section 4, and the national days have tests of their own in
+  [`ordo/test_calendar_1962.py`](../ordo/test_calendar_1962.py).
 
 ### The date of Easter
 

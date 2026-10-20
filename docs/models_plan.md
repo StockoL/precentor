@@ -308,7 +308,8 @@ of Mary) that keeps another memorial on its day.
 **Where the rows come from:** `manage.py load_calendar`
 (`ordo/calendar_data.py`) loads the General Roman, England and Wales
 calendars from `ordo/data/romcal/`, and the 1962 calendar from
-`ordo/data/missalemeum/`, matching each row by form, calendar and key,
+`ordo/data/missalemeum/` with England's and Wales's 1962 days from
+`ordo/data/lms/`, matching each row by form, calendar and key,
 so it can be run again safely. Occasions a conductor enters
 by hand have no key, take no part in precedence and are never touched
 by a load. Precedence level 12 (optional memorial) exists only so a

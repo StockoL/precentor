@@ -224,6 +224,49 @@ had written from memory without their suffixes (`sancti:08-09t`, the
 Vigil of St Lawrence, and `sancti:06-28r`, the Vigil of SS Peter and
 Paul); the rules now take every key from Missalemeum's constants.
 
+### England and Wales in 1962, as built
+
+`ordo/data/lms/england_1962.json` and `wales_1962.json` hold the days
+the Latin Mass Society's Ordo for 2025-26 gives "in all dioceses of
+England" or "in both dioceses of Wales": 8 rows for England and 12 for
+Wales. Some override a universal day by its key (St George, St Edward
+the Confessor, and St Thomas of Canterbury, which is only a
+commemoration universally); the rest are days of their own (the Holy
+Martyrs of England and Wales, St Alban, SS John Fisher and Thomas
+More, St David, and three Welsh feasts). Feasts of a single diocese
+are left out.
+
+Where a national third-class saint shares a date with a universal one,
+Missalemeum's rule for local saints applies: the national saint is
+celebrated and the universal one commemorated, as the Ordo has it for
+the Holy Martyrs and St Monica (4 May) and St Alban and St Paulinus
+(22 June). When St David's day fell on the Second Sunday of Lent in
+2026, the rule for two first-class days moved it to Monday 2 March,
+with a commemoration of the Lent weekday, again as in the Ordo.
+
+**Checked against the Ordo.** For every day of the 2025-26 year,
+Precentor's 1962 calendar matches the Ordo's class in England on all
+363 days, and in Wales on all but one: Rogation Monday (12 May), when
+the Welsh dioceses have a votive Mass of the Rogations, which is a
+Mass ordered for the day, not a day of the calendar.
+
+Three things to know:
+
+- **St Ubaldus (16 May) and St Didacus (13 November)** are third class
+  in the Ordo, but fourth class (commemorations) in Missalemeum's
+  universal data. The Ordo has them on its main line, not as national
+  days, so the universal calendar may simply be wrong in Missalemeum;
+  but I only have evidence for England and Wales, so I've raised them
+  there and left the universal calendar as Missalemeum has it.
+- **One year's Ordo shows only that year.** A national feast that was
+  impeded in 2025-26 doesn't appear in it at all. St Augustine of
+  Canterbury, for one, isn't in this Ordo, almost certainly because 26
+  May 2026 fell in the Pentecost Octave. An Ordo for another year would
+  show any such feasts.
+- **The rows are written by hand**, so unlike the romcal and
+  Missalemeum data they have no export script; `manage.py
+  load_calendar` loads them with the rest.
+
 ## 5. What goes in
 
 | | Included | Left out for now |

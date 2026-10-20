@@ -387,11 +387,15 @@ template.
 
 ## 11. Acknowledgements
 
-I'm grateful to everyone whose work Precentor builds on. The liturgical
-calendar's date rules are a Python port of
+I'm grateful to everyone whose work Precentor builds on. The Ordinary
+Form calendar's date rules are a Python port of
 [romcal](https://github.com/romcal/romcal)'s (MIT licence), checked
-against romcal's own dates, and the order of precedence follows the
+against romcal's own calendars, and its order of precedence follows the
 Church's General Norms for the Liturgical Year and the Calendar. The
+1962 calendar is a port of
+[Missalemeum](https://github.com/mmolenda/Missalemeum)'s rules (MIT
+licence), and its days for England and Wales come from the Latin Mass
+Society's Ordo. The
 stylesheets follow Andy Bell's CUBE CSS, with layouts based on Every
 Layout by Heydon Pickering and Andy Bell, and fluid scales from
 Utopia. The typefaces are EB Garamond and Inter, both under the SIL
