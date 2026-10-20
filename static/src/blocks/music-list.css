@@ -34,6 +34,9 @@
   }
 
   .service-entry {
+    /* A size container, so its layout can follow the entry's own width:
+       in a narrow newspaper column, not the window. */
+    container-type: inline-size;
     break-inside: avoid;
     margin-block-end: var(--spacing-m);
     padding-inline-start: var(--spacing-s);
@@ -47,6 +50,17 @@
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: var(--spacing-s);
+  }
+
+  /* In a narrow entry (a newspaper column on screen), side by side left
+     the pieces about 200px, one word a line; the occasion, hymns and
+     psalm go underneath instead. Wide entries, print included, keep
+     them beside. */
+  @container (width < 26rem) {
+    .service-entry-grid {
+      grid-template-columns: 1fr;
+      gap: var(--spacing-2xs);
+    }
   }
 
   .occasion-secondary {
@@ -64,7 +78,11 @@
     text-align: center;
   }
 
+  /* Each service's heading sits in an 18rem column, where the app's
+     usual h2 size wrapped "Sunday 20th September 2026 — Choral
+     Evensong" onto four lines. */
   .music-list h2 {
+    font-size: var(--typography-step-1);
     border-block-end: 1px solid var(--colors-border-subtle);
     padding-block-end: var(--spacing-3xs);
     margin-block-end: var(--spacing-2xs);
@@ -138,10 +156,33 @@
     display: none;
   }
 
+  /*
+   * Fixed point sizes: the screen's fluid scale is worked out from the
+   * window width, which means nothing on paper. Garamond throughout, as
+   * on screen. And the colour tokens the list uses are reset to
+   * print-safe values here, so the paper looks the same whichever theme
+   * the person printing has chosen.
+   */
   .music-list {
-    font-family: serif;
-    color: black;
+    --colors-text-base: #000;
+    --colors-text-muted: #444;
+    --colors-border-subtle: #bbb;
+    font-family: var(--fonts-heading);
+    font-size: 11pt;
+    color: var(--colors-text-base);
     background: white;
+  }
+
+  .music-list h1 {
+    font-size: 18pt;
+  }
+
+  .music-list h2 {
+    font-size: 14pt;
+  }
+
+  .music-list .occasion-secondary {
+    font-size: 9.5pt;
   }
 }
 

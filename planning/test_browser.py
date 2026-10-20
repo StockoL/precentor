@@ -266,3 +266,42 @@ class OccasionAutoSuggestBrowserTest(PlaywrightTestCase):
         # Give the fetch a moment to (not) resolve, then confirm nothing appeared.
         self.page.wait_for_timeout(300)
         assert not self.page.is_visible("#occasion-suggestions")
+
+
+class MusicListLayoutBrowserTest(PlaywrightTestCase):
+    def setUp(self):
+        super().setUp()
+        self.login_as_conductor()
+        self.term = Term.objects.create(
+            name="Layout Term",
+            start_date=date(2026, 1, 1),
+            end_date=date(2026, 3, 31),
+            calendar_use="current",
+        )
+        for day in (4, 11, 18):
+            service = Service.objects.create(
+                term=self.term, date=date(2026, 1, day), service_type="Choral Evensong",
+                hymns="123, 345", psalm="150",
+            )
+            role = ServiceRole.objects.create(service=service, role_name="Setting")
+            score = Score.objects.create(
+                title="Missa Aeterna Christi Munera", composer_surname="Palestrina"
+            )
+            RolePiece.objects.create(service_role=role, score=score, is_confirmed=True)
+        self.page.set_viewport_size({"width": 1280, "height": 800})
+        self.page.goto(f"/terms/{self.term.pk}/music-list/")
+
+    def test_narrow_columns_put_hymns_under_the_pieces(self):
+        entry = self.page.locator(".service-entry").first
+        main = entry.locator(".service-entry-main").bounding_box()
+        aside = entry.locator(".service-entry-aside").bounding_box()
+        assert aside["y"] >= main["y"] + main["height"], (main, aside)
+
+    def test_print_uses_fixed_point_sizes(self):
+        self.page.emulate_media(media="print")
+        sizes = self.page.evaluate("""() => [
+            getComputedStyle(document.querySelector('.music-list')).fontSize,
+            getComputedStyle(document.querySelector('.music-list h2')).fontSize,
+        ]""")
+        # 11pt and 14pt in CSS pixels (1pt = 4/3px).
+        assert sizes == ["14.6667px", "18.6667px"], sizes
