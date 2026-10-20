@@ -32,6 +32,7 @@ RANK_CHOICES = [
     ("sunday", "Sunday"),
     ("feast", "Feast"),
     ("memorial", "Memorial"),
+    ("optional_memorial", "Optional memorial"),
     ("weekday", "Weekday"),
     # 1962
     ("class_1", "First class"),
@@ -42,8 +43,10 @@ RANK_CHOICES = [
 
 # The Ordinary Form's Table of Liturgical Days (General Norms for the
 # Liturgical Year and the Calendar, no. 59), highest first. A lower
-# number wins; letters order the days within a level. Level 12 (optional
-# memorials) is left out, since Precentor doesn't carry them.
+# number wins; letters order the days within a level. Precentor leaves
+# optional memorials (level 12) out; the level exists so a national
+# calendar can make a general memorial optional, as England does with St
+# Elizabeth of Hungary.
 OF_PRECEDENCE_CHOICES = [
     ("1", "1: The Paschal Triduum"),
     ("2", "2: Christmas, Epiphany, Ascension, Pentecost; Sundays of Advent, Lent and Easter; Ash Wednesday; Holy Week; the Easter Octave"),
@@ -65,6 +68,7 @@ OF_PRECEDENCE_CHOICES = [
     ("10", "10: Obligatory memorials of the General Calendar"),
     ("11a", "11a: Memorial of a secondary patron"),
     ("11b", "11b: Other obligatory memorials proper to a diocese or order"),
+    ("12", "12: Optional memorials"),
     ("13", "13: Other weekdays"),
 ]
 

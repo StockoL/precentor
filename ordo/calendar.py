@@ -26,6 +26,8 @@ DAY = timedelta(days=1)
 TRIDUUM = 1
 PRIVILEGED_WEEKDAY = 9
 MEMORIAL_LEVELS = {10, 11}
+# Optional memorials aren't listed (docs/calendar_plan.md, section 5).
+OPTIONAL_MEMORIAL = 12
 # A solemnity that's impeded moves to the nearest day not taken by a day
 # of these levels (General Norms, no. 60).
 LEVELS_A_SOLEMNITY_CANNOT_MOVE_TO = set(range(1, 9))
@@ -37,12 +39,24 @@ def level(occasion):
 
 
 def precedence_key(occasion):
-    """Sorts a day's occasions with the one kept first: by level, then
-    by the letter within it, then the Proper of Time ahead of the saints
-    when two days are otherwise equal."""
+    """
+    Sorts a day's occasions with the one kept first: by level, then by
+    the letter within it. Between days still equal, the Proper of Time
+    comes first, then a day whose date moves with the seasons (the
+    Immaculate Heart of Mary with the Sacred Heart, or the Eternal High
+    Priest with Pentecost) ahead of a fixed one, and finally the key, so
+    the result never depends on the order rows come from the database.
+    """
     code = occasion.precedence
     number = str(level(occasion))
-    return (int(number), code[len(number):], 0 if occasion.is_proper_of_time else 1)
+    moves = bool(occasion.date_rule) or occasion.is_moveable
+    return (
+        int(number),
+        code[len(number):],
+        0 if occasion.is_proper_of_time else 1,
+        0 if moves else 1,
+        occasion.key,
+    )
 
 
 def kept_alongside(celebration, others, day, dates):
@@ -103,6 +117,8 @@ def resolve_year(year, calendar_use="current", national_calendar="general_roman"
     ranked = defaultdict(list)
     unranked = defaultdict(list)
     for occasion in occasions:
+        if occasion.precedence and level(occasion) == OPTIONAL_MEMORIAL:
+            continue
         day = occasion.date_in(dates)
         if day is None or day.year != year:
             continue
