@@ -104,6 +104,13 @@ class LiturgicalOccasion(models.Model):
     precedence = models.CharField(
         max_length=4, choices=OF_PRECEDENCE_CHOICES, blank=True
     )
+    # The Proper of Time (the seasons, Sundays and feasts of the Lord with
+    # moving dates) takes precedence over a saint's day of equal rank.
+    is_proper_of_time = models.BooleanField(default=False)
+    # A memorial that shares its day with another memorial, both kept as
+    # optional (the Immaculate Heart of Mary). Otherwise, of two memorials
+    # on one day, only the first is kept.
+    shares_with_memorials = models.BooleanField(default=False)
     # A named date rule from ordo/dates.py, its arguments and any days
     # added: the 5th Sunday of Ordinary Time is "date_of_ordinary_time"
     # with [0, 5]. Blank means the fixed month and day, or the Easter
@@ -164,17 +171,14 @@ class LiturgicalOccasion(models.Model):
         return apply_transfers(day, self.transfers, dates)
 
 
-def occasion_for_date(target_date, calendar_use):
+def occasion_for_date(target_date, calendar_use, national_calendar="general_roman"):
     """
-    Reverse lookup: which LiturgicalOccasion(s) fall on target_date for a
-    given calendar_use. date_for_year() is a Python method, not a
-    database field, so candidates are scoped by calendar_use first (to
-    keep the loop small) and then evaluated in Python. Returns a list —
-    zero, one, or more occasions can share a date.
+    Reverse lookup: the occasions kept on target_date, the day's
+    celebration first and then anything observed alongside it. The list
+    may be empty. Dates come from rules, not database columns, so the
+    whole year is worked out in Python (ordo/calendar.py), which is also
+    what lets precedence and transferred solemnities be applied.
     """
-    candidates = LiturgicalOccasion.objects.filter(calendar_use=calendar_use)
-    return [
-        occasion
-        for occasion in candidates
-        if occasion.date_for_year(target_date.year) == target_date
-    ]
+    from .calendar import resolve_year
+
+    return resolve_year(target_date.year, calendar_use, national_calendar).get(target_date, [])
