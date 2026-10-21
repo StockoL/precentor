@@ -3,6 +3,7 @@
 {% block title %}{% if form.instance.pk %}Edit service{% else %}New service{% endif %} — Precentor{% endblock %}
 {% block extra_js %}
 <script type="module" src="{% static 'src/js/occasion-suggest.js' %}"></script>
+<script type="module" src="{% static 'src/js/tag-input.js' %}"></script>
 {% endblock %}
 {% block content %}
 <div class="flow">
@@ -24,12 +25,14 @@
             <div
                 id="occasion-suggestions"
                 class="flow"
-                style="--flow-space: var(--spacing-3xs);"
+                style="--flow-space: var(--spacing-2xs);"
                 data-term-calendar-use="{{ term.calendar_use }}"
+                data-national-calendar="{{ site_config.national_calendar }}"
                 hidden
             ></div>
             <div>{{ form.occasion.as_field_group }}</div>
-            <div>{{ form.additional_occasions.as_field_group }}</div>
+            {# tag-input.js turns this into chips over a search box; without JavaScript it stays a list. #}
+            <div data-tag-input>{{ form.additional_occasions.as_field_group }}</div>
             <div>{{ form.calendar_use.as_field_group }}</div>
         </fieldset>
 

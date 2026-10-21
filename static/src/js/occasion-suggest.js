@@ -1,8 +1,9 @@
-// Progressive enhancement over the plain occasion / additional_occasions
-// <select> fields that ServiceForm already renders — those selects work
-// exactly as before with this script absent. On date change, this fetches
-// candidate occasions and offers them as choices the conductor confirms;
-// it never fills a selection in without a click.
+// Progressive enhancement over the occasion and additional occasions
+// <select>s that ServiceForm renders, which work the same without it. When
+// the date changes, this fetches the occasions kept that day, in the
+// church's national calendar, and offers them for the conductor to
+// choose: the day's celebration first, then anything also kept. It never
+// fills a field in without a click.
 function initOccasionSuggest() {
   const dateField = document.getElementById("id_date");
   const container = document.getElementById("occasion-suggestions");
@@ -15,6 +16,16 @@ function initOccasionSuggest() {
   function effectiveCalendarUse() {
     return calendarUseField?.value || container.dataset.termCalendarUse || "";
   }
+
+  // Keep the boxes in step with the field, which its chip input
+  // (tag-input.js) can change too.
+  additionalField?.addEventListener("change", () => {
+    container.querySelectorAll("input[data-occasion-id]").forEach((box) => {
+      box.checked = Array.from(additionalField.selectedOptions).some(
+        (opt) => opt.value === box.dataset.occasionId
+      );
+    });
+  });
 
   function clear() {
     container.hidden = true;
@@ -32,16 +43,16 @@ function initOccasionSuggest() {
     const heading = document.createElement("p");
     heading.textContent =
       occasions.length === 1
-        ? "This date matches a known occasion:"
-        : "This date matches more than one known occasion:";
+        ? "Kept on this date:"
+        : "Kept on this date, the day’s celebration first:";
     container.appendChild(heading);
 
-    occasions.forEach((occasion) => {
+    occasions.forEach((occasion, index) => {
       const row = document.createElement("div");
       row.className = "cluster";
 
       const label = document.createElement("span");
-      label.textContent = occasion.name;
+      label.textContent = index === 0 ? occasion.name : `${occasion.name} (also kept)`;
       row.appendChild(label);
 
       const setPrimary = document.createElement("button");
@@ -57,13 +68,19 @@ function initOccasionSuggest() {
         const checkboxLabel = document.createElement("label");
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
+        checkbox.dataset.occasionId = String(occasion.id);
+        checkbox.checked = Array.from(additionalField.selectedOptions).some(
+          (opt) => opt.value === String(occasion.id)
+        );
         checkbox.addEventListener("change", () => {
           const option = Array.from(additionalField.options).find(
             (opt) => opt.value === String(occasion.id)
           );
           if (option) option.selected = checkbox.checked;
+          // Lets the chip input over this select (tag-input.js) redraw.
+          additionalField.dispatchEvent(new Event("change"));
         });
-        checkboxLabel.append(checkbox, " Also relevant");
+        checkboxLabel.append(checkbox, " Add to other occasions");
         row.appendChild(checkboxLabel);
       }
 
@@ -82,6 +99,7 @@ function initOccasionSuggest() {
     const params = new URLSearchParams({
       date: dateValue,
       calendar_use: calendarUse,
+      national_calendar: container.dataset.nationalCalendar || "",
     });
 
     let data;

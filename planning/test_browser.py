@@ -269,6 +269,37 @@ class OccasionAutoSuggestBrowserTest(PlaywrightTestCase):
         self.page.wait_for_timeout(300)
         assert not self.page.is_visible("#occasion-suggestions")
 
+    def test_a_day_kept_alongside_can_be_added_as_a_chip(self):
+        # A Lent weekday with a memorial: the weekday is the celebration and
+        # the memorial is also kept.
+        LiturgicalOccasion.objects.create(
+            name="Saturday of the Second Week of Lent", key="lent_2_saturday", fixed_month=3, fixed_day=7,
+            precedence="9", rank="weekday", is_proper_of_time=True,
+        )
+        LiturgicalOccasion.objects.create(
+            name="Saints Perpetua and Felicity", key="perpetua", fixed_month=3, fixed_day=7,
+            precedence="10", rank="memorial",
+        )
+        self.page.goto(f"/terms/{self.term.pk}/services/add/")
+        self.page.fill("#id_date", "2026-03-07")
+        self.page.dispatch_event("#id_date", "change")
+        self.page.wait_for_selector("#occasion-suggestions button")
+        text = self.page.inner_text("#occasion-suggestions")
+        assert text.index("Saturday of the Second Week") < text.index("Perpetua"), text
+        assert "Saints Perpetua and Felicity (also kept)" in text
+
+        # Other occasions is a chip input, so ticking the box shows a chip.
+        box = self.page.locator("#occasion-suggestions input[type=checkbox]").nth(1)
+        self.page.locator("#occasion-suggestions label", has_text="Add to other occasions").nth(1).click()
+        chip = self.page.locator(".tag-input__chip", has_text="Saints Perpetua and Felicity")
+        assert chip.is_visible()
+        assert box.is_checked()
+
+        # Removing the chip unticks the box: the two stay in step.
+        chip.click()
+        assert chip.count() == 0
+        assert not box.is_checked()
+
 
 class MusicListLayoutBrowserTest(PlaywrightTestCase):
     def setUp(self):

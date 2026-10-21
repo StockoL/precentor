@@ -1,5 +1,5 @@
 // Chip input over a <select multiple> (the score form's three "suitable
-// for" fields). Progressive enhancement: the native select stays the
+// for" fields, and the service form's other occasions). Progressive enhancement: the native select stays the
 // source of truth, so adding a chip selects its option and removing one
 // deselects it, and the form submits exactly as it would without
 // JavaScript. The select is only hidden once everything here is built;
@@ -90,6 +90,12 @@ function buildTagInput(container) {
     return li;
   }
 
+  // Tell anything watching the select (and this widget, which redraws)
+  // that its options changed, as a change made by hand would.
+  function changed() {
+    select.dispatchEvent(new Event("change"));
+  }
+
   function renderChips() {
     chips.replaceChildren();
     options
@@ -98,7 +104,7 @@ function buildTagInput(container) {
         chips.append(
           makeChip(option.textContent, () => {
             option.selected = false;
-            renderChips();
+            changed();
           }),
         );
       });
@@ -170,6 +176,7 @@ function buildTagInput(container) {
   function choose(match) {
     if (match.option) {
       match.option.selected = true;
+      changed();
       announce(`Added ${match.option.textContent}`);
     } else {
       setNewNames([...newNames(), match.newName]);
@@ -217,6 +224,10 @@ function buildTagInput(container) {
   wrapper.addEventListener("focusout", (event) => {
     if (!wrapper.contains(event.relatedTarget)) closeList();
   });
+
+  // Something else may select an option, such as the service form's
+  // suggestions; it fires "change", and the chips are redrawn.
+  select.addEventListener("change", renderChips);
 
   renderChips();
 
