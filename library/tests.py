@@ -1,21 +1,17 @@
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
+from accounts.testing import make_user
 from ordo.models import LiturgicalOccasion, UseType
 
 from .models import Score
-
-User = get_user_model()
 
 
 class ScoreFormLabelTests(TestCase):
     """Labels come from explicit verbose_name, not field names."""
 
     def test_score_form_labels_read_naturally(self):
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="testpass123")
-        )
+        self.client.force_login(make_user("librarian"))
         response = self.client.get("/library/add/")
         for label in ("Background", "Interpretation notes",
                       "Composer&#x27;s other names", "Sopranos", "Basses",
@@ -32,9 +28,7 @@ class ScoreFormLayoutTests(TestCase):
     def test_fields_are_grouped_and_none_are_missing(self):
         from .forms import ScoreForm
 
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="testpass123")
-        )
+        self.client.force_login(make_user("librarian"))
         response = self.client.get("/library/add/")
         for legend in ("Identity", "Forces", "Library", "Liturgical use", "Notes"):
             with self.subTest(legend=legend):
@@ -49,9 +43,7 @@ class VoicingSuggestionTests(TestCase):
     def test_voicing_field_suggests_existing_voicings_once_each(self):
         for title, voicing in (("A", "SATB"), ("B", "SATB"), ("C", "SSA"), ("D", "")):
             Score.objects.create(title=title, composer_surname="X", voicing=voicing)
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="testpass123")
-        )
+        self.client.force_login(make_user("librarian"))
         response = self.client.get("/library/add/")
         self.assertContains(response, 'list="voicing-options"')
         self.assertContains(response, '<option value="SATB"></option>', count=1, html=True)
@@ -111,9 +103,7 @@ class NewUseTypeTests(TestCase):
 
 class ScoreEditorTests(TestCase):
     def test_editor_can_be_recorded_from_the_form(self):
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="testpass123")
-        )
+        self.client.force_login(make_user("librarian"))
         response = self.client.post("/library/add/", {
             "title": "Sicut cervus", "composer_surname": "Palestrina",
             "editor": "Stockton", "voicing": "SATB", "language": "Latin",
@@ -258,9 +248,7 @@ class VocalRangeTests(TestCase):
 
 class ScoreDetailPageTests(TestCase):
     def setUp(self):
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="testpass123")
-        )
+        self.client.force_login(make_user("librarian"))
         self.score = Score.objects.create(
             title="Sicut cervus", composer_surname="Palestrina", editor="Stockton",
             voicing="SATB", language="Latin",
@@ -329,9 +317,7 @@ class ScoreDetailPageTests(TestCase):
 
 class LibraryEmptyStateTests(TestCase):
     def setUp(self):
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="testpass123")
-        )
+        self.client.force_login(make_user("librarian"))
 
     def test_empty_library_offers_the_first_score(self):
         response = self.client.get("/library/")
@@ -408,10 +394,8 @@ class ScoreComposerTests(TestCase):
 
 class ScoreFilterTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            username="conductor", password="testpass123"
-        )
-        self.client.login(username="conductor", password="testpass123")
+        self.user = make_user("viewer")
+        self.client.force_login(self.user)
         Score.objects.create(
             title="Ave Verum", composer_surname="Byrd", language="Latin", tenor_parts=1
         )
@@ -477,10 +461,8 @@ class ScoreFilterTests(TestCase):
 
 class ScoreSuitabilityRankingTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            username="conductor", password="testpass123"
-        )
-        self.client.login(username="conductor", password="testpass123")
+        self.user = make_user("viewer")
+        self.client.force_login(self.user)
         self.occasion = LiturgicalOccasion.objects.create(name="Advent Sunday 4")
         self.other_occasion = LiturgicalOccasion.objects.create(
             name="Ordinary Time 7"
@@ -531,9 +513,7 @@ class ScoreSuitabilityRankingTests(TestCase):
 
 class LibrarySortTests(TestCase):
     def setUp(self):
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="testpass123")
-        )
+        self.client.force_login(make_user("librarian"))
         Score.objects.create(title="Ave verum", composer_surname="Byrd", duration_minutes=4)
         Score.objects.create(title="Sicut cervus", composer_surname="Palestrina")
         Score.objects.create(title="Jesu, joy", composer_surname="Bach", duration_minutes=3)
