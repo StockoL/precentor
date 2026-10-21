@@ -1,10 +1,12 @@
-from datetime import date
+from datetime import date, timedelta
+
+from django.utils import timezone
 
 from library.models import Score
 from ordo.models import LiturgicalOccasion
 from precentor_project.test_browser import PlaywrightTestCase
 
-from .models import RolePiece, Service, ServiceRole, Term
+from .models import RolePiece, Service, ServiceRole, Term, TermMarker
 
 
 class ConfirmToggleBrowserTest(PlaywrightTestCase):
@@ -518,3 +520,38 @@ class OccasionCalendarFilterBrowserTest(PlaywrightTestCase):
         self.page.select_option("#id_occasion", str(self.old.pk))
         self.page.select_option("#id_calendar_use", "current")
         assert self.visible_options() == ["Baptism of the Lord", "Holy Family (1962)"]
+
+
+class TermPagesForViewersBrowserTest(PlaywrightTestCase):
+    def setUp(self):
+        super().setUp()
+        # Around today, so the Terms page shows it as a current term.
+        today = timezone.localdate()
+        self.term = Term.objects.create(
+            name="Lent", start_date=today - timedelta(days=30), end_date=today + timedelta(days=30),
+            calendar_use="current",
+        )
+        Service.objects.create(term=self.term, date=today + timedelta(days=3), service_type="Sung Mass")
+        TermMarker.objects.create(term=self.term, date=today + timedelta(days=10), text="Half term")
+
+    def write_links(self):
+        return self.page.eval_on_selector_all(
+            "main a[href*='/add/'], main a[href*='/edit/'], main a[href*='/delete/']",
+            "links => links.map(a => a.getAttribute('href'))",
+        )
+
+    def test_a_viewer_reads_terms_without_write_controls(self):
+        self.log_in_as("viewer")
+        self.page.goto("/")
+        assert self.page.locator(".term-card", has_text="Lent").is_visible()
+        assert self.write_links() == []
+
+        self.page.goto(f"/terms/{self.term.pk}/")
+        assert "Half term" in self.page.inner_text("main")
+        assert self.write_links() == []
+        assert self.page.locator(f"a[href='/terms/{self.term.pk}/music-list/']").is_visible()
+
+    def test_a_conductor_still_has_them(self):
+        self.log_in_as("conductor")
+        self.page.goto(f"/terms/{self.term.pk}/")
+        assert len(self.write_links()) == 6  # new service, new notice, edit and delete term, edit and delete notice

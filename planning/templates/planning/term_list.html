@@ -4,9 +4,11 @@
 <div class="flow">
     <header class="page-header">
         <h1>Terms</h1>
+        {% if can.plan %}
         <div class="page-header__actions">
             <a class="btn-primary" href="{% url 'planning:term_create' %}">New term</a>
         </div>
+        {% endif %}
     </header>
 
     {% if active_terms %}
@@ -18,7 +20,11 @@
     {% elif not past_terms %}
     <div class="empty-state flow">
         <p>No terms yet. A term holds a run of services and their music, such as Michaelmas 2026.</p>
+        {% if can.plan %}
         <a class="btn" href="{% url 'planning:term_create' %}">Create the first term</a>
+        {% else %}
+        <p>A conductor sets them up.</p>
+        {% endif %}
     </div>
     {% else %}
     <p>No current or upcoming terms.</p>

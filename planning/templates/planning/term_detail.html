@@ -9,11 +9,15 @@
     <header class="page-header">
         <h1>{{ term }}</h1>
         <div class="page-header__actions">
+            {% if can.plan %}
             <a class="btn-primary" href="{% url 'planning:service_create' term.pk %}">New service</a>
             <a class="btn" href="{% url 'planning:marker_create' term.pk %}">New notice</a>
+            {% endif %}
             <a class="btn" href="{% url 'planning:term_music_list' term.pk %}">Music list</a>
+            {% if can.plan %}
             <a class="btn-ghost" href="{% url 'planning:term_update' term.pk %}">Edit term</a>
             <a class="btn-danger" href="{% url 'planning:term_delete' term.pk %}">Delete term</a>
+            {% endif %}
         </div>
     </header>
     <p class="term-card__meta">
@@ -40,8 +44,12 @@
             </li>
             {% empty %}
             <li class="empty-state flow">
+                {% if can.plan %}
                 <p>No services yet. Add each service in this term, and its music, to build the music list.</p>
                 <a class="btn" href="{% url 'planning:service_create' term.pk %}">Add the first service</a>
+                {% else %}
+                <p>No services yet.</p>
+                {% endif %}
             </li>
             {% endfor %}
         </ul>
@@ -53,15 +61,19 @@
             {% for marker in markers %}
             <li class="list-row">
                 {{ marker.date|date }} — {{ marker.text }}
+                {% if can.plan %}
                 <span class="cluster">
                     <a class="btn-ghost" href="{% url 'planning:marker_update' marker.pk %}">Edit</a>
                     <a class="btn-danger" href="{% url 'planning:marker_delete' marker.pk %}">Delete</a>
                 </span>
+                {% endif %}
             </li>
             {% empty %}
             <li class="empty-state flow">
                 <p>No notices. A notice puts a dated line on the music list, such as half term or a change of time.</p>
+                {% if can.plan %}
                 <a class="btn" href="{% url 'planning:marker_create' term.pk %}">Add a notice</a>
+                {% endif %}
             </li>
             {% endfor %}
         </ul>
