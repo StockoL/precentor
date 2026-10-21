@@ -346,3 +346,12 @@ class CommentRightsTests(TestCase):
         self.client.force_login(admin)
         self.assertEqual(self.client.post(self.add_url, {"body": "Hello"}).status_code, 403)
         self.assertFalse(Comment.objects.exists())
+
+    def test_only_conductors_and_librarians_delete_a_closed_thread(self):
+        for role, allowed in (("viewer", False), ("librarian", True), ("conductor", True)):
+            with self.subTest(role=role):
+                comment = Comment.objects.create(author=make_user(), body="Done", target=self.term, is_open=False)
+                self.client.force_login(make_user(role))
+                response = self.client.post(f"/comments/{comment.pk}/delete/")
+                self.assertEqual(response.status_code, 302 if allowed else 403)
+                self.assertEqual(Comment.objects.filter(pk=comment.pk).exists(), not allowed)

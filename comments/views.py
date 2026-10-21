@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
@@ -9,7 +8,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import ListView
 
 from accounts.decorators import role_required
-from accounts.permissions import can_comment
+from accounts.permissions import can_comment, can_delete_comments
 from precentor_project.utils import ajax_or_redirect
 
 from .forms import CommentForm
@@ -120,7 +119,7 @@ def toggle_close(request, comment_pk):
     return ajax_or_redirect(request, fragments, request.META.get("HTTP_REFERER", "/"))
 
 
-@login_required
+@role_required(can_delete_comments)
 @require_POST
 def delete_comment(request, comment_pk):
     comment = get_object_or_404(Comment, pk=comment_pk)
