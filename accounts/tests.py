@@ -1,3 +1,23 @@
 from django.test import TestCase
 
-# Create your tests here.
+from .testing import make_user
+
+
+class MakeUserTests(TestCase):
+    def test_each_role_gets_its_group_and_a_viewer_gets_none(self):
+        self.assertEqual(list(make_user("conductor").groups.values_list("name", flat=True)), ["Conductor"])
+        self.assertEqual(list(make_user("librarian").groups.values_list("name", flat=True)), ["Librarian"])
+        self.assertFalse(make_user("viewer").groups.exists())
+
+    def test_each_user_gets_their_own_address_unless_given_one(self):
+        first, second = make_user(), make_user()
+        self.assertNotEqual(first.email, second.email)
+        self.assertEqual(make_user(email="organist@example.com").email, "organist@example.com")
+
+    def test_the_password_works_for_signing_in(self):
+        user = make_user(password="s3cret-pass")
+        self.assertTrue(self.client.login(username=user.username, password="s3cret-pass"))
+
+    def test_an_unknown_role_is_refused(self):
+        with self.assertRaises(ValueError):
+            make_user("organist")
