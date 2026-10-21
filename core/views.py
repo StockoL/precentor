@@ -1,13 +1,15 @@
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView
 
-from accounts.mixins import ConductorRequiredMixin
+from accounts.mixins import RoleRequiredMixin
+from accounts.permissions import can_manage_settings
 
 from .forms import SiteConfigForm
 from .models import SiteConfig
 
 
-class SiteConfigUpdateView(ConductorRequiredMixin, UpdateView):
+class SiteConfigUpdateView(RoleRequiredMixin, UpdateView):
+    permission = can_manage_settings
     model = SiteConfig
     form_class = SiteConfigForm
     template_name = "core/site_config_form.html"
