@@ -7,6 +7,7 @@ from django.views import View
 from .context_processors import Can
 from .decorators import role_required
 from .mixins import RoleRequiredMixin
+from .models import Organisation
 from .permissions import (
     can_comment,
     can_delete_comments,
@@ -149,3 +150,12 @@ class CanContextProcessorTests(TestCase):
         self.client.force_login(make_user("viewer"))
         response = self.client.get("/library/")
         self.assertIs(response.context["can"]["edit_library"], False)
+
+
+class OrganisationAdminTests(TestCase):
+    def test_a_superuser_can_list_and_add_organisations(self):
+        self.client.force_login(make_superuser())
+        make_organisation("St Mary's")
+        self.assertContains(self.client.get("/admin/accounts/organisation/"), "St Mary&#x27;s")
+        self.client.post("/admin/accounts/organisation/add/", {"name": "St Cecilia's"})
+        self.assertTrue(Organisation.objects.filter(name="St Cecilia's").exists())
