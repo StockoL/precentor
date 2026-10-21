@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
-from .permissions import can_plan
+from .permissions import can_edit_library, can_plan
 from .testing import make_user
 
 
@@ -42,3 +42,11 @@ class CanPlanTests(TestCase):
         admin.is_superuser = True
         admin.save()
         self.assertFalse(can_plan(admin))
+
+
+class CanEditLibraryTests(TestCase):
+    def test_conductors_and_librarians_edit_the_library(self):
+        self.assertTrue(can_edit_library(make_user("conductor")))
+        self.assertTrue(can_edit_library(make_user("librarian")))
+        self.assertFalse(can_edit_library(make_user("viewer")))
+        self.assertFalse(can_edit_library(AnonymousUser()))

@@ -21,3 +21,8 @@ def _has_role(user, *roles):
 def can_plan(user):
     """Terms, services, slots and pieces: proposing, confirming, marking N/A."""
     return _has_role(user, "conductor")
+
+
+def can_edit_library(user):
+    """Scores and their physical details: adding, editing, deleting."""
+    return _has_role(user, "conductor", "librarian")
