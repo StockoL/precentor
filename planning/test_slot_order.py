@@ -1,19 +1,15 @@
 from datetime import date
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.test import TestCase
 
-from .models import Service, ServiceRole, Term
+from accounts.testing import make_user
 
-User = get_user_model()
+from .models import Service, ServiceRole, Term
 
 
 class SlotOrderTests(TestCase):
     def setUp(self):
-        conductor = User.objects.create_user(username="conductor", password="x")
-        conductor.groups.add(Group.objects.get_or_create(name="Conductor")[0])
-        self.client.force_login(conductor)
+        self.client.force_login(make_user("conductor"))
         term = Term.objects.create(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
         self.roles = [ServiceRole.objects.create(service=self.service, role_name=n) for n in ("Introit", "Gloria", "Communion")]
@@ -64,6 +60,6 @@ class SlotOrderTests(TestCase):
                 self.assertEqual(self.names(), ["Introit", "Gloria", "Communion"])
 
     def test_only_a_conductor_moves_slots(self):
-        self.client.force_login(User.objects.create_user(username="librarian", password="x"))
+        self.client.force_login(make_user("librarian"))
         self.client.post(f"/roles/{self.roles[2].pk}/move/", {"direction": "up"})
         self.assertEqual(self.names(), ["Introit", "Gloria", "Communion"])
