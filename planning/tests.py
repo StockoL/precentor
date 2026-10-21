@@ -914,3 +914,42 @@ class MusicListTests(TestCase):
         response = self.client.get(f"/terms/{self.term.pk}/music-list/")
         self.assertContains(response, "Anthem")
         self.assertContains(response, "Test Anthem")
+
+
+class ServiceFormOccasionChoicesTests(TestCase):
+    """The occasion menus follow the national calendar chosen on Settings."""
+
+    @classmethod
+    def setUpTestData(cls):
+        from core.models import SiteConfig
+        from ordo.calendar_data import load_calendar_files
+
+        load_calendar_files()
+        config = SiteConfig.get_solo()
+        config.national_calendar = "england"
+        config.save()
+        cls.term = Term.objects.create(
+            name="Easter Term", start_date=date(2026, 4, 1), end_date=date(2026, 7, 31), calendar_use="current"
+        )
+
+    def labels(self, form, field):
+        return [label for _, label in form.fields[field].choices]
+
+    def test_englands_days_in_both_forms_and_not_another_countrys(self):
+        labels = self.labels(ServiceForm(), "occasion")
+        self.assertIn("Saint George, Martyr, Patron of England", labels)
+        self.assertIn("St. George, Martyr, Patron of England (1962)", labels)
+        self.assertNotIn("St. David, Bishop & Confessor, Patron of Wales (1962)", labels)
+        # Both menus offer the same occasions; the single one starts blank.
+        self.assertEqual(labels[1:], self.labels(ServiceForm(), "additional_occasions"))
+
+    def test_a_services_own_occasions_stay_listed(self):
+        david = LiturgicalOccasion.objects.get(calendar="wales", key="sancti:03-01wa")
+        service = Service.objects.create(term=self.term, date=date(2026, 3, 2), service_type="Mass", occasion=david)
+        self.assertIn(david.choice_label, self.labels(ServiceForm(instance=service), "occasion"))
+
+    def test_the_page_tells_the_suggestions_which_calendar(self):
+        user = User.objects.create_superuser(username="admin", password="testpass123")
+        self.client.force_login(user)
+        response = self.client.get(f"/terms/{self.term.pk}/services/add/")
+        self.assertContains(response, 'data-national-calendar="england"')

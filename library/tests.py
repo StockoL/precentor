@@ -584,3 +584,35 @@ class LibrarySortTests(TestCase):
         response = self.client.get("/library/")
         self.assertContains(response, "<td>Palestrina (ed. Stockton)</td>", html=True)
         self.assertContains(response, "Never")
+
+
+class ScoreFormOccasionChoicesTests(TestCase):
+    """The "suitable for" occasions follow the national calendar on Settings."""
+
+    @classmethod
+    def setUpTestData(cls):
+        from core.models import SiteConfig
+        from ordo.calendar_data import load_calendar_files
+
+        load_calendar_files()
+        config = SiteConfig.get_solo()
+        config.national_calendar = "wales"
+        config.save()
+
+    def labels(self, form):
+        return [label for _, label in form.fields["suited_occasions"].choices]
+
+    def test_only_the_churchs_calendar_is_offered(self):
+        from .forms import ScoreForm
+
+        labels = self.labels(ScoreForm())
+        self.assertIn("St. David, Bishop & Confessor, Patron of Wales (1962)", labels)
+        self.assertNotIn("Saint George, Martyr, Patron of England", labels)
+
+    def test_a_scores_existing_tags_stay_listed(self):
+        from .forms import ScoreForm
+
+        england_george = LiturgicalOccasion.objects.get(calendar="england", key="george_of_lydda_martyr")
+        score = Score.objects.create(title="Te Deum", composer_surname="Stanford")
+        score.suited_occasions.add(england_george)
+        self.assertIn(england_george.choice_label, self.labels(ScoreForm(instance=score)))

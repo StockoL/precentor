@@ -93,6 +93,27 @@ class UseType(models.Model):
         return self.name
 
 
+class LiturgicalOccasionQuerySet(models.QuerySet):
+    def listable(self, national_calendar="general_roman", keep=()):
+        """
+        The occasions a conductor can choose from, in both forms: the
+        general calendar with one national calendar's days added and its
+        overrides in place of the general rows, plus occasions entered by
+        hand. Another country's days, fourth-class days and optional
+        memorials are left out, as they are from the suggestions. Anything
+        in keep (the occasions already chosen) stays listed regardless.
+        """
+        listed = self.filter(calendar__in=["general_roman", national_calendar])
+        if national_calendar != "general_roman":
+            national_keys = self.filter(calendar=national_calendar).exclude(key="").values("key")
+            listed = listed.exclude(calendar="general_roman", key__in=national_keys)
+        listed = listed.exclude(rank__in=["class_4", "optional_memorial"]).exclude(precedence="12")
+        keep = [pk for pk in keep if pk]
+        if keep:
+            listed = self.filter(models.Q(pk__in=listed.values("pk")) | models.Q(pk__in=keep))
+        return listed.order_by("calendar_use", "name")
+
+
 class LiturgicalOccasion(models.Model):
     name = models.CharField(max_length=100)
     # Stable identifier from the source data (romcal's id for the
@@ -138,6 +159,8 @@ class LiturgicalOccasion(models.Model):
         related_name="occasions",
     )
 
+    objects = LiturgicalOccasionQuerySet.as_manager()
+
     class Meta:
         ordering = ["name"]  # noqa
         constraints = [
@@ -152,6 +175,13 @@ class LiturgicalOccasion(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def choice_label(self):
+        """The name in a list of choices, where the 1962 days need telling
+        apart from the Ordinary Form's (Sts. Peter & Paul, Saints Peter and
+        Paul)."""
+        return f"{self.name} (1962)" if self.calendar_use == "historic" else self.name
 
     def date_for_year(self, year, national_calendar=None):
         """

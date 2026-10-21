@@ -1,6 +1,8 @@
 from django import forms
 
-from ordo.models import UseType
+from core.models import SiteConfig
+from ordo.fields import OccasionMultipleChoiceField
+from ordo.models import LiturgicalOccasion, UseType
 from precentor_project.widgets import NativeDateInput
 
 from .models import Score
@@ -50,6 +52,16 @@ class ScoreForm(forms.ModelForm):
             # score_form.html), so SATB and S.A.T.B. don't split in two.
             "voicing": forms.TextInput(attrs={"list": "voicing-options"}),
         }
+        field_classes = {"suited_occasions": OccasionMultipleChoiceField}  # noqa
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # The church's own calendar, in both forms, and whatever this score
+        # is already tagged with.
+        keep = list(self.instance.suited_occasions.values_list("pk", flat=True)) if self.instance.pk else []
+        self.fields["suited_occasions"].queryset = LiturgicalOccasion.objects.listable(
+            SiteConfig.get_solo().national_calendar, keep
+        )
 
     def clean_new_use_types(self):
         """The typed names, trimmed, blanks dropped, each once whatever

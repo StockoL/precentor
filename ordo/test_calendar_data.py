@@ -89,3 +89,73 @@ class RealCalendarTests(TestCase):
             names(date(2026, 3, 7)),
             ["Saturday of the Second Week of Lent", "Saints Perpetua and Felicity, Martyrs"],
         )
+
+
+class ListableOccasionTests(TestCase):
+    """The occasions a conductor can choose from, for one national calendar."""
+
+    @classmethod
+    def setUpTestData(cls):
+        load_calendar_files()
+
+    def keys(self, national_calendar, keep=()):
+        return {(o.calendar_use, o.calendar, o.key) for o in LiturgicalOccasion.objects.listable(national_calendar, keep)}
+
+    def test_both_forms_of_the_general_calendar(self):
+        listed = self.keys("general_roman")
+        self.assertIn(("current", "general_roman", "nativity_of_the_lord"), listed)
+        self.assertIn(("historic", "general_roman", "sancti:12-25m1"), listed)
+
+    def test_fourth_class_days_and_other_countries_are_left_out(self):
+        listed = self.keys("england")
+        self.assertFalse([k for k in listed if k[1] == "wales"])
+        fourth_class = LiturgicalOccasion.objects.filter(calendar_use="historic", rank="class_4").values_list("key", flat=True)
+        self.assertFalse({("historic", "general_roman", k) for k in fourth_class} & listed)
+
+    def test_a_national_row_takes_the_general_rows_place(self):
+        listed = self.keys("england")
+        self.assertIn(("current", "england", "peter_and_paul_apostles"), listed)
+        self.assertNotIn(("current", "general_roman", "peter_and_paul_apostles"), listed)
+        self.assertIn(("historic", "england", "sancti:04-23"), listed)
+
+    def test_a_memorial_england_makes_optional_is_not_listed_there(self):
+        self.assertIn(("current", "general_roman", "elizabeth_of_hungary_religious"), self.keys("general_roman"))
+        self.assertFalse([k for k in self.keys("england") if k[2] == "elizabeth_of_hungary_religious"])
+
+    def test_occasions_entered_by_hand_are_listed(self):
+        own = LiturgicalOccasion.objects.create(name="Patronal festival", fixed_month=8, fixed_day=9)
+        self.assertIn(own, LiturgicalOccasion.objects.listable("england"))
+
+    def test_an_occasion_already_chosen_stays_listed(self):
+        welsh = LiturgicalOccasion.objects.get(calendar="wales", key="sancti:03-01wa")
+        self.assertNotIn(welsh, LiturgicalOccasion.objects.listable("england"))
+        self.assertIn(welsh, LiturgicalOccasion.objects.listable("england", keep=[welsh.pk, None]))
+
+    def test_1962_days_are_labelled(self):
+        george = LiturgicalOccasion.objects.get(calendar="england", key="sancti:04-23")
+        self.assertEqual(george.choice_label, "St. George, Martyr, Patron of England (1962)")
+        christmas = LiturgicalOccasion.objects.get(calendar_use="current", key="nativity_of_the_lord")
+        self.assertEqual(christmas.choice_label, christmas.name)
+
+
+class OccasionLookupNationalCalendarTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        load_calendar_files()
+
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+
+        self.client.force_login(get_user_model().objects.create_user(username="conductor", password="x"))
+
+    def names(self, **params):
+        response = self.client.get("/ordo/occasion-lookup/", {"date": "2026-04-23", "calendar_use": "current", **params})
+        return [o["name"] for o in response.json()["occasions"]]
+
+    def test_the_national_calendar_is_used(self):
+        self.assertEqual(self.names(national_calendar="england"), ["Saint George, Martyr, Patron of England"])
+        self.assertEqual(self.names(national_calendar="general_roman"), [])
+
+    def test_an_unknown_or_missing_calendar_means_the_general_one(self):
+        self.assertEqual(self.names(national_calendar="narnia"), [])
+        self.assertEqual(self.names(), [])
