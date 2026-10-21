@@ -43,3 +43,9 @@ def can_manage_settings(user):
 def can_delete_comments(user):
     """Deleting a closed thread. Nobody can delete an open one."""
     return _has_role(user, "conductor", "librarian")
+
+
+def can_manage_organisation(user):
+    """Members, invitations, reset links, ownership, and deleting the
+    organisation: the owner's alone, whatever their role."""
+    return _role(user) is not None and user.is_owner

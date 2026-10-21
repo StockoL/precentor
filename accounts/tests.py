@@ -12,6 +12,7 @@ from .permissions import (
     can_comment,
     can_delete_comments,
     can_edit_library,
+    can_manage_organisation,
     can_manage_settings,
     can_plan,
 )
@@ -79,6 +80,25 @@ class PermissionMatrixTests(TestCase):
             for check in self.MATRIX:
                 with self.subTest(user=name, check=check.__name__):
                     self.assertIs(check(user), False)
+
+
+class CanManageOrganisationTests(TestCase):
+    """Ownership is a flag on a Conductor or Librarian, not a fourth role,
+    so it sits outside the roles table."""
+
+    def test_only_the_owner_manages_the_organisation(self):
+        owner = make_user("librarian")
+        owner.is_owner = True
+        self.assertIs(can_manage_organisation(owner), True)
+        self.assertIs(can_manage_organisation(make_user("conductor")), False)
+
+    def test_an_owner_loses_it_when_deactivated_and_a_superuser_never_has_it(self):
+        owner = make_user("conductor")
+        owner.is_owner = True
+        owner.is_active = False
+        self.assertIs(can_manage_organisation(owner), False)
+        self.assertIs(can_manage_organisation(make_superuser()), False)
+        self.assertIs(can_manage_organisation(AnonymousUser()), False)
 
 
 class RoleRequiredTests(TestCase):
