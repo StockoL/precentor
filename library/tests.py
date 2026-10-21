@@ -596,3 +596,23 @@ class ScoreFormOccasionChoicesTests(TestCase):
         score = Score.objects.create(title="Te Deum", composer_surname="Stanford")
         score.suited_occasions.add(england_george)
         self.assertIn(england_george.choice_label, self.labels(ScoreForm(instance=score)))
+
+
+class LibraryEditAccessTests(TestCase):
+    def setUp(self):
+        self.score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        self.urls = ("/library/add/", f"/library/{self.score.pk}/edit/", f"/library/{self.score.pk}/delete/")
+
+    def test_a_viewer_cannot_add_edit_or_delete_scores(self):
+        self.client.force_login(make_user("viewer"))
+        for url in self.urls:
+            for method in (self.client.get, self.client.post):
+                with self.subTest(url=url, method=method.__name__):
+                    self.assertEqual(method(url).status_code, 403)
+        self.assertTrue(Score.objects.filter(pk=self.score.pk).exists())
+
+    def test_a_librarian_can(self):
+        self.client.force_login(make_user("librarian"))
+        for url in self.urls:
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 200)

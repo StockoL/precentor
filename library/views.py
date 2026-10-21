@@ -11,6 +11,8 @@ from django.views.generic import (
     UpdateView,
 )
 
+from accounts.mixins import RoleRequiredMixin
+from accounts.permissions import can_edit_library
 from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 from precentor_project.mixins import DeletePageMixin
 
@@ -166,6 +168,12 @@ class ScoreDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+class LibraryEditRequiredMixin(RoleRequiredMixin):
+    """For the pages that add, change or delete a score."""
+
+    permission = can_edit_library
+
+
 class ScoreFormMixin:
     """What the score form page needs beyond the form itself."""
 
@@ -181,17 +189,17 @@ class ScoreFormMixin:
         return context
 
 
-class ScoreCreateView(LoginRequiredMixin, ScoreFormMixin, CreateView):
+class ScoreCreateView(LibraryEditRequiredMixin, ScoreFormMixin, CreateView):
     model = Score
     form_class = ScoreForm
 
 
-class ScoreUpdateView(LoginRequiredMixin, ScoreFormMixin, UpdateView):
+class ScoreUpdateView(LibraryEditRequiredMixin, ScoreFormMixin, UpdateView):
     model = Score
     form_class = ScoreForm
 
 
-class ScoreDeleteView(LoginRequiredMixin, DeletePageMixin, DeleteView):
+class ScoreDeleteView(LibraryEditRequiredMixin, DeletePageMixin, DeleteView):
     model = Score
     success_url = reverse_lazy("library:score_list")
     gone_url = success_url
