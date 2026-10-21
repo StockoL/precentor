@@ -1,5 +1,7 @@
 from django.test import TestCase
 
+from accounts.testing import make_user
+
 from .forms import SiteConfigForm
 from .models import SiteConfig
 
@@ -119,21 +121,12 @@ class CrestProcessingTests(TestCase):
 class SettingsAccessTests(TestCase):
     url = "/settings/"
 
-    def make_user(self, name, conductor=False):
-        from django.contrib.auth import get_user_model
-        from django.contrib.auth.models import Group
-
-        user = get_user_model().objects.create_user(username=name, password="testpass123")
-        if conductor:
-            user.groups.add(Group.objects.get_or_create(name="Conductor")[0])
-        return user
-
     def test_visitor_is_sent_to_log_in(self):
         response = self.client.get(self.url)
         self.assertRedirects(response, f"/accounts/login/?next={self.url}")
 
     def test_librarian_is_refused(self):
-        self.client.force_login(self.make_user("librarian"))
+        self.client.force_login(make_user("librarian"))
         self.assertEqual(self.client.get(self.url).status_code, 403)
         response = self.client.post(self.url, {
             "church_name": "Changed", "house_accent_colour": "#000000",
@@ -143,7 +136,7 @@ class SettingsAccessTests(TestCase):
         self.assertEqual(SiteConfig.get_solo().church_name, "")
 
     def test_conductor_can_change_the_settings(self):
-        self.client.force_login(self.make_user("conductor", conductor=True))
+        self.client.force_login(make_user("conductor"))
         self.assertEqual(self.client.get(self.url).status_code, 200)
         response = self.client.post(self.url, {
             "church_name": "St Mary's", "house_accent_colour": "#123456",
@@ -162,10 +155,7 @@ class NationalCalendarSettingTests(TestCase):
         self.assertEqual(SiteConfig.get_solo().national_calendar, "general_roman")
 
     def test_settings_page_offers_each_calendar_with_its_help_text(self):
-        from django.contrib.auth import get_user_model
-
-        user = get_user_model().objects.create_superuser(username="admin", password="testpass123")
-        self.client.force_login(user)
+        self.client.force_login(make_user("conductor"))
         response = self.client.get("/settings/")
         for label in ("General Roman Calendar", "England", "Wales"):
             with self.subTest(label=label):
