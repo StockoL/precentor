@@ -4,9 +4,11 @@
 <div class="flow">
     <header class="page-header">
         <h1>Library</h1>
+        {% if can.edit_library %}
         <div class="page-header__actions">
             <a class="btn-primary" href="{% url 'library:score_create' %}">New score</a>
         </div>
+        {% endif %}
     </header>
 
     <form method="get" role="search" class="toolbar">
@@ -96,8 +98,12 @@
     </div>
     {% else %}
     <div class="empty-state flow">
+        {% if can.edit_library %}
         <p>The library is empty. Add the scores you own, and you can propose them for services.</p>
         <a class="btn" href="{% url 'library:score_create' %}">Add the first score</a>
+        {% else %}
+        <p>The library is empty. A conductor or librarian adds the scores.</p>
+        {% endif %}
     </div>
     {% endif %}
 </div>

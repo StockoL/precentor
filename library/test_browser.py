@@ -70,3 +70,14 @@ class TagInputBrowserTest(PlaywrightTestCase):
         self.page.click("label[for='id_suited_seasons-tags-search']")
         assert self.page.evaluate("document.activeElement.id") == "id_suited_seasons-tags-search"
         assert self.page.get_attribute(self.seasons, "aria-describedby") == "id_suited_seasons_helptext"
+
+
+class LibraryForViewersBrowserTest(PlaywrightTestCase):
+    def test_a_viewer_sees_the_library_but_no_way_to_add_to_it(self):
+        self.log_in_as("viewer")
+        self.page.goto("/library/")
+        assert "A conductor or librarian adds the scores." in self.page.inner_text("main")
+        Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        self.page.reload()
+        assert self.page.locator("main", has_text="Ave verum").is_visible()
+        assert self.page.locator("a[href='/library/add/']").count() == 0
