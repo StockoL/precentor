@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AnonymousUser
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.db import IntegrityError, transaction
 from django.http import HttpResponse
 from django.test import RequestFactory, TestCase
 from django.views import View
@@ -80,6 +81,24 @@ class PermissionMatrixTests(TestCase):
             for check in self.MATRIX:
                 with self.subTest(user=name, check=check.__name__):
                     self.assertIs(check(user), False)
+
+
+class UserConstraintTests(TestCase):
+    def assert_refused(self, message, **fields):
+        user = User(email="someone@example.com", **fields)
+        with self.assertRaisesMessage(ValidationError, message):
+            user.full_clean()
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            user.save()
+
+    def test_an_organisation_needs_a_role_and_a_role_needs_an_organisation(self):
+        message = "needs a role there"
+        self.assert_refused(message, organisation=make_organisation(), role="")
+        self.assert_refused(message, organisation=None, role="viewer")
+
+    def test_both_or_neither_is_fine(self):
+        make_user("viewer").full_clean()
+        make_superuser().full_clean()
 
 
 class CanManageOrganisationTests(TestCase):

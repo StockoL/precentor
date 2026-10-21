@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 
 
@@ -59,6 +60,17 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
     REQUIRED_FIELDS = []
+
+    class Meta:
+        constraints = [
+            # In an organisation means having a role there, and the other
+            # way round. A superuser has neither.
+            models.CheckConstraint(
+                condition=Q(organisation__isnull=True, role="") | (Q(organisation__isnull=False) & ~Q(role="")),
+                name="user_organisation_and_role_together",
+                violation_error_message="Someone in an organisation needs a role there, and only they can have one.",
+            ),
+        ]
 
     def __str__(self):
         return self.name or self.email
