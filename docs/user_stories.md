@@ -26,6 +26,9 @@ These user stories drive the design and functionality of Precentor.
 - As a conductor, I want to add or remove slots on a specific service,
   so I can handle exceptions (an extra motet, a hymn sung in place of a
   Proper) without fighting a fixed template.
+- As a conductor, I want templates for the services I plan often (Mass,
+  Vespers, or my own), so a new service starts with its usual slots in
+  one click, and I can still change them afterwards.
 - As a conductor, I want to add a dated notice to a term's music list
   (e.g. "Choir resumes on 22 February"), so the congregation knows
   about breaks without a service being invented to carry the message.

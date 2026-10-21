@@ -482,6 +482,28 @@ class ServiceRole(models.Model):
 Shown in the interface as a **slot**. Slot names are free text; see
 the README (§3.2) for why.
 
+### `planning.SlotTemplate`
+
+```python
+class SlotTemplate(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    slot_names = models.TextField("slots")  # one slot per line, in order
+
+    @property
+    def slots(self): ...  # trimmed, blank lines dropped, each name once
+
+    def apply_to(self, service): ...  # adds the slots the service lacks
+```
+
+A template is a named list of slots that a conductor adds to a service
+in one go. Mass and Vespers come from a data migration
+(`planning/0009`), which runs once, so editing or deleting them later
+is never undone. The slots are lines of text, not a related table: the
+form is a textarea that needs no JavaScript, and order is simply line
+order. Applying one copies the names into new `ServiceRole` rows,
+skipping names the service already has (ignoring case), and keeps no
+link, so editing a template never changes services already planned.
+
 ### `planning.RolePiece`
 
 ```python

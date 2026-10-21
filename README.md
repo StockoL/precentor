@@ -123,9 +123,15 @@ be added, removed, or marked **N/A** service by service (a special day
 might need an extra motet, or have no setting at all, as on Good
 Friday).
 
-Templates per service type, so that a new Sung Mass starts with its
-usual slots, are **not built**: slots are added by hand on each
-service. They're a natural piece of future work.
+**Slot templates** save adding the usual slots one by one. On a
+service's page, a button per template adds its slots in order: **Mass**
+(Introit, Kyrie, Gloria, Gradual, Alleluia or Tract, Credo, Offertory,
+Sanctus, Agnus Dei, Communion) and **Vespers** (Psalms, Hymn,
+Magnificat, Marian antiphon) come ready-made, and a conductor can edit
+those or make their own, such as Benediction or a choir's usual Sunday
+Mass with its motets. A template only adds slots the service doesn't
+already have, so applying it twice changes nothing, and afterwards the
+slots are ordinary slots, to rename, mark N/A or remove like any other.
 
 ### 3.3 Proposing and Confirming
 
@@ -345,7 +351,6 @@ This remains a **"should have"**, not core to the MVP.
   second set of tests without helping any real user. A second tradition
   remains possible future work, most simply as a site-wide setting, not
   a per-term choice.
-- Service-type templates (slots are added per service, see §3.2).
 - A history or archive of past music lists.
 - An "active term" flag (the dates already show which term is current).
 - Nested comment replies.
@@ -385,8 +390,9 @@ not oversights, when an assessor reads this document.
 - [`docs/erd.mmd`](docs/erd.mmd) (Mermaid source, which GitHub renders):
   the entity relationship diagram for Score, Term, Service, Service
   Role, Role Piece, Ordo (Liturgical Occasion), User and Comment. Its
-  notes cover two simplifications: slots are added per service with no
-  template table, and Comment's polymorphic relationship is drawn as
+  notes cover two simplifications: a slot template copies its names
+  into a service's slots and keeps no link to them, and Comment's
+  polymorphic relationship is drawn as
   three edges for readability, though it's a single Django
   `GenericForeignKey` in the code.
 - [`docs/models_plan.md`](docs/models_plan.md): the Django app breakdown
