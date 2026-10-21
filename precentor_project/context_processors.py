@@ -1,4 +1,3 @@
-from accounts.mixins import ConductorRequiredMixin
 from comments.models import Comment
 
 # URL namespace -> nav section, and each section's own landing page.
@@ -34,7 +33,6 @@ def nav(request):
     if not user.is_authenticated:
         return {}
     return {
-        "is_conductor": ConductorRequiredMixin.is_conductor(user),
         # Same set the inbox page lists: every open comment.
         "open_comment_count": Comment.objects.filter(is_open=True).count(),
         "nav_current": nav_current(request),

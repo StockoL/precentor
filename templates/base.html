@@ -82,7 +82,7 @@
                             <label><input type="radio" name="theme" value="light"> Light</label>
                             <label><input type="radio" name="theme" value="dark"> Dark</label>
                         </fieldset>
-                        {% if is_conductor %}
+                        {% if can.manage_settings %}
                         <a href="{% url 'core:site_config_update' %}"{% if nav_current.settings %} aria-current="{{ nav_current.settings }}"{% endif %}>Settings</a>
                         {% endif %}
                         <form method="post" action="{% url 'logout' %}">
