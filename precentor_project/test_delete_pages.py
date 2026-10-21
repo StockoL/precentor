@@ -1,12 +1,10 @@
 from datetime import date
 
-from django.contrib.auth import get_user_model
 from django.test import TestCase
 
+from accounts.testing import make_user
 from library.models import Score
 from planning.models import Service, SlotTemplate, Term, TermMarker
-
-User = get_user_model()
 
 
 class DeleteThenBackTests(TestCase):
@@ -14,7 +12,7 @@ class DeleteThenBackTests(TestCase):
     with a message, never on "Page not found"."""
 
     def setUp(self):
-        self.client.force_login(User.objects.create_superuser(username="admin", password="x"))
+        self.client.force_login(make_user("conductor"))
         self.term = Term.objects.create(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
 
     def delete_twice(self, url, list_url, message):
@@ -45,13 +43,13 @@ class DeleteThenBackTests(TestCase):
 
     def test_permissions_are_still_checked_first(self):
         template = SlotTemplate.objects.create(name="Benediction", slot_names="O salutaris")
-        self.client.force_login(User.objects.create_user(username="librarian", password="x"))
+        self.client.force_login(make_user("librarian"))
         self.assertEqual(self.client.get(f"/templates/{template.pk}/delete/").status_code, 403)
 
 
 class NotFoundPageTests(TestCase):
     def test_a_missing_page_uses_the_house_style(self):
-        self.client.force_login(User.objects.create_superuser(username="admin", password="x"))
+        self.client.force_login(make_user("viewer"))
         response = self.client.get("/no-such-page/")
         self.assertEqual(response.status_code, 404)
         self.assertTemplateUsed(response, "404.html")
