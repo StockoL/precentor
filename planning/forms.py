@@ -48,6 +48,11 @@ class ServiceForm(forms.ModelForm):
         choices = LiturgicalOccasion.objects.listable(SiteConfig.get_solo().national_calendar, keep)
         self.fields["occasion"].queryset = choices
         self.fields["additional_occasions"].queryset = choices
+        # Say what blank means: the term's calendar, by name.
+        term = getattr(self.instance, "term", None)
+        if term:
+            field = self.fields["calendar_use"]
+            field.choices = [("", f"As the term: {term.get_calendar_use_display()}"), *field.choices[1:]]
 
 
 class TermMarkerForm(forms.ModelForm):

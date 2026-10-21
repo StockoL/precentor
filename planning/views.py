@@ -195,9 +195,12 @@ class ServiceCreateView(ConductorRequiredMixin, CreateView):
         context["site_config"] = SiteConfig.get_solo()
         return context
 
-    def form_valid(self, form):
-        form.instance.term = get_object_or_404(Term, pk=self.kwargs["term_pk"])
-        return super().form_valid(form)
+    def get_form_kwargs(self):
+        # The new service belongs to the term from the start, so the form
+        # can name the term's calendar.
+        kwargs = super().get_form_kwargs()
+        kwargs["instance"] = Service(term=get_object_or_404(Term, pk=self.kwargs["term_pk"]))
+        return kwargs
 
 
 class ServiceDetailView(LoginRequiredMixin, DetailView):

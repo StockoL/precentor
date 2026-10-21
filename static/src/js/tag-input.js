@@ -126,7 +126,7 @@ function buildTagInput(container) {
     const query = input.value.trim();
     const lower = query.toLowerCase();
     const found = options
-      .filter((option) => !option.selected)
+      .filter((option) => !option.selected && !option.disabled)
       .filter((option) => !lower || option.textContent.toLowerCase().includes(lower))
       .map((option) => ({ label: option.textContent, option }));
     const exact = options.some((option) => option.textContent.toLowerCase() === lower)

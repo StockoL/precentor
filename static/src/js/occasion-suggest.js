@@ -3,7 +3,8 @@
 // the date changes, this fetches the occasions kept that day, in the
 // church's national calendar, and offers them for the conductor to
 // choose: the day's celebration first, then anything also kept. It never
-// fills a field in without a click.
+// fills a field in without a click. It also hides the occasions of the
+// other form of the calendar, so the lists are shorter to search.
 function initOccasionSuggest() {
   const dateField = document.getElementById("id_date");
   const container = document.getElementById("occasion-suggestions");
@@ -15,6 +16,20 @@ function initOccasionSuggest() {
 
   function effectiveCalendarUse() {
     return calendarUseField?.value || container.dataset.termCalendarUse || "";
+  }
+
+  // Each option says which form it belongs to (ordo/fields.py). One
+  // already chosen stays in sight whatever the calendar, so nothing is
+  // dropped without the conductor seeing it.
+  function showOnlyThisCalendar() {
+    const calendarUse = effectiveCalendarUse();
+    [occasionField, additionalField].forEach((field) => {
+      field?.querySelectorAll("option[data-calendar-use]").forEach((option) => {
+        const other = Boolean(calendarUse) && option.dataset.calendarUse !== calendarUse && !option.selected;
+        option.hidden = other;
+        option.disabled = other;
+      });
+    });
   }
 
   // Keep the boxes in step with the field, which its chip input
@@ -116,6 +131,11 @@ function initOccasionSuggest() {
   }
 
   dateField.addEventListener("change", suggest);
+  calendarUseField?.addEventListener("change", () => {
+    showOnlyThisCalendar();
+    suggest();
+  });
+  showOnlyThisCalendar();
 }
 
 document.addEventListener("DOMContentLoaded", initOccasionSuggest);

@@ -490,3 +490,31 @@ class RemoveSlotBrowserTest(PlaywrightTestCase):
         self.page.wait_for_selector(f"#role-block-{self.motet.pk}", state="detached")
         assert self.names() == ["Introit", "Communion"]
         assert not RolePiece.objects.exists()
+
+
+class OccasionCalendarFilterBrowserTest(PlaywrightTestCase):
+    def setUp(self):
+        super().setUp()
+        self.login_as_conductor()
+        self.term = Term.objects.create(
+            name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
+        )
+        self.new = LiturgicalOccasion.objects.create(name="Baptism of the Lord", calendar_use="current", fixed_month=1, fixed_day=11)
+        self.old = LiturgicalOccasion.objects.create(name="Holy Family", calendar_use="historic", fixed_month=1, fixed_day=11)
+
+    def visible_options(self):
+        return self.page.eval_on_selector_all(
+            "#id_occasion option[data-calendar-use]", "els => els.filter(o => !o.hidden).map(o => o.textContent)"
+        )
+
+    def test_only_the_chosen_calendars_occasions_are_listed(self):
+        self.page.goto(f"/terms/{self.term.pk}/services/add/")
+        # Blank follows the term, which keeps the Ordinary Form.
+        assert self.visible_options() == ["Baptism of the Lord"]
+        self.page.select_option("#id_calendar_use", "historic")
+        assert self.visible_options() == ["Holy Family (1962)"]
+
+        # One already chosen stays listed when the calendar changes.
+        self.page.select_option("#id_occasion", str(self.old.pk))
+        self.page.select_option("#id_calendar_use", "current")
+        assert self.visible_options() == ["Baptism of the Lord", "Holy Family (1962)"]
