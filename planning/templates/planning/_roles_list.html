@@ -3,6 +3,6 @@
     {% for role in roles %}
     {% include "planning/_role_block.html" %}
     {% empty %}
-    <p id="roles-list-empty" class="empty-state">No slots yet. Add a template's slots below, or one at a time for each place in the service that needs music, such as the Mass setting or an Offertory motet.</p>
+    <p id="roles-list-empty" class="empty-state">No slots yet.{% if can.plan %} Add a template's slots below, or one at a time for each place in the service that needs music, such as the Mass setting or an Offertory motet.{% endif %}</p>
     {% endfor %}
 </div>

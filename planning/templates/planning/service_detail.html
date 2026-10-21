@@ -12,10 +12,12 @@
     {% endif %}
     <header class="page-header">
         <h1>{{ service }}</h1>
+        {% if can.plan %}
         <div class="page-header__actions">
             <a class="btn-ghost" href="{% url 'planning:service_update' service.pk %}">Edit service</a>
             <a class="btn-danger" href="{% url 'planning:service_delete' service.pk %}">Delete service</a>
         </div>
+        {% endif %}
     </header>
     {% if service.occasion and service.occasion.colour %}
     <div class="accent-rule" style="--accent: var(--colors-liturgical-{{ service.occasion.colour }});"></div>
@@ -58,14 +60,17 @@
     <div class="flow">
         <h2>Slots</h2>
         {% include "planning/_roles_list.html" %}
+        {% if can.plan %}
         {# Sent by service-detail.js after a slot is dragged to a new place. #}
         <form id="slot-order-form" method="post" action="{% url 'planning:reorder_slots' service.pk %}" hidden>
             {% csrf_token %}
             <input type="hidden" name="order">
         </form>
         {{ score_options|json_script:"score-options" }}
+        {% endif %}
     </div>
 
+    {% if can.plan %}
     <div class="flow">
         <h2>Add slots from a template</h2>
         {# Each button adds its template's slots in order, leaving out any this service already has. #}
@@ -90,6 +95,7 @@
         <h2>Add a slot</h2>
         {% include "planning/_add_role_form.html" with form=role_form %}
     </div>
+    {% endif %}
 
     {# Inside the page's .flow, so it's spaced like every other section. #}
     {% include "comments/_thread.html" with object_id=service.pk %}

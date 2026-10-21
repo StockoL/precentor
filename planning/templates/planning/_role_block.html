@@ -1,10 +1,13 @@
 <details id="role-block-{{ role.pk }}" class="role-block card" open data-role-pk="{{ role.pk }}">
     <summary>
+        {% if can.plan %}
         {# Drag by this to move the slot; the buttons below do the same without a mouse. #}
         <span class="role-block__handle" aria-hidden="true" title="Drag to move">&#x2807;&#x2807;</span>
+        {% endif %}
         {{ role.role_name }}{% if role.is_not_applicable %} (N/A){% endif %}
     </summary>
     <div class="flow" style="--flow-space: var(--spacing-xs);">
+        {% if can.plan %}
         <div class="cluster role-block__actions">
             <form method="post" action="{% url 'planning:move_slot' role.pk %}" class="ajax-move-slot" data-slot-name="{{ role.role_name }}" data-direction="up">
                 {% csrf_token %}
@@ -24,9 +27,12 @@
             </form>
             {% endwith %}
         </div>
+        {% endif %}
 
         {% include "planning/_role_pieces.html" %}
 
+        {% if can.plan %}
         {% include "planning/_add_piece_form.html" with form=role.piece_form %}
+        {% endif %}
     </div>
 </details>

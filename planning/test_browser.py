@@ -555,3 +555,35 @@ class TermPagesForViewersBrowserTest(PlaywrightTestCase):
         self.log_in_as("conductor")
         self.page.goto(f"/terms/{self.term.pk}/")
         assert len(self.write_links()) == 6  # new service, new notice, edit and delete term, edit and delete notice
+
+
+class ServicePageForViewersBrowserTest(PlaywrightTestCase):
+    def setUp(self):
+        super().setUp()
+        term = Term.objects.create(
+            name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
+        )
+        self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        role = ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
+        score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        RolePiece.objects.create(service_role=role, score=score)
+
+    def planning_controls(self):
+        return self.page.locator(
+            ".role-block__handle, .role-block__actions, .ajax-toggle-confirm, [data-fallback-for],"
+            " .ajax-propose-piece, .apply-template, .ajax-add-role,"
+            f" a[href='/services/{self.service.pk}/edit/'], a[href='/services/{self.service.pk}/delete/']"
+        )
+
+    def test_a_viewer_reads_the_slots_and_pieces_without_planning_controls(self):
+        self.log_in_as("viewer")
+        self.page.goto(f"/services/{self.service.pk}/")
+        assert self.page.locator(".role-block summary", has_text="Offertory motet").is_visible()
+        assert self.page.locator(".list-row", has_text="Ave verum").is_visible()
+        assert self.planning_controls().count() == 0
+
+    def test_a_conductor_still_has_them(self):
+        self.log_in_as("conductor")
+        self.page.goto(f"/services/{self.service.pk}/")
+        assert self.planning_controls().count() > 0
+        assert self.page.locator(".ajax-toggle-confirm").count() == 1
