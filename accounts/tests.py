@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
-from .permissions import can_edit_library, can_plan
+from .permissions import can_comment, can_edit_library, can_plan
 from .testing import make_user
 
 
@@ -50,3 +50,17 @@ class CanEditLibraryTests(TestCase):
         self.assertTrue(can_edit_library(make_user("librarian")))
         self.assertFalse(can_edit_library(make_user("viewer")))
         self.assertFalse(can_edit_library(AnonymousUser()))
+
+
+class CanCommentTests(TestCase):
+    def test_every_role_comments(self):
+        for role in ("conductor", "librarian", "viewer"):
+            with self.subTest(role=role):
+                self.assertTrue(can_comment(make_user(role)))
+
+    def test_signed_out_and_superusers_do_not(self):
+        self.assertFalse(can_comment(AnonymousUser()))
+        admin = make_user("viewer")
+        admin.is_superuser = True
+        admin.save()
+        self.assertFalse(can_comment(admin))

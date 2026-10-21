@@ -8,14 +8,24 @@ A superuser looks after the site from the admin pages and has no role
 inside the app.
 
 For now a role is a Group (see accounts/testing.py); when the custom
-user model arrives, only _has_role changes.
+user model arrives, only _role changes.
 """
 
 
-def _has_role(user, *roles):
+def _role(user):
+    """The person's one role, or None if they have none. A user in neither
+    group is a Viewer, unless they're a superuser, who has no role."""
     if not (user.is_authenticated and user.is_active):
-        return False
-    return user.groups.filter(name__in=[role.title() for role in roles]).exists()
+        return None
+    groups = set(user.groups.values_list("name", flat=True))
+    for role in ("conductor", "librarian"):
+        if role.title() in groups:
+            return role
+    return None if user.is_superuser else "viewer"
+
+
+def _has_role(user, *roles):
+    return _role(user) in roles
 
 
 def can_plan(user):
@@ -26,3 +36,8 @@ def can_plan(user):
 def can_edit_library(user):
     """Scores and their physical details: adding, editing, deleting."""
     return _has_role(user, "conductor", "librarian")
+
+
+def can_comment(user):
+    """Comments and replies, and closing or reopening a thread."""
+    return _has_role(user, "conductor", "librarian", "viewer")
