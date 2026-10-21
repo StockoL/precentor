@@ -81,3 +81,11 @@ class LibraryForViewersBrowserTest(PlaywrightTestCase):
         self.page.reload()
         assert self.page.locator("main", has_text="Ave verum").is_visible()
         assert self.page.locator("a[href='/library/add/']").count() == 0
+
+    def test_a_viewer_sees_a_score_without_edit_or_delete(self):
+        score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        self.log_in_as("viewer")
+        self.page.goto(f"/library/{score.pk}/")
+        assert self.page.locator("h1", has_text="Ave verum").is_visible()
+        assert self.page.locator(f"a[href='/library/{score.pk}/edit/']").count() == 0
+        assert self.page.locator(f"a[href='/library/{score.pk}/delete/']").count() == 0

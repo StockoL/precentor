@@ -4,10 +4,12 @@
 <div class="flow">
     <header class="page-header">
         <h1>{{ score }}</h1>
+        {% if can.edit_library %}
         <div class="page-header__actions">
             <a class="btn-ghost" href="{% url 'library:score_update' score.pk %}">Edit</a>
             <a class="btn-danger" href="{% url 'library:score_delete' score.pk %}">Delete</a>
         </div>
+        {% endif %}
     </header>
 
     <dl class="detail-list">
