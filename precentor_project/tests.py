@@ -1,8 +1,6 @@
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.test import TestCase
 
-User = get_user_model()
+from accounts.testing import make_user
 
 
 class BaseTemplateTests(TestCase):
@@ -56,9 +54,7 @@ class BaseTemplateTests(TestCase):
 
 class NavWordingTests(TestCase):
     def setUp(self):
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="testpass123")
-        )
+        self.client.force_login(make_user("conductor"))
 
     def test_nav_links_and_page_headings_use_the_same_words(self):
         pages = {
@@ -86,9 +82,7 @@ class NewAndEditWordingTests(TestCase):
         from library.models import Score
         from planning.models import Service, Term
 
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="pw")
-        )
+        self.client.force_login(make_user("conductor"))
         self.term = Term.objects.create(
             name="Lent 2027",
             start_date=date(2027, 1, 1),
@@ -178,7 +172,7 @@ class NavInboxCountTests(TestCase):
 
         from planning.models import Term
 
-        self.user = User.objects.create_superuser(username="admin", password="pw")
+        self.user = make_user("conductor")
         self.client.force_login(self.user)
         self.term = Term.objects.create(
             name="Term",
@@ -225,12 +219,10 @@ class NavCurrentSectionTests(TestCase):
 
 class UserMenuTests(TestCase):
     def test_menu_holds_appearance_settings_and_log_out(self):
-        self.client.force_login(
-            User.objects.create_superuser(username="louis", password="pw")
-        )
+        self.client.force_login(make_user("conductor", email="louis@example.com"))
         html = self.client.get("/").content.decode()
         menu = html.split('<details class="user-menu">', 1)[1].split("</details>", 1)[0]
-        self.assertIn("<summary>louis</summary>", menu)
+        self.assertIn("<summary>louis@example.com</summary>", menu)
         # Hidden in the HTML: the script reveals it, since it needs JS.
         self.assertIn('<fieldset id="theme-choice" class="theme-choice" hidden>', menu)
         self.assertIn('href="/settings/"', menu)
@@ -242,13 +234,9 @@ class NavSettingsLinkTests(TestCase):
     """Settings is conductor-only, so the link shows only to conductors."""
 
     def test_conductor_sees_settings_link(self):
-        conductor = User.objects.create_user(username="conductor", password="pw")
-        conductor.groups.add(Group.objects.get_or_create(name="Conductor")[0])
-        self.client.force_login(conductor)
+        self.client.force_login(make_user("conductor"))
         self.assertContains(self.client.get("/library/"), 'href="/settings/"')
 
     def test_librarian_does_not_see_settings_link(self):
-        librarian = User.objects.create_user(username="librarian", password="pw")
-        librarian.groups.add(Group.objects.get_or_create(name="Librarian")[0])
-        self.client.force_login(librarian)
+        self.client.force_login(make_user("librarian"))
         self.assertNotContains(self.client.get("/library/"), 'href="/settings/"')
