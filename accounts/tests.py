@@ -1,6 +1,9 @@
 from django.contrib.auth.models import AnonymousUser
-from django.test import TestCase
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponse
+from django.test import RequestFactory, TestCase
 
+from .decorators import role_required
 from .permissions import (
     can_comment,
     can_delete_comments,
@@ -62,3 +65,24 @@ class PermissionMatrixTests(TestCase):
             for check in self.MATRIX:
                 with self.subTest(user=name, check=check.__name__):
                     self.assertIs(check(user), False)
+
+
+class RoleRequiredTests(TestCase):
+    def setUp(self):
+        self.view = role_required(can_plan)(lambda request: HttpResponse("planned"))
+        self.request = RequestFactory().get("/services/1/edit/")
+
+    def test_someone_signed_out_is_sent_to_log_in_and_back(self):
+        self.request.user = AnonymousUser()
+        response = self.view(self.request)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], "/accounts/login/?next=/services/1/edit/")
+
+    def test_someone_signed_in_without_the_right_is_refused(self):
+        self.request.user = make_user("viewer")
+        with self.assertRaises(PermissionDenied):
+            self.view(self.request)
+
+    def test_someone_with_the_right_gets_the_view(self):
+        self.request.user = make_user("conductor")
+        self.assertEqual(self.view(self.request).content, b"planned")
