@@ -19,8 +19,8 @@ class LoadingTests(TestCase):
             set(counts),
             {"general_roman", "england", "wales", "general_roman (1962)", "england (1962)", "wales (1962)"},
         )
-        self.assertEqual(counts["general_roman"], (223, 0))
-        self.assertEqual(counts["general_roman (1962)"], (702, 0))
+        self.assertEqual((counts["general_roman"].created, counts["general_roman"].updated), (223, 0))
+        self.assertEqual(counts["general_roman (1962)"].created, 702)
         self.assertEqual(LiturgicalOccasion.objects.filter(calendar_use="current", calendar="general_roman").count(), 223)
 
     def test_loading_again_updates_and_adds_nothing(self):
@@ -28,7 +28,8 @@ class LoadingTests(TestCase):
         total = LiturgicalOccasion.objects.count()
         counts = load_calendar_files()
         self.assertEqual(LiturgicalOccasion.objects.count(), total)
-        self.assertEqual(counts["general_roman"], (0, 223))
+        self.assertEqual((counts["general_roman"].created, counts["general_roman"].updated), (0, 223))
+        self.assertEqual(counts["general_roman"].removed, 0)
 
     def test_an_edited_row_is_restored_and_a_conductors_own_is_left_alone(self):
         load_calendar_files()
@@ -159,3 +160,38 @@ class OccasionLookupNationalCalendarTests(TestCase):
     def test_an_unknown_or_missing_calendar_means_the_general_one(self):
         self.assertEqual(self.names(national_calendar="narnia"), [])
         self.assertEqual(self.names(), [])
+
+
+class RemovedFromTheDataTests(TestCase):
+    def setUp(self):
+        load_calendar_files()
+
+    def stale(self, **fields):
+        return LiturgicalOccasion.objects.create(
+            name="Old day", key="old_day", calendar="england", fixed_month=1, fixed_day=2, **fields
+        )
+
+    def test_a_row_gone_from_its_file_is_removed(self):
+        old = self.stale()
+        counts = load_calendar_files()
+        self.assertFalse(LiturgicalOccasion.objects.filter(pk=old.pk).exists())
+        self.assertEqual(counts["england"].removed, 1)
+
+    def test_one_a_service_uses_is_kept_and_named(self):
+        from planning.models import Service, Term
+
+        old = self.stale()
+        term = Term.objects.create(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 1), calendar_use="current")
+        Service.objects.create(term=term, date=date(2026, 1, 2), service_type="Mass", occasion=old)
+        counts = load_calendar_files()
+        self.assertTrue(LiturgicalOccasion.objects.filter(pk=old.pk).exists())
+        self.assertEqual(counts["england"].kept_in_use, [old])
+
+        out = StringIO()
+        call_command("load_calendar", stdout=out)
+        self.assertIn("Kept Old day (old_day)", out.getvalue())
+
+    def test_occasions_entered_by_hand_are_never_removed(self):
+        own = LiturgicalOccasion.objects.create(name="Patronal festival", calendar="england", fixed_month=8, fixed_day=9)
+        load_calendar_files()
+        self.assertTrue(LiturgicalOccasion.objects.filter(pk=own.pk).exists())

@@ -11,11 +11,14 @@ national calendar holds only the days it adds or changes.
 Loading is repeatable: each occasion is matched by its form, calendar
 and key, and created or brought up to date. The data files are the
 source for these rows, so an edit made to one in the admin is
-overwritten on the next load. A conductor's own occasions have no key
-and are never touched.
+overwritten on the next load, and a row that has gone from its file is
+removed, unless a service or score uses it: then it's kept, and named
+in the result, for someone to decide about. A conductor's own
+occasions have no key and are never touched.
 """
 
 import json
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from django.db import transaction
@@ -62,11 +65,22 @@ def occasion_fields(item):
     return fields
 
 
+@dataclass
+class LoadResult:
+    """What loading one file did."""
+
+    created: int = 0
+    updated: int = 0
+    removed: int = 0
+    # Rows gone from the file but kept because a service or score uses them.
+    kept_in_use: list = field(default_factory=list)
+
+
 @transaction.atomic
 def load_calendar_files(sources=SOURCES):
     """Load every calendar file in each source folder. Returns
-    {label: (created, updated)}, labelled by calendar, with "(1962)"
-    after the 1962 ones."""
+    {label: LoadResult}, labelled by calendar, with "(1962)" after the
+    1962 ones."""
     seasons = {}
     counts = {}
     for directory, calendar_use in sources:
@@ -80,10 +94,10 @@ def load_calendar_files(sources=SOURCES):
 
 
 def _load(data, calendar_use, seasons):
-    """Create or update one file's occasions. Returns (created, updated)."""
+    """Create, update or remove one file's occasions."""
     from .models import LiturgicalOccasion, LiturgicalSeason
 
-    created = updated = 0
+    result = LoadResult()
     for item in data["occasions"]:
         fields = occasion_fields(item)
         if item["season"]:
@@ -96,7 +110,24 @@ def _load(data, calendar_use, seasons):
             calendar_use=calendar_use, calendar=data["calendar"], key=item["key"], defaults=fields
         )
         if was_created:
-            created += 1
+            result.created += 1
         else:
-            updated += 1
-    return created, updated
+            result.updated += 1
+
+    gone = (
+        LiturgicalOccasion.objects.filter(calendar_use=calendar_use, calendar=data["calendar"])
+        .exclude(key="")
+        .exclude(key__in=[item["key"] for item in data["occasions"]])
+    )
+    for occasion in gone:
+        in_use = (
+            occasion.services.exists()
+            or occasion.also_relevant_services.exists()
+            or occasion.suited_scores.exists()
+        )
+        if in_use:
+            result.kept_in_use.append(occasion)
+        else:
+            occasion.delete()
+            result.removed += 1
+    return result
