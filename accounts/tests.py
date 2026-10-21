@@ -2,8 +2,10 @@ from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.test import RequestFactory, TestCase
+from django.views import View
 
 from .decorators import role_required
+from .mixins import RoleRequiredMixin
 from .permissions import (
     can_comment,
     can_delete_comments,
@@ -80,6 +82,33 @@ class RoleRequiredTests(TestCase):
 
     def test_someone_signed_in_without_the_right_is_refused(self):
         self.request.user = make_user("viewer")
+        with self.assertRaises(PermissionDenied):
+            self.view(self.request)
+
+    def test_someone_with_the_right_gets_the_view(self):
+        self.request.user = make_user("conductor")
+        self.assertEqual(self.view(self.request).content, b"planned")
+
+
+class RoleRequiredMixinTests(TestCase):
+    class PlanningView(RoleRequiredMixin, View):
+        permission = can_plan
+
+        def get(self, request):
+            return HttpResponse("planned")
+
+    def setUp(self):
+        self.view = self.PlanningView.as_view()
+        self.request = RequestFactory().get("/terms/add/")
+
+    def test_someone_signed_out_is_sent_to_log_in_and_back(self):
+        self.request.user = AnonymousUser()
+        response = self.view(self.request)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], "/accounts/login/?next=/terms/add/")
+
+    def test_someone_signed_in_without_the_right_is_refused(self):
+        self.request.user = make_user("librarian")
         with self.assertRaises(PermissionDenied):
             self.view(self.request)
 
