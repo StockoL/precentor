@@ -240,3 +240,13 @@ class NavSettingsLinkTests(TestCase):
     def test_librarian_does_not_see_settings_link(self):
         self.client.force_login(make_user("librarian"))
         self.assertNotContains(self.client.get("/library/"), 'href="/settings/"')
+
+
+class ForbiddenPageTests(TestCase):
+    def test_a_refused_page_uses_the_house_style_and_explains(self):
+        self.client.force_login(make_user("viewer"))
+        response = self.client.get("/terms/add/")
+        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed(response, "403.html")
+        self.assertContains(response, "<h1>Not available to you</h1>", status_code=403, html=True)
+        self.assertContains(response, 'href="/"', status_code=403)

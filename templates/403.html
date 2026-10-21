@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Not available to you — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Not available to you</h1>
+    <p>Your role in Precentor doesn't include this. You can still see everything and join the discussion in the comments. If you need to change something here, ask one of your conductors.</p>
+    <p><a class="btn-primary" href="{% url 'planning:term_list' %}">Go to Terms</a></p>
+</div>
+{% endblock %}
