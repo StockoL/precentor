@@ -24,6 +24,7 @@ from comments.forms import CommentForm
 from comments.models import Comment
 from comments.utils import attach_reply_forms
 from core.models import SiteConfig
+from precentor_project.mixins import DeletePageMixin
 from precentor_project.utils import ajax_or_redirect
 
 from .forms import (
@@ -173,9 +174,11 @@ class TermUpdateView(ConductorRequiredMixin, UpdateView):
     form_class = TermForm
 
 
-class TermDeleteView(ConductorRequiredMixin, DeleteView):
+class TermDeleteView(ConductorRequiredMixin, DeletePageMixin, DeleteView):
     model = Term
     success_url = reverse_lazy("planning:term_list")
+    gone_url = success_url
+    gone_message = "That term has already been deleted."
 
 
 # --- Service views ---
@@ -289,9 +292,11 @@ class SlotTemplateUpdateView(ConductorRequiredMixin, ReturnToServiceMixin, Updat
     form_class = SlotTemplateForm
 
 
-class SlotTemplateDeleteView(ConductorRequiredMixin, DeleteView):
+class SlotTemplateDeleteView(ConductorRequiredMixin, DeletePageMixin, DeleteView):
     model = SlotTemplate
     success_url = reverse_lazy("planning:slot_template_list")
+    gone_url = success_url
+    gone_message = "That template has already been deleted."
 
 
 @login_required
@@ -314,8 +319,10 @@ def apply_template(request, service_pk, template_pk):
     return redirect(service.get_absolute_url())
 
 
-class ServiceDeleteView(ConductorRequiredMixin, DeleteView):
+class ServiceDeleteView(ConductorRequiredMixin, DeletePageMixin, DeleteView):
     model = Service
+    gone_url = reverse_lazy("planning:term_list")
+    gone_message = "That service has already been deleted."
 
     def get_success_url(self):
         return self.object.term.get_absolute_url()
@@ -492,8 +499,10 @@ class TermMarkerUpdateView(ConductorRequiredMixin, UpdateView):
         return self.object.term.get_absolute_url()
 
 
-class TermMarkerDeleteView(ConductorRequiredMixin, DeleteView):
+class TermMarkerDeleteView(ConductorRequiredMixin, DeletePageMixin, DeleteView):
     model = TermMarker
+    gone_url = reverse_lazy("planning:term_list")
+    gone_message = "That notice has already been deleted."
 
     def get_success_url(self):
         return self.object.term.get_absolute_url()

@@ -12,6 +12,7 @@ from django.views.generic import (
 )
 
 from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
+from precentor_project.mixins import DeletePageMixin
 
 from .forms import ScoreForm
 from .models import Score, ScoreQuerySet
@@ -190,9 +191,11 @@ class ScoreUpdateView(LoginRequiredMixin, ScoreFormMixin, UpdateView):
     form_class = ScoreForm
 
 
-class ScoreDeleteView(LoginRequiredMixin, DeleteView):
+class ScoreDeleteView(LoginRequiredMixin, DeletePageMixin, DeleteView):
     model = Score
     success_url = reverse_lazy("library:score_list")
+    gone_url = success_url
+    gone_message = "That score has already been deleted."
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
