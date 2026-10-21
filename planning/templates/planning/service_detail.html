@@ -61,10 +61,25 @@
             {% for role in roles %}
             {% include "planning/_role_block.html" %}
             {% empty %}
-            <p id="roles-list-empty" class="empty-state">No slots yet. Add one below for each place in the service that needs music, such as the Mass setting or an Offertory motet.</p>
+            <p id="roles-list-empty" class="empty-state">No slots yet. Add a template's slots below, or one at a time for each place in the service that needs music, such as the Mass setting or an Offertory motet.</p>
             {% endfor %}
         </div>
         {{ score_options|json_script:"score-options" }}
+    </div>
+
+    <div class="flow">
+        <h2>Add slots from a template</h2>
+        {# Each button adds its template's slots in order, leaving out any this service already has. #}
+        <div class="cluster">
+            {% for template in slot_templates %}
+            <form method="post" action="{% url 'planning:apply_template' service.pk template.pk %}">
+                {% csrf_token %}
+                <button type="submit" title="{{ template.slots|join:', ' }}">{{ template.name }}</button>
+            </form>
+            {% endfor %}
+            <a class="btn-ghost" href="{% url 'planning:slot_template_create' %}?next={{ request.path|urlencode }}">New template</a>
+        </div>
+        <p class="list-row__meta"><a href="{% url 'planning:slot_template_list' %}">Edit templates</a></p>
     </div>
 
     <div class="flow">

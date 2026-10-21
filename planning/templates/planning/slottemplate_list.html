@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Slot templates — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <header class="page-header">
+        <h1>Slot templates</h1>
+        <div class="page-header__actions">
+            <a class="btn-primary" href="{% url 'planning:slot_template_create' %}">New template</a>
+        </div>
+    </header>
+    <p>A template adds its slots to a service in one go, from the buttons above "Add a slot" on the service's page.</p>
+    <ul role="list" class="flow" style="--flow-space: var(--spacing-xs);">
+        {% for template in slot_templates %}
+        <li class="list-row">
+            <div class="flow" style="--flow-space: var(--spacing-3xs);">
+                <p><strong>{{ template.name }}</strong></p>
+                <p class="list-row__meta">{{ template.slots|join:", " }}</p>
+            </div>
+            <div class="cluster">
+                <a class="btn-ghost" href="{% url 'planning:slot_template_update' template.pk %}">Edit<span class="visually-hidden"> {{ template.name }}</span></a>
+                <a class="btn-danger" href="{% url 'planning:slot_template_delete' template.pk %}">Delete<span class="visually-hidden"> {{ template.name }}</span></a>
+            </div>
+        </li>
+        {% empty %}
+        <li class="empty-state">No templates yet. Make one for each kind of service you plan often, such as Mass or Vespers.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

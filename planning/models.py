@@ -284,6 +284,53 @@ class ServiceRole(models.Model):
         )
 
 
+class SlotTemplate(models.Model):
+    """
+    A named set of slots to add to a service in one go: Mass and Vespers
+    come ready-made (a data migration adds them), and a conductor can
+    edit those or make more. The slots are plain lines of text, so the
+    form is a textarea and needs no JavaScript.
+    """
+
+    name = models.CharField(max_length=50, unique=True, help_text="e.g. Mass, Vespers, Benediction")
+    slot_names = models.TextField(
+        "slots", help_text="One slot per line, in the order of the service."
+    )
+
+    class Meta:
+        ordering = ["name"]  # noqa
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def slots(self):
+        """The slot names in order: trimmed, blank lines dropped, and each
+        name once whatever its case."""
+        names = []
+        for line in self.slot_names.splitlines():
+            name = " ".join(line.split())
+            if name and name.lower() not in (n.lower() for n in names):
+                names.append(name)
+        return names
+
+    def apply_to(self, service):
+        """
+        Add this template's slots to a service, in order, leaving out any
+        it already has (whatever their case), so applying it twice adds
+        nothing. Returns (added, already_there) as lists of names.
+        """
+        existing = {name.lower() for name in service.roles.values_list("role_name", flat=True)}
+        added, already_there = [], []
+        for name in self.slots:
+            if name.lower() in existing:
+                already_there.append(name)
+            else:
+                ServiceRole.objects.create(service=service, role_name=name)
+                added.append(name)
+        return added, already_there
+
+
 class RolePiece(models.Model):
     # A piece's place in a score's history. The raw value names the CSS
     # class (badge--sung); the label is what people see.

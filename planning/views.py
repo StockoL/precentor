@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from collections import Counter
@@ -8,6 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 from django.views.generic import (
     CreateView,
@@ -28,10 +30,11 @@ from .forms import (
     RolePieceForm,
     ServiceForm,
     ServiceRoleForm,
+    SlotTemplateForm,
     TermForm,
     TermMarkerForm,
 )
-from .models import RolePiece, Service, ServiceRole, Term, TermMarker
+from .models import RolePiece, Service, ServiceRole, SlotTemplate, Term, TermMarker
 
 # --- Term views ---
 
@@ -213,6 +216,7 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
             for score in self.object.suggested_scores()
         ]
         context["role_form"] = ServiceRoleForm()
+        context["slot_templates"] = SlotTemplate.objects.all()
 
         # The services either side of this one in its term, for Previous
         # and Next links. Date, then id, so two services on one day keep a
@@ -241,6 +245,73 @@ class ServiceUpdateView(ConductorRequiredMixin, UpdateView):
         context["term"] = self.object.term
         context["site_config"] = SiteConfig.get_solo()
         return context
+
+
+# --- Slot templates ---
+
+
+class SlotTemplateListView(ConductorRequiredMixin, ListView):
+    model = SlotTemplate
+    context_object_name = "slot_templates"
+
+
+class ReturnToServiceMixin:
+    """After saving a template, go back to the service it was started
+    from (?next=), if that's a page on this site; otherwise to the list."""
+
+    def safe_next(self, value):
+        """value if it's a page on this site, else "". The Cancel link uses
+        it as an href, so anything else (javascript:, another site) must
+        never reach the template."""
+        if value and url_has_allowed_host_and_scheme(
+            value, allowed_hosts={self.request.get_host()}, require_https=self.request.is_secure()
+        ):
+            return value
+        return ""
+
+    def get_success_url(self):
+        next_url = self.safe_next(self.request.POST.get("next") or self.request.GET.get("next"))
+        return next_url or reverse_lazy("planning:slot_template_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["next"] = self.safe_next(self.request.GET.get("next") or self.request.POST.get("next"))
+        return context
+
+
+class SlotTemplateCreateView(ConductorRequiredMixin, ReturnToServiceMixin, CreateView):
+    model = SlotTemplate
+    form_class = SlotTemplateForm
+
+
+class SlotTemplateUpdateView(ConductorRequiredMixin, ReturnToServiceMixin, UpdateView):
+    model = SlotTemplate
+    form_class = SlotTemplateForm
+
+
+class SlotTemplateDeleteView(ConductorRequiredMixin, DeleteView):
+    model = SlotTemplate
+    success_url = reverse_lazy("planning:slot_template_list")
+
+
+@login_required
+@user_passes_test(ConductorRequiredMixin.is_conductor)
+@require_POST
+def apply_template(request, service_pk, template_pk):
+    """Add a template's slots to a service, then go back to the service
+    with a message saying what was added."""
+    service = get_object_or_404(Service, pk=service_pk)
+    template = get_object_or_404(SlotTemplate, pk=template_pk)
+    added, already_there = template.apply_to(service)
+    if not added:
+        messages.info(request, f"The {template.name} slots are all here already.")
+    else:
+        slots = "slot" if len(added) == 1 else "slots"
+        text = f"Added {len(added)} {slots} from {template.name}."
+        if already_there:
+            text += f" {len(already_there)} were here already."
+        messages.success(request, text)
+    return redirect(service.get_absolute_url())
 
 
 class ServiceDeleteView(ConductorRequiredMixin, DeleteView):

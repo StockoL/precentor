@@ -49,6 +49,23 @@ urlpatterns = [
     path(
         "services/<int:service_pk>/roles/add/", views.add_role, name="add_role"
     ),
+    path(
+        "services/<int:service_pk>/templates/<int:template_pk>/apply/",
+        views.apply_template,
+        name="apply_template",
+    ),
+    path("templates/", views.SlotTemplateListView.as_view(), name="slot_template_list"),
+    path("templates/add/", views.SlotTemplateCreateView.as_view(), name="slot_template_create"),
+    path(
+        "templates/<int:pk>/edit/",
+        views.SlotTemplateUpdateView.as_view(),
+        name="slot_template_update",
+    ),
+    path(
+        "templates/<int:pk>/delete/",
+        views.SlotTemplateDeleteView.as_view(),
+        name="slot_template_delete",
+    ),
     path("roles/<int:role_pk>/pieces/add/", views.add_piece, name="add_piece"),
     path(
         "pieces/<int:piece_pk>/toggle-confirm/",

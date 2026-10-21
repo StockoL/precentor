@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Delete template — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Delete the "{{ slottemplate.name }}" template?</h1>
+    <p>Services that already have its slots keep them.</p>
+    <div class="cluster">
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn-danger" type="submit">Yes, delete</button>
+        </form>
+        <a class="btn-ghost" href="{% url 'planning:slot_template_list' %}">Cancel</a>
+    </div>
+</div>
+{% endblock %}

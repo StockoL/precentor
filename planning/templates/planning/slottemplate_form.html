@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{% if form.instance.pk %}Edit template{% else %}New template{% endif %} — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>{% if form.instance.pk %}Edit template{% else %}New template{% endif %}</h1>
+    <form method="post" class="flow">
+        {% csrf_token %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        {{ form.as_p }}
+        <div class="cluster">
+            <button class="btn-primary" type="submit">Save</button>
+            <a class="btn-ghost" href="{% if next %}{{ next }}{% else %}{% url 'planning:slot_template_list' %}{% endif %}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
