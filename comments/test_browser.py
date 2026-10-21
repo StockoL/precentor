@@ -111,3 +111,19 @@ class CommentDeleteBrowserTest(PlaywrightTestCase):
         self.page.wait_for_selector(card, state="detached")
         self.page.wait_for_selector("#comment-list-empty")
         assert not Comment.objects.filter(pk=comment.pk).exists()
+
+
+class ClosedThreadForViewersBrowserTest(PlaywrightTestCase):
+    def setUp(self):
+        super().setUp()
+        self.term = Term.objects.create(
+            name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
+        )
+
+    def test_a_viewer_can_reopen_a_closed_thread_but_not_delete_it(self):
+        viewer = self.log_in_as("viewer")
+        comment = Comment.objects.create(author=viewer, body="Settled", target=self.term, is_open=False)
+        self.page.goto(f"/terms/{self.term.pk}/")
+        card = self.page.locator(f"#comment-{comment.pk}")
+        assert card.get_by_role("button", name="Re-open").is_visible()
+        assert card.locator(".ajax-delete-comment").count() == 0

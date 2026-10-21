@@ -7,7 +7,7 @@
             {% csrf_token %}
             <button type="submit">{% if comment.is_open %}Close{% else %}Re-open{% endif %}</button>
         </form>
-        {% if not comment.is_open %}
+        {% if not comment.is_open and can.delete_comments %}
         <form method="post" action="{% url 'comments:delete_comment' comment.pk %}" class="ajax-delete-comment">
             {% csrf_token %}
             <button type="submit" class="btn-danger" aria-label="Delete comment">×</button>
