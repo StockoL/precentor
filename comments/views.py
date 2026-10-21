@@ -8,6 +8,8 @@ from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 from django.views.generic import ListView
 
+from accounts.decorators import role_required
+from accounts.permissions import can_comment
 from precentor_project.utils import ajax_or_redirect
 
 from .forms import CommentForm
@@ -32,7 +34,7 @@ def _render_comment_form(request, form, content_type_id, object_id, parent_id):
     )
 
 
-@login_required
+@role_required(can_comment)
 @require_POST
 def add_comment(request, content_type_id, object_id):
     content_type = get_object_or_404(ContentType, pk=content_type_id)
@@ -94,7 +96,7 @@ def add_comment(request, content_type_id, object_id):
     )
 
 
-@login_required
+@role_required(can_comment)
 @require_POST
 def toggle_close(request, comment_pk):
     comment = get_object_or_404(Comment, pk=comment_pk)

@@ -322,3 +322,27 @@ class AddCommentViewTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertTrue(Comment.objects.filter(pk=comment.pk).exists())
+
+
+class CommentRightsTests(TestCase):
+    def setUp(self):
+        self.term = Term.objects.create(
+            name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
+        )
+        self.add_url = f"/comments/add/{ContentType.objects.get_for_model(Term).id}/{self.term.pk}/"
+
+    def test_a_viewer_can_comment_and_close_a_thread(self):
+        self.client.force_login(make_user("viewer"))
+        self.client.post(self.add_url, {"body": "Which edition?"})
+        comment = Comment.objects.get()
+        self.client.post(f"/comments/{comment.pk}/toggle-close/")
+        comment.refresh_from_db()
+        self.assertFalse(comment.is_open)
+
+    def test_a_superuser_without_a_role_cannot(self):
+        admin = make_user("viewer")
+        admin.is_superuser = True
+        admin.save()
+        self.client.force_login(admin)
+        self.assertEqual(self.client.post(self.add_url, {"body": "Hello"}).status_code, 403)
+        self.assertFalse(Comment.objects.exists())
