@@ -1,7 +1,8 @@
 from datetime import date
 
-from django.contrib.auth import get_user_model
 from django.test import TestCase
+
+from accounts.testing import make_user
 
 from .models import (
     LiturgicalOccasion,
@@ -10,8 +11,6 @@ from .models import (
     occasion_for_date,
 )
 from .utils import calculate_easter_sunday
-
-User = get_user_model()
 
 
 class CalculateEasterSundayTests(TestCase):
@@ -118,10 +117,7 @@ class OccasionForDateTests(TestCase):
 
 class OccasionLookupViewTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            username="conductor", password="testpass123"
-        )
-        self.client.login(username="conductor", password="testpass123")
+        self.client.force_login(make_user("viewer"))
         self.christmas = LiturgicalOccasion.objects.create(
             name="Christmas Day",
             calendar_use="current",

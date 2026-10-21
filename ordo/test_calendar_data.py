@@ -4,6 +4,8 @@ from io import StringIO
 from django.core.management import call_command
 from django.test import TestCase
 
+from accounts.testing import make_user
+
 from .calendar_data import load_calendar_files
 from .models import LiturgicalOccasion, occasion_for_date
 
@@ -145,9 +147,7 @@ class OccasionLookupNationalCalendarTests(TestCase):
         load_calendar_files()
 
     def setUp(self):
-        from django.contrib.auth import get_user_model
-
-        self.client.force_login(get_user_model().objects.create_user(username="conductor", password="x"))
+        self.client.force_login(make_user("viewer"))
 
     def names(self, **params):
         response = self.client.get("/ordo/occasion-lookup/", {"date": "2026-04-23", "calendar_use": "current", **params})
