@@ -89,8 +89,24 @@ class CommentDeleteBrowserTest(PlaywrightTestCase):
         )
         self.page.wait_for_selector(f"{card} .ajax-delete-comment")
 
-        self.page.once("dialog", lambda dialog: dialog.accept())
+        # The house-style dialog, not the browser's: Cancel keeps it.
         self.page.click(f"{card} .ajax-delete-comment button")
+        dialog = self.page.locator("dialog.confirm-dialog")
+        assert dialog.is_visible()
+        assert "Delete this comment?" in dialog.inner_text()
+        assert self.page.evaluate("document.activeElement.textContent") == "Cancel"
+        dialog.get_by_role("button", name="Cancel").click()
+        dialog.wait_for(state="detached")
+        assert self.page.is_visible(card)
+
+        # Escape cancels too.
+        self.page.click(f"{card} .ajax-delete-comment button")
+        self.page.keyboard.press("Escape")
+        self.page.locator("dialog.confirm-dialog").wait_for(state="detached")
+        assert self.page.is_visible(card)
+
+        self.page.click(f"{card} .ajax-delete-comment button")
+        self.page.locator("dialog.confirm-dialog").get_by_role("button", name="Delete comment").click()
 
         self.page.wait_for_selector(card, state="detached")
         self.page.wait_for_selector("#comment-list-empty")

@@ -1,5 +1,6 @@
 import { postForm, applyFragments, fragmentToElement, AjaxError } from "./ajax.js";
 import { showToast } from "./toast.js";
+import { confirmAction } from "./confirm-dialog.js";
 
 // Generic by design: works off whatever content_type_id/object_id are
 // already in the DOM (via _comment_form.html's action URL), not
@@ -44,7 +45,12 @@ function initComments() {
 
     if (form.matches(".ajax-delete-comment")) {
       event.preventDefault();
-      if (!window.confirm("Delete this comment? This can't be undone.")) return;
+      const confirmed = await confirmAction({
+        title: "Delete this comment?",
+        message: "Any replies go with it, and this can't be undone.",
+        confirmLabel: "Delete comment",
+      });
+      if (!confirmed) return;
       try {
         const data = await postForm(form.action, new FormData(form));
         applyFragments(data.fragments);

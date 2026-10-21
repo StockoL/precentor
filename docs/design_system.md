@@ -247,7 +247,7 @@ static/src/
 │   ├── badge.css / button.css / card.css / comment-card.css
 │   ├── form.css / list-row.css / nav.css / role-block.css
 │   ├── music-list.css / liturgical-accent.css / term-summary.css
-│   ├── score-combobox.css / crest-crop.css / toast.css
+│   ├── score-combobox.css / crest-crop.css / toast.css / confirm-dialog.css
 │   ├── skip-link.css / page-header.css / user-menu.css
 │   ├── detail-list.css / empty-state.css
 │   └── toolbar.css / data-table.css / tag-input.css / term-card.css
@@ -255,7 +255,7 @@ static/src/
 │   └── utilities.css
 └── js/
     ├── ajax.js / toast.js / user-menu.js / theme-choice.js
-    ├── comments.js / service-detail.js / score-picker.js
+    ├── comments.js / confirm-dialog.js / service-detail.js / score-picker.js
     ├── occasion-suggest.js / tag-input.js / crest-crop.js
     └── print-button.js
 ```
@@ -572,6 +572,21 @@ There are no inline event handlers. The music list's Print button used
 The button is `hidden` in the HTML and the script shows it, since it
 does nothing without JavaScript; the browser's own Print command still
 prints the list with the same print styles.
+
+## Confirmation dialog
+
+Deleting a comment asks first, in a dialog styled like the rest of the
+app (`confirm-dialog.js`, `confirm-dialog.css`). It replaced the
+browser's own `window.confirm()`, whose look each browser decides and
+no stylesheet can reach. The dialog is a native `<dialog>` opened with
+`showModal()`, so the browser keeps focus inside it, Escape cancels,
+and screen readers announce it as a dialog, named by its heading and
+described by its message. Focus starts on Cancel, the safe choice, and
+goes back where it was when the dialog closes. A click outside it
+cancels too. It takes the card's surface, border and corners, with the
+ghost and danger buttons, so it follows the theme like everything
+else. `confirmAction()` returns a promise, so any later "are you sure?"
+can use it in one line.
 
 ## Page transitions
 

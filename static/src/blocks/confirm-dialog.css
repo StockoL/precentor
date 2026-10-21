@@ -1,0 +1,29 @@
+/* ==========================================================================
+   BLOCK: CONFIRM DIALOG
+   ========================================================================== */
+
+@layer blocks {
+  /*
+   * A confirmation before something that can't be undone
+   * (confirm-dialog.js). It takes the card's look; this adds the size,
+   * spacing and backdrop.
+   */
+  .confirm-dialog {
+    inline-size: min(28rem, 100% - 2 * var(--spacing-m));
+    padding: var(--spacing-m);
+    color: var(--colors-text-base);
+    --flow-space: var(--spacing-s);
+  }
+
+  .confirm-dialog h2 {
+    font-size: var(--typography-step-1);
+  }
+
+  .confirm-dialog__actions {
+    --cluster-justify: flex-end;
+  }
+
+  .confirm-dialog::backdrop {
+    background-color: rgb(0 0 0 / 0.45);
+  }
+}
