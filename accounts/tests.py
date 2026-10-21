@@ -14,14 +14,26 @@ from .permissions import (
     can_manage_settings,
     can_plan,
 )
-from .testing import make_user
+from .testing import make_organisation, make_superuser, make_user
 
 
 class MakeUserTests(TestCase):
-    def test_each_role_gets_its_group_and_a_viewer_gets_none(self):
-        self.assertEqual(list(make_user("conductor").groups.values_list("name", flat=True)), ["Conductor"])
-        self.assertEqual(list(make_user("librarian").groups.values_list("name", flat=True)), ["Librarian"])
-        self.assertFalse(make_user("viewer").groups.exists())
+    def test_each_user_gets_their_role_in_the_shared_test_church(self):
+        for role in ("conductor", "librarian", "viewer"):
+            with self.subTest(role=role):
+                user = make_user(role)
+                self.assertEqual(user.role, role)
+                self.assertEqual(user.organisation, make_organisation())
+
+    def test_a_test_can_pass_its_own_organisation(self):
+        elsewhere = make_organisation("St Elsewhere")
+        self.assertEqual(make_user(organisation=elsewhere).organisation, elsewhere)
+
+    def test_a_superuser_has_no_organisation_or_role(self):
+        admin = make_superuser()
+        self.assertTrue(admin.is_superuser and admin.is_staff)
+        self.assertIsNone(admin.organisation)
+        self.assertEqual(admin.role, "")
 
     def test_each_user_gets_their_own_address_unless_given_one(self):
         first, second = make_user(), make_user()
@@ -30,7 +42,7 @@ class MakeUserTests(TestCase):
 
     def test_the_password_works_for_signing_in(self):
         user = make_user(password="s3cret-pass")
-        self.assertTrue(self.client.login(username=user.username, password="s3cret-pass"))
+        self.assertTrue(self.client.login(username=user.email, password="s3cret-pass"))
 
     def test_an_unknown_role_is_refused(self):
         with self.assertRaises(ValueError):
@@ -61,9 +73,7 @@ class PermissionMatrixTests(TestCase):
     def test_nobody_without_a_role_passes_any_check(self):
         deactivated = make_user("conductor")
         deactivated.is_active = False
-        superuser = make_user("viewer")
-        superuser.is_superuser = True
-        superuser.save()
+        superuser = make_superuser()
         for name, user in (("signed out", AnonymousUser()), ("deactivated", deactivated), ("superuser", superuser)):
             for check in self.MATRIX:
                 with self.subTest(user=name, check=check.__name__):
@@ -124,13 +134,12 @@ class CanContextProcessorTests(TestCase):
         self.assertIs(can["edit_library"], True)
         self.assertIs(can["plan"], False)
 
-    def test_each_check_runs_once_and_only_when_asked(self):
+    def test_asking_costs_no_queries_and_each_answer_is_kept(self):
         user = make_user("conductor")
         with self.assertNumQueries(0):
             can = Can(user)
-        with self.assertNumQueries(1):
             can["plan"]
-            can["plan"]
+        self.assertEqual(dict(can), {"plan": True})
 
     def test_an_unknown_check_is_an_error_not_a_quiet_no(self):
         with self.assertRaises(KeyError):

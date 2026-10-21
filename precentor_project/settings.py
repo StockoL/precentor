@@ -151,6 +151,10 @@ STORAGES = {
 
 # Login and logout redirects
 
+# Set before the first migrate: Django cannot switch user models once
+# the tables exist.
+AUTH_USER_MODEL = "accounts.User"
+
 LOGIN_REDIRECT_URL = "planning:term_list"
 LOGOUT_REDIRECT_URL = "planning:term_list"
 

@@ -1,31 +1,40 @@
 """
-The one way tests make users. Every test module goes through make_user,
-so when the custom user model replaces Django's default one, only this
-file changes, not every test that needs someone signed in.
+The one way tests make organisations and users, so the tests don't each
+depend on how a user is built.
 
-For now a role is a Group: Conductor and Librarian each have one, made
-by accounts/migrations/0001_create_groups.py, and a Viewer is a user in
-neither.
+Everyone made here joins one shared "Test Church" unless a test passes
+an organisation of its own, which is how the tests that keep
+organisations apart will make two.
 """
 
 from itertools import count
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
+from .models import Organisation, Role, User
 
-ROLES = ("conductor", "librarian", "viewer")
+ROLES = tuple(Role.values)
 
 _numbers = count(1)
 
 
-def make_user(role="conductor", *, email=None, password="testpass123"):
+def make_organisation(name="Test Church"):
+    organisation, _ = Organisation.objects.get_or_create(name=name)
+    return organisation
+
+
+def make_user(role="conductor", *, organisation=None, email=None, password="testpass123"):
     if role not in ROLES:
         raise ValueError(f"Unknown role {role!r}; expected one of {ROLES}.")
     if email is None:
         email = f"{role}{next(_numbers)}@example.com"
-    # The username is the email for now, so tests that sign in by
-    # filling the login form already use the address they'll use later.
-    user = get_user_model().objects.create_user(username=email, email=email, password=password)
-    if role != "viewer":
-        user.groups.add(Group.objects.get_or_create(name=role.title())[0])
-    return user
+    return User.objects.create_user(
+        email=email,
+        password=password,
+        organisation=organisation or make_organisation(),
+        role=role,
+    )
+
+
+def make_superuser(email="admin@example.com", password="testpass123"):
+    """Someone who looks after the site from the admin pages: no
+    organisation and no role."""
+    return User.objects.create_superuser(email=email, password=password)

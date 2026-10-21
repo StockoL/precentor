@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from accounts.testing import make_user
+from accounts.testing import make_superuser, make_user
 from planning.models import Term
 
 from .models import Comment
@@ -340,10 +340,7 @@ class CommentRightsTests(TestCase):
         self.assertFalse(comment.is_open)
 
     def test_a_superuser_without_a_role_cannot(self):
-        admin = make_user("viewer")
-        admin.is_superuser = True
-        admin.save()
-        self.client.force_login(admin)
+        self.client.force_login(make_superuser())
         self.assertEqual(self.client.post(self.add_url, {"body": "Hello"}).status_code, 403)
         self.assertFalse(Comment.objects.exists())
 
