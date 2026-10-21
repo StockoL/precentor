@@ -218,7 +218,8 @@ class RolePieceWorkflowTests(TestCase):
 
         response = self.client.get(f"/roles/{role.pk}/pieces/add/")
 
-        self.assertEqual(response.status_code, 302)
+        # Refused outright, not sent back to the login page they're past.
+        self.assertEqual(response.status_code, 403)
 
     def test_add_role_ajax_success_returns_role_block_and_status_badge(self):
         response = self.client.post(

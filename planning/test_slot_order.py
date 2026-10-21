@@ -61,5 +61,6 @@ class SlotOrderTests(TestCase):
 
     def test_only_a_conductor_moves_slots(self):
         self.client.force_login(make_user("librarian"))
-        self.client.post(f"/roles/{self.roles[2].pk}/move/", {"direction": "up"})
+        response = self.client.post(f"/roles/{self.roles[2].pk}/move/", {"direction": "up"})
+        self.assertEqual(response.status_code, 403)
         self.assertEqual(self.names(), ["Introit", "Gloria", "Communion"])

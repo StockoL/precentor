@@ -57,7 +57,7 @@ class RemoveSlotTests(TestCase):
 
     def test_only_conductors_can_remove(self):
         self.client.force_login(make_user("viewer"))
-        self.client.post(f"/roles/{self.introit.pk}/remove/")
+        self.assertEqual(self.client.post(f"/roles/{self.introit.pk}/remove/").status_code, 403)
         self.assertEqual(self.names(), ["Introit", "Offertory motet"])
 
     def test_get_is_not_allowed(self):

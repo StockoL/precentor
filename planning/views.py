@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from collections import Counter
 
@@ -19,7 +19,9 @@ from django.views.generic import (
     UpdateView,
 )
 
+from accounts.decorators import role_required
 from accounts.mixins import ConductorRequiredMixin
+from accounts.permissions import can_plan
 from comments.forms import CommentForm
 from comments.models import Comment
 from comments.utils import attach_reply_forms
@@ -308,8 +310,7 @@ class SlotTemplateDeleteView(ConductorRequiredMixin, DeletePageMixin, DeleteView
     gone_message = "That template has already been deleted."
 
 
-@login_required
-@user_passes_test(ConductorRequiredMixin.is_conductor)
+@role_required(can_plan)
 @require_POST
 def apply_template(request, service_pk, template_pk):
     """
@@ -358,8 +359,7 @@ class ServiceDeleteView(ConductorRequiredMixin, DeletePageMixin, DeleteView):
 # --- Role / Piece action views ---
 
 
-@login_required
-@user_passes_test(ConductorRequiredMixin.is_conductor)
+@role_required(can_plan)
 @require_POST
 def add_role(request, service_pk):
     service = get_object_or_404(Service, pk=service_pk)
@@ -400,8 +400,7 @@ def _slots_fragment(request, service):
     }
 
 
-@login_required
-@user_passes_test(ConductorRequiredMixin.is_conductor)
+@role_required(can_plan)
 @require_POST
 def move_slot(request, role_pk):
     """Move a slot up or down one place (the Move up and Move down
@@ -412,8 +411,7 @@ def move_slot(request, role_pk):
     return ajax_or_redirect(request, _slots_fragment(request, role.service), role.service.get_absolute_url())
 
 
-@login_required
-@user_passes_test(ConductorRequiredMixin.is_conductor)
+@role_required(can_plan)
 @require_POST
 def remove_slot(request, role_pk):
     """Remove a slot. An empty one goes at once; one with pieces proposed
@@ -430,8 +428,7 @@ def remove_slot(request, role_pk):
     return ajax_or_redirect(request, _slots_fragment(request, service), service.get_absolute_url())
 
 
-@login_required
-@user_passes_test(ConductorRequiredMixin.is_conductor)
+@role_required(can_plan)
 @require_POST
 def reorder_slots(request, service_pk):
     """Put the slots in a new order, sent after a drag as "id,id,id"."""
@@ -447,8 +444,7 @@ def reorder_slots(request, service_pk):
     return ajax_or_redirect(request, _slots_fragment(request, service), service.get_absolute_url())
 
 
-@login_required
-@user_passes_test(ConductorRequiredMixin.is_conductor)
+@role_required(can_plan)
 def add_piece(request, role_pk):
     """
     With JavaScript, the service page posts here from each slot's
@@ -489,8 +485,7 @@ def add_piece(request, role_pk):
     return ajax_or_redirect(request, fragments, role.service.get_absolute_url(), status=400)
 
 
-@login_required
-@user_passes_test(ConductorRequiredMixin.is_conductor)
+@role_required(can_plan)
 @require_POST
 def toggle_confirm(request, piece_pk):
     piece = get_object_or_404(RolePiece, pk=piece_pk)

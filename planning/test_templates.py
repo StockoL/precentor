@@ -60,7 +60,7 @@ class ApplyTemplateTests(TemplateTestMixin, TestCase):
         url = f"/services/{self.service.pk}/templates/{self.mass.pk}/apply/"
         self.assertEqual(self.client.get(url).status_code, 405)
         self.client.force_login(make_user("librarian"))
-        self.client.post(url)
+        self.assertEqual(self.client.post(url).status_code, 403)
         self.assertEqual(self.slot_names(), [])
 
     def test_the_service_page_offers_each_template(self):
