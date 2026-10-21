@@ -4,12 +4,14 @@ erDiagram
   %% - COMMENT's link to TERM/SERVICE/ROLE_PIECE is one polymorphic
   %%   GenericForeignKey in Django, shown here as three edges since
   %%   erDiagram syntax can't express "one FK, any of three tables"
-  %% - SLOT_TEMPLATE has no relationship: applying one copies its slot
-  %%   names into new SERVICE_ROLE rows, and nothing links back
+  %% - applying a SLOT_TEMPLATE copies its slot names into new
+  %%   SERVICE_ROLE rows, which keep no link to it; the SERVICE only
+  %%   records which template it uses now
   USER ||--o{ COMMENT : writes
   TERM ||--o{ SERVICE : contains
   LITURGICAL_OCCASION ||--o{ SERVICE : occurs_on
   SERVICE ||--o{ SERVICE_ROLE : has
+  SLOT_TEMPLATE |o--o{ SERVICE : used_by
   SERVICE_ROLE ||--o{ ROLE_PIECE : holds
   SCORE ||--o{ ROLE_PIECE : referenced_by
   SCORE }o--o{ LITURGICAL_OCCASION : suits
@@ -33,6 +35,7 @@ erDiagram
   }
   SERVICE_ROLE {
     string role_name
+    int position
     string status
   }
   SLOT_TEMPLATE {

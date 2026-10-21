@@ -391,6 +391,9 @@ class Service(models.Model):
         "ordo.LiturgicalOccasion", blank=True, related_name="also_relevant_services",
     )
     calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES, null=True, blank=True)
+    slot_template = models.ForeignKey(
+        "SlotTemplate", null=True, blank=True, on_delete=models.SET_NULL, related_name="services",
+    )  # the template whose slots it uses now
     hymns = models.CharField(max_length=200, blank=True)
     psalm = models.CharField(max_length=100, blank=True)
     comments = GenericRelation("comments.Comment")
@@ -400,6 +403,10 @@ class Service(models.Model):
 
     def effective_calendar_use(self):
         return self.calendar_use or self.term.calendar_use
+
+    def use_template(self, template, replace=False): ...  # see SlotTemplate
+    def move_slot(self, role, step): ...  # Move up / Move down
+    def set_slot_order(self, pks): ...  # after a drag; ValueError unless pks are exactly its slots
 
     @property
     def status(self):
@@ -477,10 +484,22 @@ class ServiceRole(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="roles")
     role_name = models.CharField("slot", max_length=50)  # e.g. "Introit", "Offertory motet"
     is_not_applicable = models.BooleanField("not needed (N/A)", default=False)
+    position = models.PositiveIntegerField(default=0)  # a new slot gets the next number
+
+    class Meta:
+        ordering = ["position", "id"]
+
+    def deletion_summary(self): ...  # pieces and comments removing it takes with it
 ```
 
 Shown in the interface as a **slot**. Slot names are free text; see
-the README (§3.2) for why.
+the README (§3.2) for why. `position` holds the order the conductor
+gives the slots. Moves renumber the service's slots from 1, and the
+migration that added it (`planning/0011`) numbered existing slots in
+the order they were made, which was the order shown before. A drag
+sends the whole new order, not one move, and `set_slot_order` refuses
+a list that isn't exactly the service's slots, so a page that's out of
+date can't lose or duplicate one.
 
 ### `planning.SlotTemplate`
 
@@ -501,8 +520,12 @@ in one go. Mass and Vespers come from a data migration
 is never undone. The slots are lines of text, not a related table: the
 form is a textarea that needs no JavaScript, and order is simply line
 order. Applying one copies the names into new `ServiceRole` rows,
-skipping names the service already has (ignoring case), and keeps no
-link, so editing a template never changes services already planned.
+skipping names the service already has (ignoring case). The slots keep
+no link to it, so editing a template never changes services already
+planned. `Service.slot_template` only records which template the
+service uses, so that choosing a different one can ask first and then
+replace the slots (`Service.use_template(replace=True)`), keeping any
+slot with pieces proposed.
 
 ### `planning.RolePiece`
 

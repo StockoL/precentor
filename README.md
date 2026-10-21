@@ -123,15 +123,29 @@ be added, removed, or marked **N/A** service by service (a special day
 might need an extra motet, or have no setting at all, as on Good
 Friday).
 
+Each slot has its own **Remove** button. An empty slot goes straight
+away; one with pieces proposed asks first, saying how many pieces go
+with it, because those pieces and their comments are deleted too.
+
+Slots keep the order they're given, and a new one goes at the end, so
+they can be **moved**: dragged by the handle beside the name, or moved
+with the Move up and Move down buttons, which work from the keyboard,
+on a phone and without JavaScript. While a slot is being dragged,
+holding it near the top or bottom of the window scrolls the page, so a
+motet can be carried from the end of a long Mass to anywhere in it.
+
 **Slot templates** save adding the usual slots one by one. On a
 service's page, a button per template adds its slots in order: **Mass**
 (Introit, Kyrie, Gloria, Gradual, Alleluia or Tract, Credo, Offertory,
 Sanctus, Agnus Dei, Communion) and **Vespers** (Psalms, Hymn,
 Magnificat, Marian antiphon) come ready-made, and a conductor can edit
 those or make their own, such as Benediction or a choir's usual Sunday
-Mass with its motets. A template only adds slots the service doesn't
-already have, so applying it twice changes nothing, and afterwards the
-slots are ordinary slots, to rename, mark N/A or remove like any other.
+Mass with its motets. A service uses one template at a time: choosing
+a different one asks "Replace the Mass slots with Vespers?" first, then
+removes the old slots and adds the new. Any slot with pieces proposed
+is kept, so no planning is lost. Applying the same template twice
+changes nothing, and afterwards the slots are ordinary slots, to move,
+mark N/A or remove like any other.
 
 ### 3.3 Proposing and Confirming
 
@@ -194,6 +208,11 @@ Ordo holds the real calendars, not a sample:
 - **Suggestions.** When a service's date is entered, the service form
   suggests the day's celebration, and anything also kept that day, for
   the conductor to choose.
+- **One form at a time.** The calendar comes first on the service
+  form, and the occasion lists below it then show only that form's
+  days, which roughly halves what there is to search. An occasion
+  already chosen stays listed whichever form is picked, and without
+  JavaScript both forms are listed, with the 1962 days marked "(1962)".
 
 The rules are ported from two open-source projects, romcal (the
 Ordinary Form) and Missalemeum (1962), and checked against them for
@@ -391,7 +410,8 @@ not oversights, when an assessor reads this document.
   the entity relationship diagram for Score, Term, Service, Service
   Role, Role Piece, Ordo (Liturgical Occasion), User and Comment. Its
   notes cover two simplifications: a slot template copies its names
-  into a service's slots and keeps no link to them, and Comment's
+  into a service's slots, so the slots themselves keep no link to it,
+  and Comment's
   polymorphic relationship is drawn as
   three edges for readability, though it's a single Django
   `GenericForeignKey` in the code.

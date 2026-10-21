@@ -530,6 +530,16 @@ forms, with 1962 days marked "(1962)" so that, for example, the
 Ordinary Form's "Saints Peter and Paul, Apostles" and 1962's "Sts.
 Peter & Paul" can be told apart.
 
+The Calendar menu comes first in the Liturgy section, and its blank
+choice names what it means ("As the term: Ordinary Form (Novus
+Ordo)"). Each occasion `<option>` carries its form as
+`data-calendar-use` (the widgets in `ordo/fields.py`), and the same
+script hides and disables the other form's options whenever the
+calendar changes, then asks for suggestions again. A chosen occasion
+is never hidden, so a change of calendar can't silently drop it. The
+chip input skips disabled options when it searches, so Other occasions
+narrows too.
+
 ## Proposing a piece
 
 Each slot on the service page has a search box for proposing a piece
@@ -573,6 +583,43 @@ The button is `hidden` in the HTML and the script shows it, since it
 does nothing without JavaScript; the browser's own Print command still
 prints the list with the same print styles.
 
+## Moving and removing slots
+
+Each slot's row of small buttons holds Move up, Move down and, pushed
+to the far end, Remove in the danger text colour. CSS hides Move up on
+the first slot and Move down on the last, by position in the list, so
+they stay right however the slots change without the page working it
+out. It hides the whole form, not just the button, or the empty form
+would still leave a gap in the row.
+
+Dragging uses the browser's own drag and drop, started only from the
+handle beside the slot's name, so text in a slot can still be
+selected. When a drag ends, the new order is sent once and the server
+sends the list back. Native drag and drop needs a mouse or trackpad;
+the buttons cover everything else. Holding a slot within 80px of the
+top or bottom of the window scrolls the page, faster nearer the edge,
+up to 18px a frame. That listens on the whole document, since the
+header and footer can sit in those bands. The browser keeps sending
+`dragover` while the mouse is still, so a slot keeps finding its place
+as the list scrolls under it.
+
+Removing an empty slot happens at once. A slot with pieces asks in the
+confirmation dialog below, with wording the page puts on the form, and
+without JavaScript the view shows a page that lists what goes with it.
+After a removal, focus moves to the slot that took its place, or the
+one before, or the Add a slot box when none are left, so a keyboard
+user isn't sent back to the top of the page.
+
+## Pages for deleting, and 404
+
+The delete pages (term, service, notice, template, score) are sent
+with `no-store`, so Back after a delete fetches the page again rather
+than showing a copy of the form. If the thing is already gone, the
+page (or a second Confirm) goes to a sensible list with a message
+saying so, instead of a 404 (`DeletePageMixin` in
+`precentor_project/mixins.py`). A real 404 gets the site's own page,
+with a way back to the terms.
+
 ## Confirmation dialog
 
 Deleting a comment asks first, in a dialog styled like the rest of the
@@ -586,7 +633,8 @@ goes back where it was when the dialog closes. A click outside it
 cancels too. It takes the card's surface, border and corners, with the
 ghost and danger buttons, so it follows the theme like everything
 else. `confirmAction()` returns a promise, so any later "are you sure?"
-can use it in one line.
+can use it in one line, as removing a slot and replacing a service's
+template now do.
 
 ## Page transitions
 
