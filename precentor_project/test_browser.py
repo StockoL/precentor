@@ -58,7 +58,10 @@ class PlaywrightTestCase(StaticLiveServerTestCase):
         super().tearDown()
 
     def login_as_conductor(self, password="testpass123"):
-        user = make_user("conductor", password=password)
+        return self.log_in_as("conductor", password=password)
+
+    def log_in_as(self, role, password="testpass123"):
+        user = make_user(role, password=password)
         self.page.goto("/accounts/login/")
         # Signs in through the real form, by email, as people will.
         self.page.fill("#id_username", user.email)
@@ -66,6 +69,13 @@ class PlaywrightTestCase(StaticLiveServerTestCase):
         self.page.click("button[type=submit]")
         self.page.wait_for_load_state("networkidle")
         return user
+
+
+class LogInAsBrowserTest(PlaywrightTestCase):
+    def test_any_role_signs_in_through_the_form(self):
+        user = self.log_in_as("viewer")
+        assert self.page.url == f"{self.live_server_url}/"
+        assert self.page.inner_text(".user-menu summary") == user.email
 
 
 class RootFontSizeBrowserTest(PlaywrightTestCase):
