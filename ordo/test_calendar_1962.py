@@ -133,3 +133,24 @@ class EnglandAndWales1962Tests(TestCase):
             with self.subTest(key=key):
                 self.assertEqual(self.on(day, "wales")[:1], [key])
                 self.assertNotIn(key, self.on(day, "england"))
+
+    def test_st_augustine_of_canterbury_moves_to_26_may(self):
+        # 2025: second class, with St Philip Neri commemorated, and 28 May
+        # is no longer his.
+        self.assertEqual(self.on(date(2025, 5, 26), "england"), ["sancti:05-28", "sancti:05-26"])
+        self.assertNotIn("sancti:05-28", self.on(date(2025, 5, 28), "england"))
+        # 2024: 26 May was Trinity Sunday, which outranks him.
+        self.assertEqual(self.on(date(2024, 5, 26), "england"), ["tempora:Pent01-0r"])
+        # Universally he stays third class on 28 May.
+        self.assertIn("sancti:05-28", keys(date(2024, 5, 28)))
+
+    def test_st_brigid_and_st_cadoc_in_wales(self):
+        self.assertEqual(self.on(date(2025, 2, 1), "wales"), ["sancti:02-01wa", "sancti:02-01"])
+        self.assertEqual(self.on(date(2024, 9, 25), "wales")[:1], ["sancti:09-25wa"])
+        self.assertNotIn("sancti:02-01wa", self.on(date(2025, 2, 1), "england"))
+
+    def test_st_ubaldus_and_st_didacus_stay_commemorations(self):
+        # Third class in the Ordo, but left as Missalemeum has them: no
+        # bearing on planning music.
+        self.assertEqual(self.on(date(2026, 5, 16), "england"), [])
+        self.assertEqual(self.on(date(2026, 11, 13), "wales"), [])

@@ -1,17 +1,17 @@
 {
- "source": "The Ordo 2025-2026, compiled by Peter Day-Milne, copyright The Latin Mass Society 2025 (https://lms.org.uk). Facts only: the days, dates, classes and colours of the dioceses of Wales, taken by hand; the names are in Missalemeum's style. Feasts of single dioceses are left out.",
+ "source": "The Ordo for 2023-2024, 2024-2025 and 2025-2026, compiled by Peter Day-Milne, copyright The Latin Mass Society (https://lms.org.uk). Facts only: the days, dates, classes and colours of the dioceses of Wales, taken by hand; the names are in Missalemeum's style. Feasts of single dioceses are left out.",
  "calendar": "wales",
  "occasions": [
   {
-   "key": "sancti:12-29",
-   "name": "St. Thomas of Canterbury, Bishop & Martyr",
-   "rank": "class_1",
+   "key": "sancti:02-01wa",
+   "name": "St. Brigid, Virgin",
+   "rank": "class_3",
    "is_proper_of_time": false,
-   "colour": "red",
+   "colour": "white",
    "season": null,
-   "fixed_month": 12,
-   "fixed_day": 29,
-   "note": "29 December 2025: In all dioceses of England and Wales, St Thomas of Canterbury B M, I Cl, R. Replaces the universal commemoration of St Thomas Becket."
+   "fixed_month": 2,
+   "fixed_day": 1,
+   "note": "1 February 2024 and 2025: In all dioceses of Wales, St Brigid V, III Cl, W."
   },
   {
    "key": "sancti:03-01wa",
@@ -22,7 +22,7 @@
    "season": null,
    "fixed_month": 3,
    "fixed_day": 1,
-   "note": "2 March 2026: In both dioceses of Wales, St David B C, I Cl, W, moved from 1 March, the Second Sunday of Lent."
+   "note": "1 March 2024 and 2025, and 2 March 2026 (moved off a Sunday of Lent): In both dioceses of Wales, St David B C, I Cl, W, moved from 1 March, the Second Sunday of Lent."
   },
   {
    "key": "sancti:04-23",
@@ -33,7 +33,7 @@
    "season": null,
    "fixed_month": 4,
    "fixed_day": 23,
-   "note": "23 April 2026: In both dioceses of Wales, St George M, III Cl, R. Universally a commemoration."
+   "note": "23 April 2024 and 2026 (in 2025 the Easter Octave took the day): In both dioceses of Wales, St George M, III Cl, R. Universally a commemoration."
   },
   {
    "key": "sancti:05-04ew",
@@ -44,18 +44,18 @@
    "season": null,
    "fixed_month": 5,
    "fixed_day": 4,
-   "note": "4 May 2026: In all dioceses of England and Wales, The Holy Martyrs of England and Wales, III Cl, R."
+   "note": "4 May 2024 and 2026: In all dioceses of England and Wales, The Holy Martyrs of England and Wales, III Cl, R."
   },
   {
-   "key": "sancti:05-16",
-   "name": "St. Ubaldus",
-   "rank": "class_3",
+   "key": "sancti:05-28",
+   "name": "St. Augustine of Canterbury, Bishop & Confessor, Apostle of England",
+   "rank": "class_2",
    "is_proper_of_time": false,
    "colour": "white",
    "season": null,
    "fixed_month": 5,
-   "fixed_day": 16,
-   "note": "16 May 2026: St Ubaldus B C, III Cl, W, on the Ordo's main line. Missalemeum has a commemoration."
+   "fixed_day": 26,
+   "note": "26 May 2025: In all dioceses of England and Wales, St Augustine of Canterbury B C, II Cl, W, with a commemoration of St Philip Neri. Universally III Cl on 28 May, which in 2024 most dioceses of England and Wales kept as a feria. In 2024, 26 May was Trinity Sunday and he wasn't kept."
   },
   {
    "key": "sancti:06-22ew",
@@ -66,7 +66,7 @@
    "season": null,
    "fixed_month": 6,
    "fixed_day": 22,
-   "note": "22 June 2026: In all dioceses of England and Wales, St Alban M, III Cl, R."
+   "note": "22 June 2024 and 2026: In all dioceses of England and Wales, St Alban M, III Cl, R."
   },
   {
    "key": "sancti:07-09ew",
@@ -77,7 +77,7 @@
    "season": null,
    "fixed_month": 7,
    "fixed_day": 9,
-   "note": "9 July 2026: In all dioceses of England and Wales, SS John Fisher B & Thomas More MM, I Cl, R."
+   "note": "9 July 2024, 2025 and 2026: In all dioceses of England and Wales, SS John Fisher B & Thomas More MM, I Cl, R."
   },
   {
    "key": "sancti:07-17wa",
@@ -88,7 +88,7 @@
    "season": null,
    "fixed_month": 7,
    "fixed_day": 17,
-   "note": "17 July 2026: In both dioceses of Wales, Our Lady in Porticu, III Cl, W."
+   "note": "17 July 2024, 2025 and 2026: In both dioceses of Wales, Our Lady in Porticu, III Cl, W."
   },
   {
    "key": "sancti:07-30wa",
@@ -99,7 +99,7 @@
    "season": null,
    "fixed_month": 7,
    "fixed_day": 30,
-   "note": "30 July 2026: In both dioceses of Wales, BB Edward Powell, Richard Featherstone & Comps MM, III Cl, R."
+   "note": "30 July 2024, 2025 and 2026: In both dioceses of Wales, BB Edward Powell, Richard Featherstone & Comps MM, III Cl, R."
   },
   {
    "key": "sancti:08-03wa",
@@ -110,7 +110,18 @@
    "season": null,
    "fixed_month": 8,
    "fixed_day": 3,
-   "note": "3 August 2026: In both dioceses of Wales, St Germanus B C, III Cl, W."
+   "note": "3 August 2024 and 2026: In both dioceses of Wales, St Germanus B C, III Cl, W."
+  },
+  {
+   "key": "sancti:09-25wa",
+   "name": "St. Cadoc, Bishop & Martyr",
+   "rank": "class_3",
+   "is_proper_of_time": false,
+   "colour": "red",
+   "season": null,
+   "fixed_month": 9,
+   "fixed_day": 25,
+   "note": "25 September 2024 and 2025: In all dioceses of Wales, St Cadoc B M, III Cl, R."
   },
   {
    "key": "sancti:10-13",
@@ -121,18 +132,18 @@
    "season": null,
    "fixed_month": 10,
    "fixed_day": 13,
-   "note": "13 October 2026: In all dioceses of England and Wales, St Edward K C, II Cl, W. Universally III Cl."
+   "note": "13 October 2025 and 2026 (in 2024 the Sunday took the day): In all dioceses of England and Wales, St Edward K C, II Cl, W. Universally III Cl."
   },
   {
-   "key": "sancti:11-13",
-   "name": "St. Didacus",
-   "rank": "class_3",
+   "key": "sancti:12-29",
+   "name": "St. Thomas of Canterbury, Bishop & Martyr",
+   "rank": "class_1",
    "is_proper_of_time": false,
-   "colour": "white",
+   "colour": "red",
    "season": null,
-   "fixed_month": 11,
-   "fixed_day": 13,
-   "note": "13 November 2026: St Didacus C, III Cl, W, on the Ordo's main line. Missalemeum has a commemoration."
+   "fixed_month": 12,
+   "fixed_day": 29,
+   "note": "29 December 2023, 2024 and 2025: In all dioceses of England and Wales, St Thomas of Canterbury B M, I Cl, R. Replaces the universal commemoration of St Thomas Becket."
   }
  ]
 }
