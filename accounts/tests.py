@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
-from .permissions import can_comment, can_edit_library, can_plan
+from .permissions import can_comment, can_edit_library, can_manage_settings, can_plan
 from .testing import make_user
 
 
@@ -64,3 +64,11 @@ class CanCommentTests(TestCase):
         admin.is_superuser = True
         admin.save()
         self.assertFalse(can_comment(admin))
+
+
+class CanManageSettingsTests(TestCase):
+    def test_only_a_conductor_manages_settings(self):
+        self.assertTrue(can_manage_settings(make_user("conductor")))
+        self.assertFalse(can_manage_settings(make_user("librarian")))
+        self.assertFalse(can_manage_settings(make_user("viewer")))
+        self.assertFalse(can_manage_settings(AnonymousUser()))

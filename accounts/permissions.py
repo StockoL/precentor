@@ -41,3 +41,8 @@ def can_edit_library(user):
 def can_comment(user):
     """Comments and replies, and closing or reopening a thread."""
     return _has_role(user, "conductor", "librarian", "viewer")
+
+
+def can_manage_settings(user):
+    """The church's name, crest, colours and calendar."""
+    return _has_role(user, "conductor")
