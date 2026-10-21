@@ -55,6 +55,17 @@ These user stories drive the design and functionality of Precentor.
 - As a librarian, I want to see a simple inbox of all open comments, so
   I know at a glance what still needs attention.
 
+## Viewer (a singer, a clergy colleague, an assistant)
+
+- As a viewer, I want to see each term's services, their slots and the
+  pieces proposed or confirmed, so I know what's coming without asking.
+- As a viewer, I want to browse and search the library, so I can look
+  up a piece's voicing, language or notes before a rehearsal.
+- As a viewer, I want to comment on a service or term, and close or
+  reopen a thread, so I can raise a question and say when it's settled.
+- As a viewer, I want the pages to show me only what I can use, so I'm
+  not offered buttons that would refuse me.
+
 ## Site owner's goals (the church)
 
 - The church wants an accurate, professionally formatted music list
