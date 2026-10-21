@@ -1,17 +1,14 @@
 from datetime import date
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.test import TestCase
 from django.urls import reverse
 
+from accounts.testing import make_user
 from library.models import Score
 from ordo.models import LiturgicalOccasion
 
 from .forms import ServiceForm, TermForm, TermMarkerForm
 from .models import RolePiece, Service, ServiceRole, Term, TermMarker
-
-User = get_user_model()
 
 
 class ServiceStatusTests(TestCase):
@@ -81,8 +78,7 @@ class ServiceStatusTests(TestCase):
         self.assertEqual(self.service.status_label, "Complete")
 
     def test_badges_show_label_and_keep_raw_value_as_class(self):
-        user = User.objects.create_superuser(username="admin", password="testpass123")
-        self.client.force_login(user)
+        self.client.force_login(make_user("conductor"))
         for url in (self.service.get_absolute_url(), self.term.get_absolute_url()):
             with self.subTest(url=url):
                 response = self.client.get(url)
@@ -118,11 +114,8 @@ class ServiceEffectiveCalendarUseTests(TestCase):
 
 class RolePieceWorkflowTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            username="conductor", password="testpass123"
-        )
-        self.user.groups.add(Group.objects.get_or_create(name="Conductor")[0])
-        self.client.login(username="conductor", password="testpass123")
+        self.user = make_user("conductor")
+        self.client.force_login(self.user)
         self.term = Term.objects.create(
             name="Test Term",
             start_date=date(2026, 1, 1),
@@ -221,8 +214,7 @@ class RolePieceWorkflowTests(TestCase):
 
     def test_add_piece_page_is_for_conductors_only(self):
         role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
-        librarian = User.objects.create_user(username="librarian", password="testpass123")
-        self.client.force_login(librarian)
+        self.client.force_login(make_user("librarian"))
 
         response = self.client.get(f"/roles/{role.pk}/pieces/add/")
 
@@ -313,10 +305,8 @@ class ServiceSuggestedScoresTests(TestCase):
 
 class ServiceDetailProposePieceRankingTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            username="conductor", password="testpass123"
-        )
-        self.client.login(username="conductor", password="testpass123")
+        self.user = make_user("conductor")
+        self.client.force_login(self.user)
         self.term = Term.objects.create(
             name="Test Term",
             start_date=date(2026, 1, 1),
@@ -379,7 +369,7 @@ class TermPageMixin:
 
         from django.utils import timezone
 
-        self.user = User.objects.create_superuser(username="admin", password="testpass123")
+        self.user = make_user("conductor")
         self.client.force_login(self.user)
         self.today = timezone.localdate()
         self.days = lambda n: self.today + timedelta(days=n)
@@ -567,9 +557,7 @@ class RolePieceHistoryStateTests(TestCase):
 
 class ServiceNeighbourLinkTests(TestCase):
     def setUp(self):
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="testpass123")
-        )
+        self.client.force_login(make_user("conductor"))
         term = Term.objects.create(
             name="Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
             calendar_use="current",
@@ -600,9 +588,7 @@ class ServiceNeighbourLinkTests(TestCase):
 
 class ServiceDetailListTests(TestCase):
     def test_facts_are_a_description_list_including_hymns_and_psalm(self):
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="testpass123")
-        )
+        self.client.force_login(make_user("conductor"))
         term = Term.objects.create(
             name="Test Term",
             start_date=date(2026, 1, 1),
@@ -626,7 +612,7 @@ class DeletionSummaryTests(TestCase):
     def setUp(self):
         from comments.models import Comment
 
-        self.user = User.objects.create_superuser(username="admin", password="testpass123")
+        self.user = make_user("conductor")
         self.term = Term.objects.create(
             name="Test Term",
             start_date=date(2026, 1, 1),
@@ -674,9 +660,7 @@ class SlotWordingTests(TestCase):
     """A ServiceRole is called a slot in the UI; the model keeps its name."""
 
     def test_service_page_says_slot_not_role(self):
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="testpass123")
-        )
+        self.client.force_login(make_user("conductor"))
         term = Term.objects.create(
             name="Test Term",
             start_date=date(2026, 1, 1),
@@ -700,9 +684,7 @@ class NoticeWordingTests(TestCase):
     """A TermMarker is called a notice in the UI; the model keeps its name."""
 
     def setUp(self):
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="testpass123")
-        )
+        self.client.force_login(make_user("conductor"))
         self.term = Term.objects.create(
             name="Test Term",
             start_date=date(2026, 1, 1),
@@ -755,9 +737,7 @@ class PlanningFormLabelTests(TestCase):
 
 class ServiceFormLayoutTests(TestCase):
     def test_fields_are_grouped_in_fieldsets(self):
-        self.client.force_login(
-            User.objects.create_superuser(username="admin", password="testpass123")
-        )
+        self.client.force_login(make_user("conductor"))
         term = Term.objects.create(
             name="Test Term",
             start_date=date(2026, 1, 1),
@@ -800,10 +780,8 @@ class DateInputValueTests(TestCase):
 
 class TermDetailViewTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            username="conductor", password="testpass123"
-        )
-        self.client.login(username="conductor", password="testpass123")
+        self.user = make_user("conductor")
+        self.client.force_login(self.user)
         self.term = Term.objects.create(
             name="Test Term",
             start_date=date(2026, 1, 1),
@@ -841,10 +819,8 @@ class TermDetailViewTests(TestCase):
 
 class MusicListTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            username="conductor", password="testpass123"
-        )
-        self.client.login(username="conductor", password="testpass123")
+        self.user = make_user("viewer")
+        self.client.force_login(self.user)
         self.term = Term.objects.create(
             name="Test Term",
             start_date=date(2026, 1, 1),
@@ -949,7 +925,6 @@ class ServiceFormOccasionChoicesTests(TestCase):
         self.assertIn(david.choice_label, self.labels(ServiceForm(instance=service), "occasion"))
 
     def test_the_page_tells_the_suggestions_which_calendar(self):
-        user = User.objects.create_superuser(username="admin", password="testpass123")
-        self.client.force_login(user)
+        self.client.force_login(make_user("conductor"))
         response = self.client.get(f"/terms/{self.term.pk}/services/add/")
         self.assertContains(response, 'data-national-calendar="england"')
