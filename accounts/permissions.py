@@ -46,3 +46,8 @@ def can_comment(user):
 def can_manage_settings(user):
     """The church's name, crest, colours and calendar."""
     return _has_role(user, "conductor")
+
+
+def can_delete_comments(user):
+    """Deleting a closed thread. Nobody can delete an open one."""
+    return _has_role(user, "conductor", "librarian")

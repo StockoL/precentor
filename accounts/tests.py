@@ -1,7 +1,13 @@
 from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
-from .permissions import can_comment, can_edit_library, can_manage_settings, can_plan
+from .permissions import (
+    can_comment,
+    can_delete_comments,
+    can_edit_library,
+    can_manage_settings,
+    can_plan,
+)
 from .testing import make_user
 
 
@@ -72,3 +78,11 @@ class CanManageSettingsTests(TestCase):
         self.assertFalse(can_manage_settings(make_user("librarian")))
         self.assertFalse(can_manage_settings(make_user("viewer")))
         self.assertFalse(can_manage_settings(AnonymousUser()))
+
+
+class CanDeleteCommentsTests(TestCase):
+    def test_conductors_and_librarians_delete_closed_threads(self):
+        self.assertTrue(can_delete_comments(make_user("conductor")))
+        self.assertTrue(can_delete_comments(make_user("librarian")))
+        self.assertFalse(can_delete_comments(make_user("viewer")))
+        self.assertFalse(can_delete_comments(AnonymousUser()))
