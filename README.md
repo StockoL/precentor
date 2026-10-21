@@ -62,14 +62,17 @@ department, not a multi-church platform. (A benefice with several
 choirs under one director is an interesting edge case, but it's out of
 scope for this project.)
 
-There are two user roles, reflecting how the work is actually divided:
+There are three user roles, reflecting how the work is actually divided:
 
-| Role                        | Owns                                                                         | Can see                                               |
-| --------------------------- | ---------------------------------------------------------------------------- | ----------------------------------------------------- |
-| **Conductor**               | Repertoire planning: proposing, confirming, unconfirming, marking slots N/A | Everything                                            |
-| **Librarian / Music Admin** | Physical library data: copies owned, filing location                         | Repertoire (read-only), physical library (read/write) |
+| Role                        | Can change                                                                                           | Can see    |
+| --------------------------- | ---------------------------------------------------------------------------------------------------- | ---------- |
+| **Conductor**               | Planning (terms, services, slots, proposing, confirming, N/A), slot templates, the library, Settings | Everything |
+| **Librarian / Music Admin** | The library: scores, copies owned, filing location                                                   | Everything |
+| **Viewer**                  | Nothing, apart from taking part in comments                                                          | Everything |
 
-Both roles take part in shared comment threads (see §6).
+Everyone takes part in the comment threads (see §6). A site superuser
+has no role inside the app; they look after the site from Django's
+admin pages.
 
 ## 3. Core Domain Concepts
 
@@ -295,12 +298,23 @@ state:
 
 ## 5. Roles and Permissions, Revisited
 
-The conductor and librarian roles don't only differ in what they can
-see; they mirror how the work is divided: **the conductor decides, the
-librarian fulfils.** The librarian owns the physical library (which the
-conductor generally doesn't touch), while repertoire decisions
-(propose, confirm, unconfirm, N/A) stay with the conductor alone. The
-librarian can see all of it but change none of it.
+The roles mirror how the work is divided: **the conductor decides, the
+librarian fulfils.** The librarian owns the physical library, while
+repertoire decisions (propose, confirm, unconfirm, N/A) stay with the
+conductor alone. The librarian can see all of the planning but change
+none of it. A viewer, such as a singer or a clergy colleague, can see
+everything and join the discussion in the comments, but changes
+nothing.
+
+Every rule lives in one place, `accounts/permissions.py`: one small
+function per question ("may this person plan?", "may they edit the
+library?"). Views ask through a decorator or a mixin, and templates
+through a `can` variable, so a button and the page behind it always
+agree. Someone signed in who tries something their role doesn't allow
+gets a "403 Forbidden" response, rather than being sent back to the
+login page, where logging in again would change nothing. A test holds
+the whole table of roles against rules, so the code and this section
+can't quietly drift apart.
 
 ## 6. Comment Threads
 
@@ -310,7 +324,9 @@ things without leaving the app:
 - **Flat structure:** one layer of comments, with replies underneath and
   no nested threading.
 - **Authored:** each comment shows its author's name.
-- **Open or closed,** and either person can close a thread.
+- **Open or closed,** and anyone can close or reopen a thread. Only a
+  conductor or librarian can delete one, and only once it's closed, so
+  a viewer can't erase a discussion other people took part in.
 - **Three colour states:** open, open with replies, and closed.
 - **Targets:** each service and each term has a comment thread ("is
   this service's shape right?" against "how's this term looking
@@ -382,8 +398,9 @@ This remains a **"should have"**, not core to the MVP.
   remit, but modelling that would mean permission checks keyed to
   individual slot names instead of a fixed Conductor and Librarian
   split, a much bigger structural change than the MVP calls for. The
-  current two roles (Conductor: full access; Librarian: full access to
-  the library, read-only on planning) cover the common case.
+  three roles (Conductor: full access; Librarian: the library, with
+  planning read-only; Viewer: read-only, apart from comments) cover the
+  common case.
 - Ordo as a liturgical reference tool. Ordo's job is to name, date and
   colour occasions, for ranking repertoire and labelling services. It
   doesn't model readings, psalms, propers or rubrical detail (e.g.

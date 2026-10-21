@@ -9,7 +9,7 @@ the reasoning behind each domain concept.
 
 | App        | Owns                                                                      | Rationale                                                                                    |
 | ---------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `accounts` | User profile and role (conductor or librarian), `ConductorRequiredMixin`  | Keeps auth and permissions apart from domain logic. The mixin lives here so any app can gate a view by role without depending on `planning` |
+| `accounts` | Roles and who may do what: `permissions.py`, `role_required`, `RoleRequiredMixin`, the `can` context processor | Keeps auth and permissions apart from domain logic, so any app can guard a view by role without depending on `planning` |
 | `library`  | `Score`, with its copies and filing fields                                | The reusable "what do we own" side, independent of any term                                  |
 | `ordo`     | `LiturgicalOccasion` (seasons, calendar use, moveable feast calculation)  | A self-contained calendar engine that could be reused elsewhere                              |
 | `planning` | `Term`, `Service`, `TermMarker`, `ServiceRole`, `RolePiece`               | The core planning workflow: the spine of the MVP                                             |
@@ -19,10 +19,9 @@ the reasoning behind each domain concept.
 Dependencies run one way: `planning` imports from `accounts`,
 `library`, `ordo` and `core`, never the reverse. That avoids circular
 imports and keeps the spine app easy to reason about and test on its
-own. `core` also imports `ConductorRequiredMixin` from `accounts`. Its
-settings page needed the same conductor-only gate as `planning`, which
-is why I moved the mixin out of `planning` and into `accounts` instead
-of duplicating it. `library` and `planning` read the national
+own. `core`, `library` and `comments` also import their permission
+checks from `accounts`, so every app asks the same module who may do
+what. `library` and `planning` read the national
 calendar from `core`'s settings for their occasion menus; `ordo` reads
 nothing from `core` (the suggestion endpoint is told the calendar by
 the page), so `core` can import `ordo`'s choices without a cycle.
@@ -672,11 +671,16 @@ app shares.
   many-to-many, which would have meant re-testing everything that
   reads `service.occasion` as a single value. The public music list
   shows a second occasion as a smaller label under the main one.
-- `ConductorRequiredMixin` lives in `accounts`, not `planning`. It
-  checks group membership, nothing to do with terms or services, and
-  `core`'s settings page needed the same gate. Moving it once avoided
-  duplicating the check or making `core` depend on `planning` for
-  something that never belonged there.
+- Permissions live in `accounts/permissions.py`, not in each app: one
+  function per question (`can_plan`, `can_edit_library`, `can_comment`,
+  `can_manage_settings`, `can_delete_comments`), each taking a user and
+  returning True or False. Function views use `@role_required(check)`
+  and class-based views `RoleRequiredMixin` with `permission = check`;
+  templates read the same answers through the `can` context processor.
+  A signed-in person without the right gets a 403, and a superuser has
+  no role inside the app. For now a role is a Django Group (a Viewer is
+  in neither group); the custom user model replaces that with a field,
+  and only the private `_role` function changes.
 - `SiteConfig.layout_style` only changes the **public** music list.
   Draft mode always shows the plain single-column list, since draft
   is for a conductor to scan what's still TBC, not to preview the
