@@ -1,15 +1,12 @@
 from datetime import date
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.test import TestCase
 
+from accounts.testing import make_user
 from ordo.models import LiturgicalOccasion
 
 from .forms import ServiceForm
 from .models import Service, Term
-
-User = get_user_model()
 
 
 class ServiceFormCalendarTests(TestCase):
@@ -30,9 +27,7 @@ class ServiceFormCalendarTests(TestCase):
         self.assertEqual(choices[0], ("", "As the term: Extraordinary Form (1962)"))
 
     def test_calendar_comes_first_in_the_liturgy_section(self):
-        conductor = User.objects.create_user(username="conductor", password="x")
-        conductor.groups.add(Group.objects.get_or_create(name="Conductor")[0])
-        self.client.force_login(conductor)
+        self.client.force_login(make_user("conductor"))
         html = self.client.get(f"/terms/{self.term.pk}/services/add/").content.decode()
         liturgy = html[html.index("<legend>Liturgy</legend>"):]
         self.assertLess(liturgy.index('id="id_calendar_use"'), liturgy.index('id="id_occasion"'))
