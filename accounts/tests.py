@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.test import RequestFactory, TestCase
 from django.views import View
 
+from .context_processors import Can
 from .decorators import role_required
 from .mixins import RoleRequiredMixin
 from .permissions import (
@@ -115,3 +116,27 @@ class RoleRequiredMixinTests(TestCase):
     def test_someone_with_the_right_gets_the_view(self):
         self.request.user = make_user("conductor")
         self.assertEqual(self.view(self.request).content, b"planned")
+
+
+class CanContextProcessorTests(TestCase):
+    def test_templates_get_the_same_answers_as_the_checks(self):
+        can = Can(make_user("librarian"))
+        self.assertIs(can["edit_library"], True)
+        self.assertIs(can["plan"], False)
+
+    def test_each_check_runs_once_and_only_when_asked(self):
+        user = make_user("conductor")
+        with self.assertNumQueries(0):
+            can = Can(user)
+        with self.assertNumQueries(1):
+            can["plan"]
+            can["plan"]
+
+    def test_an_unknown_check_is_an_error_not_a_quiet_no(self):
+        with self.assertRaises(KeyError):
+            Can(make_user())["fly"]
+
+    def test_every_page_has_it(self):
+        self.client.force_login(make_user("viewer"))
+        response = self.client.get("/library/")
+        self.assertIs(response.context["can"]["edit_library"], False)
