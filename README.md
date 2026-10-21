@@ -10,9 +10,10 @@ _Milestone 3 project, Code Institute_
 > [`docs/overhaul_plan.md`](docs/overhaul_plan.md). So far I've narrowed
 > the calendar to the Catholic one, rebuilt the type and spacing scales,
 > fixed the gaps in dark mode and keyboard access, settled the wording
-> the app uses, built a consistent set of components, and reworked every
-> page. Still to come are performance work, the liturgical calendar
-> data, deployment and the final documentation.
+> the app uses, built a consistent set of components, reworked every
+> page, done the performance work, and loaded the real liturgical
+> calendars (§3.4). Still to come are the CSV import, deployment and the
+> final documentation.
 >
 > The rest of this document keeps its original concept-and-reasoning
 > framing, because that reasoning is what the build followed. Where the
@@ -166,6 +167,36 @@ Form calendar, and a single service can override its term's choice,
 since some choirs sing both. Services carry a liturgical occasion drawn
 from Ordo, which drives both the ranking of suitable scores and the
 seasonal colour used in the interface.
+
+Ordo holds the real calendars, not a sample:
+
+- **Both forms.** The Ordinary Form's Sundays, solemnities, feasts,
+  obligatory memorials and privileged weekdays, and the 1962
+  calendar's days of the first three classes. Optional memorials and
+  fourth-class days are left out: a choir is very unlikely to sing for
+  one.
+- **The church's own country.** On Settings, a conductor chooses the
+  General Roman Calendar, England or Wales. England keeps St George as
+  a solemnity, for example, and moves Corpus Christi to the Sunday;
+  Wales keeps St David. The 1962 calendar has England's and Wales's
+  days too.
+- **Precedence.** When two days fall together, Ordo works out which is
+  kept, by the Church's own tables: a solemnity on a Sunday of Easter
+  moves to the Monday, a memorial in Lent is kept only alongside the
+  weekday, and in 1962 a feast may be commemorated instead. It works
+  this out for any year, from rules, not from a list of dates.
+- **Suggestions.** When a service's date is entered, the service form
+  suggests the day's celebration, and anything also kept that day, for
+  the conductor to choose.
+
+The rules are ported from two open-source projects, romcal (the
+Ordinary Form) and Missalemeum (1962), and checked against them for
+every day from 2020 to 2040; England's and Wales's 1962 days come from
+the Latin Mass Society's Ordo. Where Precentor's answer differs from a
+source, the reason is recorded.
+[`docs/calendar_plan.md`](docs/calendar_plan.md) has the design and
+the checks, and [`docs/acknowledgements.md`](docs/acknowledgements.md)
+how each source was used.
 
 ### 3.5 Rehearsal Lead-Time (dropped)
 
@@ -366,6 +397,15 @@ not oversights, when an assessor reads this document.
 - [`docs/design_system.md`](docs/design_system.md): the visual design
   system, covering CUBE CSS, cascade layers (not `@import`), design
   tokens, self-hosted typography and the liturgical accent.
+- [`docs/calendar_plan.md`](docs/calendar_plan.md): the design of Ordo's
+  real calendars and their order of precedence, what was built, and
+  how it was checked against its sources.
+- [`docs/ordo_plan.md`](docs/ordo_plan.md): the earlier design of the
+  occasion suggestions and the score suitability tags.
+- [`docs/score_import_plan.md`](docs/score_import_plan.md): the design
+  for importing a library from a spreadsheet, not yet built.
+- [`docs/overhaul_plan.md`](docs/overhaul_plan.md): the overhaul before
+  deployment, phase by phase, with a log of what each phase found.
 - [`docs/acknowledgements.md`](docs/acknowledgements.md): every outside
   source I've drawn on (calendar data and rules, liturgical documents,
   design methods, typefaces and packages), what I used from each, and

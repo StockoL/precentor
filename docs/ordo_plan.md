@@ -56,6 +56,12 @@ def occasion_for_date(target_date, calendar_use):
 It returns a list, because more than one occasion can fall on a date
 (see "Multiple matching occasions" below).
 
+*Since built further:* with the real calendars loaded, the lookup now
+works out the whole year with the order of precedence, so it returns
+the day's celebration first and leaves out what's impeded; it also
+takes the church's national calendar. That design is in
+[`calendar_plan.md`](calendar_plan.md).
+
 - This is lighter than, and different from, an idea I'd already
   dropped: modelling seasons as continuous date ranges. The lookup only
   checks the named occasions that have been entered, and never claims

@@ -227,45 +227,57 @@ Paul); the rules now take every key from Missalemeum's constants.
 ### England and Wales in 1962, as built
 
 `ordo/data/lms/england_1962.json` and `wales_1962.json` hold the days
-the Latin Mass Society's Ordo for 2025-26 gives "in all dioceses of
-England" or "in both dioceses of Wales": 8 rows for England and 12 for
-Wales. Some override a universal day by its key (St George, St Edward
-the Confessor, and St Thomas of Canterbury, which is only a
-commemoration universally); the rest are days of their own (the Holy
-Martyrs of England and Wales, St Alban, SS John Fisher and Thomas
-More, St David, and three Welsh feasts). Feasts of a single diocese
-are left out.
+the Latin Mass Society's Ordo gives "in all dioceses of England" or
+"of Wales", read from three years of it (2023-24, 2024-25 and 2025-26):
+7 rows for England and 13 for Wales. Some override a universal day by
+its key: St George, St Edward the Confessor, St Thomas of Canterbury
+(only a commemoration universally), and St Augustine of Canterbury,
+who is third class on 28 May universally but second class on 26 May in
+England and Wales. The rest are days of their own: the Holy Martyrs of
+England and Wales, St Alban, SS John Fisher and Thomas More, and in
+Wales St David, St Brigid, St Cadoc and three more. Feasts of a single
+diocese are left out. Each row notes the years and entries it comes
+from.
 
-Where a national third-class saint shares a date with a universal one,
-Missalemeum's rule for local saints applies: the national saint is
-celebrated and the universal one commemorated, as the Ordo has it for
-the Holy Martyrs and St Monica (4 May) and St Alban and St Paulinus
-(22 June). When St David's day fell on the Second Sunday of Lent in
-2026, the rule for two first-class days moved it to Monday 2 March,
-with a commemoration of the Lent weekday, again as in the Ordo.
+The rules already ported handle them. Where a national third-class
+saint shares a date with a universal one, Missalemeum's rule for local
+saints applies: the national saint is celebrated and the universal one
+commemorated, as the Ordo has it for the Holy Martyrs and St Monica (4
+May), St Alban and St Paulinus (22 June), and St Brigid and St
+Ignatius (1 February). A national day that meets a first-class day
+moves or gives way by the same rules as any other: St George was moved
+out of the Easter Octave to 28 April in 2025, St David off a Sunday of
+Lent to 2 March in 2026, and St Augustine wasn't kept in 2024, when 26
+May was Trinity Sunday. All match the Ordo.
 
-**Checked against the Ordo.** For every day of the 2025-26 year,
-Precentor's 1962 calendar matches the Ordo's class in England on all
-363 days, and in Wales on all but one: Rogation Monday (12 May), when
-the Welsh dioceses have a votive Mass of the Rogations, which is a
-Mass ordered for the day, not a day of the calendar.
+**Checked against the Ordo.** For every day of each year, by class:
 
-Three things to know:
+| Ordo | England | Wales |
+| --- | --- | --- |
+| 2023-24 | 361 of 364 | 361 of 364 |
+| 2024-25 | 362 of 364 | 362 of 364 |
+| 2025-26 | 361 of 363 | 360 of 363 |
 
-- **St Ubaldus (16 May) and St Didacus (13 November)** are third class
-  in the Ordo, but fourth class (commemorations) in Missalemeum's
-  universal data. The Ordo has them on its main line, not as national
-  days, so the universal calendar may simply be wrong in Missalemeum;
-  but I only have evidence for England and Wales, so I've raised them
-  there and left the universal calendar as Missalemeum has it.
-- **One year's Ordo shows only that year.** A national feast that was
-  impeded in 2025-26 doesn't appear in it at all. St Augustine of
-  Canterbury, for one, isn't in this Ordo, almost certainly because 26
-  May 2026 fell in the Pentecost Octave. An Ordo for another year would
-  show any such feasts.
+Every difference is one of three kinds:
+
+- **St Ubaldus (16 May) and St Didacus (13 November),** in each year.
+  They're third class on the Ordo's main line, but commemorations in
+  Missalemeum's data, and I left them as commemorations (decided 21
+  October 2026): it makes no difference to planning music.
+- **28 May 2024,** which is my checking script's difference, not
+  Precentor's. The Ordo's entry for the dioceses of England and Wales
+  that day runs over several lines before giving "feria", and the
+  script read only the first. Precentor gives the feria, as those
+  dioceses kept it.
+- **Rogation Monday (12 May 2026) in Wales,** when the Welsh dioceses
+  have a votive Mass of the Rogations, which is a Mass ordered for the
+  day, not a day of the calendar.
+
+Also:
 - **The rows are written by hand**, so unlike the romcal and
   Missalemeum data they have no export script; `manage.py
-  load_calendar` loads them with the rest.
+  load_calendar` loads them with the rest, and removes any row that has
+  gone from the files, unless a service or score uses it (section 6).
 
 ## 5. What goes in
 
@@ -325,7 +337,10 @@ also put about 260 occasions into every test database, under tests
 that build small calendars of their own. The command can be run again
 at any time: it matches each occasion by form, calendar and key,
 creates or updates it, and never touches an occasion entered by hand
-(which has no key). The cost is that a deploy has to run it after
+(which has no key). A row that has gone from its data file is removed
+too, unless a service or score uses it: deleting it would quietly
+clear that service's occasion, so it's kept and named in the command's
+output instead. The cost is that a deploy has to run it after
 `migrate`, which Phase 7 of [`overhaul_plan.md`](overhaul_plan.md) now
 says.
 
@@ -349,13 +364,15 @@ says.
 ## 8. Order of work
 
 Each step ends with the tests passing and the changes left for me to
-review and commit.
+review and commit. All eight steps were done on 20 and 21 October
+2026; the log is in [`overhaul_plan.md`](overhaul_plan.md).
 
 1. Model fields, the `national_calendar` setting and the black colour.
 2. Ordinary Form date rules, with unit tests.
 3. Ordinary Form precedence, with unit tests.
-4. romcal export, data files and the data migration for General
-   Roman, England and Wales, with reference tests.
+4. romcal export, data files and the loading (a `load_calendar`
+   command, not a data migration: see section 6) for General Roman,
+   England and Wales, with reference tests.
 5. 1962 date rules and precedence, with unit tests.
 6. Missalemeum export, the England and Wales supplements from the
    Ordo, data and reference tests.

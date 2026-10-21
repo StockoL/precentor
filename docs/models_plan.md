@@ -234,11 +234,11 @@ class LiturgicalOccasion(models.Model):
         ...
 
 
-def occasion_for_date(target_date, calendar_use):
-    """Reverse lookup: which LiturgicalOccasion(s) fall on target_date.
-    Scopes candidates by calendar_use, then evaluates
-    date_for_year() in Python since it isn't a database column. Returns
-    a list, because zero, one or more occasions can share a date."""
+def occasion_for_date(target_date, calendar_use, national_calendar="general_roman"):
+    """Reverse lookup: the occasions kept on target_date, the day's
+    celebration first. Works out the whole year with the order of
+    precedence (ordo/calendar.py, or ordo/calendar_1962.py for 1962).
+    Returns a list, because zero, one or more occasions can be kept."""
     ...
 ```
 
@@ -313,7 +313,8 @@ of Mary) that keeps another memorial on its day.
 calendars from `ordo/data/romcal/`, and the 1962 calendar from
 `ordo/data/missalemeum/` with England's and Wales's 1962 days from
 `ordo/data/lms/`, matching each row by form, calendar and key,
-so it can be run again safely. Occasions a conductor enters
+so it can be run again safely. A row gone from the files is removed,
+unless a service or score uses it, when it's kept and reported. Occasions a conductor enters
 by hand have no key, take no part in precedence and are never touched
 by a load. Precedence level 12 (optional memorial) exists only so a
 national row can make a general memorial optional; the engine leaves
