@@ -20,7 +20,7 @@ from django.views.generic import (
 )
 
 from accounts.decorators import role_required
-from accounts.mixins import ConductorRequiredMixin
+from accounts.mixins import RoleRequiredMixin
 from accounts.permissions import can_plan
 from comments.forms import CommentForm
 from comments.models import Comment
@@ -38,6 +38,13 @@ from .forms import (
     TermMarkerForm,
 )
 from .models import RolePiece, Service, ServiceRole, SlotTemplate, Term, TermMarker
+
+
+class PlanningRequiredMixin(RoleRequiredMixin):
+    """For the pages that change a term, service, notice or template."""
+
+    permission = can_plan
+
 
 # --- Term views ---
 
@@ -166,17 +173,17 @@ class TermDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class TermCreateView(ConductorRequiredMixin, CreateView):
+class TermCreateView(PlanningRequiredMixin, CreateView):
     model = Term
     form_class = TermForm
 
 
-class TermUpdateView(ConductorRequiredMixin, UpdateView):
+class TermUpdateView(PlanningRequiredMixin, UpdateView):
     model = Term
     form_class = TermForm
 
 
-class TermDeleteView(ConductorRequiredMixin, DeletePageMixin, DeleteView):
+class TermDeleteView(PlanningRequiredMixin, DeletePageMixin, DeleteView):
     model = Term
     success_url = reverse_lazy("planning:term_list")
     gone_url = success_url
@@ -186,7 +193,7 @@ class TermDeleteView(ConductorRequiredMixin, DeletePageMixin, DeleteView):
 # --- Service views ---
 
 
-class ServiceCreateView(ConductorRequiredMixin, CreateView):
+class ServiceCreateView(PlanningRequiredMixin, CreateView):
     model = Service
     form_class = ServiceForm
 
@@ -250,7 +257,7 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class ServiceUpdateView(ConductorRequiredMixin, UpdateView):
+class ServiceUpdateView(PlanningRequiredMixin, UpdateView):
     model = Service
     form_class = ServiceForm
 
@@ -264,7 +271,7 @@ class ServiceUpdateView(ConductorRequiredMixin, UpdateView):
 # --- Slot templates ---
 
 
-class SlotTemplateListView(ConductorRequiredMixin, ListView):
+class SlotTemplateListView(PlanningRequiredMixin, ListView):
     model = SlotTemplate
     context_object_name = "slot_templates"
 
@@ -293,17 +300,17 @@ class ReturnToServiceMixin:
         return context
 
 
-class SlotTemplateCreateView(ConductorRequiredMixin, ReturnToServiceMixin, CreateView):
+class SlotTemplateCreateView(PlanningRequiredMixin, ReturnToServiceMixin, CreateView):
     model = SlotTemplate
     form_class = SlotTemplateForm
 
 
-class SlotTemplateUpdateView(ConductorRequiredMixin, ReturnToServiceMixin, UpdateView):
+class SlotTemplateUpdateView(PlanningRequiredMixin, ReturnToServiceMixin, UpdateView):
     model = SlotTemplate
     form_class = SlotTemplateForm
 
 
-class SlotTemplateDeleteView(ConductorRequiredMixin, DeletePageMixin, DeleteView):
+class SlotTemplateDeleteView(PlanningRequiredMixin, DeletePageMixin, DeleteView):
     model = SlotTemplate
     success_url = reverse_lazy("planning:slot_template_list")
     gone_url = success_url
@@ -347,7 +354,7 @@ def apply_template(request, service_pk, template_pk):
     return redirect(service.get_absolute_url())
 
 
-class ServiceDeleteView(ConductorRequiredMixin, DeletePageMixin, DeleteView):
+class ServiceDeleteView(PlanningRequiredMixin, DeletePageMixin, DeleteView):
     model = Service
     gone_url = reverse_lazy("planning:term_list")
     gone_message = "That service has already been deleted."
@@ -548,7 +555,7 @@ def term_music_list(request, term_pk):
 # --- TermMarker views ---
 
 
-class TermMarkerCreateView(ConductorRequiredMixin, CreateView):
+class TermMarkerCreateView(PlanningRequiredMixin, CreateView):
     model = TermMarker
     form_class = TermMarkerForm
 
@@ -565,7 +572,7 @@ class TermMarkerCreateView(ConductorRequiredMixin, CreateView):
         return self.object.term.get_absolute_url()
 
 
-class TermMarkerUpdateView(ConductorRequiredMixin, UpdateView):
+class TermMarkerUpdateView(PlanningRequiredMixin, UpdateView):
     model = TermMarker
     form_class = TermMarkerForm
 
@@ -578,7 +585,7 @@ class TermMarkerUpdateView(ConductorRequiredMixin, UpdateView):
         return self.object.term.get_absolute_url()
 
 
-class TermMarkerDeleteView(ConductorRequiredMixin, DeletePageMixin, DeleteView):
+class TermMarkerDeleteView(PlanningRequiredMixin, DeletePageMixin, DeleteView):
     model = TermMarker
     gone_url = reverse_lazy("planning:term_list")
     gone_message = "That notice has already been deleted."
