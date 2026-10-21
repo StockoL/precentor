@@ -7,7 +7,7 @@ from django.views import View
 from .context_processors import Can
 from .decorators import role_required
 from .mixins import RoleRequiredMixin
-from .models import Organisation
+from .models import Organisation, User
 from .permissions import (
     can_comment,
     can_delete_comments,
@@ -159,3 +159,27 @@ class OrganisationAdminTests(TestCase):
         self.assertContains(self.client.get("/admin/accounts/organisation/"), "St Mary&#x27;s")
         self.client.post("/admin/accounts/organisation/add/", {"name": "St Cecilia's"})
         self.assertTrue(Organisation.objects.filter(name="St Cecilia's").exists())
+
+
+class UserAdminTests(TestCase):
+    def setUp(self):
+        self.client.force_login(make_superuser())
+
+    def test_a_superuser_adds_someone_to_an_organisation_with_a_password(self):
+        church = make_organisation("St Mary's")
+        self.client.post("/admin/accounts/user/add/", {
+            "email": "organist@example.com", "name": "Anne Organist",
+            "organisation": church.pk, "role": "conductor", "usable_password": "true",
+            "password1": "a-long-passphrase", "password2": "a-long-passphrase",
+        })
+        user = User.objects.get(email="organist@example.com")
+        self.assertEqual((user.organisation, user.role, user.name), (church, "conductor", "Anne Organist"))
+        self.assertTrue(user.check_password("a-long-passphrase"))
+
+    def test_the_list_and_edit_pages_show_email_organisation_and_role(self):
+        user = make_user("librarian", email="librarian@example.com")
+        listing = self.client.get("/admin/accounts/user/")
+        for text in ("librarian@example.com", "Test Church", "Librarian"):
+            with self.subTest(text=text):
+                self.assertContains(listing, text)
+        self.assertContains(self.client.get(f"/admin/accounts/user/{user.pk}/change/"), 'name="role"')
