@@ -479,9 +479,11 @@ menu is the topmost thing over a card.
 
 ## Chip inputs
 
-The score form's three "suitable for" fields are multi-selects,
-which are awkward to use: a long list and Ctrl-click to choose
-several. `tag-input.js` turns each into chips over a search box:
+The score form's three "suitable for" fields, and the service form's
+other occasions, are multi-selects, which are awkward to use: a long
+list (about 600 occasions once the real calendars are loaded) and
+Ctrl-click to choose several. `tag-input.js` turns each into chips over
+a search box:
 type to see the options not yet chosen, Enter or a click to add one,
 click a chip (or Backspace in an empty box) to remove one.
 
@@ -489,6 +491,11 @@ click a chip (or Backspace in an empty box) to remove one.
   deselects its option, so the form submits exactly as it would
   without JavaScript. The select is only hidden once the widget is
   fully built; if anything fails first, the plain select still works.
+- **Changes from elsewhere.** The service form's suggestions can tick
+  an occasion into "Other occasions". Both widgets fire the select's
+  `change` event when they change it, and both listen for it, so a
+  chip appears when the suggestion's box is ticked and the box is
+  unticked when the chip is removed.
 - **Accessibility:** the search box is an ARIA combobox with arrow
   keys, each chip is a button labelled "Remove Advent", and a live
   region announces every change. The field's `<label>` moves to the
@@ -507,6 +514,21 @@ Building this showed up a cascade problem worth recording. The
 `form.css`, which gives every select `display: block`, quietly undid
 it. A `[hidden] { display: none; }` rule in the utilities layer, the
 last layer, now makes `hidden` mean hidden everywhere.
+
+## Occasion suggestions
+
+When a service's date is entered, `occasion-suggest.js` asks the server
+which occasions are kept that day, in the church's national calendar,
+and lists them under the date: the day's celebration first, then
+anything also kept (a memorial in Lent, a commemoration in 1962),
+marked "(also kept)". Each has a Set as occasion button and an "Add to
+other occasions" box. Nothing is chosen without a click, and without
+JavaScript the occasion menus work as before.
+
+The menus themselves offer only the church's own calendar, in both
+forms, with 1962 days marked "(1962)" so that, for example, the
+Ordinary Form's "Saints Peter and Paul, Apostles" and 1962's "Sts.
+Peter & Paul" can be told apart.
 
 ## Proposing a piece
 
@@ -540,7 +562,8 @@ the user menu and toasts. Everything else comes from the page that uses
 it, through a `{% block extra_js %}`: the service page loads
 `service-detail.js` (which brings in `score-picker.js`) and
 `comments.js`, the term page `comments.js`, the service form
-`occasion-suggest.js`, the score form `tag-input.js`, Settings
+`occasion-suggest.js` and `tag-input.js`, the score form
+`tag-input.js`, Settings
 `crest-crop.js`, and the music list `print-button.js`. They're all
 `type="module"` scripts, which never block the page from rendering.
 

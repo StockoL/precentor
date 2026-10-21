@@ -22,7 +22,10 @@ imports and keeps the spine app easy to reason about and test on its
 own. `core` also imports `ConductorRequiredMixin` from `accounts`. Its
 settings page needed the same conductor-only gate as `planning`, which
 is why I moved the mixin out of `planning` and into `accounts` instead
-of duplicating it.
+of duplicating it. `library` and `planning` read the national
+calendar from `core`'s settings for their occasion menus; `ordo` reads
+nothing from `core` (the suggestion endpoint is told the calendar by
+the page), so `core` can import `ordo`'s choices without a cycle.
 
 ## Labels and interface words
 
@@ -325,6 +328,17 @@ year's layout of the season's blocks; and Christ the King uses
 `christ_the_king_1962`, the last Sunday of October.
 `occasion_for_date()` chooses the Ordinary Form or the 1962 engine by
 `calendar_use`.
+
+**Choosing occasions in forms:** `LiturgicalOccasion.objects.listable()`
+gives the occasions a conductor can pick for one national calendar:
+the general calendar in both forms with the national rows in place of
+the ones they override, plus occasions entered by hand, but no other
+country's days, no fourth-class days and no optional memorials. The
+service form's occasion menus and the score form's "suitable for"
+occasions use it, with the church's calendar from Settings, and keep
+anything already chosen even if it's no longer listable.
+`choice_label` adds "(1962)" to the 1962 days' names in those menus
+(`ordo/fields.py`).
 
 The design, its sources and the order of work are in
 [`calendar_plan.md`](calendar_plan.md).

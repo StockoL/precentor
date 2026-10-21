@@ -360,7 +360,11 @@ review and commit.
 6. Missalemeum export, the England and Wales supplements from the
    Ordo, data and reference tests.
 7. The service form's suggestions in precedence order, and the choice
-   on Settings.
+   on Settings. Built: the suggestions use the Settings calendar and
+   list the day's celebration first; the occasion menus, here and on
+   the score form, offer only the church's calendar (see
+   `models_plan.md`); and the service form's other occasions became a
+   chip input, since the real calendars put about 600 occasions in it.
 8. README and `models_plan.md`.
 
 Adding the United States later is then one more run of the export
