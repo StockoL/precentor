@@ -1,9 +1,9 @@
 import os
 import unittest
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+
+from accounts.testing import make_user
 
 # Playwright's sync API runs its own event loop on a background thread,
 # which makes Django misdetect the live server's request-handling thread
@@ -19,8 +19,6 @@ try:
     PLAYWRIGHT_AVAILABLE = True
 except ImportError:
     PLAYWRIGHT_AVAILABLE = False
-
-User = get_user_model()
 
 
 @unittest.skipUnless(
@@ -59,11 +57,11 @@ class PlaywrightTestCase(StaticLiveServerTestCase):
         self.page.close()
         super().tearDown()
 
-    def login_as_conductor(self, username="browser_conductor", password="testpass123"):
-        user = User.objects.create_user(username=username, password=password)
-        user.groups.add(Group.objects.get_or_create(name="Conductor")[0])
+    def login_as_conductor(self, password="testpass123"):
+        user = make_user("conductor", password=password)
         self.page.goto("/accounts/login/")
-        self.page.fill("#id_username", username)
+        # Signs in through the real form, by email, as people will.
+        self.page.fill("#id_username", user.email)
         self.page.fill("#id_password", password)
         self.page.click("button[type=submit]")
         self.page.wait_for_load_state("networkidle")
