@@ -1,21 +1,17 @@
 from datetime import date
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.test import TestCase
 
+from accounts.testing import make_user
 from comments.models import Comment
 from library.models import Score
 
 from .models import RolePiece, Service, ServiceRole, Term
 
-User = get_user_model()
-
 
 class RemoveSlotTests(TestCase):
     def setUp(self):
-        self.conductor = User.objects.create_user(username="conductor", password="x")
-        self.conductor.groups.add(Group.objects.get_or_create(name="Conductor")[0])
+        self.conductor = make_user("conductor")
         self.client.force_login(self.conductor)
         term = Term.objects.create(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
@@ -60,7 +56,7 @@ class RemoveSlotTests(TestCase):
         self.assertNotContains(response, 'data-confirm-title="Remove Introit?"')
 
     def test_only_conductors_can_remove(self):
-        self.client.force_login(User.objects.create_user(username="singer", password="x"))
+        self.client.force_login(make_user("viewer"))
         self.client.post(f"/roles/{self.introit.pk}/remove/")
         self.assertEqual(self.names(), ["Introit", "Offertory motet"])
 
