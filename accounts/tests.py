@@ -31,58 +31,34 @@ class MakeUserTests(TestCase):
             make_user("organist")
 
 
-class CanPlanTests(TestCase):
-    def test_only_a_conductor_plans(self):
-        self.assertTrue(can_plan(make_user("conductor")))
-        self.assertFalse(can_plan(make_user("librarian")))
-        self.assertFalse(can_plan(make_user("viewer")))
+class PermissionMatrixTests(TestCase):
+    """The roles table in the README, as code. A change to who may do what
+    has to change this table too, so the two can't drift apart."""
 
-    def test_nobody_signed_out_or_deactivated_plans(self):
-        self.assertFalse(can_plan(AnonymousUser()))
-        conductor = make_user("conductor")
-        conductor.is_active = False
-        self.assertFalse(can_plan(conductor))
+    MATRIX = {
+        #                       conductor  librarian  viewer
+        can_plan:               (True,     False,     False),
+        can_edit_library:       (True,     True,      False),
+        can_comment:            (True,     True,      True),
+        can_manage_settings:    (True,     False,     False),
+        can_delete_comments:    (True,     True,      False),
+    }
+    ROLES = ("conductor", "librarian", "viewer")
 
-    def test_being_a_superuser_gives_no_role(self):
-        admin = make_user("viewer")
-        admin.is_superuser = True
-        admin.save()
-        self.assertFalse(can_plan(admin))
+    def test_each_role_against_each_check(self):
+        users = {role: make_user(role) for role in self.ROLES}
+        for check, allowed in self.MATRIX.items():
+            for role, expected in zip(self.ROLES, allowed):
+                with self.subTest(check=check.__name__, role=role):
+                    self.assertIs(check(users[role]), expected)
 
-
-class CanEditLibraryTests(TestCase):
-    def test_conductors_and_librarians_edit_the_library(self):
-        self.assertTrue(can_edit_library(make_user("conductor")))
-        self.assertTrue(can_edit_library(make_user("librarian")))
-        self.assertFalse(can_edit_library(make_user("viewer")))
-        self.assertFalse(can_edit_library(AnonymousUser()))
-
-
-class CanCommentTests(TestCase):
-    def test_every_role_comments(self):
-        for role in ("conductor", "librarian", "viewer"):
-            with self.subTest(role=role):
-                self.assertTrue(can_comment(make_user(role)))
-
-    def test_signed_out_and_superusers_do_not(self):
-        self.assertFalse(can_comment(AnonymousUser()))
-        admin = make_user("viewer")
-        admin.is_superuser = True
-        admin.save()
-        self.assertFalse(can_comment(admin))
-
-
-class CanManageSettingsTests(TestCase):
-    def test_only_a_conductor_manages_settings(self):
-        self.assertTrue(can_manage_settings(make_user("conductor")))
-        self.assertFalse(can_manage_settings(make_user("librarian")))
-        self.assertFalse(can_manage_settings(make_user("viewer")))
-        self.assertFalse(can_manage_settings(AnonymousUser()))
-
-
-class CanDeleteCommentsTests(TestCase):
-    def test_conductors_and_librarians_delete_closed_threads(self):
-        self.assertTrue(can_delete_comments(make_user("conductor")))
-        self.assertTrue(can_delete_comments(make_user("librarian")))
-        self.assertFalse(can_delete_comments(make_user("viewer")))
-        self.assertFalse(can_delete_comments(AnonymousUser()))
+    def test_nobody_without_a_role_passes_any_check(self):
+        deactivated = make_user("conductor")
+        deactivated.is_active = False
+        superuser = make_user("viewer")
+        superuser.is_superuser = True
+        superuser.save()
+        for name, user in (("signed out", AnonymousUser()), ("deactivated", deactivated), ("superuser", superuser)):
+            for check in self.MATRIX:
+                with self.subTest(user=name, check=check.__name__):
+                    self.assertIs(check(user), False)
