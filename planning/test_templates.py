@@ -1,21 +1,18 @@
 from datetime import date
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.test import TestCase
+
+from accounts.testing import make_user
 
 from .forms import SlotTemplateForm
 from .models import Service, ServiceRole, SlotTemplate, Term
-
-User = get_user_model()
 
 MASS = ["Introit", "Kyrie", "Gloria", "Gradual", "Alleluia or Tract", "Credo", "Offertory", "Sanctus", "Agnus Dei", "Communion"]
 
 
 class TemplateTestMixin:
     def setUp(self):
-        self.conductor = User.objects.create_user(username="conductor", password="testpass123")
-        self.conductor.groups.add(Group.objects.get_or_create(name="Conductor")[0])
+        self.conductor = make_user("conductor")
         self.client.force_login(self.conductor)
         term = Term.objects.create(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
@@ -62,7 +59,7 @@ class ApplyTemplateTests(TemplateTestMixin, TestCase):
     def test_only_a_conductor_can_apply_one_and_only_by_post(self):
         url = f"/services/{self.service.pk}/templates/{self.mass.pk}/apply/"
         self.assertEqual(self.client.get(url).status_code, 405)
-        self.client.force_login(User.objects.create_user(username="librarian", password="x"))
+        self.client.force_login(make_user("librarian"))
         self.client.post(url)
         self.assertEqual(self.slot_names(), [])
 
@@ -109,7 +106,7 @@ class TemplatePageTests(TemplateTestMixin, TestCase):
         self.assertFalse(SlotTemplate.objects.filter(name="Mass").exists())
 
     def test_template_pages_are_for_conductors(self):
-        self.client.force_login(User.objects.create_user(username="librarian", password="x"))
+        self.client.force_login(make_user("librarian"))
         for url in ("/templates/", "/templates/add/", f"/templates/{self.mass.pk}/edit/"):
             with self.subTest(url=url):
                 self.assertEqual(self.client.get(url).status_code, 403)
