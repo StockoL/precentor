@@ -1,23 +1,19 @@
 from datetime import date, datetime
 from datetime import timezone as dt_timezone
 
-from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
+from accounts.testing import make_user
 from planning.models import Term
 
 from .models import Comment
 
-User = get_user_model()
-
 
 class CommentTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            username="conductor", password="testpass123"
-        )
+        self.user = make_user()
         self.term = Term.objects.create(
             name="Test Term",
             start_date=date(2026, 1, 1),
@@ -70,7 +66,7 @@ class InboxPageTests(TestCase):
     def setUp(self):
         from planning.models import Service
 
-        self.user = User.objects.create_user(username="conductor", password="testpass123")
+        self.user = make_user()
         self.client.force_login(self.user)
         self.term = Term.objects.create(
             name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
@@ -129,16 +125,14 @@ class InboxPageTests(TestCase):
 
 class AddCommentViewTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            username="conductor", password="testpass123"
-        )
+        self.user = make_user()
         self.term = Term.objects.create(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
             calendar_use="current",
         )
-        self.client.login(username="conductor", password="testpass123")
+        self.client.force_login(self.user)
         self.content_type_id = ContentType.objects.get_for_model(Term).id
 
     def test_add_comment_via_view(self):
