@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Remove {{ role.role_name }}? — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Remove {{ role.role_name }}?</h1>
+    <p>From {{ service }}.</p>
+    {% include "planning/_deletion_summary.html" with summary=role.deletion_summary %}
+    <div class="cluster">
+        <form method="post" action="{% url 'planning:remove_slot' role.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="confirm" value="1">
+            <button class="btn-danger" type="submit">Remove</button>
+        </form>
+        <a class="btn-ghost" href="{{ service.get_absolute_url }}">Cancel</a>
+    </div>
+</div>
+{% endblock %}

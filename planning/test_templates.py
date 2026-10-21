@@ -134,3 +134,57 @@ class SlotTemplateFormTests(TestCase):
     def test_names_are_unique(self):
         form = SlotTemplateForm(data={"name": "Mass", "slot_names": "Introit"})
         self.assertIn("name", form.errors)
+
+
+class OneTemplatePerServiceTests(TemplateTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.vespers = SlotTemplate.objects.get(name="Vespers")
+
+    def apply(self, template, **data):
+        return self.client.post(f"/services/{self.service.pk}/templates/{template.pk}/apply/", data, follow=True)
+
+    def test_the_first_template_needs_no_asking_and_is_remembered(self):
+        self.apply(self.mass)
+        self.service.refresh_from_db()
+        self.assertEqual(self.service.slot_template, self.mass)
+        self.assertEqual(self.slot_names(), MASS)
+
+    def test_another_template_asks_before_replacing(self):
+        self.apply(self.mass)
+        response = self.apply(self.vespers)
+        self.assertTemplateUsed(response, "planning/apply_template_confirm.html")
+        self.assertContains(response, "Replace the Mass slots with Vespers?")
+        self.assertEqual(self.slot_names(), MASS)
+
+    def test_replacing_keeps_slots_with_pieces(self):
+        from library.models import Score
+        from planning.models import RolePiece
+
+        self.apply(self.mass)
+        introit = self.service.roles.get(role_name="Introit")
+        RolePiece.objects.create(service_role=introit, score=Score.objects.create(title="Rorate", composer_surname="Plainchant"))
+        response = self.apply(self.vespers, replace="1")
+        self.assertEqual(self.slot_names(), ["Introit", "Psalms", "Hymn", "Magnificat", "Marian antiphon"])
+        self.assertContains(response, "Now using Vespers: 4 slots added. Kept Introit, which has pieces proposed.")
+        self.service.refresh_from_db()
+        self.assertEqual(self.service.slot_template, self.vespers)
+
+    def test_slots_added_by_hand_also_ask_first(self):
+        ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
+        response = self.apply(self.mass)
+        self.assertContains(response, "Replace the current slots with Mass?")
+
+    def test_the_same_template_again_just_fills_in(self):
+        self.apply(self.mass)
+        self.service.roles.get(role_name="Credo").delete()
+        response = self.apply(self.mass)
+        self.assertContains(response, "Added 1 slot from Mass.")
+
+    def test_buttons_that_would_replace_carry_the_dialogs_wording(self):
+        self.apply(self.mass)
+        response = self.client.get(self.service.get_absolute_url())
+        self.assertContains(response, 'data-confirm-title="Replace the Mass slots with Vespers?"')
+        self.assertContains(response, 'data-confirm-label="Use Vespers"')
+        self.assertNotContains(response, 'data-confirm-label="Use Mass"')
+        self.assertContains(response, 'aria-current="true">Mass</button>')

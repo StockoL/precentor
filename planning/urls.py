@@ -67,6 +67,9 @@ urlpatterns = [
         name="slot_template_delete",
     ),
     path("roles/<int:role_pk>/pieces/add/", views.add_piece, name="add_piece"),
+    path("roles/<int:role_pk>/move/", views.move_slot, name="move_slot"),
+    path("roles/<int:role_pk>/remove/", views.remove_slot, name="remove_slot"),
+    path("services/<int:service_pk>/slots/order/", views.reorder_slots, name="reorder_slots"),
     path(
         "pieces/<int:piece_pk>/toggle-confirm/",
         views.toggle_confirm,

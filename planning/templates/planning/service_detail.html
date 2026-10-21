@@ -57,13 +57,12 @@
 
     <div class="flow">
         <h2>Slots</h2>
-        <div id="roles-list" class="flow">
-            {% for role in roles %}
-            {% include "planning/_role_block.html" %}
-            {% empty %}
-            <p id="roles-list-empty" class="empty-state">No slots yet. Add a template's slots below, or one at a time for each place in the service that needs music, such as the Mass setting or an Offertory motet.</p>
-            {% endfor %}
-        </div>
+        {% include "planning/_roles_list.html" %}
+        {# Sent by service-detail.js after a slot is dragged to a new place. #}
+        <form id="slot-order-form" method="post" action="{% url 'planning:reorder_slots' service.pk %}" hidden>
+            {% csrf_token %}
+            <input type="hidden" name="order">
+        </form>
         {{ score_options|json_script:"score-options" }}
     </div>
 
@@ -72,9 +71,14 @@
         {# Each button adds its template's slots in order, leaving out any this service already has. #}
         <div class="cluster">
             {% for template in slot_templates %}
-            <form method="post" action="{% url 'planning:apply_template' service.pk template.pk %}">
+            <form method="post" action="{% url 'planning:apply_template' service.pk template.pk %}" class="apply-template"
+                {% if template.replaces_slots %}
+                data-confirm-title="{% if service.slot_template %}Replace the {{ service.slot_template.name }} slots with {{ template.name }}?{% else %}Replace the current slots with {{ template.name }}?{% endif %}"
+                data-confirm-message="{% include 'planning/_replace_slots_note.html' %}"
+                data-confirm-label="Use {{ template.name }}"
+                {% endif %}>
                 {% csrf_token %}
-                <button type="submit" title="{{ template.slots|join:', ' }}">{{ template.name }}</button>
+                <button type="submit" title="{{ template.slots|join:', ' }}"{% if template == service.slot_template %} aria-current="true"{% endif %}>{{ template.name }}</button>
             </form>
             {% endfor %}
             <a class="btn-ghost" href="{% url 'planning:slot_template_create' %}?next={{ request.path|urlencode }}">New template</a>

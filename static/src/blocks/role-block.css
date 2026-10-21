@@ -31,4 +31,52 @@
   .role-block[open] summary {
     margin-block-end: var(--spacing-xs);
   }
+
+  /* The template this service's slots came from. */
+  .apply-template button[aria-current] {
+    border-color: var(--colors-action-primary);
+    color: var(--colors-action-primary);
+    font-weight: 700;
+  }
+
+  /* Moving and removing slots: a handle to drag by, Move up and Move
+     down for keyboards, phones and no JavaScript, and Remove at the end
+     of the row. The ends are hidden by position
+     in the list, so they stay right as slots are added or moved without
+     a reload. */
+  .role-block__handle {
+    margin-inline-end: var(--spacing-2xs);
+    color: var(--colors-text-muted);
+    cursor: grab;
+    letter-spacing: -0.2em;
+  }
+
+  .role-block__actions {
+    --gutter: var(--spacing-2xs);
+  }
+
+  .role-block__actions button {
+    font-size: var(--typography-step--2);
+    min-block-size: auto;
+    padding-block: var(--spacing-3xs);
+  }
+
+  /* The whole form goes, not just its button, or the empty form would
+     still take a gap in the row. */
+  .role-block:first-of-type form:has(.role-block__move-up),
+  .role-block:last-of-type form:has(.role-block__move-down) {
+    display: none;
+  }
+
+  .role-block__remove {
+    margin-inline-start: auto;
+  }
+
+  .role-block__remove button {
+    color: var(--colors-danger-text);
+  }
+
+  .role-block.is-dragging {
+    opacity: 0.5;
+  }
 }

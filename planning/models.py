@@ -163,6 +163,11 @@ class Service(models.Model):
         max_length=200, blank=True, help_text="Hymn numbers, e.g. 123, 345, 234"
     )
     psalm = models.CharField(max_length=100, blank=True, help_text="e.g. 150")
+    # The template the slots came from, so a second template asks before
+    # replacing them. String reference: SlotTemplate is defined below.
+    slot_template = models.ForeignKey(
+        "SlotTemplate", null=True, blank=True, on_delete=models.SET_NULL, related_name="services"
+    )
     comments = GenericRelation("comments.Comment")
 
     class Meta:
@@ -176,6 +181,57 @@ class Service(models.Model):
 
     def effective_calendar_use(self):
         return self.calendar_use or self.term.calendar_use
+
+    def asks_before_using(self, template):
+        """Using another template replaces the slots, so the conductor is
+        asked first: whenever there are slots and they didn't come from
+        this template."""
+        return self.slot_template_id != template.pk and self.roles.exists()
+
+    def use_template(self, template, replace=False):
+        """
+        Give this service a template's slots. With replace, the current
+        slots go first, except any with pieces proposed, which are kept so
+        no planning is lost. Returns a dict of slot names: added,
+        already_there, removed and kept.
+        """
+        removed, kept = [], []
+        if replace:
+            for role in self.roles.prefetch_related("pieces"):
+                if role.pieces.all():
+                    kept.append(role.role_name)
+                else:
+                    removed.append(role.role_name)
+                    role.delete()
+        added, already_there = template.apply_to(self)
+        self.slot_template = template
+        self.save(update_fields=["slot_template"])
+        return {"added": added, "already_there": already_there, "removed": removed, "kept": kept}
+
+    def move_slot(self, role, step):
+        """Move one slot up (step -1) or down (+1); at either end, nothing
+        happens."""
+        roles = list(self.roles.all())
+        here = next(i for i, r in enumerate(roles) if r.pk == role.pk)
+        there = here + step
+        if 0 <= there < len(roles):
+            roles[here], roles[there] = roles[there], roles[here]
+            self._number_slots(roles)
+
+    def set_slot_order(self, pks):
+        """Put the slots in this order (a list of their ids, as after a
+        drag). It must name each of this service's slots exactly once."""
+        roles = {r.pk: r for r in self.roles.all()}
+        if sorted(pks) != sorted(roles):
+            raise ValueError("The order must list each of this service's slots once.")
+        self._number_slots([roles[pk] for pk in pks])
+
+    @staticmethod
+    def _number_slots(roles):
+        for number, role in enumerate(roles, start=1):
+            if role.position != number:
+                role.position = number
+                role.save(update_fields=["position"])
 
     def suggested_scores(self):
         """
@@ -268,12 +324,30 @@ class ServiceRole(models.Model):
     # "Slot" is the UI word for a ServiceRole.
     role_name = models.CharField("slot", max_length=50)
     is_not_applicable = models.BooleanField("not needed (N/A)", default=False)
+    # The slot's place in the service; a new slot goes at the end, and the
+    # conductor can move it (Move up and Move down, or drag).
+    position = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ["id"]  # noqa
+        ordering = ["position", "id"]  # noqa
+
+    def save(self, *args, **kwargs):
+        if self._state.adding and not self.position:
+            last = self.service.roles.aggregate(models.Max("position"))["position__max"]
+            self.position = (last or 0) + 1
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.role_name} ({self.service})"
+
+    def deletion_summary(self):
+        """What removing this slot takes with it; see Term's version."""
+        piece_pks = list(self.pieces.values_list("pk", flat=True))
+        counts = [
+            (len(piece_pks), "proposed piece"),
+            (comment_count_on(RolePiece, piece_pks), "comment"),
+        ]
+        return [(count, noun) for count, noun in counts if count]
 
     @property
     def is_resolved(self):

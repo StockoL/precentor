@@ -344,3 +344,149 @@ class MusicListLayoutBrowserTest(PlaywrightTestCase):
         ]""")
         # 11pt and 14pt in CSS pixels (1pt = 4/3px).
         assert sizes == ["14.6667px", "18.6667px"], sizes
+
+
+class SlotOrderBrowserTest(PlaywrightTestCase):
+    def setUp(self):
+        super().setUp()
+        self.login_as_conductor()
+        term = Term.objects.create(
+            name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
+        )
+        self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        self.roles = [ServiceRole.objects.create(service=self.service, role_name=n) for n in ("Introit", "Gloria", "Communion")]
+
+    def order(self):
+        return self.page.eval_on_selector_all(
+            "#roles-list > .role-block summary", "els => els.map(el => el.textContent.trim().replace(/^\W+/, ''))"
+        )
+
+    def test_move_buttons_reorder_without_a_reload_and_keep_focus(self):
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.evaluate("window.__marker = true")
+        self.page.click(f"#move-down-{self.roles[0].pk}")
+        self.page.wait_for_function(
+            "document.querySelector('#roles-list > .role-block summary').textContent.includes('Gloria')"
+        )
+        assert self.order() == ["Gloria", "Introit", "Communion"]
+        assert self.page.evaluate("window.__marker") is True
+        assert self.page.evaluate("document.activeElement.id") == f"move-down-{self.roles[0].pk}"
+        # The first slot has no Move up, the last no Move down.
+        assert not self.page.is_visible(f"#move-up-{self.roles[1].pk}")
+        assert not self.page.is_visible(f"#move-down-{self.roles[2].pk}")
+
+    def pick_up(self, role):
+        # Playwright's drag_to jumps in a single move, which never starts a
+        # native drag in Chromium, so move the mouse in steps instead.
+        box = self.page.locator(f"#role-block-{role.pk} .role-block__handle").bounding_box()
+        self.page.mouse.move(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+        self.page.mouse.down()
+        self.page.mouse.move(box["x"] + 20, box["y"] + 20, steps=5)
+
+    def drop_on_top_of(self, role):
+        box = self.page.locator(f"#role-block-{role.pk}").bounding_box()
+        self.page.mouse.move(box["x"] + 30, box["y"] + 8, steps=10)
+        self.page.mouse.up()
+
+    def test_dragging_a_slot_by_its_handle(self):
+        # Tall enough that all three slots are on screen at once.
+        self.page.set_viewport_size({"width": 1280, "height": 1400})
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.pick_up(self.roles[2])
+        self.drop_on_top_of(self.roles[0])
+        self.page.wait_for_selector(".toast--success")
+        assert self.order() == ["Communion", "Introit", "Gloria"]
+        assert [r.role_name for r in self.service.roles.all()] == ["Communion", "Introit", "Gloria"]
+
+    def test_holding_a_slot_at_the_edge_of_the_window_scrolls_the_page(self):
+        more = [ServiceRole.objects.create(service=self.service, role_name=f"Motet {n}") for n in range(1, 9)]
+        self.page.set_viewport_size({"width": 1000, "height": 600})
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.locator(f"#role-block-{more[-1].pk}").scroll_into_view_if_needed()
+        assert self.page.evaluate("window.scrollY") > 0
+
+        self.pick_up(more[-1])
+        self.page.mouse.move(300, 4, steps=10)
+        self.page.wait_for_function("window.scrollY === 0", timeout=10000)
+        self.drop_on_top_of(self.roles[0])
+        self.page.wait_for_selector(".toast--success")
+        assert self.order()[:2] == ["Motet 8", "Introit"]
+
+
+class ReplaceTemplateBrowserTest(PlaywrightTestCase):
+    def setUp(self):
+        super().setUp()
+        self.login_as_conductor()
+        term = Term.objects.create(
+            name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
+        )
+        self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        from planning.models import SlotTemplate
+
+        # Live-server tests flush the database after each test, so the seeded
+        # templates may or may not be here: set them either way.
+        SlotTemplate.objects.update_or_create(name="Mass", defaults={"slot_names": "Introit\nKyrie"})
+        SlotTemplate.objects.update_or_create(name="Vespers", defaults={"slot_names": "Psalms\nMagnificat"})
+
+    def test_another_template_asks_in_the_dialog(self):
+        # Headless Chromium stops painting after this form's redirect back
+        # to the same page when the page transition is on, so the next click
+        # never lands. Reduced motion turns the transition off.
+        self.page.emulate_media(reduced_motion="reduce")
+        self.page.goto(f"/services/{self.service.pk}/")
+        with self.page.expect_navigation():
+            self.page.click("form.apply-template button:has-text('Mass')")
+        assert self.page.is_visible(".role-block summary:has-text('Kyrie')")
+
+        self.page.click("form.apply-template button:has-text('Vespers')")
+        dialog = self.page.locator("dialog.confirm-dialog")
+        assert "Replace the Mass slots with Vespers?" in dialog.inner_text()
+        dialog.get_by_role("button", name="Cancel").click()
+        dialog.wait_for(state="detached")
+        assert [r.role_name for r in self.service.roles.all()] == ["Introit", "Kyrie"]
+
+        self.page.click("form.apply-template button:has-text('Vespers')")
+        with self.page.expect_navigation():
+            self.page.locator("dialog.confirm-dialog").get_by_role("button", name="Use Vespers").click()
+        assert [r.role_name for r in self.service.roles.all()] == ["Psalms", "Magnificat"]
+
+
+class RemoveSlotBrowserTest(PlaywrightTestCase):
+    def setUp(self):
+        super().setUp()
+        self.login_as_conductor()
+        term = Term.objects.create(
+            name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
+        )
+        self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        self.introit, self.motet, self.communion = [
+            ServiceRole.objects.create(service=self.service, role_name=n) for n in ("Introit", "Offertory motet", "Communion")
+        ]
+        score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        RolePiece.objects.create(service_role=self.motet, score=score)
+
+    def names(self):
+        return [r.role_name for r in self.service.roles.all()]
+
+    def test_an_empty_slot_goes_at_once_and_focus_moves_on(self):
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.click(f"#remove-slot-{self.introit.pk}")
+        self.page.wait_for_selector(f"#role-block-{self.introit.pk}", state="detached")
+        assert "Removed Introit" in self.page.inner_text(".toast--success")
+        assert self.page.evaluate("document.activeElement.closest('.role-block')?.id") == f"role-block-{self.motet.pk}"
+        assert self.names() == ["Offertory motet", "Communion"]
+
+    def test_a_slot_with_pieces_asks_in_the_dialog(self):
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.click(f"#remove-slot-{self.motet.pk}")
+        dialog = self.page.locator("dialog.confirm-dialog")
+        assert "Its 1 proposed piece" in dialog.inner_text()
+        dialog.get_by_role("button", name="Cancel").click()
+        dialog.wait_for(state="detached")
+        assert self.names() == ["Introit", "Offertory motet", "Communion"]
+
+        self.page.click(f"#remove-slot-{self.motet.pk}")
+        self.page.locator("dialog.confirm-dialog").get_by_role("button", name="Remove").click()
+        self.page.wait_for_selector(f"#role-block-{self.motet.pk}", state="detached")
+        assert self.names() == ["Introit", "Communion"]
+        assert not RolePiece.objects.exists()

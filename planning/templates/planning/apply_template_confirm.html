@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Use {{ template.name }}? — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>{% if service.slot_template %}Replace the {{ service.slot_template.name }} slots with {{ template.name }}?{% else %}Replace the current slots with {{ template.name }}?{% endif %}</h1>
+    <p>For {{ service }}. {% include "planning/_replace_slots_note.html" %}</p>
+    {% if kept %}
+    <p>Kept: {{ kept|join:", " }}.</p>
+    {% endif %}
+    <div class="cluster">
+        <form method="post" action="{% url 'planning:apply_template' service.pk template.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="replace" value="1">
+            <button class="btn-primary" type="submit">Use {{ template.name }}</button>
+        </form>
+        <a class="btn-ghost" href="{{ service.get_absolute_url }}">Cancel</a>
+    </div>
+</div>
+{% endblock %}

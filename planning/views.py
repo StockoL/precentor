@@ -219,7 +219,13 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
             for score in self.object.suggested_scores()
         ]
         context["role_form"] = ServiceRoleForm()
-        context["slot_templates"] = SlotTemplate.objects.all()
+        # Each template knows whether using it would replace the slots, so
+        # its button can ask first (service-detail.js).
+        has_slots = bool(self.object.roles.all())
+        templates = list(SlotTemplate.objects.all())
+        for template in templates:
+            template.replaces_slots = has_slots and self.object.slot_template_id != template.pk
+        context["slot_templates"] = templates
 
         # The services either side of this one in its term, for Previous
         # and Next links. Date, then id, so two services on one day keep a
@@ -303,18 +309,36 @@ class SlotTemplateDeleteView(ConductorRequiredMixin, DeletePageMixin, DeleteView
 @user_passes_test(ConductorRequiredMixin.is_conductor)
 @require_POST
 def apply_template(request, service_pk, template_pk):
-    """Add a template's slots to a service, then go back to the service
-    with a message saying what was added."""
+    """
+    Give a service a template's slots, then go back to it with a message
+    saying what changed. A service uses one template: the same one again
+    only fills in missing slots, but another replaces the slots, so it's
+    confirmed first. With JavaScript, a dialog asks and sends replace=1;
+    without, this shows a page that asks.
+    """
     service = get_object_or_404(Service, pk=service_pk)
     template = get_object_or_404(SlotTemplate, pk=template_pk)
-    added, already_there = template.apply_to(service)
-    if not added:
+    replace = request.POST.get("replace") == "1"
+    if service.asks_before_using(template) and not replace:
+        return render(request, "planning/apply_template_confirm.html", {
+            "service": service,
+            "template": template,
+            "kept": [r.role_name for r in service.roles.prefetch_related("pieces") if r.pieces.all()],
+        })
+
+    result = service.use_template(template, replace=replace)
+    added, kept = result["added"], result["kept"]
+    if replace:
+        text = f"Now using {template.name}: {len(added)} slot{'' if len(added) == 1 else 's'} added."
+        if kept:
+            text += f" Kept {', '.join(kept)}, which {'has' if len(kept) == 1 else 'have'} pieces proposed."
+        messages.success(request, text)
+    elif not added:
         messages.info(request, f"The {template.name} slots are all here already.")
     else:
-        slots = "slot" if len(added) == 1 else "slots"
-        text = f"Added {len(added)} {slots} from {template.name}."
-        if already_there:
-            text += f" {len(already_there)} were here already."
+        text = f"Added {len(added)} slot{'' if len(added) == 1 else 's'} from {template.name}."
+        if result["already_there"]:
+            text += f" {len(result['already_there'])} were here already."
         messages.success(request, text)
     return redirect(service.get_absolute_url())
 
@@ -361,6 +385,63 @@ def add_role(request, service_pk):
         request, fragments, service.get_absolute_url(),
         error_message="Couldn't add that slot — please check the form.", status=400,
     )
+
+
+def _slots_fragment(request, service):
+    """The service's slot list, redrawn after a slot moves or goes."""
+    roles = service.roles.prefetch_related("pieces__score")
+    return {
+        "roles-list": render_to_string(
+            "planning/_roles_list.html", {"roles": roles, "service": service}, request=request
+        ),
+    }
+
+
+@login_required
+@user_passes_test(ConductorRequiredMixin.is_conductor)
+@require_POST
+def move_slot(request, role_pk):
+    """Move a slot up or down one place (the Move up and Move down
+    buttons, which work without JavaScript)."""
+    role = get_object_or_404(ServiceRole.objects.select_related("service"), pk=role_pk)
+    step = -1 if request.POST.get("direction") == "up" else 1
+    role.service.move_slot(role, step)
+    return ajax_or_redirect(request, _slots_fragment(request, role.service), role.service.get_absolute_url())
+
+
+@login_required
+@user_passes_test(ConductorRequiredMixin.is_conductor)
+@require_POST
+def remove_slot(request, role_pk):
+    """Remove a slot. An empty one goes at once; one with pieces proposed
+    asks first, in a dialog with JavaScript or on a page without, and is
+    removed when the answer comes back with confirm=1."""
+    role = get_object_or_404(ServiceRole.objects.select_related("service"), pk=role_pk)
+    service = role.service
+    if role.pieces.exists() and not request.POST.get("confirm"):
+        return render(request, "planning/remove_slot_confirm.html", {"role": role, "service": service})
+    name = role.role_name
+    role.delete()
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest":
+        messages.success(request, f"Removed {name}.")
+    return ajax_or_redirect(request, _slots_fragment(request, service), service.get_absolute_url())
+
+
+@login_required
+@user_passes_test(ConductorRequiredMixin.is_conductor)
+@require_POST
+def reorder_slots(request, service_pk):
+    """Put the slots in a new order, sent after a drag as "id,id,id"."""
+    service = get_object_or_404(Service, pk=service_pk)
+    try:
+        pks = [int(pk) for pk in request.POST.get("order", "").split(",") if pk]
+        service.set_slot_order(pks)
+    except ValueError:
+        return ajax_or_redirect(
+            request, _slots_fragment(request, service), service.get_absolute_url(),
+            error_message="Couldn't move those slots; the page was out of date.", status=400,
+        )
+    return ajax_or_redirect(request, _slots_fragment(request, service), service.get_absolute_url())
 
 
 @login_required

@@ -1,6 +1,30 @@
-<details id="role-block-{{ role.pk }}" class="role-block card" open>
-    <summary>{{ role.role_name }}{% if role.is_not_applicable %} (N/A){% endif %}</summary>
+<details id="role-block-{{ role.pk }}" class="role-block card" open data-role-pk="{{ role.pk }}">
+    <summary>
+        {# Drag by this to move the slot; the buttons below do the same without a mouse. #}
+        <span class="role-block__handle" aria-hidden="true" title="Drag to move">&#x2807;&#x2807;</span>
+        {{ role.role_name }}{% if role.is_not_applicable %} (N/A){% endif %}
+    </summary>
     <div class="flow" style="--flow-space: var(--spacing-xs);">
+        <div class="cluster role-block__actions">
+            <form method="post" action="{% url 'planning:move_slot' role.pk %}" class="ajax-move-slot" data-slot-name="{{ role.role_name }}" data-direction="up">
+                {% csrf_token %}
+                <input type="hidden" name="direction" value="up">
+                <button type="submit" id="move-up-{{ role.pk }}" class="btn-ghost role-block__move-up">Move up<span class="visually-hidden"> {{ role.role_name }}</span></button>
+            </form>
+            <form method="post" action="{% url 'planning:move_slot' role.pk %}" class="ajax-move-slot" data-slot-name="{{ role.role_name }}" data-direction="down">
+                {% csrf_token %}
+                <input type="hidden" name="direction" value="down">
+                <button type="submit" id="move-down-{{ role.pk }}" class="btn-ghost role-block__move-down">Move down<span class="visually-hidden"> {{ role.role_name }}</span></button>
+            </form>
+            {# An empty slot goes at once. One with pieces asks first: service-detail.js reads the data-confirm wording for its dialog, and without JavaScript the view shows a page instead. #}
+            {% with count=role.pieces.all|length %}
+            <form method="post" action="{% url 'planning:remove_slot' role.pk %}" class="ajax-remove-slot role-block__remove" data-slot-name="{{ role.role_name }}"{% if count %} data-confirm-title="Remove {{ role.role_name }}?" data-confirm-message="Its {{ count }} proposed piece{{ count|pluralize }}, and any comments on {{ count|pluralize:"it,them" }}, go with it. This can't be undone." data-confirm-label="Remove"{% endif %}>
+                {% csrf_token %}
+                <button type="submit" id="remove-slot-{{ role.pk }}" class="btn-ghost">Remove<span class="visually-hidden"> {{ role.role_name }}</span></button>
+            </form>
+            {% endwith %}
+        </div>
+
         {% include "planning/_role_pieces.html" %}
 
         {% include "planning/_add_piece_form.html" with form=role.piece_form %}
