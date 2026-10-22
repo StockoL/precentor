@@ -1,5 +1,9 @@
+import os
+from unittest import mock
+
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.management import call_command
 from django.db import IntegrityError, transaction
 from django.http import HttpResponse
 from django.test import RequestFactory, TestCase
@@ -90,6 +94,17 @@ class PermissionMatrixTests(TestCase):
             for check in self.MATRIX:
                 with self.subTest(user=name, check=check.__name__):
                     self.assertIs(check(user), False)
+
+
+class CreateSuperuserCommandTests(TestCase):
+    def test_it_asks_only_for_an_email_and_makes_an_admin_outside_any_organisation(self):
+        with mock.patch.dict(os.environ, {"DJANGO_SUPERUSER_PASSWORD": "a-long-passphrase"}):
+            call_command("createsuperuser", interactive=False, email="Admin@Example.com", verbosity=0)
+        admin = User.objects.get()
+        self.assertEqual(admin.email, "admin@example.com")
+        self.assertTrue(admin.is_superuser and admin.is_staff)
+        self.assertEqual((admin.organisation, admin.role, admin.is_owner), (None, "", False))
+        self.assertTrue(admin.check_password("a-long-passphrase"))
 
 
 class UserConstraintTests(TestCase):
