@@ -1,7 +1,7 @@
 from datetime import date
 
-from planning.models import Term
 from precentor_project.test_browser import PlaywrightTestCase
+from precentor_project.testing import make_term
 
 from .models import Comment
 
@@ -10,7 +10,7 @@ class CommentThreadBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
         self.login_as_conductor()
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -66,7 +66,7 @@ class CommentDeleteBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
         self.user = self.login_as_conductor()
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -116,7 +116,7 @@ class CommentDeleteBrowserTest(PlaywrightTestCase):
 class ClosedThreadForViewersBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
         )
 
