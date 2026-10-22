@@ -23,9 +23,9 @@ def comment_count_on(model, pks):
 
 
 class Term(models.Model):
-    # Allowed to be empty only until existing rows are given one.
+    # Whose term this is.
     organisation = models.ForeignKey(
-        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="terms"
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="terms"
     )
     name = models.CharField(max_length=100, help_text="e.g. Michaelmas 2026")
     start_date = models.DateField()
@@ -141,7 +141,7 @@ class Service(models.Model):
     # Always its term's organisation, copied in save(), so it can be
     # scoped like everything else without anyone having to set it.
     organisation = models.ForeignKey(
-        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="services"
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="services"
     )
     date = models.DateField()
     service_type = models.CharField(max_length=50, help_text="e.g. Sung Mass, Vespers")
@@ -324,7 +324,7 @@ class TermMarker(models.Model):
     # Always its term's organisation, copied in save(), so it can be
     # scoped like everything else without anyone having to set it.
     organisation = models.ForeignKey(
-        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="markers"
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="markers"
     )
     date = models.DateField()
     # "Notice" is the UI word for a TermMarker.
@@ -345,7 +345,7 @@ class ServiceRole(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="roles")
     # Always its service's organisation, copied in save().
     organisation = models.ForeignKey(
-        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="service_roles"
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="service_roles"
     )
     # "Slot" is the UI word for a ServiceRole.
     role_name = models.CharField("slot", max_length=50)
@@ -393,9 +393,9 @@ class SlotTemplate(models.Model):
     form is a textarea and needs no JavaScript.
     """
 
-    # Allowed to be empty only until existing rows are given one.
+    # Whose template this is.
     organisation = models.ForeignKey(
-        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="slot_templates"
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="slot_templates"
     )
     name = models.CharField(max_length=50, unique=True, help_text="e.g. Mass, Vespers, Benediction")
     slot_names = models.TextField(
@@ -450,7 +450,7 @@ class RolePiece(models.Model):
     )
     # Always its slot's organisation, copied in save().
     organisation = models.ForeignKey(
-        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="role_pieces"
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="role_pieces"
     )
     score = models.ForeignKey(
         "library.Score", on_delete=models.PROTECT, related_name="role_pieces"
