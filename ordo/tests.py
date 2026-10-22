@@ -213,22 +213,3 @@ class UseTypeOrganisationTests(TestCase):
         church = make_organisation()
         use = make_use_type("Communion", organisation=church)
         self.assertEqual(list(church.use_types.all()), [use])
-
-
-class FillUseTypeOrganisationTests(TestCase):
-    """The fill-in migration, run against today's models while the column
-    can still be empty. These go when the column becomes required."""
-
-    def run_migration(self):
-        import importlib
-
-        from django.apps import apps
-
-        importlib.import_module("ordo.migrations.0017_fill_use_type_organisation").give_use_types_an_organisation(apps, None)
-
-    def test_with_an_organisation_every_use_type_joins_it(self):
-        church = make_organisation("St Cecilia's")
-        use = UseType.objects.create(name="Vespers")
-        self.run_migration()
-        use.refresh_from_db()
-        self.assertEqual(use.organisation, church)
