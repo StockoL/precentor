@@ -3,14 +3,15 @@ from datetime import date
 from django.test import TestCase
 
 from accounts.testing import make_user
+from precentor_project.testing import make_term
 
-from .models import Service, ServiceRole, Term
+from .models import Service, ServiceRole
 
 
 class SlotOrderTests(TestCase):
     def setUp(self):
         self.client.force_login(make_user("conductor"))
-        term = Term.objects.create(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
+        term = make_term(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
         self.roles = [ServiceRole.objects.create(service=self.service, role_name=n) for n in ("Introit", "Gloria", "Communion")]
 
