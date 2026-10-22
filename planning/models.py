@@ -23,6 +23,10 @@ def comment_count_on(model, pks):
 
 
 class Term(models.Model):
+    # Allowed to be empty only until existing rows are given one.
+    organisation = models.ForeignKey(
+        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="terms"
+    )
     name = models.CharField(max_length=100, help_text="e.g. Michaelmas 2026")
     start_date = models.DateField()
     end_date = models.DateField()
@@ -366,6 +370,10 @@ class SlotTemplate(models.Model):
     form is a textarea and needs no JavaScript.
     """
 
+    # Allowed to be empty only until existing rows are given one.
+    organisation = models.ForeignKey(
+        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="slot_templates"
+    )
     name = models.CharField(max_length=50, unique=True, help_text="e.g. Mass, Vespers, Benediction")
     slot_names = models.TextField(
         "slots", help_text="One slot per line, in the order of the service."

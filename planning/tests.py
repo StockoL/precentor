@@ -966,3 +966,19 @@ class MusicListCrestTests(TestCase):
             response, f'<img class="music-list-banner" src="{self.config.crest_url}" alt="St Cecilia&#x27;s">', html=True
         )
         self.assertNotContains(response, "music-list-church-name")
+
+
+class PlanningOrganisationTests(TestCase):
+    def test_terms_and_templates_belong_to_an_organisation(self):
+        from accounts.testing import make_organisation
+
+        from .models import SlotTemplate
+
+        church = make_organisation()
+        term = Term.objects.create(
+            name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
+            calendar_use="current", organisation=church,
+        )
+        template = SlotTemplate.objects.create(name="Benediction", slot_names="O salutaris", organisation=church)
+        self.assertEqual(list(church.terms.all()), [term])
+        self.assertEqual(list(church.slot_templates.all()), [template])
