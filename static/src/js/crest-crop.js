@@ -66,7 +66,7 @@ function buildCropper(container) {
     warning.hidden = true;
     if (img.naturalWidth < MIN_WIDTH || img.naturalHeight < MIN_HEIGHT) {
       warning.hidden = false;
-      warning.textContent = `This image is quite small (${img.naturalWidth}×${img.naturalHeight}px) — it may look blurry once cropped.`;
+      warning.textContent = `This image is quite small (${img.naturalWidth}×${img.naturalHeight}px), so it may look blurry once cropped.`;
     }
 
     const frame = document.createElement("div");

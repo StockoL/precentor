@@ -40,7 +40,7 @@ class SiteConfigFormLabelTests(TestCase):
 class AccentColourTests(TestCase):
     def form(self, colour):
         return SiteConfigForm(data={
-            "house_accent_colour": colour,
+            "house_accent_colour": colour, "crest_style": "logo",
             "layout_style": "columns", "national_calendar": "general_roman",
         })
 
@@ -132,13 +132,6 @@ class CrestProcessingTests(TestCase):
         with self.assertRaisesMessage(ValidationError, "at least 150px on its shorter side"):
             process_logo_image(self.upload((400, 120)))
 
-    def test_form_runs_uploads_through_the_processing(self):
-        form = SiteConfigForm(
-            data={"house_accent_colour": "#8b1a2b", "layout_style": "columns", "national_calendar": "general_roman"},
-            files={"crest_image": self.upload((1000, 1000))},
-        )
-        self.assertTrue(form.is_valid(), form.errors)
-        self.assertEqual(form.cleaned_data["crest_image"].name, "crest.jpg")
 
 
 class SettingsAccessTests(TestCase):
@@ -152,7 +145,7 @@ class SettingsAccessTests(TestCase):
         self.client.force_login(make_user("librarian"))
         self.assertEqual(self.client.get(self.url).status_code, 403)
         response = self.client.post(self.url, {
-            "church_name": "Changed", "house_accent_colour": "#000000",
+            "church_name": "Changed", "house_accent_colour": "#000000", "crest_style": "logo",
             "layout_style": "columns", "national_calendar": "general_roman",
         })
         self.assertEqual(response.status_code, 403)
@@ -162,7 +155,7 @@ class SettingsAccessTests(TestCase):
         self.client.force_login(make_user("conductor"))
         self.assertEqual(self.client.get(self.url).status_code, 200)
         response = self.client.post(self.url, {
-            "church_name": "St Mary's", "house_accent_colour": "#123456",
+            "church_name": "St Mary's", "house_accent_colour": "#123456", "crest_style": "logo",
             "layout_style": "simple", "national_calendar": "england",
         })
         self.assertRedirects(response, self.url)
@@ -238,3 +231,58 @@ class CrestViewTests(TestCase):
         self.config.save()
         self.assertEqual(self.config.crest_url, "")
         self.assertEqual(self.client.get("/settings/crest/anything/").status_code, 404)
+
+
+class CrestFormTests(TestCase):
+    def upload(self, size, name="crest.png"):
+        from io import BytesIO
+
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from PIL import Image
+
+        buffer = BytesIO()
+        Image.new("RGB", size, "navy").save(buffer, "PNG")
+        return SimpleUploadedFile(name, buffer.getvalue())
+
+    def save(self, style, upload=None, **extra):
+        data = {"house_accent_colour": "#8b1a2b", "crest_style": style, "layout_style": "columns",
+                "national_calendar": "general_roman", **extra}
+        form = SiteConfigForm(data=data, files={"crest_file": upload} if upload else {},
+                              instance=SiteConfig.get_solo())
+        if form.is_valid():
+            form.save()
+        return form
+
+    def crest_size(self):
+        from io import BytesIO
+
+        from PIL import Image
+
+        return Image.open(BytesIO(bytes(SiteConfig.get_solo().crest))).size
+
+    def test_each_style_is_processed_to_suit_it_and_stored(self):
+        self.assertTrue(self.save("banner", self.upload((1000, 1000))).is_valid())
+        self.assertEqual(self.crest_size(), (1600, 400))
+        self.assertEqual(SiteConfig.get_solo().crest_type, "image/jpeg")
+        self.assertTrue(self.save("logo", self.upload((1200, 900))).is_valid())
+        self.assertEqual(self.crest_size(), (600, 450))
+
+    def test_a_new_style_asks_for_a_new_image(self):
+        self.save("logo", self.upload((400, 400)))
+        form = self.save("banner")
+        self.assertEqual(form.errors["crest_file"], ["Choose an image for the new style."])
+        self.assertEqual(SiteConfig.get_solo().crest_style, "logo")
+
+    def test_remove_clears_the_crest_and_cannot_come_with_a_new_one(self):
+        self.save("logo", self.upload((400, 400)))
+        self.assertIn("remove_crest", self.save("logo", self.upload((400, 400)), remove_crest="on").errors)
+        self.assertTrue(self.save("logo", remove_crest="on").is_valid())
+        self.assertFalse(SiteConfig.get_solo().has_crest)
+
+    def test_an_upload_over_5_mb_or_too_small_is_refused(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        big = SimpleUploadedFile("crest.png", b"x" * (5 * 1024 * 1024 + 1))
+        self.assertEqual(self.save("logo", big).errors["crest_file"], ["Choose an image under 5 MB."])
+        self.assertIn("at least 150px", self.save("logo", self.upload((400, 100))).errors["crest_file"][0])
+        self.assertFalse(SiteConfig.get_solo().has_crest)

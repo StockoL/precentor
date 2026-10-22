@@ -12,14 +12,17 @@
         <p>{{ form.church_name.label_tag }} {{ form.church_name }} {{ form.church_name.errors }}</p>
         <div>{{ form.national_calendar.as_field_group }}</div>
 
-        <div class="crest-crop" data-target="{{ form.crest_image.id_for_label }}"
-             data-target-width="1600" data-target-height="400">
-            {{ form.crest_image.label_tag }}
-            {% if site_config.crest_image %}
-            <img class="crest-crop__current" src="{{ site_config.crest_image.url }}" alt="Current crest">
+        <div>{{ form.crest_style.as_field_group }}</div>
+        {# crest-crop.js crops a banner to the size core/imaging.py makes, and previews a logo as it is. #}
+        <div class="crest-crop" data-target="{{ form.crest_file.id_for_label }}" data-style-field="{{ form.crest_style.html_name }}"
+             data-target-width="{{ banner_size.0 }}" data-target-height="{{ banner_size.1 }}">
+            {% if site_config.has_crest %}
+            <img class="crest-crop__current" src="{{ site_config.crest_url }}" alt="Current crest">
             {% endif %}
-            {{ form.crest_image }}
-            {{ form.crest_image.errors }}
+            {{ form.crest_file.as_field_group }}
+            {% if site_config.has_crest %}
+            <p>{{ form.remove_crest }} {{ form.remove_crest.label_tag }} {{ form.remove_crest.errors }}</p>
+            {% endif %}
         </div>
 
         <p>{{ form.house_accent_colour.label_tag }} {{ form.house_accent_colour }} {{ form.house_accent_colour.errors }}</p>

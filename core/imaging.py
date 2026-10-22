@@ -4,10 +4,8 @@ from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from PIL import Image, UnidentifiedImageError
 
-# ~4:1 banner slot, wide enough for a small crest-plus-text graphic or a
-# standalone wide banner. A tunable starting point, not a fixed decision —
-# adjust here (and in static/src/js/crest-crop.js's matching constants) if
-# the design needs a different slot once real content is in front of us.
+# A 4:1 banner, wide enough for artwork that carries the church's name. The
+# Settings page passes this size to crest-crop.js, so change it here only.
 TARGET_SIZE = (1600, 400)
 MIN_SIZE = (800, 200)
 # A logo keeps its own shape, fitted inside this box.
@@ -57,8 +55,7 @@ def process_crest_image(uploaded_file, target_size=TARGET_SIZE):
     image = _open_image(uploaded_file)
     if image.width < MIN_SIZE[0] or image.height < MIN_SIZE[1]:
         raise ValidationError(
-            f"Image is too small — please upload at least "
-            f"{MIN_SIZE[0]}×{MIN_SIZE[1]}px."
+            f"This image is too small. Choose one at least {MIN_SIZE[0]}×{MIN_SIZE[1]}px."
         )
 
     target_ratio = target_size[0] / target_size[1]

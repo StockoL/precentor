@@ -146,13 +146,17 @@ class SettingsFormBrowserTest(PlaywrightTestCase):
         image = BytesIO()
         Image.new("RGB", (1600, 800), "navy").save(image, "PNG")
 
+        crest = {"name": "crest.png", "mimeType": "image/png", "buffer": image.getvalue()}
         self.login_as_conductor()
         self.page.goto("/settings/")
-        self.page.set_input_files(
-            "#id_crest_image",
-            {"name": "crest.png", "mimeType": "image/png", "buffer": image.getvalue()},
-        )
+        self.page.check("input[name=crest_style][value=banner]")
+        self.page.set_input_files("#id_crest_file", crest)
         self.page.wait_for_selector(".crest-crop__frame")
+
+        # A logo keeps its own shape, so it's previewed rather than cropped.
+        self.page.check("input[name=crest_style][value=logo]")
+        self.page.wait_for_selector(".crest-crop__logo-preview")
+        assert self.page.locator(".crest-crop__frame").count() == 0
 
 
 class ListRowWidthBrowserTest(PlaywrightTestCase):

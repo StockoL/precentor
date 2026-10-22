@@ -7,6 +7,7 @@ from accounts.mixins import RoleRequiredMixin
 from accounts.permissions import can_manage_settings
 
 from .forms import SiteConfigForm
+from .imaging import TARGET_SIZE
 from .models import SiteConfig
 
 
@@ -23,6 +24,7 @@ class SiteConfigUpdateView(RoleRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["site_config"] = self.object
+        context["banner_size"] = TARGET_SIZE
         return context
 
 
