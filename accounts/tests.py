@@ -278,3 +278,17 @@ class EmailAuthenticationFormTests(TestCase):
         form = EmailAuthenticationForm(data={"username": "Anne@Example.com", "password": "s3cret-pass"})
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.get_user(), user)
+
+
+class LoginPageTests(TestCase):
+    def test_the_login_page_asks_for_an_email_address(self):
+        response = self.client.get("/accounts/login/")
+        self.assertIsInstance(response.context["form"], EmailAuthenticationForm)
+        self.assertContains(response, 'type="email"')
+
+    def test_signing_in_with_any_capitals_lands_on_terms(self):
+        make_user(email="anne@example.com", password="s3cret-pass")
+        response = self.client.post(
+            "/accounts/login/", {"username": "Anne@Example.com", "password": "s3cret-pass"}
+        )
+        self.assertRedirects(response, "/")

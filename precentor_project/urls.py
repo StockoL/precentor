@@ -18,10 +18,19 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import include, path
+
+from accounts.forms import EmailAuthenticationForm
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # Ahead of Django's own auth URLs, so the login page asks for an email.
+    path(
+        "accounts/login/",
+        auth_views.LoginView.as_view(authentication_form=EmailAuthenticationForm),
+        name="login",
+    ),
     path("accounts/", include("django.contrib.auth.urls")),
     path("library/", include("library.urls")),
     path("ordo/", include("ordo.urls")),
