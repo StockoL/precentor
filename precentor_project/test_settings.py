@@ -52,6 +52,14 @@ class HostSettingsTests(SimpleTestCase):
         self.assertEqual(hosts, ["precentor.example.org", "www.precentor.example.org"])
         self.assertEqual(origins, ["https://precentor.example.org"])
 
+    def test_renders_own_address_is_added_for_both(self):
+        hosts, origins = read_settings(
+            "ALLOWED_HOSTS", "CSRF_TRUSTED_ORIGINS",
+            ALLOWED_HOSTS="", CSRF_TRUSTED_ORIGINS="", RENDER_EXTERNAL_HOSTNAME="precentor.onrender.com",
+        )
+        self.assertEqual(hosts, ["precentor.onrender.com"])
+        self.assertEqual(origins, ["https://precentor.onrender.com"])
+
     def test_nothing_set_means_no_extra_hosts(self):
         self.assertEqual(read_settings("ALLOWED_HOSTS", ALLOWED_HOSTS=""), [[]])
 
