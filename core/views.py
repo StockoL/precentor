@@ -1,4 +1,6 @@
+from django.http import Http404, HttpResponse
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_safe
 from django.views.generic import UpdateView
 
 from accounts.mixins import RoleRequiredMixin
@@ -22,3 +24,19 @@ class SiteConfigUpdateView(RoleRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context["site_config"] = self.object
         return context
+
+
+@require_safe
+def crest(request, version):
+    """
+    The church's crest, from the database. It's public branding, printed at
+    the top of the music list, so it needs no login. The version in the
+    address is a fingerprint of the image, so browsers can keep it for a
+    year: a new crest gets a new address, and an old address finds nothing.
+    """
+    config = SiteConfig.get_solo()
+    if not config.has_crest or version != config.crest_version:
+        raise Http404("No crest at this address.")
+    response = HttpResponse(bytes(config.crest), content_type=config.crest_type)
+    response["Cache-Control"] = "public, max-age=31536000, immutable"
+    return response

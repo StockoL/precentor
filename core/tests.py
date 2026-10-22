@@ -216,3 +216,25 @@ class CrestStorageTests(TestCase):
 
     def test_a_new_site_starts_with_the_logo_style(self):
         self.assertEqual(SiteConfig.get_solo().crest_style, "logo")
+
+
+class CrestViewTests(TestCase):
+    def setUp(self):
+        config = SiteConfig.get_solo()
+        config.set_crest(b"png bytes", "image/png")
+        config.save()
+        self.config = config
+
+    def test_anyone_can_fetch_the_crest_and_keep_it(self):
+        response = self.client.get(self.config.crest_url)
+        self.assertEqual(response.content, b"png bytes")
+        self.assertEqual(response["Content-Type"], "image/png")
+        self.assertEqual(response["Cache-Control"], "public, max-age=31536000, immutable")
+        self.assertEqual(self.client.post(self.config.crest_url).status_code, 405)
+
+    def test_an_old_address_or_no_crest_finds_nothing(self):
+        self.assertEqual(self.client.get("/settings/crest/000000000000/").status_code, 404)
+        self.config.clear_crest()
+        self.config.save()
+        self.assertEqual(self.config.crest_url, "")
+        self.assertEqual(self.client.get("/settings/crest/anything/").status_code, 404)
