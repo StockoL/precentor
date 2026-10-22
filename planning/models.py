@@ -343,6 +343,10 @@ class TermMarker(models.Model):
 
 class ServiceRole(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="roles")
+    # Always its service's organisation, copied in save().
+    organisation = models.ForeignKey(
+        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="service_roles"
+    )
     # "Slot" is the UI word for a ServiceRole.
     role_name = models.CharField("slot", max_length=50)
     is_not_applicable = models.BooleanField("not needed (N/A)", default=False)
@@ -354,6 +358,7 @@ class ServiceRole(models.Model):
         ordering = ["position", "id"]  # noqa
 
     def save(self, *args, **kwargs):
+        self.organisation_id = self.service.organisation_id
         if self._state.adding and not self.position:
             last = self.service.roles.aggregate(models.Max("position"))["position__max"]
             self.position = (last or 0) + 1
@@ -443,6 +448,10 @@ class RolePiece(models.Model):
     service_role = models.ForeignKey(
         ServiceRole, on_delete=models.CASCADE, related_name="pieces"
     )
+    # Always its slot's organisation, copied in save().
+    organisation = models.ForeignKey(
+        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="role_pieces"
+    )
     score = models.ForeignKey(
         "library.Score", on_delete=models.PROTECT, related_name="role_pieces"
     )
@@ -451,6 +460,10 @@ class RolePiece(models.Model):
 
     class Meta:
         ordering = ["id"]  # noqa
+
+    def save(self, *args, **kwargs):
+        self.organisation_id = self.service_role.organisation_id
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.score} ({'confirmed' if self.is_confirmed else 'proposed'})"

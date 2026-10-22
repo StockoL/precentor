@@ -994,3 +994,17 @@ class PlanningOrganisationTests(TestCase):
         service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
         notice = TermMarker.objects.create(term=term, date=date(2026, 2, 16), text="Half term")
         self.assertEqual((service.organisation, notice.organisation), (church, church))
+
+    def test_slots_and_pieces_take_their_services_organisation(self):
+        from accounts.testing import make_organisation
+
+        church = make_organisation()
+        term = Term.objects.create(
+            name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
+            calendar_use="current", organisation=church,
+        )
+        service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        slot = ServiceRole.objects.create(service=service, role_name="Offertory motet")
+        score = Score.objects.create(title="Ave verum", composer_surname="Byrd", organisation=church)
+        piece = RolePiece.objects.create(service_role=slot, score=score)
+        self.assertEqual((slot.organisation, piece.organisation), (church, church))
