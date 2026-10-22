@@ -2,7 +2,8 @@ from datetime import date
 
 from django.test import TestCase
 
-from accounts.testing import make_user
+from accounts.testing import make_organisation, make_user
+from precentor_project.testing import make_use_type
 
 from .models import (
     LiturgicalOccasion,
@@ -209,8 +210,6 @@ class LiturgicalColourTokenTests(TestCase):
 
 class UseTypeOrganisationTests(TestCase):
     def test_a_use_type_belongs_to_an_organisation(self):
-        from accounts.testing import make_organisation
-
         church = make_organisation()
-        use = UseType.objects.create(name="Communion", organisation=church)
+        use = make_use_type("Communion", organisation=church)
         self.assertEqual(list(church.use_types.all()), [use])
