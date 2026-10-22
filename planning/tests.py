@@ -929,3 +929,40 @@ class ServiceFormOccasionChoicesTests(TestCase):
         self.client.force_login(make_user("conductor"))
         response = self.client.get(f"/terms/{self.term.pk}/services/add/")
         self.assertContains(response, 'data-national-calendar="england"')
+
+
+class MusicListCrestTests(TestCase):
+    def setUp(self):
+        from core.models import SiteConfig
+
+        self.client.force_login(make_user("viewer"))
+        self.term = Term.objects.create(
+            name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
+        )
+        self.config = SiteConfig.get_solo()
+        self.config.church_name = "St Cecilia's"
+        self.config.save()
+
+    def page(self, style=None):
+        if style:
+            self.config.crest_style = style
+            self.config.set_crest(b"image bytes", "image/png")
+            self.config.save()
+        return self.client.get(f"/terms/{self.term.pk}/music-list/")
+
+    def test_without_a_crest_the_name_is_written(self):
+        response = self.page()
+        self.assertContains(response, '<p class="music-list-church-name">St Cecilia&#x27;s</p>', html=True)
+        self.assertNotContains(response, "/settings/crest/")
+
+    def test_a_logo_sits_beside_the_written_name(self):
+        response = self.page("logo")
+        self.assertContains(response, f'<img class="music-list-crest" src="{self.config.crest_url}" alt="">', html=True)
+        self.assertContains(response, "music-list-church-name")
+
+    def test_a_banner_carries_the_name_so_it_is_not_written_again(self):
+        response = self.page("banner")
+        self.assertContains(
+            response, f'<img class="music-list-banner" src="{self.config.crest_url}" alt="St Cecilia&#x27;s">', html=True
+        )
+        self.assertNotContains(response, "music-list-church-name")

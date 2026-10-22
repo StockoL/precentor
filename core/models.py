@@ -91,6 +91,12 @@ class SiteConfig(models.Model):
         return bool(self.crest_version)
 
     @property
+    def crest_layout(self):
+        """How the music list shows the crest: "banner", "logo", or "" with
+        no crest at all."""
+        return self.crest_style if self.has_crest else ""
+
+    @property
     def crest_url(self):
         """Where the crest is served, with its version in the address."""
         return reverse("core:crest", args=[self.crest_version]) if self.has_crest else ""

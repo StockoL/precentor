@@ -19,6 +19,14 @@
     width: auto;
   }
 
+  /* Banner artwork, across the full width of the list. */
+  .music-list-banner {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    margin-block-end: var(--spacing-s);
+  }
+
   .music-list-church-name {
     font-weight: 600;
     color: var(--colors-text-muted);
