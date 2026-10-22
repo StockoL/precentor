@@ -1,3 +1,5 @@
+import hashlib
+
 from django.core.validators import RegexValidator
 from django.db import models
 
@@ -26,6 +28,11 @@ class SiteConfig(models.Model):
         blank=True,
         help_text="Shown at the top of the music list, cropped to a banner shape.",
     )
+    # The crest itself, kept in the database because a host's disk is wiped
+    # on every deploy. Set and cleared through set_crest() and clear_crest().
+    crest = models.BinaryField(blank=True, default=b"", editable=False)
+    crest_type = models.CharField(max_length=20, blank=True, editable=False)  # e.g. "image/png"
+    crest_version = models.CharField(max_length=12, blank=True, editable=False)
     house_accent_colour = models.CharField(
         "accent colour",
         max_length=7,
@@ -58,6 +65,21 @@ class SiteConfig(models.Model):
 
     def delete(self, *args, **kwargs):
         pass  # the singleton row is never deleted
+
+    def set_crest(self, data, content_type):
+        """Store a processed crest. The version is a fingerprint of the
+        image, so its address changes whenever the image does and
+        browsers can cache it for good."""
+        self.crest = data
+        self.crest_type = content_type
+        self.crest_version = hashlib.sha256(data).hexdigest()[:12]
+
+    def clear_crest(self):
+        self.crest, self.crest_type, self.crest_version = b"", "", ""
+
+    @property
+    def has_crest(self):
+        return bool(self.crest_version)
 
     @classmethod
     def get_solo(cls):

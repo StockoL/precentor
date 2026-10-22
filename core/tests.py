@@ -163,3 +163,30 @@ class NationalCalendarSettingTests(TestCase):
         # as_field_group links the help text to the select.
         self.assertContains(response, 'aria-describedby="id_national_calendar_helptext"')
         self.assertContains(response, "Adds your country's own days")
+
+
+class CrestStorageTests(TestCase):
+    def test_a_crest_is_kept_in_the_database_with_its_type(self):
+        config = SiteConfig.get_solo()
+        config.set_crest(b"png bytes", "image/png")
+        config.save()
+        config = SiteConfig.get_solo()
+        self.assertEqual(bytes(config.crest), b"png bytes")
+        self.assertEqual(config.crest_type, "image/png")
+        self.assertTrue(config.has_crest)
+
+    def test_the_version_changes_only_when_the_image_does(self):
+        config = SiteConfig.get_solo()
+        config.set_crest(b"first", "image/png")
+        first = config.crest_version
+        config.set_crest(b"first", "image/png")
+        self.assertEqual(config.crest_version, first)
+        config.set_crest(b"second", "image/png")
+        self.assertNotEqual(config.crest_version, first)
+
+    def test_clearing_leaves_no_crest(self):
+        config = SiteConfig.get_solo()
+        config.set_crest(b"png bytes", "image/png")
+        config.clear_crest()
+        self.assertFalse(config.has_crest)
+        self.assertEqual((bytes(config.crest), config.crest_type), (b"", ""))
