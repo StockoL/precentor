@@ -102,10 +102,12 @@ class CheckboxBrowserTest(PlaywrightTestCase):
     def test_checkbox_keeps_its_natural_size(self):
         from datetime import date
 
-        from planning.models import Service, Term
+        from planning.models import Service
+
+        from .testing import make_term
 
         self.login_as_conductor()
-        term = Term.objects.create(
+        term = make_term(
             name="Form Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -163,10 +165,12 @@ class ListRowWidthBrowserTest(PlaywrightTestCase):
     def test_list_row_spans_its_list_not_the_reading_measure(self):
         from datetime import date
 
-        from planning.models import Service, Term
+        from planning.models import Service
+
+        from .testing import make_term
 
         self.login_as_conductor()
-        term = Term.objects.create(
+        term = make_term(
             name="Layout Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -218,12 +222,12 @@ class UserMenuBrowserTest(PlaywrightTestCase):
     def test_open_menu_is_drawn_above_the_page(self):
         from datetime import date, timedelta
 
-        from planning.models import Term
+        from .testing import make_term
 
         # A term card sits under the menu on a phone; it's positioned (for
         # its stretched link), so it would cover the menu if the nav
         # weren't raised.
-        Term.objects.create(
+        make_term(
             name="Covered?", start_date=date.today() - timedelta(days=7),
             end_date=date.today() + timedelta(days=60), calendar_use="current",
         )
