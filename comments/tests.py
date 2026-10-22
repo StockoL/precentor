@@ -352,3 +352,17 @@ class CommentRightsTests(TestCase):
                 response = self.client.post(f"/comments/{comment.pk}/delete/")
                 self.assertEqual(response.status_code, 302 if allowed else 403)
                 self.assertEqual(Comment.objects.filter(pk=comment.pk).exists(), not allowed)
+
+
+class CommentOrganisationTests(TestCase):
+    def test_a_comment_takes_the_organisation_of_what_its_about(self):
+        from accounts.testing import make_organisation
+
+        church = make_organisation()
+        term = Term.objects.create(
+            name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
+            calendar_use="current", organisation=church,
+        )
+        comment = Comment.objects.create(author=make_user(), body="Copies?", target=term)
+        reply = Comment.objects.create(author=make_user(), body="Twelve.", target=term, parent=comment)
+        self.assertEqual((comment.organisation, reply.organisation), (church, church))

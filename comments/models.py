@@ -17,10 +17,19 @@ class Comment(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     target = GenericForeignKey("content_type", "object_id")
+    # Always the organisation of what it's about, copied in save(): a term,
+    # a service or a piece, each of which has one.
+    organisation = models.ForeignKey(
+        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="comments"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ["created_at"]  # noqa
+
+    def save(self, *args, **kwargs):
+        self.organisation_id = self.target.organisation_id
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Comment by {self.author} on {self.target}"
