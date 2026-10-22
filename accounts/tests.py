@@ -43,6 +43,11 @@ class MakeUserTests(TestCase):
         self.assertNotEqual(first.email, second.email)
         self.assertEqual(make_user(email="organist@example.com").email, "organist@example.com")
 
+    def test_an_email_address_is_stored_in_lowercase(self):
+        user = make_user(email="Anne.Organist@Example.COM")
+        user.refresh_from_db()
+        self.assertEqual(user.email, "anne.organist@example.com")
+
     def test_the_password_works_for_signing_in(self):
         user = make_user(password="s3cret-pass")
         self.assertTrue(self.client.login(username=user.email, password="s3cret-pass"))
@@ -107,10 +112,10 @@ class UserConstraintTests(TestCase):
         )
 
     def test_an_email_address_is_taken_whatever_its_case(self):
-        make_user(email="Anne@Example.com")
+        make_user(email="anne@example.com")
         self.assert_refused(
             "Someone already has an account with this email address.",
-            email="anne@example.com", organisation=make_organisation(), role="viewer",
+            email="Anne@Example.com", organisation=make_organisation(), role="viewer",
         )
 
     def test_both_or_neither_is_fine(self):

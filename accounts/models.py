@@ -92,6 +92,12 @@ class User(AbstractBaseUser, PermissionsMixin):
             ),
         ]
 
+    def save(self, *args, **kwargs):
+        # Stored lowercase, so one address is always shown and looked up
+        # the same way. Django's normalize_email only lowercases the domain.
+        self.email = self.email.lower()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.name or self.email
 
