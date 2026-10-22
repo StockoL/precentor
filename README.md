@@ -4,16 +4,19 @@ _A repertoire and service-planning tool for church musicians._
 
 _Milestone 3 project, Code Institute_
 
-> **Status:** All five Django apps (`library`, `ordo`, `planning`,
-> `comments`, `core`) are built, tested and permission-gated. Before
-> deploying, I'm working through an overhaul, tracked phase by phase in
-> [`docs/overhaul_plan.md`](docs/overhaul_plan.md). So far I've narrowed
-> the calendar to the Catholic one, rebuilt the type and spacing scales,
+> **Status:** All six Django apps (`accounts`, `library`, `ordo`,
+> `planning`, `comments`, `core`) are built and tested. Before
+> deploying, I worked through an overhaul, tracked phase by phase in
+> [`docs/overhaul_plan.md`](docs/overhaul_plan.md): I narrowed the
+> calendar to the Catholic one, rebuilt the type and spacing scales,
 > fixed the gaps in dark mode and keyboard access, settled the wording
 > the app uses, built a consistent set of components, reworked every
-> page, done the performance work, and loaded the real liturgical
-> calendars (§3.4). Still to come are the CSV import, deployment and the
-> final documentation.
+> page, did the performance work, and loaded the real liturgical
+> calendars (§3.4). Since then I've replaced Django's user with my own:
+> people sign in by email, belong to an organisation, and hold one of
+> three roles, and every page shows them only what their role allows
+> (§5). Still to come are deployment, keeping each organisation's data
+> apart from the others', the CSV import and the final documentation.
 >
 > The rest of this document keeps its original concept-and-reasoning
 > framing, because that reasoning is what the build followed. Where the
