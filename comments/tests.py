@@ -5,8 +5,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from accounts.testing import make_superuser, make_user
+from accounts.testing import make_organisation, make_superuser, make_user
 from planning.models import Term
+from precentor_project.testing import make_score, make_term
 
 from .models import Comment
 
@@ -14,7 +15,7 @@ from .models import Comment
 class CommentTests(TestCase):
     def setUp(self):
         self.user = make_user()
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -68,7 +69,7 @@ class InboxPageTests(TestCase):
 
         self.user = make_user()
         self.client.force_login(self.user)
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
             calendar_use="current",
         )
@@ -77,12 +78,11 @@ class InboxPageTests(TestCase):
         )
 
     def test_each_subject_links_to_its_page(self):
-        from library.models import Score
         from planning.models import RolePiece, ServiceRole
 
         role = ServiceRole.objects.create(service=self.service, role_name="Motet")
         piece = RolePiece.objects.create(
-            service_role=role, score=Score.objects.create(title="Ave", composer_surname="Byrd")
+            service_role=role, score=make_score(title="Ave", composer_surname="Byrd")
         )
         for target in (self.term, self.service, piece):
             Comment.objects.create(author=self.user, body="Query", target=target)
@@ -126,7 +126,7 @@ class InboxPageTests(TestCase):
 class AddCommentViewTests(TestCase):
     def setUp(self):
         self.user = make_user()
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -326,7 +326,7 @@ class AddCommentViewTests(TestCase):
 
 class CommentRightsTests(TestCase):
     def setUp(self):
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
         )
         self.add_url = f"/comments/add/{ContentType.objects.get_for_model(Term).id}/{self.term.pk}/"
@@ -356,10 +356,8 @@ class CommentRightsTests(TestCase):
 
 class CommentOrganisationTests(TestCase):
     def test_a_comment_takes_the_organisation_of_what_its_about(self):
-        from accounts.testing import make_organisation
-
         church = make_organisation()
-        term = Term.objects.create(
+        term = make_term(
             name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
             calendar_use="current", organisation=church,
         )
