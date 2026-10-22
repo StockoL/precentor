@@ -2,6 +2,8 @@ from django.test import TestCase
 
 from accounts.testing import make_user
 
+from .testing import make_score, make_term
+
 
 class BaseTemplateTests(TestCase):
     """Checks on templates/base.html, through the login page, which
@@ -79,11 +81,10 @@ class NewAndEditWordingTests(TestCase):
     def setUp(self):
         from datetime import date
 
-        from library.models import Score
-        from planning.models import Service, Term
+        from planning.models import Service
 
         self.client.force_login(make_user("conductor"))
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Lent 2027",
             start_date=date(2027, 1, 1),
             end_date=date(2027, 3, 31),
@@ -92,7 +93,7 @@ class NewAndEditWordingTests(TestCase):
         self.service = Service.objects.create(
             term=self.term, date=date(2027, 1, 10), service_type="Sung Mass"
         )
-        self.score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        self.score = make_score(title="Ave verum", composer_surname="Byrd")
 
     def test_form_pages(self):
         from django.urls import reverse
@@ -170,11 +171,9 @@ class NavInboxCountTests(TestCase):
     def setUp(self):
         from datetime import date
 
-        from planning.models import Term
-
         self.user = make_user("conductor")
         self.client.force_login(self.user)
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
