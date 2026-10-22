@@ -4,14 +4,15 @@ from django.test import TestCase
 
 from accounts.testing import make_user
 from ordo.models import LiturgicalOccasion
+from precentor_project.testing import make_term
 
 from .forms import ServiceForm
-from .models import Service, Term
+from .models import Service
 
 
 class ServiceFormCalendarTests(TestCase):
     def setUp(self):
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="historic"
         )
         LiturgicalOccasion.objects.create(name="Epiphany", calendar_use="current", fixed_month=1, fixed_day=6)
