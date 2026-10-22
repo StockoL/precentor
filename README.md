@@ -316,6 +316,20 @@ login page, where logging in again would change nothing. A test holds
 the whole table of roles against rules, so the code and this section
 can't quietly drift apart.
 
+**Accounts.** People sign in with their email address and a password.
+Each person belongs to one organisation (a church, a music department
+or a school) and holds one role in it, and one of them is its owner,
+who will look after its members. I replaced Django's built-in user with
+my own model before the database had any tables, because Django can't
+swap user models once they exist. The database itself refuses accounts
+that make no sense: someone in an organisation without a role, an
+owner outside one or who is only a viewer, or a second account for the
+same address typed in different capitals. Addresses are stored in
+lowercase and sign-in ignores case, so Anne@Example.com and
+anne@example.com are one person. A site superuser belongs to no
+organisation; the admin pages are where they add organisations and
+people until sign-up and invitations exist.
+
 ## 6. Comment Threads
 
 A small, bounded feature that lets the librarian and conductor discuss
@@ -425,7 +439,8 @@ not oversights, when an assessor reads this document.
   check the finished application against its original intent.
 - [`docs/erd.mmd`](docs/erd.mmd) (Mermaid source, which GitHub renders):
   the entity relationship diagram for Score, Term, Service, Service
-  Role, Role Piece, Ordo (Liturgical Occasion), User and Comment. Its
+  Role, Role Piece, Ordo (Liturgical Occasion), Organisation, User and
+  Comment. Its
   notes cover two simplifications: a slot template copies its names
   into a service's slots, so the slots themselves keep no link to it,
   and Comment's

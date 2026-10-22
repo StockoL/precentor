@@ -47,6 +47,60 @@ migration that records the new label and runs no SQL.
 
 ## Model field plan
 
+### `accounts.Organisation` and `accounts.User`
+
+```python
+class Organisation(models.Model):
+    name = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Role(models.TextChoices):
+    CONDUCTOR = "conductor", "Conductor"
+    LIBRARIAN = "librarian", "Librarian"
+    VIEWER = "viewer", "Viewer"
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField("email address", unique=True)  # the login; stored lowercase
+    name = models.CharField(max_length=150, blank=True)
+    organisation = models.ForeignKey(Organisation, null=True, blank=True, on_delete=models.CASCADE, related_name="users")
+    role = models.CharField(max_length=20, choices=Role.choices, blank=True)
+    is_owner = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    date_joined = models.DateTimeField(default=timezone.now)
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+```
+
+I replaced Django's default user before the first migration of the
+rebuilt database, because Django can't change `AUTH_USER_MODEL` once
+its tables exist. One user belongs to one organisation, so the role
+and the owner flag sit on the user rather than on a separate
+membership table; memberships across several organisations are future
+scope.
+
+Four database constraints keep the rows sensible, each in its own
+migration (`accounts/0002` to `0005`) so each can be read and reverted
+alone:
+
+- an organisation and a role go together, or neither does (a superuser
+  has neither);
+- an owner belongs to an organisation;
+- an owner is a Conductor or a Librarian, never a Viewer;
+- email addresses are unique ignoring case (`UniqueConstraint(Lower("email"))`).
+  The field keeps `unique=True` as well, because Django's system check
+  requires it on the `USERNAME_FIELD`.
+
+`save()` lowercases the whole address, since `normalize_email` only
+lowercases the domain, and the manager's `get_by_natural_key` matches
+with `email__iexact`, so sign-in ignores case. `createsuperuser` asks
+for an email and a password only, and makes an admin with no
+organisation and no role. Users are deleted with their organisation,
+and their comments with them.
+
 ### `library.Score`
 
 ```python
@@ -678,9 +732,10 @@ app shares.
   and class-based views `RoleRequiredMixin` with `permission = check`;
   templates read the same answers through the `can` context processor.
   A signed-in person without the right gets a 403, and a superuser has
-  no role inside the app. For now a role is a Django Group (a Viewer is
-  in neither group); the custom user model replaces that with a field,
-  and only the private `_role` function changes.
+  no role inside the app. A role is a field on the user; while the
+  custom user was being built it was a Django Group, and only the
+  private `_role` function changed when it moved. Owning the
+  organisation is a flag, checked by `can_manage_organisation`.
 - `SiteConfig.layout_style` only changes the **public** music list.
   Draft mode always shows the plain single-column list, since draft
   is for a conductor to scan what's still TBC, not to preview the
