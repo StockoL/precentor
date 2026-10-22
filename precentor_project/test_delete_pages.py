@@ -3,8 +3,9 @@ from datetime import date
 from django.test import TestCase
 
 from accounts.testing import make_user
-from library.models import Score
-from planning.models import Service, SlotTemplate, Term, TermMarker
+from planning.models import Service, TermMarker
+
+from .testing import make_score, make_slot_template, make_term
 
 
 class DeleteThenBackTests(TestCase):
@@ -13,7 +14,7 @@ class DeleteThenBackTests(TestCase):
 
     def setUp(self):
         self.client.force_login(make_user("conductor"))
-        self.term = Term.objects.create(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
+        self.term = make_term(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
 
     def delete_twice(self, url, list_url, message):
         response = self.client.get(url)
@@ -27,7 +28,7 @@ class DeleteThenBackTests(TestCase):
                 self.assertContains(response, message)
 
     def test_template(self):
-        template = SlotTemplate.objects.create(name="Benediction", slot_names="O salutaris")
+        template = make_slot_template(name="Benediction", slot_names="O salutaris")
         self.delete_twice(f"/templates/{template.pk}/delete/", "/templates/", "That template has already been deleted.")
 
     def test_term_service_and_notice(self):
@@ -38,11 +39,11 @@ class DeleteThenBackTests(TestCase):
         self.delete_twice(f"/terms/{self.term.pk}/delete/", "/", "That term has already been deleted.")
 
     def test_score(self):
-        score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        score = make_score(title="Ave verum", composer_surname="Byrd")
         self.delete_twice(f"/library/{score.pk}/delete/", "/library/", "That score has already been deleted.")
 
     def test_permissions_are_still_checked_first(self):
-        template = SlotTemplate.objects.create(name="Benediction", slot_names="O salutaris")
+        template = make_slot_template(name="Benediction", slot_names="O salutaris")
         self.client.force_login(make_user("librarian"))
         self.assertEqual(self.client.get(f"/templates/{template.pk}/delete/").status_code, 403)
 
