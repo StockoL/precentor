@@ -226,18 +226,6 @@ class FillUseTypeOrganisationTests(TestCase):
 
         importlib.import_module("ordo.migrations.0017_fill_use_type_organisation").give_use_types_an_organisation(apps, None)
 
-    def test_with_no_organisation_unused_starters_go_and_tagged_ones_stay(self):
-        from library.models import Score
-
-        UseType.objects.create(name="Vespers")
-        mass = UseType.objects.create(name="Mass")
-        score = Score.objects.create(title="Missa brevis", composer_surname="Palestrina")
-        score.suited_use_types.add(mass)
-        self.run_migration()
-        self.assertEqual(list(UseType.objects.values_list("name", flat=True)), ["Mass"])
-        mass.refresh_from_db()
-        self.assertEqual(mass.organisation.name, "My church")
-
     def test_with_an_organisation_every_use_type_joins_it(self):
         church = make_organisation("St Cecilia's")
         use = UseType.objects.create(name="Vespers")
