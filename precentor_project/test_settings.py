@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import sys
@@ -6,11 +7,12 @@ from django.conf import settings
 from django.test import SimpleTestCase
 
 
-def start_django(**env):
+def start_django(code="", **env):
     """Start Django in a fresh process with some environment variables
-    changed, since settings are read once, when Django starts."""
+    changed, since settings are read once, when Django starts, then run
+    any code given."""
     return subprocess.run(
-        [sys.executable, "-c", "import django; django.setup()"],
+        [sys.executable, "-c", "import django; django.setup(); " + code],
         env={**os.environ, "DJANGO_SETTINGS_MODULE": "precentor_project.settings", **env},
         cwd=settings.BASE_DIR,
         capture_output=True,
@@ -28,3 +30,27 @@ class SecretKeyTests(SimpleTestCase):
 
     def test_starting_with_one_works(self):
         self.assertEqual(start_django(SECRET_KEY="a-test-key").returncode, 0)
+
+
+def read_settings(*names, **env):
+    """The named settings as Django sees them with this environment."""
+    result = start_django(
+        "from django.conf import settings; import json; "
+        f"print(json.dumps([getattr(settings, name) for name in {list(names)!r}]))",
+        **env,
+    )
+    return json.loads(result.stdout)
+
+
+class HostSettingsTests(SimpleTestCase):
+    def test_hosts_and_origins_come_from_the_environment(self):
+        hosts, origins = read_settings(
+            "ALLOWED_HOSTS", "CSRF_TRUSTED_ORIGINS",
+            ALLOWED_HOSTS="precentor.example.org, www.precentor.example.org",
+            CSRF_TRUSTED_ORIGINS="https://precentor.example.org",
+        )
+        self.assertEqual(hosts, ["precentor.example.org", "www.precentor.example.org"])
+        self.assertEqual(origins, ["https://precentor.example.org"])
+
+    def test_nothing_set_means_no_extra_hosts(self):
+        self.assertEqual(read_settings("ALLOWED_HOSTS", ALLOWED_HOSTS=""), [[]])

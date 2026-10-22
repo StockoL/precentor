@@ -24,6 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 
 
+def env_list(name):
+    """A comma-separated environment variable as a list, e.g.
+    ALLOWED_HOSTS="precentor.example.org,www.precentor.example.org"."""
+    return [item.strip() for item in os.getenv(name, "").split(",") if item.strip()]
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -39,7 +45,13 @@ if not SECRET_KEY:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
+# The site's own address(es), set on the host. With DEBUG on and none
+# set, Django allows localhost by itself.
+ALLOWED_HOSTS = env_list("ALLOWED_HOSTS")
+
+# Full origins, with the scheme, e.g. https://precentor.example.org. Django
+# checks a form's Origin header against these on HTTPS.
+CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
 
 
 # Application definition
