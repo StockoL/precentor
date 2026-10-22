@@ -99,6 +99,12 @@ class UserConstraintTests(TestCase):
     def test_an_owner_needs_an_organisation(self):
         self.assert_refused("Only someone in an organisation can own it.", is_owner=True)
 
+    def test_an_owner_cannot_be_a_viewer(self):
+        self.assert_refused(
+            "An owner must be a Conductor or a Librarian.",
+            organisation=make_organisation(), role="viewer", is_owner=True,
+        )
+
     def test_both_or_neither_is_fine(self):
         make_user("viewer").full_clean()
         make_superuser().full_clean()

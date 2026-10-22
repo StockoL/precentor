@@ -76,6 +76,12 @@ class User(AbstractBaseUser, PermissionsMixin):
                 name="user_owner_has_organisation",
                 violation_error_message="Only someone in an organisation can own it.",
             ),
+            # An owner runs the organisation, which a read-only role can't.
+            models.CheckConstraint(
+                condition=Q(is_owner=False) | ~Q(role=Role.VIEWER),
+                name="user_owner_is_not_a_viewer",
+                violation_error_message="An owner must be a Conductor or a Librarian.",
+            ),
         ]
 
     def __str__(self):
