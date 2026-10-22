@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from accounts.testing import make_organisation, make_user
 from ordo.models import LiturgicalOccasion, UseType
-from precentor_project.testing import make_score, make_term
+from precentor_project.testing import make_score, make_term, make_use_type
 
 from .models import Score
 
@@ -627,3 +627,19 @@ class ScoreOrganisationTests(TestCase):
         score = make_score(title="Ave verum", composer_surname="Byrd", organisation=church)
         self.assertEqual(score.organisation, church)
         self.assertEqual(list(church.scores.all()), [score])
+
+    def test_a_score_made_through_the_app_and_its_typed_use_types_join_the_makers_church(self):
+        from ordo.models import UseType
+
+        church = make_organisation("St Cecilia's")
+        make_use_type("Benediction", organisation=make_organisation("St Elsewhere"))
+        self.client.force_login(make_user("librarian", organisation=church))
+        self.client.post("/library/add/", {
+            **NewUseTypeTests.BASE, "title": "O salutaris", "composer_surname": "Elgar",
+            "new_use_types": "benediction",
+        })
+        score = Score.objects.get(title="O salutaris")
+        self.assertEqual(score.organisation, church)
+        # A new "Benediction" for St Cecilia's, not St Elsewhere's reused.
+        self.assertEqual([u.organisation for u in score.suited_use_types.all()], [church])
+        self.assertEqual(UseType.objects.filter(name__iexact="benediction").count(), 2)

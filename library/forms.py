@@ -74,12 +74,14 @@ class ScoreForm(forms.ModelForm):
         return names
 
     def add_new_use_types(self, score):
-        """Tag the score with each typed use type, reusing an existing one
-        whose name matches in any case ("mass" finds "Mass")."""
+        """Tag the score with each typed use type, reusing one of the
+        church's own whose name matches in any case ("mass" finds "Mass").
+        Another church's use types are never reused or seen."""
+        church_use_types = UseType.objects.filter(organisation=score.organisation)
         for name in self.cleaned_data.get("new_use_types", []):
-            use_type = UseType.objects.filter(name__iexact=name).first()
+            use_type = church_use_types.filter(name__iexact=name).first()
             if use_type is None:
-                use_type = UseType.objects.create(name=name)
+                use_type = UseType.objects.create(name=name, organisation=score.organisation)
             score.suited_use_types.add(use_type)
 
     def save(self, commit=True):

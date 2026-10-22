@@ -11,7 +11,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from accounts.mixins import RoleRequiredMixin
+from accounts.mixins import OrganisationCreateMixin, RoleRequiredMixin
 from accounts.permissions import can_edit_library
 from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 from precentor_project.mixins import DeletePageMixin
@@ -189,7 +189,7 @@ class ScoreFormMixin:
         return context
 
 
-class ScoreCreateView(LibraryEditRequiredMixin, ScoreFormMixin, CreateView):
+class ScoreCreateView(LibraryEditRequiredMixin, OrganisationCreateMixin, ScoreFormMixin, CreateView):
     model = Score
     form_class = ScoreForm
 
