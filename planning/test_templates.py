@@ -3,12 +3,13 @@ from datetime import date
 from django.test import TestCase
 
 from accounts.testing import make_user
-from precentor_project.testing import make_score, make_term
+from precentor_project.testing import make_score, make_slot_template, make_term
 
 from .forms import SlotTemplateForm
-from .models import Service, ServiceRole, SlotTemplate
+from .models import Service, ServiceRole, SlotTemplate, Term
 
 MASS = ["Introit", "Kyrie", "Gloria", "Gradual", "Alleluia or Tract", "Credo", "Offertory", "Sanctus", "Agnus Dei", "Communion"]
+VESPERS = ["Psalms", "Hymn", "Magnificat", "Marian antiphon"]
 
 
 class TemplateTestMixin:
@@ -17,16 +18,48 @@ class TemplateTestMixin:
         self.client.force_login(self.conductor)
         term = make_term(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
-        self.mass = SlotTemplate.objects.get(name="Mass")
+        # The church's own Mass and Vespers, with the ready-made slots.
+        self.mass = make_slot_template(name="Mass", slot_names="\n".join(MASS))
+        self.vespers = make_slot_template(name="Vespers", slot_names="\n".join(VESPERS))
 
     def slot_names(self):
         return list(self.service.roles.values_list("role_name", flat=True))
 
 
-class ReadyMadeTemplateTests(TestCase):
-    def test_mass_and_vespers_come_ready_made(self):
-        self.assertEqual(SlotTemplate.objects.get(name="Mass").slots, MASS)
-        self.assertEqual(SlotTemplate.objects.get(name="Vespers").slots, ["Psalms", "Hymn", "Magnificat", "Marian antiphon"])
+class FillTemplateOrganisationTests(TestCase):
+    """The fill-in migration, run against today's models while the column
+    can still be empty. These go when the column becomes required."""
+
+    def run_migration(self):
+        import importlib
+
+        from django.apps import apps
+
+        module = importlib.import_module("planning.migrations.0015_fill_term_and_template_organisation")
+        module.give_terms_and_templates_an_organisation(apps, None)
+
+    def test_with_no_organisation_unused_starters_go_and_used_ones_stay(self):
+        SlotTemplate.objects.all().delete()
+        unused = SlotTemplate.objects.create(name="Vespers", slot_names="Psalms")
+        used = SlotTemplate.objects.create(name="Mass", slot_names="Introit")
+        term = Term.objects.create(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
+        Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Mass", slot_template=used)
+        self.run_migration()
+        self.assertFalse(SlotTemplate.objects.filter(pk=unused.pk).exists())
+        used.refresh_from_db()
+        term.refresh_from_db()
+        self.assertEqual(used.organisation.name, "My church")
+        self.assertEqual(term.organisation, used.organisation)
+
+    def test_with_an_organisation_everything_joins_it_and_nothing_goes(self):
+        from accounts.testing import make_organisation
+
+        SlotTemplate.objects.all().delete()
+        church = make_organisation("St Cecilia's")
+        template = SlotTemplate.objects.create(name="Vespers", slot_names="Psalms")
+        self.run_migration()
+        template.refresh_from_db()
+        self.assertEqual(template.organisation, church)
 
 
 class SlotParsingTests(TestCase):
@@ -130,6 +163,7 @@ class SlotTemplateFormTests(TestCase):
         self.assertEqual(form.cleaned_data["slot_names"], "Introit\nKyrie")
 
     def test_names_are_unique(self):
+        make_slot_template(name="Mass", slot_names="Introit")
         form = SlotTemplateForm(data={"name": "Mass", "slot_names": "Introit"})
         self.assertIn("name", form.errors)
 
@@ -137,7 +171,6 @@ class SlotTemplateFormTests(TestCase):
 class OneTemplatePerServiceTests(TemplateTestMixin, TestCase):
     def setUp(self):
         super().setUp()
-        self.vespers = SlotTemplate.objects.get(name="Vespers")
 
     def apply(self, template, **data):
         return self.client.post(f"/services/{self.service.pk}/templates/{template.pk}/apply/", data, follow=True)
