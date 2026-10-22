@@ -9,6 +9,7 @@
 
   .music-list-header {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: var(--spacing-m);
     margin-block-end: var(--spacing-l);

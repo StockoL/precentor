@@ -12,7 +12,8 @@
     {# The banner carries the church's name, so the name isn't written out again; it's the alt text instead. #}
     <img class="music-list-banner" src="{{ site_config.crest_url }}" alt="{{ site_config.church_name }}">
     {% endif %}
-    <div class="music-list-header flow">
+    {# A flex row spaced by gap, so no .flow: its top margins would push the later items down. #}
+    <div class="music-list-header">
         {% if site_config.crest_layout == "logo" %}
         {# Empty alt: the church's name is written right beside the logo. #}
         <img class="music-list-crest" src="{{ site_config.crest_url }}" alt="">
