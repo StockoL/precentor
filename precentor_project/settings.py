@@ -15,6 +15,7 @@ from pathlib import Path
 
 import dj_database_url
 from django.contrib.messages import constants as message_constants
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,6 +29,12 @@ load_dotenv()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    # Stop at once with a plain reason, rather than failing later with a
+    # less obvious error once something needs the key.
+    raise ImproperlyConfigured(
+        "SECRET_KEY is not set. Put it in the environment, or in .env for local work."
+    )
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False") == "True"
