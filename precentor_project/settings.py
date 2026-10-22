@@ -53,6 +53,26 @@ ALLOWED_HOSTS = env_list("ALLOWED_HOSTS")
 # checks a form's Origin header against these on HTTPS.
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
 
+# HTTPS only, once deployed. Locally (DEBUG on) the site runs over plain
+# HTTP, so none of this applies there.
+if not DEBUG:
+    # The host's proxy talks to Django over HTTP and says, in this header,
+    # that the visitor's own connection was HTTPS.
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # Browsers remember to use HTTPS for this long. It starts at an hour,
+    # so a mistake can't lock visitors out for long; raise it on the host
+    # once HTTPS is known to work.
+    SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "3600"))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# Joining the browsers' HSTS preload list is for a domain's owner to apply
+# for, and is close to permanent. A host's shared address can't join, and
+# a custom domain should only join on purpose, so the check stays quiet.
+SILENCED_SYSTEM_CHECKS = ["security.W021"]
+
 
 # Application definition
 

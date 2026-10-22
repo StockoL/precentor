@@ -54,3 +54,29 @@ class HostSettingsTests(SimpleTestCase):
 
     def test_nothing_set_means_no_extra_hosts(self):
         self.assertEqual(read_settings("ALLOWED_HOSTS", ALLOWED_HOSTS=""), [[]])
+
+
+class HttpsSettingsTests(SimpleTestCase):
+    NAMES = ("SECURE_SSL_REDIRECT", "SESSION_COOKIE_SECURE", "CSRF_COOKIE_SECURE", "SECURE_HSTS_SECONDS")
+
+    def test_once_deployed_everything_is_https_only(self):
+        self.assertEqual(read_settings(*self.NAMES, DEBUG="False"), [True, True, True, 3600])
+
+    def test_locally_none_of_it_applies(self):
+        self.assertEqual(read_settings(*self.NAMES, DEBUG="True"), [False, False, False, 0])
+
+    def test_the_deploy_check_is_clean(self):
+        result = subprocess.run(
+            [sys.executable, "manage.py", "check", "--deploy", "--fail-level", "WARNING"],
+            env={
+                # Not the variable the browser tests set for Playwright, which
+                # the deploy check rightly refuses on a live server.
+                **{k: v for k, v in os.environ.items() if k != "DJANGO_ALLOW_ASYNC_UNSAFE"},
+                "DEBUG": "False",
+                # Long and varied enough for Django's own key check.
+                "SECRET_KEY": "only-for-the-deploy-check-test-0123456789-abcdefghijklmnop",
+                "ALLOWED_HOSTS": "precentor.example.org",
+            },
+            cwd=settings.BASE_DIR, capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
