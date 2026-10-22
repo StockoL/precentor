@@ -1000,3 +1000,15 @@ class PlanningOrganisationTests(TestCase):
         score = make_score(title="Ave verum", composer_surname="Byrd", organisation=church)
         piece = RolePiece.objects.create(service_role=slot, score=score)
         self.assertEqual((slot.organisation, piece.organisation), (church, church))
+
+    def test_terms_and_templates_made_through_the_app_join_the_makers_organisation(self):
+        from .models import SlotTemplate
+
+        church = make_organisation("St Cecilia's")
+        self.client.force_login(make_user("conductor", organisation=church))
+        self.client.post("/terms/add/", {
+            "name": "Advent", "start_date": "2026-11-29", "end_date": "2026-12-24", "calendar_use": "current",
+        })
+        self.client.post("/templates/add/", {"name": "Compline", "slot_names": "Nunc dimittis"})
+        self.assertEqual(Term.objects.get(name="Advent").organisation, church)
+        self.assertEqual(SlotTemplate.objects.get(name="Compline").organisation, church)

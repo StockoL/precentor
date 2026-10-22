@@ -23,3 +23,16 @@ class RoleRequiredMixin(UserPassesTestMixin):
         # a method when read through an instance, and would get the view as
         # its user.
         return type(self).permission(self.request.user)
+
+
+class OrganisationCreateMixin:
+    """
+    For the create views of what a church owns directly (terms, scores,
+    slot templates): the new thing belongs to the signed-in person's
+    organisation. It comes from the person, never from the form, so nobody
+    can put something into another church's data by editing a field.
+    """
+
+    def form_valid(self, form):
+        form.instance.organisation = self.request.user.organisation
+        return super().form_valid(form)

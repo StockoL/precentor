@@ -20,7 +20,7 @@ from django.views.generic import (
 )
 
 from accounts.decorators import role_required
-from accounts.mixins import RoleRequiredMixin
+from accounts.mixins import OrganisationCreateMixin, RoleRequiredMixin
 from accounts.permissions import can_plan
 from comments.forms import CommentForm
 from comments.models import Comment
@@ -173,7 +173,7 @@ class TermDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class TermCreateView(PlanningRequiredMixin, CreateView):
+class TermCreateView(PlanningRequiredMixin, OrganisationCreateMixin, CreateView):
     model = Term
     form_class = TermForm
 
@@ -300,7 +300,7 @@ class ReturnToServiceMixin:
         return context
 
 
-class SlotTemplateCreateView(PlanningRequiredMixin, ReturnToServiceMixin, CreateView):
+class SlotTemplateCreateView(PlanningRequiredMixin, OrganisationCreateMixin, ReturnToServiceMixin, CreateView):
     model = SlotTemplate
     form_class = SlotTemplateForm
 
