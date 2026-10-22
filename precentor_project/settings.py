@@ -53,6 +53,14 @@ ALLOWED_HOSTS = env_list("ALLOWED_HOSTS")
 # checks a form's Origin header against these on HTTPS.
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
 
+# Render sets this to the service's own address (precentor.onrender.com),
+# so the site works there without anyone typing it in. A custom domain
+# still goes in ALLOWED_HOSTS and CSRF_TRUSTED_ORIGINS above.
+RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_EXTERNAL_HOSTNAME}")
+
 # HTTPS only, once deployed. Locally (DEBUG on) the site runs over plain
 # HTTP, so none of this applies there.
 if not DEBUG:

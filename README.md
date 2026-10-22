@@ -15,8 +15,10 @@ _Milestone 3 project, Code Institute_
 > calendars (§3.4). Since then I've replaced Django's user with my own:
 > people sign in by email, belong to an organisation, and hold one of
 > three roles, and every page shows them only what their role allows
-> (§5). Still to come are deployment, keeping each organisation's data
-> apart from the others', the CSV import and the final documentation.
+> (§5). It's deployed on Render at
+> [precentor.onrender.com](https://precentor.onrender.com) (§12). Still
+> to come are keeping each organisation's data apart from the others',
+> the CSV import and the final documentation.
 >
 > The rest of this document keeps its original concept-and-reasoning
 > framing, because that reasoning is what the build followed. Where the
@@ -508,14 +510,67 @@ Open Font License. [`docs/acknowledgements.md`](docs/acknowledgements.md)
 lists every source in full, with what I took from each and how, and
 my thanks to each.
 
+
+## 12. Deployment
+
+Precentor runs on [Render](https://render.com), described in full by
+`render.yaml` at the root of the repository (a Render "Blueprint"). It
+creates a project called Precentor with a Production environment
+holding:
+
+- **The web service**, on Render's free plan, in Frankfurt. It sleeps
+  after 15 minutes without visitors and takes about a minute to wake,
+  which is fine for a project with a handful of users. Each deploy
+  installs the requirements, collects the static files, runs the
+  migrations and loads the liturgical calendar, then starts the site
+  with gunicorn. The free plan has no separate pre-deploy step, so all
+  of that happens in the build.
+- **The database**, Postgres 17 on the smallest paid plan, because a
+  free Render database is deleted 30 days after it's made. Its allow
+  list is empty, so only Render's own services can reach it.
+
+The settings read everything a host provides from the environment.
+Render generates `SECRET_KEY` and supplies `DATABASE_URL` and the
+site's own address, so nothing needs typing into the dashboard. With
+`DEBUG` off, the site is served only over HTTPS with secure cookies,
+and `manage.py check --deploy` is clean.
+
+To deploy it from a fresh copy of the repository:
+
+1. In the Render dashboard, choose **New**, then **Blueprint**, connect
+   GitHub if asked, and pick this repository and its `main` branch.
+2. Check the list of what will be created (the project, the web service
+   and the database) and apply it. The paid database needs a payment
+   card on the account.
+3. Watch the web service's log. The build ends with the calendar being
+   loaded (lines such as `general_roman: 223 added`), then "Your
+   service is live".
+4. Make the first superuser from your own computer, since the free plan
+   has no shell on Render. Add your IP address to the database's allow
+   list, copy its External Database URL, and in the project folder with
+   the virtual environment active run:
+
+   ```powershell
+   $env:DATABASE_URL = "the External Database URL"
+   python manage.py createsuperuser
+   Remove-Item Env:DATABASE_URL
+   ```
+
+   It asks only for an email address and a password. Then take your IP
+   address off the allow list again.
+5. Sign in to `/admin/` as the superuser, add an organisation, and add
+   your own account to it as a Conductor, ticking "is owner". Sign in
+   with that account from then on; the superuser only looks after the
+   site.
+
+Later deploys happen by themselves whenever `main` changes on GitHub.
+After one, it's worth checking that the login page loads, that `http://`
+sends you to `https://`, and that the crest still shows on Settings.
+
 ---
 
-_Remaining work is listed phase by phase in
-[`docs/overhaul_plan.md`](docs/overhaul_plan.md). The last phases cover
-deployment (the host's setup, Postgres and `collectstatic`) and the
-final documentation: screenshots, install and run instructions, and
-checking the finished app against `docs/user_stories.md`. The settings
-are already ready for a host: the secret key, allowed hosts and trusted
-origins come from the environment, Django refuses to start without a
-secret key, and with `DEBUG` off the site is served only over HTTPS,
-with secure cookies. `manage.py check --deploy` is clean._
+_The overhaul is recorded phase by phase in
+[`docs/overhaul_plan.md`](docs/overhaul_plan.md). What remains is
+keeping each organisation's data apart, the CSV import and the final
+documentation: screenshots, install and run instructions, and checking
+the finished app against `docs/user_stories.md`._

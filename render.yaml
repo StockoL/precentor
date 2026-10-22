@@ -1,0 +1,51 @@
+# Render Blueprint: the whole deployment, written down. Applying it in the
+# Render dashboard (New > Blueprint) creates the Precentor project, its
+# Production environment, the web service and the database.
+#
+# The web service is on the free plan: it sleeps after 15 minutes without
+# visitors and takes about a minute to wake. The database is on the
+# smallest paid plan, because a free one is deleted 30 days after it's made.
+
+projects:
+  - name: Precentor
+    environments:
+      - name: Production
+        services:
+          - type: web
+            name: precentor
+            runtime: python
+            plan: free
+            region: frankfurt
+            # The free plan has no separate pre-deploy step, so migrations
+            # and the calendar run here, after the packages and static
+            # files. load_calendar is safe to run on every deploy: it adds
+            # and updates days, and keeps any a service already uses.
+            buildCommand: >-
+              pip install -r requirements.txt &&
+              python manage.py collectstatic --no-input &&
+              python manage.py migrate --no-input &&
+              python manage.py load_calendar
+            startCommand: gunicorn precentor_project.wsgi:application
+            healthCheckPath: /accounts/login/
+            envVars:
+              - key: DATABASE_URL
+                fromDatabase:
+                  name: precentor-db
+                  property: connectionString
+              - key: SECRET_KEY
+                generateValue: true
+              - key: WEB_CONCURRENCY
+                value: "2"
+              # The version the tests pass on locally. Render needs all
+              # three parts of the number here.
+              - key: PYTHON_VERSION
+                value: "3.14.3"
+        databases:
+          - name: precentor-db
+            plan: 0.1c-256mb
+            region: frankfurt
+            databaseName: precentor
+            user: precentor
+            postgresMajorVersion: "17"
+            # Empty: only Render's own services can connect, not the internet.
+            ipAllowList: []
