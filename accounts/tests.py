@@ -285,6 +285,7 @@ class LoginPageTests(TestCase):
         response = self.client.get("/accounts/login/")
         self.assertIsInstance(response.context["form"], EmailAuthenticationForm)
         self.assertContains(response, 'type="email"')
+        self.assertContains(response, "Ask whoever runs Precentor for your church")
 
     def test_signing_in_with_any_capitals_lands_on_terms(self):
         make_user(email="anne@example.com", password="s3cret-pass")
