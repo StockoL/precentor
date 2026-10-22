@@ -616,3 +616,13 @@ class LibraryEditAccessTests(TestCase):
         for url in self.urls:
             with self.subTest(url=url):
                 self.assertEqual(self.client.get(url).status_code, 200)
+
+
+class ScoreOrganisationTests(TestCase):
+    def test_a_score_belongs_to_an_organisation(self):
+        from accounts.testing import make_organisation
+
+        church = make_organisation()
+        score = Score.objects.create(title="Ave verum", composer_surname="Byrd", organisation=church)
+        self.assertEqual(score.organisation, church)
+        self.assertEqual(list(church.scores.all()), [score])

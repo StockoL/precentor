@@ -106,6 +106,11 @@ class ScoreQuerySet(models.QuerySet):
 
 
 class Score(models.Model):
+    # Whose library this score is in. Allowed to be empty only until every
+    # existing row has been given one; a later migration makes it required.
+    organisation = models.ForeignKey(
+        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="scores"
+    )
     title = models.CharField(max_length=200)
     composer_surname = models.CharField(
         max_length=100, help_text="Used for sorting, e.g. Palestrina"
