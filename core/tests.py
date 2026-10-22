@@ -298,3 +298,29 @@ class SiteConfigOrganisationTests(TestCase):
         config.save()
         church.refresh_from_db()
         self.assertEqual(church.settings, config)
+
+
+class FillSettingsOrganisationTests(TestCase):
+    """The fill-in migration, run against today's models."""
+
+    def run_migration(self):
+        import importlib
+
+        from django.apps import apps
+
+        importlib.import_module("core.migrations.0010_fill_settings_organisation").give_settings_an_organisation(apps, None)
+
+    def test_the_settings_row_joins_the_organisation(self):
+        from accounts.testing import make_organisation
+
+        church = make_organisation("St Cecilia's")
+        SiteConfig.get_solo()
+        self.run_migration()
+        self.assertEqual(SiteConfig.get_solo().organisation, church)
+
+    def test_no_settings_row_means_nothing_to_do(self):
+        from accounts.models import Organisation
+
+        self.run_migration()
+        self.assertFalse(SiteConfig.objects.exists())
+        self.assertFalse(Organisation.objects.exists())
