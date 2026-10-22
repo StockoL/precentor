@@ -28,12 +28,6 @@ class SiteConfig(models.Model):
     church_name = models.CharField(
         max_length=200, blank=True, help_text="Shown at the top of the music list."
     )
-    crest_image = models.ImageField(
-        "crest",
-        upload_to="site_config/",
-        blank=True,
-        help_text="Shown at the top of the music list, cropped to a banner shape.",
-    )
     # The crest itself, kept in the database because a host's disk is wiped
     # on every deploy. Set and cleared through set_crest() and clear_crest().
     crest = models.BinaryField(blank=True, default=b"", editable=False)
