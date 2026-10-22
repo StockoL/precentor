@@ -31,8 +31,13 @@ class OrganisationCreateMixin:
     slot templates): the new thing belongs to the signed-in person's
     organisation. It comes from the person, never from the form, so nobody
     can put something into another church's data by editing a field.
+
+    It's set as the form is built, before the form checks anything, so a
+    form can check its data against the church's own, such as a template
+    name the church already uses.
     """
 
-    def form_valid(self, form):
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
         form.instance.organisation = self.request.user.organisation
-        return super().form_valid(form)
+        return form
