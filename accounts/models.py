@@ -22,6 +22,11 @@ class Role(models.TextChoices):
 
 
 class UserManager(BaseUserManager):
+    def get_by_natural_key(self, email):
+        # Django's login looks people up through this, so signing in with
+        # Anne@Example.com finds anne@example.com.
+        return self.get(email__iexact=email)
+
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError("Every user needs an email address.")

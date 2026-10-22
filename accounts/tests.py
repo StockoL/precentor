@@ -52,6 +52,10 @@ class MakeUserTests(TestCase):
         user = make_user(password="s3cret-pass")
         self.assertTrue(self.client.login(username=user.email, password="s3cret-pass"))
 
+    def test_signing_in_ignores_the_case_of_the_address(self):
+        make_user(email="anne@example.com", password="s3cret-pass")
+        self.assertTrue(self.client.login(username="Anne@Example.COM", password="s3cret-pass"))
+
     def test_an_unknown_role_is_refused(self):
         with self.assertRaises(ValueError):
             make_user("organist")
