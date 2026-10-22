@@ -205,3 +205,12 @@ class LiturgicalColourTokenTests(TestCase):
             with self.subTest(colour=value):
                 # Light, dark by system setting, and dark by choice.
                 self.assertEqual(css.count(f"--colors-liturgical-{value}:"), 3)
+
+
+class UseTypeOrganisationTests(TestCase):
+    def test_a_use_type_belongs_to_an_organisation(self):
+        from accounts.testing import make_organisation
+
+        church = make_organisation()
+        use = UseType.objects.create(name="Communion", organisation=church)
+        self.assertEqual(list(church.use_types.all()), [use])

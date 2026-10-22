@@ -84,6 +84,12 @@ class LiturgicalSeason(models.Model):
 
 
 class UseType(models.Model):
+    # Use types are a church's own words for how it uses music, so each
+    # belongs to an organisation, unlike the shared calendar. Allowed to be
+    # empty only until existing rows are given one.
+    organisation = models.ForeignKey(
+        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="use_types"
+    )
     name = models.CharField(max_length=50)
 
     class Meta:
