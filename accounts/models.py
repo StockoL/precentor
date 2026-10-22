@@ -70,6 +70,12 @@ class User(AbstractBaseUser, PermissionsMixin):
                 name="user_organisation_and_role_together",
                 violation_error_message="Someone in an organisation needs a role there, and only they can have one.",
             ),
+            # Owning means owning an organisation.
+            models.CheckConstraint(
+                condition=Q(is_owner=False) | Q(organisation__isnull=False),
+                name="user_owner_has_organisation",
+                violation_error_message="Only someone in an organisation can own it.",
+            ),
         ]
 
     def __str__(self):
