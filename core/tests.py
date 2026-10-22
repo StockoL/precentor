@@ -109,6 +109,29 @@ class CrestProcessingTests(TestCase):
             with self.subTest(case=case), self.assertRaises(ValidationError):
                 process_crest_image(upload)
 
+    def logo(self, upload):
+        from PIL import Image
+
+        from .imaging import process_logo_image
+
+        return Image.open(process_logo_image(upload))
+
+    def test_a_logo_keeps_its_own_shape_and_is_fitted_inside_600(self):
+        for size, expected in (((1200, 900), (600, 450)), ((300, 1200), (150, 600)), ((400, 400), (400, 400))):
+            with self.subTest(size=size):
+                self.assertEqual(self.logo(self.upload(size)).size, expected)
+
+    def test_a_logo_keeps_its_transparency(self):
+        self.assertEqual(self.logo(self.upload((500, 500), mode="RGBA")).mode, "RGBA")
+
+    def test_a_tiny_logo_is_refused(self):
+        from django.core.exceptions import ValidationError
+
+        from .imaging import process_logo_image
+
+        with self.assertRaisesMessage(ValidationError, "at least 150px on its shorter side"):
+            process_logo_image(self.upload((400, 120)))
+
     def test_form_runs_uploads_through_the_processing(self):
         form = SiteConfigForm(
             data={"house_accent_colour": "#8b1a2b", "layout_style": "columns", "national_calendar": "general_roman"},
