@@ -643,3 +643,27 @@ class ScoreOrganisationTests(TestCase):
         # A new "Benediction" for St Cecilia's, not St Elsewhere's reused.
         self.assertEqual([u.organisation for u in score.suited_use_types.all()], [church])
         self.assertEqual(UseType.objects.filter(name__iexact="benediction").count(), 2)
+
+
+class FillScoreOrganisationTests(TestCase):
+    """The fill-in migration, run against today's models while the column
+    can still be empty. These go when the column becomes required."""
+
+    def run_migration(self):
+        import importlib
+
+        from django.apps import apps
+
+        importlib.import_module("library.migrations.0016_fill_score_organisation").give_scores_an_organisation(apps, None)
+
+    def test_scores_without_one_join_the_organisation(self):
+        church = make_organisation("St Cecilia's")
+        Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        self.run_migration()
+        self.assertEqual(Score.objects.get().organisation, church)
+
+    def test_no_scores_means_no_organisation_is_made(self):
+        from accounts.models import Organisation
+
+        self.run_migration()
+        self.assertFalse(Organisation.objects.exists())
