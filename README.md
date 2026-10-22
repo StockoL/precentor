@@ -290,9 +290,13 @@ state:
   crest, house accent colour, and the layout and hymns-and-psalm
   settings above) is set on a conductor-only page and applied to every
   music list, so the details aren't re-entered each term. The crest can
-  be cropped to a banner shape in the browser before upload; without
-  JavaScript, the raw image can still be uploaded, and the server crops
-  it to the same shape instead of rejecting it.
+  be a logo, shown at its own shape beside the church's name, or a
+  banner across the top that carries the name itself, since churches
+  use both. A banner can be cropped in the browser before upload;
+  without JavaScript, the raw image can still be uploaded, and the
+  server crops it to the same shape instead of rejecting it. The image
+  is kept in the database rather than on disk, because a host wipes its
+  disk on every deploy.
 - **The liturgical accent, reused.** Each entry's left-hand colour
   stripe uses `Service.occasion.colour` in the same way as the service
   page (see §3.4, and the liturgical accent section of
@@ -508,7 +512,10 @@ my thanks to each.
 
 _Remaining work is listed phase by phase in
 [`docs/overhaul_plan.md`](docs/overhaul_plan.md). The last phases cover
-deployment (Heroku, Postgres, environment variables, `collectstatic`)
-and the final documentation: screenshots, install and run
-instructions, and checking the finished app against
-`docs/user_stories.md`._
+deployment (the host's setup, Postgres and `collectstatic`) and the
+final documentation: screenshots, install and run instructions, and
+checking the finished app against `docs/user_stories.md`. The settings
+are already ready for a host: the secret key, allowed hosts and trusted
+origins come from the environment, Django refuses to start without a
+secret key, and with `DEBUG` off the site is served only over HTTPS,
+with secure cookies. `manage.py check --deploy` is clean._

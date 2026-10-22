@@ -629,7 +629,10 @@ LAYOUT_STYLE_CHOICES = [
 
 class SiteConfig(models.Model):
     church_name = models.CharField(max_length=200, blank=True)
-    crest_image = models.ImageField(upload_to="site_config/", blank=True)
+    crest = models.BinaryField(blank=True, default=b"", editable=False)  # the image itself
+    crest_type = models.CharField(max_length=20, blank=True, editable=False)  # "image/png" or "image/jpeg"
+    crest_version = models.CharField(max_length=12, blank=True, editable=False)  # a fingerprint of the image
+    crest_style = models.CharField(max_length=10, choices=CREST_STYLE_CHOICES, default="logo")  # logo or banner
     house_accent_colour = models.CharField(max_length=7, default="#8b1a2b", validators=[validate_hex_colour])
     national_calendar = models.CharField(max_length=20, choices=NATIONAL_CALENDAR_CHOICES, default="general_roman")
     layout_style = models.CharField(max_length=20, choices=LAYOUT_STYLE_CHOICES, default="columns")
@@ -665,19 +668,34 @@ value like `red; background: url(...)` must never be saved. The colour
 picker can only send hex anyway; the validator covers the admin and
 anything posted by hand.
 
-**`crest_image` is the project's first uploaded file.** Nothing else
-in the app stores uploaded media, so it needed new setup: `Pillow` as
-a dependency, `MEDIA_ROOT` and `MEDIA_URL` in settings, and media
-serving in the project urlconf during development. A small
-`core/imaging.py` helper validates and normalises uploads on the
-server (format and resolution checks, then a centre crop and resize to
-a fixed 4:1 banner). It's called from `SiteConfigForm.clean_crest_image`,
-not from `Model.save()`, so a bad upload shows up as an ordinary form
-error. An in-browser crop tool I wrote (`crest-crop.js`) sits in front
-of it as progressive enhancement: pan and zoom onto a canvas, then
-hand the cropped result to the same server-side checks. The server
-step is what guarantees a consistent result, since it also has to
-handle the plain, uncropped upload from a visitor without JavaScript.
+**The crest is kept in the database.** It began as an `ImageField`
+saved to a `media/` folder, but hosts such as Render and Heroku wipe
+their disk on every deploy, so an uploaded crest would vanish. The
+image's bytes now sit in a `BinaryField`, which is fine for one small
+image: every upload is processed to a fixed size, from a few kilobytes
+for a simple logo to a few hundred for a photographic banner.
+`set_crest()` stores an image with its type and a 12-character SHA-256
+fingerprint; `clear_crest()` empties all three. A data migration
+(`core/0007`) copied any existing crest across before the file field,
+and the media settings it needed, were removed.
+
+**Two styles.** Churches use both a crest or logo shown beside the
+name and banner artwork that carries the name, so `crest_style`
+records which. `core/imaging.py` processes an upload to suit it: a
+banner is cropped to 4:1 at 1600 by 400, and a logo keeps its own shape,
+fitted inside 600 by 600 and never enlarged. Changing the style asks
+for a new image, since one shape looks wrong in the other's place. The
+form also caps uploads at 5 MB, so a huge photo fails before Pillow
+opens it. The processing runs in the form, not in `Model.save()`, so a
+bad upload shows up as an ordinary form error.
+
+**The crest is served publicly at a versioned address.**
+`core.views.crest` sends the stored image from
+`/settings/crest/<fingerprint>/` with a year-long `public, immutable`
+cache. It's public branding printed on the music list, so it needs no
+login, and a new image gets a new address, so browsers can keep it
+without ever showing an old one. `SiteConfig.crest_url` builds the
+address and `crest_layout` tells the music list which layout to use.
 
 ## Template organisation
 

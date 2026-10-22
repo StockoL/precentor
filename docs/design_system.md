@@ -658,7 +658,7 @@ run smoothly.
 
 ## `crest-crop.js`: a hand-built image crop tool
 
-This is progressive enhancement over a plain `crest_image` file input,
+This is progressive enhancement over a plain crest file input,
 in the same spirit as the chip inputs in `tag-input.js`: a real,
 working control underneath (the file input still submits normally),
 improved with my own JavaScript instead of a third-party cropping
@@ -671,3 +671,15 @@ and puts the result back on the real file input through the
 know cropping happened. `core/imaging.py` validates and normalises
 whatever arrives on the server regardless, since the client alone is
 never trusted.
+
+Only a banner is cropped. The script follows the Settings page's crest
+style buttons: with "Logo beside the church's name" chosen it shows a
+plain preview instead, because a logo keeps its own shape. It holds on
+to the file as chosen, so switching from Banner back to Logo undoes a
+crop rather than sending a logo already cut to 4:1. The banner's size
+comes from `core/imaging.py` through the page's `data-target-width` and
+`data-target-height`, so it's set in one place.
+
+On the music list a logo sits beside the written church name with an
+empty `alt`, since the name is right there, and a banner spans the list
+with the church's name as its `alt`, not written again.
