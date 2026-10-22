@@ -4,20 +4,20 @@ from django.test import TestCase
 
 from accounts.testing import make_user
 from comments.models import Comment
-from library.models import Score
+from precentor_project.testing import make_score, make_term
 
-from .models import RolePiece, Service, ServiceRole, Term
+from .models import RolePiece, Service, ServiceRole
 
 
 class RemoveSlotTests(TestCase):
     def setUp(self):
         self.conductor = make_user("conductor")
         self.client.force_login(self.conductor)
-        term = Term.objects.create(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
+        term = make_term(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
         self.introit = ServiceRole.objects.create(service=self.service, role_name="Introit")
         self.motet = ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
-        score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        score = make_score(title="Ave verum", composer_surname="Byrd")
         piece = RolePiece.objects.create(service_role=self.motet, score=score)
         Comment.objects.create(author=self.conductor, body="Too long?", target=piece)
 
