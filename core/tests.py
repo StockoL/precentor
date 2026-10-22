@@ -213,3 +213,6 @@ class CrestStorageTests(TestCase):
         config.clear_crest()
         self.assertFalse(config.has_crest)
         self.assertEqual((bytes(config.crest), config.crest_type), (b"", ""))
+
+    def test_a_new_site_starts_with_the_logo_style(self):
+        self.assertEqual(SiteConfig.get_solo().crest_style, "logo")

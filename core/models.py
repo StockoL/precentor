@@ -12,6 +12,11 @@ validate_hex_colour = RegexValidator(
     "Enter a colour as # and six hex digits, for example #8b1a2b.",
 )
 
+CREST_STYLE_CHOICES = [
+    ("logo", "Logo beside the church's name"),
+    ("banner", "Banner across the top"),
+]
+
 LAYOUT_STYLE_CHOICES = [
     ("columns", "Newspaper columns"),
     ("simple", "Simple single column"),
@@ -33,6 +38,9 @@ class SiteConfig(models.Model):
     crest = models.BinaryField(blank=True, default=b"", editable=False)
     crest_type = models.CharField(max_length=20, blank=True, editable=False)  # e.g. "image/png"
     crest_version = models.CharField(max_length=12, blank=True, editable=False)
+    crest_style = models.CharField(
+        "crest style", max_length=10, choices=CREST_STYLE_CHOICES, default="logo"
+    )
     house_accent_colour = models.CharField(
         "accent colour",
         max_length=7,
