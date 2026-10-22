@@ -20,7 +20,7 @@ class Comment(models.Model):
     # Always the organisation of what it's about, copied in save(): a term,
     # a service or a piece, each of which has one.
     organisation = models.ForeignKey(
-        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="comments"
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="comments"
     )
     created_at = models.DateTimeField(auto_now_add=True)
 

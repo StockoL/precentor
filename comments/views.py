@@ -48,7 +48,9 @@ def add_comment(request, content_type_id, object_id):
         comment.target = target
         comment.parent_id = parent_id
         try:
-            comment.full_clean()
+            # Everything but the organisation, which save() takes from the
+            # target a moment later.
+            comment.full_clean(exclude=["organisation"])
             comment.save()
         except ValidationError as e:
             form.add_error(None, e.messages)
