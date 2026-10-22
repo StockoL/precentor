@@ -3,9 +3,10 @@ from datetime import date
 from django.test import TestCase
 
 from accounts.testing import make_user
+from precentor_project.testing import make_score, make_term
 
 from .forms import SlotTemplateForm
-from .models import Service, ServiceRole, SlotTemplate, Term
+from .models import Service, ServiceRole, SlotTemplate
 
 MASS = ["Introit", "Kyrie", "Gloria", "Gradual", "Alleluia or Tract", "Credo", "Offertory", "Sanctus", "Agnus Dei", "Communion"]
 
@@ -14,7 +15,7 @@ class TemplateTestMixin:
     def setUp(self):
         self.conductor = make_user("conductor")
         self.client.force_login(self.conductor)
-        term = Term.objects.create(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
+        term = make_term(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
         self.mass = SlotTemplate.objects.get(name="Mass")
 
@@ -155,12 +156,11 @@ class OneTemplatePerServiceTests(TemplateTestMixin, TestCase):
         self.assertEqual(self.slot_names(), MASS)
 
     def test_replacing_keeps_slots_with_pieces(self):
-        from library.models import Score
         from planning.models import RolePiece
 
         self.apply(self.mass)
         introit = self.service.roles.get(role_name="Introit")
-        RolePiece.objects.create(service_role=introit, score=Score.objects.create(title="Rorate", composer_surname="Plainchant"))
+        RolePiece.objects.create(service_role=introit, score=make_score(title="Rorate", composer_surname="Plainchant"))
         response = self.apply(self.vespers, replace="1")
         self.assertEqual(self.slot_names(), ["Introit", "Psalms", "Hymn", "Magnificat", "Marian antiphon"])
         self.assertContains(response, "Now using Vespers: 4 slots added. Kept Introit, which has pieces proposed.")
