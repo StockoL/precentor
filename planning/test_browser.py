@@ -2,18 +2,19 @@ from datetime import date, timedelta
 
 from django.utils import timezone
 
-from library.models import Score
+from accounts.testing import make_organisation
 from ordo.models import LiturgicalOccasion
 from precentor_project.test_browser import PlaywrightTestCase
+from precentor_project.testing import make_score, make_term
 
-from .models import RolePiece, Service, ServiceRole, Term, TermMarker
+from .models import RolePiece, Service, ServiceRole, TermMarker
 
 
 class ConfirmToggleBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
         self.login_as_conductor()
-        term = Term.objects.create(
+        term = make_term(
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -22,7 +23,7 @@ class ConfirmToggleBrowserTest(PlaywrightTestCase):
         self.service = Service.objects.create(
             term=term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
-        score = Score.objects.create(title="Browser Anthem", composer_surname="Browser Composer")
+        score = make_score(title="Browser Anthem", composer_surname="Browser Composer")
         role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
         self.piece = RolePiece.objects.create(service_role=role, score=score)
 
@@ -70,7 +71,7 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
         self.login_as_conductor()
-        term = Term.objects.create(
+        term = make_term(
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -79,7 +80,7 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
         self.service = Service.objects.create(
             term=term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
-        self.score = Score.objects.create(title="Browser Anthem", composer_surname="Browser Composer")
+        self.score = make_score(title="Browser Anthem", composer_surname="Browser Composer")
         self.role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
 
     def test_propose_piece_appends_row_without_reload(self):
@@ -114,7 +115,7 @@ class AddRoleBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
         self.login_as_conductor()
-        term = Term.objects.create(
+        term = make_term(
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -156,7 +157,7 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
         self.login_as_conductor()
-        term = Term.objects.create(
+        term = make_term(
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -165,8 +166,8 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
         self.service = Service.objects.create(
             term=term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
-        self.score_a = Score.objects.create(title="Ave Verum", composer_surname="Byrd")
-        self.score_b = Score.objects.create(title="Locus Iste", composer_surname="Bruckner")
+        self.score_a = make_score(title="Ave Verum", composer_surname="Byrd")
+        self.score_b = make_score(title="Locus Iste", composer_surname="Bruckner")
         self.role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
 
     def test_combobox_filters_and_supports_keyboard_selection(self):
@@ -231,7 +232,7 @@ class OccasionAutoSuggestBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
         self.login_as_conductor()
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Browser Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -307,7 +308,7 @@ class MusicListLayoutBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
         self.login_as_conductor()
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Layout Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -319,7 +320,7 @@ class MusicListLayoutBrowserTest(PlaywrightTestCase):
                 hymns="123, 345", psalm="150",
             )
             role = ServiceRole.objects.create(service=service, role_name="Setting")
-            score = Score.objects.create(
+            score = make_score(
                 title="Missa Aeterna Christi Munera", composer_surname="Palestrina"
             )
             RolePiece.objects.create(service_role=role, score=score, is_confirmed=True)
@@ -352,7 +353,7 @@ class SlotOrderBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
         self.login_as_conductor()
-        term = Term.objects.create(
+        term = make_term(
             name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
         )
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
@@ -419,7 +420,7 @@ class ReplaceTemplateBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
         self.login_as_conductor()
-        term = Term.objects.create(
+        term = make_term(
             name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
         )
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
@@ -427,8 +428,11 @@ class ReplaceTemplateBrowserTest(PlaywrightTestCase):
 
         # Live-server tests flush the database after each test, so the seeded
         # templates may or may not be here: set them either way.
-        SlotTemplate.objects.update_or_create(name="Mass", defaults={"slot_names": "Introit\nKyrie"})
-        SlotTemplate.objects.update_or_create(name="Vespers", defaults={"slot_names": "Psalms\nMagnificat"})
+        church = make_organisation()
+        SlotTemplate.objects.update_or_create(name="Mass", defaults={"slot_names": "Introit\nKyrie", "organisation": church})
+        SlotTemplate.objects.update_or_create(
+            name="Vespers", defaults={"slot_names": "Psalms\nMagnificat", "organisation": church}
+        )
 
     def test_another_template_asks_in_the_dialog(self):
         # Headless Chromium stops painting after this form's redirect back
@@ -457,14 +461,14 @@ class RemoveSlotBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
         self.login_as_conductor()
-        term = Term.objects.create(
+        term = make_term(
             name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
         )
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
         self.introit, self.motet, self.communion = [
             ServiceRole.objects.create(service=self.service, role_name=n) for n in ("Introit", "Offertory motet", "Communion")
         ]
-        score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        score = make_score(title="Ave verum", composer_surname="Byrd")
         RolePiece.objects.create(service_role=self.motet, score=score)
 
     def names(self):
@@ -498,7 +502,7 @@ class OccasionCalendarFilterBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
         self.login_as_conductor()
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
         )
         self.new = LiturgicalOccasion.objects.create(name="Baptism of the Lord", calendar_use="current", fixed_month=1, fixed_day=11)
@@ -527,7 +531,7 @@ class TermPagesForViewersBrowserTest(PlaywrightTestCase):
         super().setUp()
         # Around today, so the Terms page shows it as a current term.
         today = timezone.localdate()
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Lent", start_date=today - timedelta(days=30), end_date=today + timedelta(days=30),
             calendar_use="current",
         )
@@ -560,12 +564,12 @@ class TermPagesForViewersBrowserTest(PlaywrightTestCase):
 class ServicePageForViewersBrowserTest(PlaywrightTestCase):
     def setUp(self):
         super().setUp()
-        term = Term.objects.create(
+        term = make_term(
             name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
         )
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
         role = ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
-        score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        score = make_score(title="Ave verum", composer_surname="Byrd")
         RolePiece.objects.create(service_role=role, score=score)
 
     def planning_controls(self):
