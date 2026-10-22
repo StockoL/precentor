@@ -1,8 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from accounts.testing import make_user
+from accounts.testing import make_organisation, make_user
 from ordo.models import LiturgicalOccasion, UseType
+from precentor_project.testing import make_score, make_term
 
 from .models import Score
 
@@ -42,7 +43,7 @@ class ScoreFormLayoutTests(TestCase):
 class VoicingSuggestionTests(TestCase):
     def test_voicing_field_suggests_existing_voicings_once_each(self):
         for title, voicing in (("A", "SATB"), ("B", "SATB"), ("C", "SSA"), ("D", "")):
-            Score.objects.create(title=title, composer_surname="X", voicing=voicing)
+            make_score(title=title, composer_surname="X", voicing=voicing)
         self.client.force_login(make_user("librarian"))
         response = self.client.get("/library/add/")
         self.assertContains(response, 'list="voicing-options"')
@@ -132,18 +133,18 @@ class LastSungTests(TestCase):
 
         from django.utils import timezone
 
-        from planning.models import Service, Term
+        from planning.models import Service
 
         # The same "today" as with_last_sung, which uses the UK time zone.
         self.today = timezone.localdate()
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Term",
             start_date=self.today - timedelta(days=365),
             end_date=self.today + timedelta(days=365),
             calendar_use="current",
         )
         self.Service = Service
-        self.score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        self.score = make_score(title="Ave verum", composer_surname="Byrd")
 
     def sing(self, days_from_today, confirmed=True):
         from datetime import timedelta
@@ -249,7 +250,7 @@ class VocalRangeTests(TestCase):
 class ScoreDetailPageTests(TestCase):
     def setUp(self):
         self.client.force_login(make_user("librarian"))
-        self.score = Score.objects.create(
+        self.score = make_score(
             title="Sicut cervus", composer_surname="Palestrina", editor="Stockton",
             voicing="SATB", language="Latin",
         )
@@ -283,10 +284,10 @@ class ScoreDetailPageTests(TestCase):
 
         from django.utils import timezone
 
-        from planning.models import RolePiece, Service, ServiceRole, Term
+        from planning.models import RolePiece, Service, ServiceRole
 
         today = timezone.localdate()
-        term = Term.objects.create(
+        term = make_term(
             name="Lent", start_date=today - timedelta(days=60),
             end_date=today + timedelta(days=60), calendar_use="current",
         )
@@ -325,7 +326,7 @@ class LibraryEmptyStateTests(TestCase):
         self.assertContains(response, ">Add the first score</a>")
 
     def test_filters_with_no_matches_offer_to_clear_them(self):
-        Score.objects.create(title="Ave verum", composer_surname="Byrd", language="Latin")
+        make_score(title="Ave verum", composer_surname="Byrd", language="Latin")
         response = self.client.get("/library/?language=German")
         self.assertContains(response, "No scores match these filters.")
         self.assertContains(response, ">Clear filters</a>")
@@ -334,11 +335,11 @@ class LibraryEmptyStateTests(TestCase):
 
 class ScoreComposerTests(TestCase):
     def test_surname_only_displays_as_surname(self):
-        score = Score.objects.create(title="Ave Verum", composer_surname="Byrd")
+        score = make_score(title="Ave Verum", composer_surname="Byrd")
         self.assertEqual(score.composer, "Byrd")
 
     def test_surname_and_other_names_displays_combined(self):
-        score = Score.objects.create(
+        score = make_score(
             title="O Taste and See",
             composer_surname="Vaughan Williams",
             composer_other_names="Ralph",
@@ -365,7 +366,7 @@ class ScoreComposerTests(TestCase):
             ("Byrd", "", "Ave verum corpus"),
             ("Bach", "Johann Sebastian", "Der Geist hilft"),
         ]:
-            Score.objects.create(title=title, composer_surname=surname, composer_other_names=other)
+            make_score(title=title, composer_surname=surname, composer_other_names=other)
         self.assertEqual(
             [s.title for s in Score.objects.all()],
             ["Magnificat", "Der Geist hilft", "Jesu, meine Freude", "Ave verum corpus"],
@@ -388,6 +389,7 @@ class ScoreComposerTests(TestCase):
             composer_surname="Byrd",
             voicing="SATB",
             language="English",
+            organisation=make_organisation(),
         )
         score.full_clean()  # should not raise
 
@@ -396,10 +398,10 @@ class ScoreFilterTests(TestCase):
     def setUp(self):
         self.user = make_user("viewer")
         self.client.force_login(self.user)
-        Score.objects.create(
+        make_score(
             title="Ave Verum", composer_surname="Byrd", language="Latin", tenor_parts=1
         )
-        Score.objects.create(
+        make_score(
             title="O Taste and See",
             composer_surname="Vaughan Williams",
             language="English",
@@ -415,8 +417,8 @@ class ScoreFilterTests(TestCase):
         return [s.title for s in self.client.get("/library/", params).context["scores"]]
 
     def test_search_needs_every_word_to_match_somewhere(self):
-        Score.objects.create(title="Ave Maria", composer_surname="Parsons")
-        Score.objects.create(
+        make_score(title="Ave Maria", composer_surname="Parsons")
+        make_score(
             title="Sicut cervus", composer_surname="Palestrina", editor="Stockton"
         )
         self.assertCountEqual(self.titles(q="ave"), ["Ave Verum", "Ave Maria"])
@@ -427,15 +429,15 @@ class ScoreFilterTests(TestCase):
 
     def test_filter_by_voicing(self):
         Score.objects.all().update(voicing="SATB")
-        Score.objects.create(title="Laudate", composer_surname="Ssa", voicing="SSA")
+        make_score(title="Laudate", composer_surname="Ssa", voicing="SSA")
         self.assertEqual(self.titles(voicing="SSA"), ["Laudate"])
 
     def test_any_four_part_mixed_needs_all_four_parts(self):
-        Score.objects.create(
+        make_score(
             title="Full", composer_surname="A", voicing="SSATB",
             soprano_parts=2, alto_parts=1, tenor_parts=1, bass_parts=1,
         )
-        Score.objects.create(
+        make_score(
             title="Upper voices", composer_surname="B", voicing="SSA",
             soprano_parts=2, alto_parts=1,
         )
@@ -443,13 +445,13 @@ class ScoreFilterTests(TestCase):
 
     def test_voicing_menu_counts_each_voicing(self):
         Score.objects.all().update(voicing="SATB")
-        Score.objects.create(title="Laudate", composer_surname="Ssa", voicing="SSA")
+        make_score(title="Laudate", composer_surname="Ssa", voicing="SSA")
         response = self.client.get("/library/")
         self.assertContains(response, '<option value="SATB">SATB (2)</option>', html=True)
         self.assertContains(response, '<option value="SSA">SSA (1)</option>', html=True)
 
     def test_a_score_without_a_language_adds_no_blank_option(self):
-        Score.objects.create(title="Untitled", composer_surname="Anon", language="")
+        make_score(title="Untitled", composer_surname="Anon", language="")
         response = self.client.get("/library/")
         self.assertContains(response, '<option value="">Any</option>', count=2, html=True)
         self.assertNotContains(response, '<option value=""></option>', html=True)
@@ -467,14 +469,14 @@ class ScoreSuitabilityRankingTests(TestCase):
         self.other_occasion = LiturgicalOccasion.objects.create(
             name="Ordinary Time 7"
         )
-        self.untagged = Score.objects.create(
+        self.untagged = make_score(
             title="Untagged Anthem", composer_surname="Nobody"
         )
-        self.matching = Score.objects.create(
+        self.matching = make_score(
             title="Zzz Matching Anthem", composer_surname="Somebody"
         )
         self.matching.suited_occasions.add(self.occasion)
-        self.non_matching = Score.objects.create(
+        self.non_matching = make_score(
             title="Aaa Non-Matching Anthem", composer_surname="Someone Else"
         )
         self.non_matching.suited_occasions.add(self.other_occasion)
@@ -514,9 +516,9 @@ class ScoreSuitabilityRankingTests(TestCase):
 class LibrarySortTests(TestCase):
     def setUp(self):
         self.client.force_login(make_user("librarian"))
-        Score.objects.create(title="Ave verum", composer_surname="Byrd", duration_minutes=4)
-        Score.objects.create(title="Sicut cervus", composer_surname="Palestrina")
-        Score.objects.create(title="Jesu, joy", composer_surname="Bach", duration_minutes=3)
+        make_score(title="Ave verum", composer_surname="Byrd", duration_minutes=4)
+        make_score(title="Sicut cervus", composer_surname="Palestrina")
+        make_score(title="Jesu, joy", composer_surname="Bach", duration_minutes=3)
 
     def titles(self, **params):
         return [s.title for s in self.client.get("/library/", params).context["scores"]]
@@ -549,8 +551,9 @@ class LibrarySortTests(TestCase):
         self.assertContains(response, 'href="?q=ave&amp;sort=title&amp;dir=desc"')
 
     def test_fifty_to_a_page_with_filters_kept_in_the_links(self):
+        church = make_organisation()
         Score.objects.bulk_create(
-            Score(title=f"Motet {n:02}", composer_surname="Anon") for n in range(60)
+            Score(title=f"Motet {n:02}", composer_surname="Anon", organisation=church) for n in range(60)
         )
         first = self.client.get("/library/", {"q": "motet", "sort": "title"})
         self.assertEqual(len(first.context["scores"]), 50)
@@ -593,14 +596,14 @@ class ScoreFormOccasionChoicesTests(TestCase):
         from .forms import ScoreForm
 
         england_george = LiturgicalOccasion.objects.get(calendar="england", key="george_of_lydda_martyr")
-        score = Score.objects.create(title="Te Deum", composer_surname="Stanford")
+        score = make_score(title="Te Deum", composer_surname="Stanford")
         score.suited_occasions.add(england_george)
         self.assertIn(england_george.choice_label, self.labels(ScoreForm(instance=score)))
 
 
 class LibraryEditAccessTests(TestCase):
     def setUp(self):
-        self.score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        self.score = make_score(title="Ave verum", composer_surname="Byrd")
         self.urls = ("/library/add/", f"/library/{self.score.pk}/edit/", f"/library/{self.score.pk}/delete/")
 
     def test_a_viewer_cannot_add_edit_or_delete_scores(self):
@@ -620,9 +623,7 @@ class LibraryEditAccessTests(TestCase):
 
 class ScoreOrganisationTests(TestCase):
     def test_a_score_belongs_to_an_organisation(self):
-        from accounts.testing import make_organisation
-
         church = make_organisation()
-        score = Score.objects.create(title="Ave verum", composer_surname="Byrd", organisation=church)
+        score = make_score(title="Ave verum", composer_surname="Byrd", organisation=church)
         self.assertEqual(score.organisation, church)
         self.assertEqual(list(church.scores.all()), [score])
