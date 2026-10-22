@@ -293,3 +293,37 @@ class LoginPageTests(TestCase):
             "/accounts/login/", {"username": "Anne@Example.com", "password": "s3cret-pass"}
         )
         self.assertRedirects(response, "/")
+
+
+class MigrationSupportTests(TestCase):
+    """The helper the organisation fill-in migrations share, run against
+    today's models."""
+
+    def setUp(self):
+        from django.apps import apps
+
+        self.apps = apps
+
+    def test_with_none_it_makes_my_church_once_needed(self):
+        from .migration_support import no_organisations_yet, organisation_for_existing_rows
+
+        self.assertTrue(no_organisations_yet(self.apps))
+        church = organisation_for_existing_rows(self.apps)
+        self.assertEqual(church.name, "My church")
+        self.assertFalse(no_organisations_yet(self.apps))
+        self.assertEqual(organisation_for_existing_rows(self.apps), church)
+
+    def test_with_one_it_uses_that_one(self):
+        from .migration_support import organisation_for_existing_rows
+
+        church = make_organisation("St Cecilia's")
+        self.assertEqual(organisation_for_existing_rows(self.apps), church)
+        self.assertEqual(Organisation.objects.count(), 1)
+
+    def test_with_several_it_stops_rather_than_guess(self):
+        from .migration_support import SeveralOrganisationsError, organisation_for_existing_rows
+
+        make_organisation("St Cecilia's")
+        make_organisation("St Elsewhere")
+        with self.assertRaises(SeveralOrganisationsError):
+            organisation_for_existing_rows(self.apps)
