@@ -1012,3 +1012,32 @@ class PlanningOrganisationTests(TestCase):
         self.client.post("/templates/add/", {"name": "Compline", "slot_names": "Nunc dimittis"})
         self.assertEqual(Term.objects.get(name="Advent").organisation, church)
         self.assertEqual(SlotTemplate.objects.get(name="Compline").organisation, church)
+
+
+class FillChildOrganisationTests(TestCase):
+    """The fill-in migration, run against today's models while the column
+    can still be empty. These go when the column becomes required."""
+
+    def test_services_notices_slots_and_pieces_take_their_parents(self):
+        import importlib
+
+        from django.apps import apps
+
+        church = make_organisation("St Cecilia's")
+        term = make_term(organisation=church)
+        service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        notice = TermMarker.objects.create(term=term, date=date(2026, 2, 16), text="Half term")
+        slot = ServiceRole.objects.create(service=service, role_name="Motet")
+        piece = RolePiece.objects.create(service_role=slot, score=make_score(organisation=church))
+        # Rows from before save() copied it in.
+        for model in (Service, TermMarker, ServiceRole, RolePiece):
+            model.objects.update(organisation=None)
+
+        importlib.import_module(
+            "planning.migrations.0016_fill_service_notice_slot_piece_organisation"
+        ).give_children_their_parents_organisation(apps, None)
+
+        for row in (service, notice, slot, piece):
+            with self.subTest(row=type(row).__name__):
+                row.refresh_from_db()
+                self.assertEqual(row.organisation, church)
