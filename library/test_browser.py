@@ -1,7 +1,6 @@
-from ordo.models import LiturgicalSeason, UseType
+from ordo.models import LiturgicalSeason
 from precentor_project.test_browser import PlaywrightTestCase
-
-from .models import Score
+from precentor_project.testing import make_score, make_use_type
 
 
 class TagInputBrowserTest(PlaywrightTestCase):
@@ -14,8 +13,8 @@ class TagInputBrowserTest(PlaywrightTestCase):
         # seeded by migrations included, so create what's needed here.
         self.advent = LiturgicalSeason.objects.create(name="Advent")
         LiturgicalSeason.objects.create(name="Lent")
-        UseType.objects.create(name="Mass")
-        self.score = Score.objects.create(
+        make_use_type("Mass")
+        self.score = make_score(
             title="Ave verum", composer_surname="Byrd", voicing="SATB", language="Latin",
             soprano_parts=1, alto_parts=1, tenor_parts=1, bass_parts=1,
         )
@@ -77,13 +76,13 @@ class LibraryForViewersBrowserTest(PlaywrightTestCase):
         self.log_in_as("viewer")
         self.page.goto("/library/")
         assert "A conductor or librarian adds the scores." in self.page.inner_text("main")
-        Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        make_score(title="Ave verum", composer_surname="Byrd")
         self.page.reload()
         assert self.page.locator("main", has_text="Ave verum").is_visible()
         assert self.page.locator("a[href='/library/add/']").count() == 0
 
     def test_a_viewer_sees_a_score_without_edit_or_delete(self):
-        score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        score = make_score(title="Ave verum", composer_surname="Byrd")
         self.log_in_as("viewer")
         self.page.goto(f"/library/{score.pk}/")
         assert self.page.locator("h1", has_text="Ave verum").is_visible()
