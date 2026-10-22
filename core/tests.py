@@ -286,3 +286,15 @@ class CrestFormTests(TestCase):
         self.assertEqual(self.save("logo", big).errors["crest_file"], ["Choose an image under 5 MB."])
         self.assertIn("at least 150px", self.save("logo", self.upload((400, 100))).errors["crest_file"][0])
         self.assertFalse(SiteConfig.get_solo().has_crest)
+
+
+class SiteConfigOrganisationTests(TestCase):
+    def test_the_settings_belong_to_an_organisation(self):
+        from accounts.testing import make_organisation
+
+        church = make_organisation()
+        config = SiteConfig.get_solo()
+        config.organisation = church
+        config.save()
+        church.refresh_from_db()
+        self.assertEqual(church.settings, config)

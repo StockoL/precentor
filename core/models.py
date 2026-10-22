@@ -25,6 +25,11 @@ LAYOUT_STYLE_CHOICES = [
 
 
 class SiteConfig(models.Model):
+    # Each organisation will have its own settings. Allowed to be empty only
+    # until the existing row is given one.
+    organisation = models.OneToOneField(
+        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="settings"
+    )
     church_name = models.CharField(
         max_length=200, blank=True, help_text="Shown at the top of the music list."
     )
@@ -97,6 +102,9 @@ class SiteConfig(models.Model):
 
     @classmethod
     def get_solo(cls):
+        # Temporary: there is still one row for the whole site. Stage B2
+        # replaces each caller with its organisation's own settings, then
+        # this and the fixed primary key in save() go.
         obj, _ = cls.objects.get_or_create(pk=1)
         return obj
 
