@@ -982,3 +982,15 @@ class PlanningOrganisationTests(TestCase):
         template = SlotTemplate.objects.create(name="Benediction", slot_names="O salutaris", organisation=church)
         self.assertEqual(list(church.terms.all()), [term])
         self.assertEqual(list(church.slot_templates.all()), [template])
+
+    def test_services_and_notices_take_their_terms_organisation(self):
+        from accounts.testing import make_organisation
+
+        church = make_organisation()
+        term = Term.objects.create(
+            name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
+            calendar_use="current", organisation=church,
+        )
+        service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        notice = TermMarker.objects.create(term=term, date=date(2026, 2, 16), text="Half term")
+        self.assertEqual((service.organisation, notice.organisation), (church, church))

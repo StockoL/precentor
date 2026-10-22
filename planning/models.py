@@ -138,6 +138,11 @@ class Service(models.Model):
     }
 
     term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name="services")
+    # Always its term's organisation, copied in save(), so it can be
+    # scoped like everything else without anyone having to set it.
+    organisation = models.ForeignKey(
+        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="services"
+    )
     date = models.DateField()
     service_type = models.CharField(max_length=50, help_text="e.g. Sung Mass, Vespers")
     occasion = models.ForeignKey(
@@ -182,6 +187,10 @@ class Service(models.Model):
 
     def get_absolute_url(self):
         return reverse("planning:service_detail", kwargs={"pk": self.pk})
+
+    def save(self, *args, **kwargs):
+        self.organisation_id = self.term.organisation_id
+        super().save(*args, **kwargs)
 
     def effective_calendar_use(self):
         return self.calendar_use or self.term.calendar_use
@@ -312,12 +321,21 @@ class Service(models.Model):
 
 class TermMarker(models.Model):
     term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name="markers")
+    # Always its term's organisation, copied in save(), so it can be
+    # scoped like everything else without anyone having to set it.
+    organisation = models.ForeignKey(
+        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="markers"
+    )
     date = models.DateField()
     # "Notice" is the UI word for a TermMarker.
     text = models.CharField("notice", max_length=200)
 
     class Meta:
         ordering = ["date"]  # noqa
+
+    def save(self, *args, **kwargs):
+        self.organisation_id = self.term.organisation_id
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.text} ({date_format(self.date)})"
