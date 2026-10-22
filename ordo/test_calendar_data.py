@@ -5,6 +5,7 @@ from django.core.management import call_command
 from django.test import TestCase
 
 from accounts.testing import make_user
+from precentor_project.testing import make_term
 
 from .calendar_data import load_calendar_files
 from .models import LiturgicalOccasion, occasion_for_date
@@ -178,10 +179,10 @@ class RemovedFromTheDataTests(TestCase):
         self.assertEqual(counts["england"].removed, 1)
 
     def test_one_a_service_uses_is_kept_and_named(self):
-        from planning.models import Service, Term
+        from planning.models import Service
 
         old = self.stale()
-        term = Term.objects.create(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 1), calendar_use="current")
+        term = make_term(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 1), calendar_use="current")
         Service.objects.create(term=term, date=date(2026, 1, 2), service_type="Mass", occasion=old)
         counts = load_calendar_files()
         self.assertTrue(LiturgicalOccasion.objects.filter(pk=old.pk).exists())
