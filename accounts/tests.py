@@ -85,7 +85,8 @@ class PermissionMatrixTests(TestCase):
 
 class UserConstraintTests(TestCase):
     def assert_refused(self, message, **fields):
-        user = User(email="someone@example.com", **fields)
+        fields.setdefault("email", "someone@example.com")
+        user = User(**fields)
         with self.assertRaisesMessage(ValidationError, message):
             user.full_clean()
         with self.assertRaises(IntegrityError), transaction.atomic():
@@ -103,6 +104,13 @@ class UserConstraintTests(TestCase):
         self.assert_refused(
             "An owner must be a Conductor or a Librarian.",
             organisation=make_organisation(), role="viewer", is_owner=True,
+        )
+
+    def test_an_email_address_is_taken_whatever_its_case(self):
+        make_user(email="Anne@Example.com")
+        self.assert_refused(
+            "Someone already has an account with this email address.",
+            email="anne@example.com", organisation=make_organisation(), role="viewer",
         )
 
     def test_both_or_neither_is_fine(self):

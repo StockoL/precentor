@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.db.models import Q
+from django.db.models.functions import Lower
 from django.utils import timezone
 
 
@@ -81,6 +82,13 @@ class User(AbstractBaseUser, PermissionsMixin):
                 condition=Q(is_owner=False) | ~Q(role=Role.VIEWER),
                 name="user_owner_is_not_a_viewer",
                 violation_error_message="An owner must be a Conductor or a Librarian.",
+            ),
+            # One account per address, however it's typed: Anne@Example.com
+            # and anne@example.com are the same inbox.
+            models.UniqueConstraint(
+                Lower("email"),
+                name="user_email_unique_ignoring_case",
+                violation_error_message="Someone already has an account with this email address.",
             ),
         ]
 
