@@ -64,7 +64,11 @@ class NewUseTypeTests(TestCase):
     def save(self, new_use_types, **extra):
         from .forms import ScoreForm
 
-        form = ScoreForm(data={**self.BASE, "new_use_types": new_use_types, **extra})
+        # The score belongs to a church, as the create view arranges.
+        form = ScoreForm(
+            data={**self.BASE, "new_use_types": new_use_types, **extra},
+            instance=Score(organisation=make_organisation()),
+        )
         self.assertTrue(form.is_valid(), form.errors)
         return form.save()
 
@@ -77,9 +81,11 @@ class NewUseTypeTests(TestCase):
         self.assertTrue(UseType.objects.filter(name="Benediction").exists())
 
     def test_an_existing_name_is_reused_whatever_its_case(self):
+        make_use_type("Mass")
+        make_use_type("Vespers")
         before = UseType.objects.count()
         score = self.save("mass,  VESPERS ")
-        self.assertEqual(self.names(score), ["Mass", "Vespers"])  # the seeded rows
+        self.assertEqual(self.names(score), ["Mass", "Vespers"])  # the church's own
         self.assertEqual(UseType.objects.count(), before)
 
     def test_blanks_and_repeats_are_ignored_and_spaces_tidied(self):
@@ -87,14 +93,16 @@ class NewUseTypeTests(TestCase):
         self.assertEqual(self.names(score), ["Wedding Mass"])
 
     def test_works_alongside_picked_use_types(self):
-        general = UseType.objects.get(name="General use")
+        general = make_use_type("General use")
         score = self.save("Benediction", suited_use_types=[general.pk])
         self.assertEqual(self.names(score), ["Benediction", "General use"])
 
     def test_commit_false_adds_them_with_save_m2m(self):
         from .forms import ScoreForm
 
-        form = ScoreForm(data={**self.BASE, "new_use_types": "Benediction"})
+        form = ScoreForm(
+            data={**self.BASE, "new_use_types": "Benediction"}, instance=Score(organisation=make_organisation())
+        )
         self.assertTrue(form.is_valid())
         score = form.save(commit=False)
         score.save()

@@ -38,11 +38,11 @@ class SeededDataTests(TestCase):
     """The test database is built by running the migrations, so these
     check what the seed and revision migrations leave behind."""
 
-    def test_seeded_use_types(self):
-        self.assertEqual(
-            set(UseType.objects.values_list("name", flat=True)),
-            {"Mass", "Vespers", "General use"},
-        )
+    def test_a_new_database_starts_without_use_types(self):
+        # 0004 and 0010 make Mass, Vespers and General use, then 0017
+        # removes them again on a database with no organisations, since
+        # each organisation gets its own copies when it registers.
+        self.assertFalse(UseType.objects.exists())
 
     def test_seeded_seasons_are_the_roman_calendar_seasons(self):
         self.assertEqual(
@@ -213,3 +213,34 @@ class UseTypeOrganisationTests(TestCase):
         church = make_organisation()
         use = make_use_type("Communion", organisation=church)
         self.assertEqual(list(church.use_types.all()), [use])
+
+
+class FillUseTypeOrganisationTests(TestCase):
+    """The fill-in migration, run against today's models while the column
+    can still be empty. These go when the column becomes required."""
+
+    def run_migration(self):
+        import importlib
+
+        from django.apps import apps
+
+        importlib.import_module("ordo.migrations.0017_fill_use_type_organisation").give_use_types_an_organisation(apps, None)
+
+    def test_with_no_organisation_unused_starters_go_and_tagged_ones_stay(self):
+        from library.models import Score
+
+        UseType.objects.create(name="Vespers")
+        mass = UseType.objects.create(name="Mass")
+        score = Score.objects.create(title="Missa brevis", composer_surname="Palestrina")
+        score.suited_use_types.add(mass)
+        self.run_migration()
+        self.assertEqual(list(UseType.objects.values_list("name", flat=True)), ["Mass"])
+        mass.refresh_from_db()
+        self.assertEqual(mass.organisation.name, "My church")
+
+    def test_with_an_organisation_every_use_type_joins_it(self):
+        church = make_organisation("St Cecilia's")
+        use = UseType.objects.create(name="Vespers")
+        self.run_migration()
+        use.refresh_from_db()
+        self.assertEqual(use.organisation, church)
