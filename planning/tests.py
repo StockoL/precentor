@@ -3,9 +3,9 @@ from datetime import date
 from django.test import TestCase
 from django.urls import reverse
 
-from accounts.testing import make_user
-from library.models import Score
+from accounts.testing import make_organisation, make_user
 from ordo.models import LiturgicalOccasion
+from precentor_project.testing import make_score, make_slot_template, make_term
 
 from .forms import ServiceForm, TermForm, TermMarkerForm
 from .models import RolePiece, Service, ServiceRole, Term, TermMarker
@@ -13,7 +13,7 @@ from .models import RolePiece, Service, ServiceRole, Term, TermMarker
 
 class ServiceStatusTests(TestCase):
     def setUp(self):
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -22,7 +22,7 @@ class ServiceStatusTests(TestCase):
         self.service = Service.objects.create(
             term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
-        self.score = Score.objects.create(title="Test Anthem", composer_surname="Test Composer")
+        self.score = make_score(title="Test Anthem", composer_surname="Test Composer")
 
     def test_no_roles_is_not_started(self):
         self.assertEqual(self.service.status, "not_started")
@@ -89,7 +89,7 @@ class ServiceStatusTests(TestCase):
 
 class ServiceEffectiveCalendarUseTests(TestCase):
     def setUp(self):
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -116,7 +116,7 @@ class RolePieceWorkflowTests(TestCase):
     def setUp(self):
         self.user = make_user("conductor")
         self.client.force_login(self.user)
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -125,7 +125,7 @@ class RolePieceWorkflowTests(TestCase):
         self.service = Service.objects.create(
             term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
-        self.score = Score.objects.create(title="Test Anthem", composer_surname="Test Composer")
+        self.score = make_score(title="Test Anthem", composer_surname="Test Composer")
 
     def test_add_role(self):
         self.client.post(
@@ -267,7 +267,7 @@ class ServiceSuggestedScoresTests(TestCase):
     def setUp(self):
         from ordo.models import LiturgicalSeason
 
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -279,8 +279,8 @@ class ServiceSuggestedScoresTests(TestCase):
         )
         # The untagged score comes first by title, so only the ranking
         # can put the other one ahead of it.
-        self.untagged = Score.objects.create(title="Aaa Untagged", composer_surname="Nobody")
-        self.suited = Score.objects.create(title="Zzz Suited", composer_surname="Somebody")
+        self.untagged = make_score(title="Aaa Untagged", composer_surname="Nobody")
+        self.suited = make_score(title="Zzz Suited", composer_surname="Somebody")
 
     def make_service(self, occasion=None):
         return Service.objects.create(
@@ -308,7 +308,7 @@ class ServiceDetailProposePieceRankingTests(TestCase):
     def setUp(self):
         self.user = make_user("conductor")
         self.client.force_login(self.user)
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -324,8 +324,8 @@ class ServiceDetailProposePieceRankingTests(TestCase):
             occasion=self.occasion,
         )
         ServiceRole.objects.create(service=self.service, role_name="Anthem")
-        self.untagged = Score.objects.create(title="Zzz Untagged", composer_surname="Nobody")
-        self.matching = Score.objects.create(title="Aaa Matching", composer_surname="Somebody")
+        self.untagged = make_score(title="Zzz Untagged", composer_surname="Nobody")
+        self.matching = make_score(title="Aaa Matching", composer_surname="Somebody")
         self.matching.suited_occasions.add(self.occasion)
 
     def test_score_options_ordered_with_suited_score_first(self):
@@ -374,11 +374,11 @@ class TermPageMixin:
         self.client.force_login(self.user)
         self.today = timezone.localdate()
         self.days = lambda n: self.today + timedelta(days=n)
-        self.score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        self.score = make_score(title="Ave verum", composer_surname="Byrd")
 
     def make_term(self, name, start, end, services=()):
         """services: (days from today, [(slot name, confirmed)]) pairs."""
-        term = Term.objects.create(
+        term = make_term(
             name=name, start_date=self.days(start), end_date=self.days(end),
             calendar_use="current",
         )
@@ -528,13 +528,13 @@ class RolePieceHistoryStateTests(TestCase):
         from django.utils import timezone
 
         today = timezone.localdate()
-        term = Term.objects.create(
+        term = make_term(
             name="Term",
             start_date=today - timedelta(days=60),
             end_date=today + timedelta(days=60),
             calendar_use="current",
         )
-        score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        score = make_score(title="Ave verum", composer_surname="Byrd")
 
         def piece(days, confirmed):
             service = Service.objects.create(
@@ -559,11 +559,11 @@ class RolePieceHistoryStateTests(TestCase):
 class ServiceNeighbourLinkTests(TestCase):
     def setUp(self):
         self.client.force_login(make_user("conductor"))
-        term = Term.objects.create(
+        term = make_term(
             name="Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
             calendar_use="current",
         )
-        other = Term.objects.create(
+        other = make_term(
             name="Other", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
             calendar_use="current",
         )
@@ -590,7 +590,7 @@ class ServiceNeighbourLinkTests(TestCase):
 class ServiceDetailListTests(TestCase):
     def test_facts_are_a_description_list_including_hymns_and_psalm(self):
         self.client.force_login(make_user("conductor"))
-        term = Term.objects.create(
+        term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -614,7 +614,7 @@ class DeletionSummaryTests(TestCase):
         from comments.models import Comment
 
         self.user = make_user("conductor")
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -624,7 +624,7 @@ class DeletionSummaryTests(TestCase):
             term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
         Service.objects.create(term=self.term, date=date(2026, 1, 18), service_type="Vespers")
-        score = Score.objects.create(title="Ave verum", composer_surname="Byrd")
+        score = make_score(title="Ave verum", composer_surname="Byrd")
         setting = ServiceRole.objects.create(service=self.service, role_name="Setting")
         ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
         piece = RolePiece.objects.create(service_role=setting, score=score)
@@ -662,7 +662,7 @@ class SlotWordingTests(TestCase):
 
     def test_service_page_says_slot_not_role(self):
         self.client.force_login(make_user("conductor"))
-        term = Term.objects.create(
+        term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -686,7 +686,7 @@ class NoticeWordingTests(TestCase):
 
     def setUp(self):
         self.client.force_login(make_user("conductor"))
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -739,7 +739,7 @@ class PlanningFormLabelTests(TestCase):
 class ServiceFormLayoutTests(TestCase):
     def test_fields_are_grouped_in_fieldsets(self):
         self.client.force_login(make_user("conductor"))
-        term = Term.objects.create(
+        term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -760,7 +760,7 @@ class DateInputValueTests(TestCase):
     which for en-gb is DD/MM/YYYY, and the browser shows a blank field."""
 
     def test_edit_forms_render_dates_as_iso(self):
-        term = Term.objects.create(
+        term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -783,7 +783,7 @@ class TermDetailViewTests(TestCase):
     def setUp(self):
         self.user = make_user("conductor")
         self.client.force_login(self.user)
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -822,7 +822,7 @@ class MusicListTests(TestCase):
     def setUp(self):
         self.user = make_user("viewer")
         self.client.force_login(self.user)
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Test Term",
             start_date=date(2026, 1, 1),
             end_date=date(2026, 3, 31),
@@ -831,7 +831,7 @@ class MusicListTests(TestCase):
         self.service = Service.objects.create(
             term=self.term, date=date(2026, 1, 11), service_type="Sung Mass"
         )
-        self.score = Score.objects.create(title="Test Anthem", composer_surname="Test Composer")
+        self.score = make_score(title="Test Anthem", composer_surname="Test Composer")
 
     def test_page_sends_no_html_comments(self):
         TermMarker.objects.create(term=self.term, date=date(2026, 1, 20), text="Half term")
@@ -905,7 +905,7 @@ class ServiceFormOccasionChoicesTests(TestCase):
         config = SiteConfig.get_solo()
         config.national_calendar = "england"
         config.save()
-        cls.term = Term.objects.create(
+        cls.term = make_term(
             name="Easter Term", start_date=date(2026, 4, 1), end_date=date(2026, 7, 31), calendar_use="current"
         )
 
@@ -936,7 +936,7 @@ class MusicListCrestTests(TestCase):
         from core.models import SiteConfig
 
         self.client.force_login(make_user("viewer"))
-        self.term = Term.objects.create(
+        self.term = make_term(
             name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
         )
         self.config = SiteConfig.get_solo()
@@ -970,24 +970,18 @@ class MusicListCrestTests(TestCase):
 
 class PlanningOrganisationTests(TestCase):
     def test_terms_and_templates_belong_to_an_organisation(self):
-        from accounts.testing import make_organisation
-
-        from .models import SlotTemplate
-
         church = make_organisation()
-        term = Term.objects.create(
+        term = make_term(
             name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
             calendar_use="current", organisation=church,
         )
-        template = SlotTemplate.objects.create(name="Benediction", slot_names="O salutaris", organisation=church)
+        template = make_slot_template(name="Benediction", slot_names="O salutaris", organisation=church)
         self.assertEqual(list(church.terms.all()), [term])
         self.assertEqual(list(church.slot_templates.all()), [template])
 
     def test_services_and_notices_take_their_terms_organisation(self):
-        from accounts.testing import make_organisation
-
         church = make_organisation()
-        term = Term.objects.create(
+        term = make_term(
             name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
             calendar_use="current", organisation=church,
         )
@@ -996,15 +990,13 @@ class PlanningOrganisationTests(TestCase):
         self.assertEqual((service.organisation, notice.organisation), (church, church))
 
     def test_slots_and_pieces_take_their_services_organisation(self):
-        from accounts.testing import make_organisation
-
         church = make_organisation()
-        term = Term.objects.create(
+        term = make_term(
             name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
             calendar_use="current", organisation=church,
         )
         service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
         slot = ServiceRole.objects.create(service=service, role_name="Offertory motet")
-        score = Score.objects.create(title="Ave verum", composer_surname="Byrd", organisation=church)
+        score = make_score(title="Ave verum", composer_surname="Byrd", organisation=church)
         piece = RolePiece.objects.create(service_role=slot, score=score)
         self.assertEqual((slot.organisation, piece.organisation), (church, church))
