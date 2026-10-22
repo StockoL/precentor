@@ -364,3 +364,29 @@ class CommentOrganisationTests(TestCase):
         comment = Comment.objects.create(author=make_user(), body="Copies?", target=term)
         reply = Comment.objects.create(author=make_user(), body="Twelve.", target=term, parent=comment)
         self.assertEqual((comment.organisation, reply.organisation), (church, church))
+
+
+class FillCommentOrganisationTests(TestCase):
+    """The fill-in migration, run against today's models while the column
+    can still be empty. These go when the column becomes required."""
+
+    def test_each_comment_takes_its_subjects_organisation(self):
+        import importlib
+
+        from django.apps import apps
+
+        from planning.models import Service
+
+        church = make_organisation("St Cecilia's")
+        term = make_term(organisation=church)
+        service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        on_term = Comment.objects.create(author=make_user(), body="Copies?", target=term)
+        on_service = Comment.objects.create(author=make_user(), body="Too long?", target=service)
+        # Rows from before save() copied it in.
+        Comment.objects.update(organisation=None)
+
+        importlib.import_module("comments.migrations.0004_fill_comment_organisation").give_comments_their_subjects_organisation(apps, None)
+
+        for comment in (on_term, on_service):
+            comment.refresh_from_db()
+            self.assertEqual(comment.organisation, church)
