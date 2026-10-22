@@ -3,6 +3,11 @@
 // possible (no DataTransfer/canvas support) this simply never builds the
 // crop UI, and the raw file the user picked submits as-is; the server-side
 // Pillow centre-crop in core/imaging.py is the fallback for that case.
+//
+// Only a banner is cropped. A logo keeps its own shape, so when the
+// church picks the logo style (the radio buttons named in
+// data-style-field), this shows a plain preview instead and leaves the
+// file as chosen. With no style buttons on the page it crops, as before.
 const DEFAULT_TARGET_WIDTH = 1600;
 const DEFAULT_TARGET_HEIGHT = 400;
 const MIN_WIDTH = 800;
@@ -26,8 +31,23 @@ function buildCropper(container) {
 
   const targetWidth = parseInt(container.dataset.targetWidth, 10) || DEFAULT_TARGET_WIDTH;
   const targetHeight = parseInt(container.dataset.targetHeight, 10) || DEFAULT_TARGET_HEIGHT;
+  const styleInputs = document.querySelectorAll(`input[name="${container.dataset.styleField}"]`);
 
   let ui = null;
+  // The file as the person chose it. Cropping replaces what the input
+  // holds, so this is what goes back if they switch to the logo style.
+  let originalFile = null;
+
+  function currentStyle() {
+    const checked = Array.from(styleInputs).find((radio) => radio.checked);
+    return checked ? checked.value : "banner";
+  }
+
+  function setInputFile(file) {
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    input.files = dataTransfer.files;
+  }
 
   function teardownUi() {
     if (ui) {
@@ -172,10 +192,7 @@ function buildCropper(container) {
 
       canvas.toBlob((blob) => {
         if (!blob) return;
-        const file = new File([blob], "crest.png", { type: "image/png" });
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        input.files = dataTransfer.files;
+        setInputFile(new File([blob], "crest.png", { type: "image/png" }));
 
         preview.hidden = false;
         preview.src = URL.createObjectURL(blob);
@@ -183,17 +200,34 @@ function buildCropper(container) {
     });
   }
 
-  input.addEventListener("change", () => {
-    const file = input.files && input.files[0];
-    if (!file) {
+  function buildLogoPreview(img) {
+    teardownUi();
+    const wrapper = document.createElement("div");
+    const preview = document.createElement("img");
+    preview.className = "crest-crop__logo-preview";
+    preview.src = img.src;
+    preview.alt = "Logo preview";
+    wrapper.append(preview);
+    container.appendChild(wrapper);
+    ui = { wrapper };
+  }
+
+  function show() {
+    if (!originalFile) {
       teardownUi();
       return;
     }
-
+    setInputFile(originalFile);
     const img = new Image();
-    img.onload = () => buildUiForImage(img);
-    img.src = URL.createObjectURL(file);
+    img.onload = () => (currentStyle() === "logo" ? buildLogoPreview(img) : buildUiForImage(img));
+    img.src = URL.createObjectURL(originalFile);
+  }
+
+  input.addEventListener("change", () => {
+    originalFile = input.files && input.files[0];
+    show();
   });
+  styleInputs.forEach((radio) => radio.addEventListener("change", show));
 }
 
 export function initCrestCrop(root = document) {

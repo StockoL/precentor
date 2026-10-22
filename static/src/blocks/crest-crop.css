@@ -47,6 +47,7 @@
   }
 
   .crest-crop__preview,
+  .crest-crop__logo-preview,
   .crest-crop__current {
     display: block;
     max-height: 4rem;
