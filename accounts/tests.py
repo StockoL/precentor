@@ -11,6 +11,7 @@ from django.views import View
 
 from .context_processors import Can
 from .decorators import role_required
+from .forms import EmailAuthenticationForm
 from .mixins import RoleRequiredMixin
 from .models import Organisation, User
 from .permissions import (
@@ -263,3 +264,17 @@ class UserAdminTests(TestCase):
             with self.subTest(text=text):
                 self.assertContains(listing, text)
         self.assertContains(self.client.get(f"/admin/accounts/user/{user.pk}/change/"), 'name="role"')
+
+
+class EmailAuthenticationFormTests(TestCase):
+    def test_the_field_asks_for_an_email_address(self):
+        html = str(EmailAuthenticationForm()["username"])
+        self.assertIn('type="email"', html)
+        self.assertIn('autocomplete="email"', html)
+        self.assertEqual(EmailAuthenticationForm().fields["username"].label, "Email address")
+
+    def test_it_signs_someone_in_whatever_the_case(self):
+        user = make_user(email="anne@example.com", password="s3cret-pass")
+        form = EmailAuthenticationForm(data={"username": "Anne@Example.com", "password": "s3cret-pass"})
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.get_user(), user)
