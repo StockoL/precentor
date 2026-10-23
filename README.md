@@ -4,6 +4,13 @@ _A repertoire and service-planning tool for church musicians._
 
 _Milestone 3 project, Code Institute_
 
+**Live site:** [precentor.onrender.com](https://precentor.onrender.com)
+
+The site runs on Render's free plan, so the first visit after a quiet
+spell can take about a minute while it wakes up. Anyone can try it by
+registering a church of their own on the sign-up page, so no login
+details are needed.
+
 > **Status:** All six Django apps (`accounts`, `library`, `ordo`,
 > `planning`, `comments`, `core`) are built and tested. Before
 > deploying, I worked through an overhaul, tracked phase by phase in
