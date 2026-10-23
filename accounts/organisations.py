@@ -30,15 +30,21 @@ STARTER_TEMPLATES = {
 STARTER_USE_TYPES = ["Mass", "Vespers", "General"]
 
 
-@transaction.atomic
 def create_organisation(name):
     """A new church with its settings and starter data, all or nothing."""
+    return set_up_organisation(Organisation(name=name))
+
+
+@transaction.atomic
+def set_up_organisation(organisation):
+    """Save a new church and give it its settings and starter data. The
+    admin calls this directly, as its form has already built the church."""
     # Looked up by name, as accounts sits beneath the apps that own these.
     SiteConfig = apps.get_model("core", "SiteConfig")
     SlotTemplate = apps.get_model("planning", "SlotTemplate")
     UseType = apps.get_model("ordo", "UseType")
 
-    organisation = Organisation.objects.create(name=name)
+    organisation.save()
     SiteConfig.of(organisation)
     SlotTemplate.objects.bulk_create(
         SlotTemplate(organisation=organisation, name=template, slot_names="\n".join(slots))

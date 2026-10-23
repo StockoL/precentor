@@ -239,7 +239,18 @@ class OrganisationAdminTests(TestCase):
         make_organisation("St Mary's")
         self.assertContains(self.client.get("/admin/accounts/organisation/"), "St Mary&#x27;s")
         self.client.post("/admin/accounts/organisation/add/", {"name": "St Cecilia's"})
-        self.assertTrue(Organisation.objects.filter(name="St Cecilia's").exists())
+        church = Organisation.objects.get(name="St Cecilia's")
+        # Added here, it starts like a church that signed up.
+        self.assertEqual(sorted(church.slot_templates.values_list("name", flat=True)), ["Mass", "Vespers"])
+        self.assertTrue(hasattr(church, "settings"))
+
+    def test_renaming_a_church_adds_nothing(self):
+        self.client.force_login(make_superuser())
+        church = make_organisation("St Mary's")
+        self.client.post(f"/admin/accounts/organisation/{church.pk}/change/", {"name": "St Mary's, Oxford"})
+        church.refresh_from_db()
+        self.assertEqual(church.name, "St Mary's, Oxford")
+        self.assertFalse(church.slot_templates.exists())
 
 
 class UserAdminTests(TestCase):

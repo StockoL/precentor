@@ -3,12 +3,20 @@ from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.contrib.auth.forms import AdminUserCreationForm, UserChangeForm
 
 from .models import Organisation, User
+from .organisations import set_up_organisation
 
 
 @admin.register(Organisation)
 class OrganisationAdmin(admin.ModelAdmin):
     list_display = ["name", "created_at"]
     search_fields = ["name"]
+
+    def save_model(self, request, obj, form, change):
+        # A church added here starts like one that signed up.
+        if change:
+            super().save_model(request, obj, form, change)
+        else:
+            set_up_organisation(obj)
 
 
 # Django's user forms name its own User model and a username field, so
