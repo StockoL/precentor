@@ -2,7 +2,7 @@ from datetime import date
 
 from django.test import TestCase
 
-from accounts.testing import make_user
+from accounts.testing import make_organisation, make_user
 from precentor_project.testing import make_score, make_slot_template, make_term
 
 from .forms import SlotTemplateForm
@@ -126,10 +126,25 @@ class SlotTemplateFormTests(TestCase):
         self.assertTrue(form.is_valid())
         self.assertEqual(form.cleaned_data["slot_names"], "Introit\nKyrie")
 
-    def test_names_are_unique(self):
-        make_slot_template(name="Mass", slot_names="Introit")
-        form = SlotTemplateForm(data={"name": "Mass", "slot_names": "Introit"})
-        self.assertIn("name", form.errors)
+    def test_a_church_has_one_template_per_name_whatever_the_case(self):
+        church = make_organisation("St Cecilia's")
+        make_slot_template(name="Mass", slot_names="Introit", organisation=church)
+        form = SlotTemplateForm(data={"name": "mass", "slot_names": "Introit"}, instance=SlotTemplate(organisation=church))
+        self.assertEqual(form.errors["name"], ["You already have a template called mass."])
+
+    def test_another_church_can_use_the_same_name(self):
+        make_slot_template(name="Mass", slot_names="Introit", organisation=make_organisation("St Elsewhere"))
+        form = SlotTemplateForm(
+            data={"name": "Mass", "slot_names": "Introit"},
+            instance=SlotTemplate(organisation=make_organisation("St Cecilia's")),
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_editing_a_template_keeps_its_own_name(self):
+        church = make_organisation("St Cecilia's")
+        mass = make_slot_template(name="Mass", slot_names="Introit", organisation=church)
+        form = SlotTemplateForm(data={"name": "Mass", "slot_names": "Introit\nKyrie"}, instance=mass)
+        self.assertTrue(form.is_valid(), form.errors)
 
 
 class OneTemplatePerServiceTests(TemplateTestMixin, TestCase):

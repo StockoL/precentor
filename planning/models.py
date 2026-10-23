@@ -397,13 +397,17 @@ class SlotTemplate(models.Model):
     organisation = models.ForeignKey(
         "accounts.Organisation", on_delete=models.CASCADE, related_name="slot_templates"
     )
-    name = models.CharField(max_length=50, unique=True, help_text="e.g. Mass, Vespers, Benediction")
+    name = models.CharField(max_length=50, help_text="e.g. Mass, Vespers, Benediction")
     slot_names = models.TextField(
         "slots", help_text="One slot per line, in the order of the service."
     )
 
     class Meta:
         ordering = ["name"]  # noqa
+        constraints = [
+            # Each church can have its own Mass, but only one.
+            models.UniqueConstraint(fields=["organisation", "name"], name="slot_template_name_unique_per_organisation"),
+        ]
 
     def __str__(self):
         return self.name

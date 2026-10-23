@@ -86,6 +86,20 @@ class SlotTemplateForm(forms.ModelForm):
             "slot_names": forms.Textarea(attrs={"rows": 12}),
         }
 
+    def clean_name(self):
+        """
+        One template per name in each church. The database refuses a second
+        too, but only this check can say so plainly: Django leaves out a
+        rule on fields the form doesn't show, and organisation is set by
+        the view, not typed. It ignores case, as "mass" would be confusing
+        beside "Mass".
+        """
+        name = self.cleaned_data["name"]
+        same_name = SlotTemplate.objects.filter(organisation_id=self.instance.organisation_id, name__iexact=name)
+        if same_name.exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError(f"You already have a template called {name}.")
+        return name
+
     def clean_slot_names(self):
         text = self.cleaned_data["slot_names"]
         names = SlotTemplate(slot_names=text).slots

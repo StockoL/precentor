@@ -2,10 +2,9 @@ from datetime import date, timedelta
 
 from django.utils import timezone
 
-from accounts.testing import make_organisation
 from ordo.models import LiturgicalOccasion
 from precentor_project.test_browser import PlaywrightTestCase
-from precentor_project.testing import make_score, make_term
+from precentor_project.testing import make_score, make_slot_template, make_term
 
 from .models import RolePiece, Service, ServiceRole, TermMarker
 
@@ -424,15 +423,8 @@ class ReplaceTemplateBrowserTest(PlaywrightTestCase):
             name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
         )
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
-        from planning.models import SlotTemplate
-
-        # Live-server tests flush the database after each test, so the seeded
-        # templates may or may not be here: set them either way.
-        church = make_organisation()
-        SlotTemplate.objects.update_or_create(name="Mass", defaults={"slot_names": "Introit\nKyrie", "organisation": church})
-        SlotTemplate.objects.update_or_create(
-            name="Vespers", defaults={"slot_names": "Psalms\nMagnificat", "organisation": church}
-        )
+        make_slot_template(name="Mass", slot_names="Introit\nKyrie")
+        make_slot_template(name="Vespers", slot_names="Psalms\nMagnificat")
 
     def test_another_template_asks_in_the_dialog(self):
         # Headless Chromium stops painting after this form's redirect back
