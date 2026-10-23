@@ -346,3 +346,18 @@ class UserWithOrganisationBackendTests(TestCase):
         user.is_active = False
         user.save()
         self.assertIsNone(UserWithOrganisationBackend().get_user(user.pk))
+
+
+class OrganisationMiddlewareTests(TestCase):
+    def organisation_on(self, user=None):
+        if user:
+            self.client.force_login(user)
+        return self.client.get("/accounts/login/").wsgi_request.organisation
+
+    def test_it_is_the_signed_in_persons_organisation(self):
+        church = make_organisation("St Cecilia's")
+        self.assertEqual(self.organisation_on(make_user("viewer", organisation=church)), church)
+
+    def test_signed_out_and_superusers_have_none(self):
+        self.assertIsNone(self.organisation_on())
+        self.assertIsNone(self.organisation_on(make_superuser()))
