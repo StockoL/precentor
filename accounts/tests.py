@@ -884,3 +884,56 @@ class ChangeRoleTests(TestCase):
         self.client.force_login(make_user("conductor", organisation=self.church))
         self.assertEqual(self.change(self.member, "conductor").status_code, 403)
         self.assertNotContains(self.client.get("/members/"), "Change role")
+
+
+class RemoveMemberTests(TestCase):
+    def setUp(self):
+        self.church = make_organisation("St Cecilia's")
+        self.owner = User.objects.create_user(
+            email="owner@example.com", organisation=self.church, role="conductor", is_owner=True
+        )
+        self.member = make_user("librarian", organisation=self.church, email="ben@example.com")
+        self.member.name = "Ben Jonson"
+        self.member.save()
+        self.url = f"/members/{self.member.pk}/remove/"
+        self.client.force_login(self.owner)
+
+    def test_the_owner_confirms_and_the_account_is_switched_off(self):
+        self.assertContains(self.client.get(self.url), "Remove Ben Jonson?")
+        response = self.client.post(self.url, follow=True)
+        self.assertContains(response, "Ben Jonson has been removed. Their comments stay.")
+        self.member.refresh_from_db()
+        self.assertFalse(self.member.is_active)
+        self.assertNotContains(response, "ben@example.com")
+
+    def test_their_comments_stay(self):
+        from comments.models import Comment
+        from precentor_project.testing import make_term
+
+        term = make_term(organisation=self.church)
+        Comment.objects.create(author=self.member, target=term, body="Copies are in the cupboard.")
+        self.client.post(self.url)
+        self.assertEqual(Comment.objects.get().author, self.member)
+
+    def test_they_are_signed_out_and_cant_sign_in_again(self):
+        member_browser = self.client_class()
+        member_browser.force_login(self.member)
+        self.client.post(self.url)
+        self.assertRedirects(member_browser.get("/"), "/accounts/login/?next=/")
+        self.assertFalse(member_browser.login(username="ben@example.com", password="testpass123"))
+
+    def test_the_owner_cant_be_removed(self):
+        self.assertNotContains(self.client.get("/members/"), f'href="/members/{self.owner.pk}/remove/"')
+        self.client.post(f"/members/{self.owner.pk}/remove/")
+        self.owner.refresh_from_db()
+        self.assertTrue(self.owner.is_active)
+
+    def test_only_the_owner_and_only_their_own(self):
+        stranger = make_user("viewer", organisation=make_organisation("St Elsewhere"))
+        self.client.post(f"/members/{stranger.pk}/remove/")
+        stranger.refresh_from_db()
+        self.assertTrue(stranger.is_active)
+        self.client.force_login(make_user("conductor", organisation=self.church))
+        self.assertEqual(self.client.post(self.url).status_code, 403)
+        self.member.refresh_from_db()
+        self.assertTrue(self.member.is_active)

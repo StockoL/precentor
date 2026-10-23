@@ -170,3 +170,28 @@ def change_role(request, pk):
     else:
         messages.error(request, form.errors["role"][0])
     return redirect("members:member_list")
+
+
+class MemberRemoveView(RoleRequiredMixin, DeletePageMixin, DetailView):
+    """
+    The owner removes someone. Their account is switched off rather than
+    deleted, so their comments stay with their name; they can't sign in,
+    and anyone already signed in is signed out on their next request. The
+    owner can't be removed: they hand ownership over first.
+    """
+
+    permission = can_manage_organisation
+    context_object_name = "member"
+    template_name = "accounts/member_confirm_remove.html"
+    gone_url = reverse_lazy("members:member_list")
+    gone_message = "That person has already been removed."
+
+    def get_queryset(self):
+        return members_of(self.request).exclude(is_owner=True)
+
+    def post(self, request, *args, **kwargs):
+        member = self.get_object()
+        member.is_active = False
+        member.save(update_fields=["is_active"])
+        messages.success(request, f"{member} has been removed. Their comments stay.")
+        return redirect(self.gone_url)

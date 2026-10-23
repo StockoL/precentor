@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Remove {{ member }} — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Remove {{ member }}?</h1>
+    <p>They won't be able to sign in any more. Their comments stay, with their name on them.</p>
+    <div class="cluster">
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn-danger" type="submit">Yes, remove them</button>
+        </form>
+        <a class="btn-ghost" href="{% url 'members:member_list' %}">Keep them</a>
+    </div>
+</div>
+{% endblock %}
