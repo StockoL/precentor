@@ -21,7 +21,7 @@ details are needed.
 > printable music list are all in place. Before the accounts work I
 > overhauled the whole app, phase by phase, as recorded in
 > [`docs/overhaul_plan.md`](docs/overhaul_plan.md). The CSV import is
-> designed but not built (see Future work).
+> designed but not built (see [Future work](#19-future-work)).
 >
 > The rest of this document keeps its original concept-and-reasoning
 > framing, because that reasoning is what the build followed. Where the
@@ -1218,6 +1218,35 @@ Everything below is read in `precentor_project/settings.py`.
 | `CSRF_TRUSTED_ORIGINS`     | Comma-separated origins allowed to post forms, such as `https://example.com`                     | none                                  |
 | `RENDER_EXTERNAL_HOSTNAME` | Set by Render; added to the allowed hosts and trusted origins                                    | none                                  |
 | `SECURE_HSTS_SECONDS`      | How long browsers are told to use only HTTPS, when `DEBUG` is off                                | 3600 (one hour)                       |
+
+## 19. Future work
+
+What's designed or wanted but not built yet:
+
+- **Importing a library from a spreadsheet.** A church with hundreds of
+  scores has to type each one in, so bulk import is the one real gap in
+  handling large amounts of data. The import is designed: a CSV in
+  Precentor's own columns, checked row by row, kept or removed as one
+  batch, with an export in the same columns. An earlier version of the
+  design is in [`docs/score_import_plan.md`](docs/score_import_plan.md).
+- **Hymn books and hymns.** Hymns are typed as numbers on the service
+  form today. Hymn books as library entries, with hymns and tunes that
+  build up through use, would let them be searched and suggested.
+- **Suggestions that give their reasons.** The piece picker already
+  ranks suitable scores first; a panel would group them and say why
+  each one appears, and warn when something was sung recently.
+- **Motet texts and a pew sheet.** Storing a motet's text and
+  translation, and printing them side by side on a sheet for the
+  congregation.
+- **A rebuilt music list,** with a choice of paper sizes and columns.
+- **Email.** Invitations and reset links are passed on by hand because
+  Precentor sends no email. With a mail provider they could be sent
+  directly, and people could reset their own passwords.
+- **The rest of the account work:** limiting repeated sign-in attempts,
+  letting an owner delete their church and a member delete their own
+  account, and one test that tries every route as another church. Each
+  view is already tested for another church's records; the single sweep
+  would keep that true as new pages are added.
 
 ---
 
