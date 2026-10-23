@@ -1248,6 +1248,73 @@ What's designed or wanted but not built yet:
   view is already tested for another church's records; the single sweep
   would keep that true as new pages are added.
 
+## 20. Technologies used
+
+**Languages:** HTML, CSS, JavaScript (hand-written ES modules, no
+framework) and Python.
+
+**Framework and libraries** (pinned in `requirements.txt`):
+
+- [Django](https://www.djangoproject.com/) 6, on Python 3.14
+- [dj-database-url](https://github.com/jazzband/dj-database-url), to
+  read the database from `DATABASE_URL`
+- [psycopg2](https://www.psycopg.org/) for PostgreSQL in production;
+  SQLite locally
+- [python-dotenv](https://github.com/theskumar/python-dotenv), to read
+  `.env` in development
+- [WhiteNoise](https://whitenoise.readthedocs.io/), to serve the static
+  files
+- [Gunicorn](https://gunicorn.org/), the web server on the host
+- [Pillow](https://python-pillow.org/), to check and resize uploaded
+  crests
+
+**Hosting:** [Render](https://render.com), a web service and a
+PostgreSQL database described by `render.yaml`.
+
+**Building and testing:**
+
+- [Playwright](https://playwright.dev/python/) with Chromium, for the
+  browser tests and the README screenshots
+- [Node.js](https://nodejs.org/), to run `build-tokens.js`, which turns
+  the design tokens in `precentor-tokens.JSON` into CSS variables, and
+  `build-font-fallback.js`
+- [Utopia](https://utopia.fyi/), for the fluid type and spacing scales
+- [flake8](https://flake8.pycqa.org/), [ESLint](https://eslint.org/),
+  the [W3C HTML](https://validator.w3.org/nu/) and
+  [CSS](https://jigsaw.w3.org/css-validator/) validators and
+  [Lighthouse](https://developer.chrome.com/docs/lighthouse/), for the
+  checks in [`TESTING.md`](TESTING.md)
+- Git and GitHub, for version control
+
+**Images:** [Inkscape](https://inkscape.org/) and
+[GIMP](https://www.gimp.org/) 3.2.2, for creating and editing SVG
+images.
+
+**Use of AI.** I used an AI coding assistant as a pair programmer and
+a sounding board: to talk through options, draft code and tests to my
+specification, look for bugs, and check documents against the code.
+The architecture, the data model, the design and every decision about
+what Precentor does and how are my own, and I reviewed and approved
+each change before it was committed.
+
+## 21. Testing
+
+[`TESTING.md`](TESTING.md) has the full record. In short:
+
+- **553 automated tests** cover the models, views, forms, permissions,
+  each church's own data and the liturgical calendar. 46 of them are
+  browser tests, which start a real server and drive Chromium through
+  Playwright, so the JavaScript is tested too.
+- **Validation:** the W3C HTML and CSS validators, ESLint for the
+  JavaScript and flake8 for the Python. The one real HTML error, on the
+  Settings colour picker, is fixed; what remains is newer CSS the
+  validators don't know yet, explained there.
+- **Lighthouse:** accessibility scores 100 on every page checked, on
+  desktop and mobile.
+- **Manual tests** of every feature, at phone and desktop widths, with
+  the keyboard and in dark mode, with their results.
+- **Bugs found and fixed,** each with its commit.
+
 ---
 
 _The overhaul is recorded phase by phase in
