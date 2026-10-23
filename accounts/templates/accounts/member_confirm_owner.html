@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Make {{ member }} the owner — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Make {{ member }} the owner?</h1>
+    <p>They'll look after members, invitations and reset links from then on. You'll stay on as a {{ user.get_role_display }}, but you won't be able to change who's in the church unless they hand it back.</p>
+    <div class="cluster">
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn-primary" type="submit">Yes, make them the owner</button>
+        </form>
+        <a class="btn-ghost" href="{% url 'members:member_list' %}">Keep it as it is</a>
+    </div>
+</div>
+{% endblock %}

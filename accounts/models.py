@@ -3,7 +3,7 @@ import secrets
 from datetime import timedelta
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django.db.models.functions import Lower
 from django.utils import timezone
@@ -120,6 +120,28 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.name or self.email
+
+    def can_take_ownership_from(self, owner):
+        """Whether this person could become the owner in place of owner:
+        someone else, still in the same church, who can manage things."""
+        return (
+            self.pk != owner.pk
+            and self.is_active
+            and self.organisation_id == owner.organisation_id
+            and self.role in (Role.CONDUCTOR, Role.LIBRARIAN)
+        )
+
+    @transaction.atomic
+    def hand_ownership_to(self, successor):
+        """Make successor the owner instead. The old flag is cleared first,
+        as an organisation may only ever have one owner, and both changes
+        happen together or not at all. The old owner keeps their role."""
+        if not (self.is_owner and successor.can_take_ownership_from(self)):
+            raise ValueError("Ownership can only go from the owner to a Conductor or Librarian in their church.")
+        self.is_owner = False
+        self.save(update_fields=["is_owner"])
+        successor.is_owner = True
+        successor.save(update_fields=["is_owner"])
 
     def get_full_name(self):
         return self.name

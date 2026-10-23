@@ -27,6 +27,9 @@
                     <button class="btn-ghost" type="submit">Change role<span class="visually-hidden"> for {{ member }}</span></button>
                 </form>
                 {% if not member.is_owner %}
+                {% if member.role != "viewer" %}
+                <a class="btn-ghost" href="{% url 'members:make_owner' member.pk %}">Make owner<span class="visually-hidden">: {{ member }}</span></a>
+                {% endif %}
                 <a class="btn-danger" href="{% url 'members:remove' member.pk %}">Remove<span class="visually-hidden"> {{ member }}</span></a>
                 {% endif %}
                 {% endif %}

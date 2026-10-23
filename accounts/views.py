@@ -12,7 +12,7 @@ from precentor_project.mixins import DeletePageMixin
 from .decorators import role_required
 from .forms import InvitationForm, JoinForm, RoleForm, SignUpForm
 from .mixins import OrganisationScopedMixin, RoleRequiredMixin
-from .models import Invitation, User
+from .models import Invitation, Role, User
 from .permissions import can_manage_organisation
 
 
@@ -208,3 +208,23 @@ def restore_member(request, pk):
     member.save(update_fields=["is_active"])
     messages.success(request, f"{member} is back, as a {member.get_role_display()}.")
     return redirect("members:member_list")
+
+
+class MakeOwnerView(RoleRequiredMixin, DeletePageMixin, DetailView):
+    """The owner hands ownership to a Conductor or Librarian, after a
+    confirmation, and stays on in their own role."""
+
+    permission = can_manage_organisation
+    context_object_name = "member"
+    template_name = "accounts/member_confirm_owner.html"
+    gone_url = reverse_lazy("members:member_list")
+    gone_message = "Ownership can only go to a current Conductor or Librarian."
+
+    def get_queryset(self):
+        return members_of(self.request).exclude(is_owner=True).filter(role__in=[Role.CONDUCTOR, Role.LIBRARIAN])
+
+    def post(self, request, *args, **kwargs):
+        successor = self.get_object()
+        request.user.hand_ownership_to(successor)
+        messages.success(request, f"{successor} is now the owner.")
+        return redirect(self.gone_url)

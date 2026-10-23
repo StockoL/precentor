@@ -979,3 +979,71 @@ class RestoreMemberTests(TestCase):
         self.assertEqual(self.client.post(f"/members/{theirs.pk}/restore/").status_code, 404)
         theirs.refresh_from_db()
         self.assertFalse(theirs.is_active)
+
+
+class HandOwnershipTests(TestCase):
+    def setUp(self):
+        self.church = make_organisation("St Cecilia's")
+        self.owner = User.objects.create_user(
+            email="owner@example.com", organisation=self.church, role="conductor", is_owner=True
+        )
+        self.librarian = make_user("librarian", organisation=self.church, email="ben@example.com")
+        self.librarian.name = "Ben Jonson"
+        self.librarian.save()
+        self.url = f"/members/{self.librarian.pk}/make-owner/"
+        self.client.force_login(self.owner)
+
+    def test_the_owner_hands_over_and_keeps_their_role(self):
+        self.assertContains(self.client.get(self.url), "Make Ben Jonson the owner?")
+        response = self.client.post(self.url, follow=True)
+        self.assertContains(response, "Ben Jonson is now the owner.")
+        self.owner.refresh_from_db()
+        self.librarian.refresh_from_db()
+        self.assertEqual((self.owner.is_owner, self.owner.role), (False, "conductor"))
+        self.assertTrue(self.librarian.is_owner)
+        # The old owner no longer has the controls.
+        self.assertNotContains(response, "Invite someone")
+
+    def test_only_a_conductor_or_librarian_in_the_church_can_take_it(self):
+        viewer = make_user("viewer", organisation=self.church)
+        removed = make_user("conductor", organisation=self.church)
+        removed.is_active = False
+        removed.save()
+        outsider = make_user("conductor", organisation=make_organisation("St Elsewhere"))
+        for person in (viewer, removed, outsider, self.owner):
+            with self.subTest(person=person.email):
+                self.client.post(f"/members/{person.pk}/make-owner/")
+                with self.assertRaises(ValueError):
+                    self.owner.hand_ownership_to(person)
+        self.owner.refresh_from_db()
+        self.assertTrue(self.owner.is_owner)
+        self.assertEqual(User.objects.filter(is_owner=True).count(), 1)
+
+    def test_the_page_offers_it_to_conductors_and_librarians_only(self):
+        viewer = make_user("viewer", organisation=self.church)
+        page = self.client.get("/members/")
+        self.assertContains(page, f'href="{self.url}"')
+        self.assertNotContains(page, f'href="/members/{viewer.pk}/make-owner/"')
+        self.assertNotContains(page, f'href="/members/{self.owner.pk}/make-owner/"')
+
+    def test_nothing_changes_if_the_second_step_fails(self):
+        # The first save really happens; only the second fails, so this
+        # shows the first is undone.
+        real_save = User.save
+        saves = []
+
+        def second_save_fails(user, *args, **kwargs):
+            saves.append(user)
+            if len(saves) == 2:
+                raise IntegrityError
+            return real_save(user, *args, **kwargs)
+
+        with mock.patch.object(User, "save", second_save_fails):
+            with self.assertRaises(IntegrityError):
+                self.owner.hand_ownership_to(self.librarian)
+        self.owner.refresh_from_db()
+        self.assertTrue(self.owner.is_owner)
+
+    def test_only_the_owner(self):
+        self.client.force_login(self.librarian)
+        self.assertEqual(self.client.post(self.url).status_code, 403)
