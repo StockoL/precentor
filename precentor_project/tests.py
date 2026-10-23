@@ -255,3 +255,8 @@ class FaviconTests(TestCase):
     def test_every_page_names_its_icon(self):
         response = self.client.get("/accounts/login/")
         self.assertContains(response, 'rel="icon" href="/static/src/images/favicon.svg" type="image/svg+xml"')
+
+
+class MetaDescriptionTests(TestCase):
+    def test_every_page_describes_the_site(self):
+        self.assertContains(self.client.get("/accounts/login/"), '<meta name="description" content="Precentor plans')
