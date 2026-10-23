@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Register your church — Precentor{% endblock %}
+{% block extra_head %}
+{# No page transition, for the same reason as the login page: the page after signing in froze in automated testing. #}
+<style>
+  @view-transition {
+    navigation: none;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="cover">
+    <div class="center flow" data-intrinsic data-centered style="--center-max-width: 30ch;">
+        <h1>Register your church</h1>
+        <p>You'll be its owner and a Conductor.</p>
+        <form method="post" class="flow">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn-primary" type="submit">Register</button>
+        </form>
+        <p class="list-row__meta">Already have an account? <a href="{% url 'login' %}">Log in</a>.</p>
+    </div>
+</div>
+{% endblock %}

@@ -296,7 +296,7 @@ class LoginPageTests(TestCase):
         response = self.client.get("/accounts/login/")
         self.assertIsInstance(response.context["form"], EmailAuthenticationForm)
         self.assertContains(response, 'type="email"')
-        self.assertContains(response, "Ask whoever runs Precentor for your church")
+        self.assertContains(response, 'href="/accounts/signup/"')
 
     def test_signing_in_with_any_capitals_lands_on_terms(self):
         make_user(email="anne@example.com", password="s3cret-pass")
@@ -493,3 +493,28 @@ class SignUpFormTests(TestCase):
             with self.assertRaises(IntegrityError):
                 form.save()
         self.assertFalse(Organisation.objects.filter(name="St Cecilia's").exists())
+
+
+class SignUpPageTests(TestCase):
+    DATA = SignUpFormTests.DATA
+
+    def test_registering_signs_the_owner_in_and_goes_home(self):
+        response = self.client.post("/accounts/signup/", self.DATA)
+        self.assertRedirects(response, "/")
+        user = User.objects.get(email="anne@example.com")
+        self.assertEqual(int(self.client.session["_auth_user_id"]), user.pk)
+
+    def test_a_mistake_shows_the_form_again_and_makes_nothing(self):
+        response = self.client.post("/accounts/signup/", {**self.DATA, "password2": "something else"})
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Organisation.objects.exists())
+
+    def test_anyone_signed_in_is_sent_home(self):
+        self.client.force_login(make_user())
+        self.assertRedirects(self.client.get("/accounts/signup/"), "/")
+
+    def test_signed_out_pages_offer_registration(self):
+        response = self.client.get("/accounts/signup/")
+        self.assertContains(response, "Register your church")
+        self.assertContains(response, 'autocomplete="new-password"')
+        self.assertContains(response, 'href="/accounts/signup/">Register</a>')

@@ -47,6 +47,14 @@ class SignUpForm(BaseUserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["name"].required = True
+        # Django lists its password rules as bullet points; one plain line
+        # says the same. The rules themselves are still checked in full.
+        self.fields["password1"].help_text = (
+            "At least 8 characters, not all numbers, not a common password "
+            "and not too like your name or email."
+        )
+        self.fields["password2"].label = "Password again"
+        self.fields["password2"].help_text = ""
         # The church's name comes first, so the cursor starts there.
         self.fields["email"].widget.attrs.pop("autofocus", None)
 
