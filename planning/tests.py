@@ -1083,3 +1083,19 @@ class PlanningForOneChurchTests(TestCase):
         self.assertFalse(their_piece.is_confirmed)
         self.assertEqual(list(self.their_service.roles.values_list("role_name", flat=True)), ["Motet"])
         self.assertFalse(our_service.roles.exists())
+
+    def test_only_our_scores_are_offered_or_accepted_for_a_slot(self):
+        our_service = Service.objects.create(term=self.our_term, date=date(2026, 1, 11), service_type="Mass")
+        our_slot = ServiceRole.objects.create(service=our_service, role_name="Motet")
+        ours = make_score(title="Ave verum", organisation=self.ours)
+        theirs = make_score(title="Ave Maria", organisation=self.their_term.organisation)
+        self.assertEqual(list(our_service.suggested_scores()), [ours])
+        page = self.client.get(our_service.get_absolute_url())
+        self.assertEqual([option["label"] for option in page.context["score_options"]], [str(ours)])
+
+        # A hand-made request naming another church's score is refused.
+        response = self.client.post(
+            f"/roles/{our_slot.pk}/pieces/add/", {"score": theirs.pk}, headers={"x-requested-with": "XMLHttpRequest"}
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(our_slot.pieces.exists())

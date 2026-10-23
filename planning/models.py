@@ -251,12 +251,12 @@ class Service(models.Model):
 
     def suggested_scores(self):
         """
-        Every score, with those suited to this service's occasion or its
-        season first. Ranked, never filtered: see
-        ScoreQuerySet.ranked_by_suitability.
+        Every score in the church's library, with those suited to this
+        service's occasion or its season first. Ranked, never filtered:
+        see ScoreQuerySet.ranked_by_suitability.
         """
         occasion = self.occasion
-        return Score.objects.ranked_by_suitability(
+        return Score.objects.for_organisation(self.organisation_id).ranked_by_suitability(
             occasion=occasion, season=occasion.season if occasion else None
         )
 

@@ -116,6 +116,17 @@ class SlotTemplateForm(forms.ModelForm):
 
 
 class RolePieceForm(forms.ModelForm):
+    """
+    Proposing a score for a slot. The scores on offer, and the only ones
+    accepted, are the service's own church's, ranked for it: the list is
+    set before the form checks anything, so another church's score can't
+    be proposed even by a hand-made request.
+    """
+
     class Meta:
         model = RolePiece
         fields = ["score"]  # noqa
+
+    def __init__(self, *args, service, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["score"].queryset = service.suggested_scores()
