@@ -84,6 +84,22 @@ Everyone takes part in the comment threads (see §6). A site superuser
 has no role inside the app; they look after the site from Django's
 admin pages.
 
+### A church's first visit
+
+A conductor finds Precentor, registers their church and is signed straight in. With nothing planned yet, the Terms page shows the first steps their role allows.
+
+![The sign-in page asking for an email address and password, with a link to register a church](docs/screenshots/01-sign-in.png)
+
+_Figure 1. Signing in by email. New visitors follow the link to register their church._
+
+![The Register your church form with fields for the church's name, your name, email and password twice](docs/screenshots/02-register.png)
+
+_Figure 2. Registering a church: the person who registers becomes its owner and a Conductor._
+
+![The Terms page for a new church showing a Getting started panel with links to Settings, adding a score and creating a term](docs/screenshots/03-first-steps.png)
+
+_Figure 3. A new church's first steps, shown until it has a term or a score._
+
 ## 3. Core Domain Concepts
 
 The interface uses the words a choir uses, and two of them differ from
@@ -108,6 +124,24 @@ voice part, the **language**, the number of copies owned and where
 they're filed, the duration, background and interpretation notes, and
 a vocal range for each part. Scores can be tagged with the uses,
 seasons and occasions they suit.
+
+**In the app.** The librarian adds scores, finds them again with search and filters, and keeps each one's details up to date.
+
+![The library table filtered to scores suited to Advent, with columns for composer, voicing, language, copies and last sung](docs/screenshots/08-library-filtered.png)
+
+_Figure 4. The library filtered to music suited to Advent, with the last-sung date for each score._
+
+![A score's page for Parsons' Ave Maria showing its details and the services it has been planned for](docs/screenshots/09-score.png)
+
+_Figure 5. A score's own page, with its details and where it has been used._
+
+![The add-score form after submitting it empty, with error messages beside the required fields](docs/screenshots/10-score-form-errors.png)
+
+_Figure 6. Adding a score: each missing field is named beside the box that needs it._
+
+![A confirmation page asking whether to delete the Ave Maria score](docs/screenshots/11-delete-confirmation.png)
+
+_Figure 7. Deleting always asks first._
 
 ### 3.2 Term, Service, and Slots
 
@@ -160,6 +194,20 @@ is kept, so no planning is lost. Applying the same template twice
 changes nothing, and afterwards the slots are ordinary slots, to move,
 mark N/A or remove like any other.
 
+**In the app.** The conductor plans a term on the Terms page, opens it to see every service and its status, and opens a service to fill its slots.
+
+![The Terms page with Michaelmas 2026, current and complete, and Advent 2026, upcoming, each with a progress bar](docs/screenshots/04-terms.png)
+
+_Figure 8. The Terms page: each term's progress at a glance._
+
+![The Advent 2026 term page listing ten services, each marked Complete, In progress or Not started, followed by notices and a comment](docs/screenshots/05-term.png)
+
+_Figure 9. A term: its services in date order with their status, its notices and its comments._
+
+![The Sung Mass for the First Sunday of Advent, with slots from the Mass template holding confirmed pieces, the Gloria and Credo marked N/A, the template buttons and a comment](docs/screenshots/06-service.png)
+
+_Figure 10. A service: the occasion worked out from its date, slots added from the Mass template, confirmed pieces and two slots marked N/A._
+
 ### 3.3 Proposing and Confirming
 
 Each slot holds a **shortlist of proposed pieces** (e.g. two motets
@@ -187,6 +235,12 @@ A service's overall status is **derived**, not stored:
 
 This status powers the Terms page's overview, so a conductor can scan a
 term and see at once which services still need attention.
+
+**In the app.** Typing in a slot's search box lists the library, with scores suited to the service ranked first. Choosing one proposes it; Confirm settles it.
+
+![A service page with a slot's score search box open and a list of matching scores beneath it](docs/screenshots/07-propose-a-piece.png)
+
+_Figure 11. Proposing a piece from the slot's search box._
 
 ### 3.4 Ordo (the Liturgical Calendar)
 
@@ -310,6 +364,16 @@ state:
   [`docs/design_system.md`](docs/design_system.md)), falling back to the
   house accent colour when a service has no occasion of its own.
 
+**In the app.** The music list lays out the whole term for the choir and congregation, with the church's name and crest, and prints on paper. A draft view marks slots still to be decided as TBC.
+
+![The Advent 2026 music list in three columns, headed by the church's crest and name, with each service's pieces and the notices between services](docs/screenshots/12-music-list.png)
+
+_Figure 12. The public music list for Advent, with Public, Draft and Print at the foot._
+
+![The Settings page with the church's name, national calendar, crest style, the current crest, accent colour and music list layout](docs/screenshots/14-settings.png)
+
+_Figure 13. Settings: the church's name, crest and calendar, which the music list uses._
+
 ## 5. Roles and Permissions, Revisited
 
 The roles mirror how the work is divided: **the conductor decides, the
@@ -361,6 +425,24 @@ who types the address of another church's score or service gets a
 that would admit it does. The liturgical calendar is the one thing
 every church shares.
 
+**In the app.** The owner invites people from the Members page. The link is shown once, to send by hand, and the new member joins in the role it names. Anyone without a permission sees a plain explanation, and another church's records simply don't exist for them.
+
+![An invitation link for Anne, alto, in a read-only box, with the role, the expiry date and a note that it is only shown once](docs/screenshots/15-invitation-link.png)
+
+_Figure 14. An invitation link, shown once for the owner to pass on._
+
+![The Members page listing the conductor, librarian and viewer with their roles, the owner badge and the owner's controls, and an invitation waiting to be used](docs/screenshots/16-members.png)
+
+_Figure 15. The Members page as the owner sees it._
+
+![A Not available to you page shown to a Viewer who tried to create a term](docs/screenshots/17-forbidden.png)
+
+_Figure 16. A Viewer trying to create a term gets a 403 page that says why._
+
+![A Page not found page shown to another church's member who opened this church's score by its address](docs/screenshots/18-not-found.png)
+
+_Figure 17. Someone from another church opening this church's score by its address gets a 404, as if it didn't exist._
+
 ## 6. Comment Threads
 
 A small, bounded feature that lets the librarian and conductor discuss
@@ -392,6 +474,12 @@ things without leaving the app:
   not an oversight.
 
 This remains a **"should have"**, not core to the MVP.
+
+**In the app.** Open threads from every service and term collect in the Inbox, and the number in the menu shows how many are waiting.
+
+![The Inbox listing open comment threads with who wrote them and which term or service they are about](docs/screenshots/13-inbox.png)
+
+_Figure 18. The Inbox of open threads._
 
 ## 7. Scope Discipline (MoSCoW)
 
@@ -928,6 +1016,57 @@ max 50), such as Mass, Vespers or General. Each church has its own.
 - Slot template names are unique within each church.
 - An occasion's key is unique within its calendar.
 - An invitation's stored fingerprint is unique.
+
+## 14. Screenshots: phones, dark mode and the keyboard
+
+The figures above sit in the sections they illustrate. These show the same app on a phone, in dark mode, and used from the keyboard.
+
+![The Terms page on a phone 390 pixels wide, with the term cards stacked in one column](docs/screenshots/19-mobile-terms.png)
+
+_Figure 19. The Terms page on a phone._
+
+![A service page on a phone, with each slot's buttons wrapping under its name](docs/screenshots/20-mobile-service.png)
+
+_Figure 20. A service on a phone._
+
+![The library on a phone, with the filters above the table](docs/screenshots/21-mobile-library.png)
+
+_Figure 21. The library on a phone; the table scrolls within its own box rather than widening the page._
+
+![The First Sunday of Advent service page in dark colours](docs/screenshots/22-dark-service.png)
+
+_Figure 22. A service in dark mode, which follows the device's setting or the choice in the user menu._
+
+![The Terms page with a visible outline round the Terms link after pressing Tab](docs/screenshots/23-keyboard-focus.png)
+
+_Figure 23. Keyboard focus: links and buttons show an outline when reached with Tab._
+
+### How the screenshots were made
+
+Every image comes from an invented church, St Aelred's, Ripon, with
+invented people, so no real church or person appears. I made them with
+two scripts in `tools/`, against a separate SQLite file rather than my
+development database:
+
+1. `settings.py` reads the database from `DATABASE_URL`, so I set it for
+   one PowerShell session:
+   `$env:DATABASE_URL = "sqlite:///screenshots.sqlite3"`. Everything run
+   in that session uses `screenshots.sqlite3`, which git ignores.
+2. `python tools/seed_demo.py` migrates that file, loads the liturgical
+   calendar into it and builds the church through the app's own
+   `create_organisation()` and models: three people, 25 scores, a past
+   term and an Advent term with services in every state, notices,
+   comments and a crest drawn in code.
+3. `python manage.py runserver 8766` serves it.
+4. `python tools/take_screenshots.py`, in a second terminal with the same
+   `DATABASE_URL`, drives Chromium through Playwright (already used for
+   the browser tests). It registers a new church for Figures 1 to 3,
+   signs in as the demo Conductor and Viewer for the rest, and saves
+   each page at 1280 by 800 or, for the phone figures, 390 by 844.
+   Images over 300 KB are reduced to 256 colours.
+5. My local `.env` turns `DEBUG` on, which shows Django's debug page in
+   place of the 404 page, so for Figure 17 the script renders the page
+   with `DEBUG` off through Django's test client and photographs that.
 
 ---
 
