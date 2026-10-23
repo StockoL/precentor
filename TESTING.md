@@ -154,6 +154,14 @@ testing, fixed, and covered by a test where it could be.
 **Left unfixed:** the 16 long lines, the variable `l` and the lambda
 found by flake8 (see section 1). None affects how the app works.
 
+### Known bugs
+
+| Bug                                                                                                                                            | Effect                                                                                                         | Why it's not fixed yet                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| The "change your password" pages (`/accounts/password_change/`) still have Django admin's look, and nothing in the app links to them           | Someone who wants a new password asks the owner for a reset link, which works, rather than changing it themselves | Restyling them and adding a menu link is new work, left until after submission          |
+| A signed-in site superuser who opens an invitation link is told their account "belongs to no church"                                           | Only affects the site's administrator, who has no church by design                                             | Cosmetic; the link is still refused, which is correct                                   |
+| Mobile performance on the longest pages is lower: 69 for a service with ten slots and 75 for the library (section 3)                           | Those pages take longer to become usable on a slow phone                                                       | Would need the pages split or loaded in parts; not attempted before submission          |
+
 ## 8. Deployment check
 
 On the live site, https://precentor.onrender.com, after each deploy.
