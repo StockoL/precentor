@@ -1147,6 +1147,78 @@ the role column in §2 says who may use each one.
 - **Removing someone** switches their account off, which signs them out
   on their next request.
 
+## 17. Running it locally
+
+These steps are for Windows with PowerShell; on macOS or Linux, activate
+the virtual environment with `source venv/bin/activate` instead. You
+need Python 3.14 and git.
+
+1. Clone the repository and go into it:
+
+   ```powershell
+   git clone https://github.com/StockoL/precentor.git
+   cd precentor
+   ```
+
+2. Create and activate a virtual environment, then install the
+   requirements:
+
+   ```powershell
+   python -m venv venv
+   venv\Scripts\Activate.ps1
+   pip install -r requirements.txt
+   ```
+
+3. Create a file called `.env` in the repository's root folder with a
+   secret key of your own and `DEBUG` switched on:
+
+   ```
+   SECRET_KEY=any-long-random-string
+   DEBUG=True
+   ```
+
+4. Set up the database, which is a local SQLite file unless
+   `DATABASE_URL` says otherwise, and load the liturgical calendar:
+
+   ```powershell
+   python manage.py migrate
+   python manage.py load_calendar
+   ```
+
+5. Optionally make a superuser for the admin pages, then start the site:
+
+   ```powershell
+   python manage.py createsuperuser
+   python manage.py runserver
+   ```
+
+   Open http://127.0.0.1:8000/, choose **Register** and register a
+   church to start using it.
+
+6. Run the tests:
+
+   ```powershell
+   python manage.py test
+   ```
+
+   The browser tests use Playwright, which isn't in `requirements.txt`
+   because the site doesn't need it to run. Install it once with
+   `pip install playwright` and `playwright install chromium`.
+
+## 18. Environment variables
+
+Everything below is read in `precentor_project/settings.py`.
+
+| Variable                   | What it does                                                                                     | Default                               |
+| -------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------- |
+| `SECRET_KEY`               | Django's signing key, for sessions, CSRF and reset links                                         | none: the site won't start without it |
+| `DEBUG`                    | `True` turns on Django's debug pages and turns off the HTTPS settings; anything else leaves it off | off                                 |
+| `DATABASE_URL`             | Which database to use, as a URL, read by `dj-database-url`                                       | `sqlite:///db.sqlite3`                |
+| `ALLOWED_HOSTS`            | Comma-separated host names the site answers to                                                   | none; with `DEBUG` on, Django allows localhost |
+| `CSRF_TRUSTED_ORIGINS`     | Comma-separated origins allowed to post forms, such as `https://example.com`                     | none                                  |
+| `RENDER_EXTERNAL_HOSTNAME` | Set by Render; added to the allowed hosts and trusted origins                                    | none                                  |
+| `SECURE_HSTS_SECONDS`      | How long browsers are told to use only HTTPS, when `DEBUG` is off                                | 3600 (one hour)                       |
+
 ---
 
 _The overhaul is recorded phase by phase in
