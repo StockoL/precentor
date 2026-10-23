@@ -31,6 +31,13 @@
     font-size: var(--typography-step--1);
   }
 
+  /* A row with controls (the members page): on a narrow screen they
+     drop below the text instead of squeezing it. */
+  .list-row--wrap {
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+
   .list-row:first-of-type {
     border-top: none;
   }

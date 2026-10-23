@@ -1,16 +1,29 @@
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView
 
 from precentor_project.mixins import DeletePageMixin
 
-from .forms import InvitationForm, JoinForm, SignUpForm
+from .decorators import role_required
+from .forms import InvitationForm, JoinForm, RoleForm, SignUpForm
 from .mixins import OrganisationScopedMixin, RoleRequiredMixin
 from .models import Invitation, User
 from .permissions import can_manage_organisation
+
+
+def members_of(request):
+    """The active people in the signed-in person's church. A superuser
+    belongs to none, so has nobody (filtering on an empty organisation
+    would find the superusers)."""
+    if request.organisation is None:
+        return User.objects.none()
+    return User.objects.filter(organisation=request.organisation, is_active=True)
+
 
 # Where a new invitation's secret waits in the owner's session between
 # making it and seeing its link, which happens once.
@@ -118,17 +131,13 @@ class MemberListView(LoginRequiredMixin, ListView):
     template_name = "accounts/member_list.html"
 
     def get_queryset(self):
-        # A superuser belongs to no church, so has no members to list
-        # (filtering on an empty organisation would find the superusers).
-        if self.request.organisation is None:
-            return User.objects.none()
-        return User.objects.filter(organisation=self.request.organisation, is_active=True).order_by(
-            "-is_owner", "name", "email"
-        )
+        return members_of(self.request).order_by("-is_owner", "name", "email")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if can_manage_organisation(self.request.user):
+            for member in context["members"]:
+                member.role_form = RoleForm(instance=member, auto_id=f"id_member_{member.pk}_%s")
             context["invitations"] = Invitation.usable().for_organisation(self.request.organisation)
         return context
 
@@ -148,3 +157,16 @@ class InvitationCancelView(RoleRequiredMixin, OrganisationScopedMixin, DeletePag
     def get_queryset(self):
         # One that's been used is the record of who joined, so it stays.
         return super().get_queryset().filter(used_at__isnull=True)
+
+
+@role_required(can_manage_organisation)
+@require_POST
+def change_role(request, pk):
+    member = get_object_or_404(members_of(request), pk=pk)
+    form = RoleForm(request.POST, instance=member)
+    if form.is_valid():
+        form.save()
+        messages.success(request, f"{member} is now a {member.get_role_display()}.")
+    else:
+        messages.error(request, form.errors["role"][0])
+    return redirect("members:member_list")

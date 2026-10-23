@@ -122,3 +122,24 @@ class InvitationForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["role"].choices = list(self.ROLE_LABELS.items())
         self.fields["role"].initial = Role.VIEWER
+
+
+class RoleForm(forms.ModelForm):
+    """The owner changing someone's role from the members page."""
+
+    class Meta:
+        model = User
+        fields = ["role"]  # noqa
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.is_owner:
+            # The owner can't be a Viewer. The database refuses it too, but
+            # Django leaves out a rule on a field the form doesn't show
+            # (is_owner), so the form offers only what's allowed and says
+            # plainly why if anything else is sent.
+            field = self.fields["role"]
+            field.choices = [choice for choice in field.choices if choice[0] != Role.VIEWER]
+            field.error_messages["invalid_choice"] = (
+                "The owner must be a Conductor or a Librarian. Hand ownership to someone else first."
+            )

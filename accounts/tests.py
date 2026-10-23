@@ -833,3 +833,54 @@ class CancelInvitationTests(TestCase):
         theirs, _ = Invitation.make(organisation=make_organisation("St Elsewhere"), role="viewer", created_by=None)
         self.client.post(f"/members/invitations/{theirs.pk}/cancel/")
         self.assertTrue(Invitation.objects.filter(pk=theirs.pk).exists())
+
+
+class ChangeRoleTests(TestCase):
+    def setUp(self):
+        self.church = make_organisation("St Cecilia's")
+        self.owner = User.objects.create_user(
+            email="owner@example.com", name="Anne Byrd", organisation=self.church, role="conductor", is_owner=True
+        )
+        self.member = make_user("viewer", organisation=self.church)
+        self.member.name = "Ben Jonson"
+        self.member.save()
+        self.client.force_login(self.owner)
+
+    def change(self, user, role):
+        return self.client.post(f"/members/{user.pk}/role/", {"role": role}, follow=True)
+
+    def test_the_owner_changes_someones_role(self):
+        response = self.change(self.member, "librarian")
+        self.assertContains(response, "Ben Jonson is now a Librarian.")
+        self.member.refresh_from_db()
+        self.assertEqual(self.member.role, "librarian")
+
+    def test_the_owner_can_switch_between_conductor_and_librarian_but_not_viewer(self):
+        self.change(self.owner, "librarian")
+        self.owner.refresh_from_db()
+        self.assertEqual(self.owner.role, "librarian")
+        response = self.change(self.owner, "viewer")
+        self.assertContains(response, "Hand ownership to someone else first.")
+        self.owner.refresh_from_db()
+        self.assertEqual(self.owner.role, "librarian")
+
+    def test_the_page_offers_a_form_per_member_and_no_viewer_for_the_owner(self):
+        from .forms import RoleForm
+
+        response = self.client.get("/members/")
+        self.assertContains(response, f'action="/members/{self.member.pk}/role/"')
+        self.assertContains(response, f'id="id_member_{self.member.pk}_role"')
+        self.assertNotIn("viewer", [value for value, _ in RoleForm(instance=self.owner).fields["role"].choices])
+
+    def test_a_made_up_role_is_refused(self):
+        self.change(self.member, "bishop")
+        self.member.refresh_from_db()
+        self.assertEqual(self.member.role, "viewer")
+
+    def test_only_the_owner_only_by_post_and_only_their_own(self):
+        self.assertEqual(self.client.get(f"/members/{self.member.pk}/role/").status_code, 405)
+        stranger = make_user("viewer", organisation=make_organisation("St Elsewhere"))
+        self.assertEqual(self.client.post(f"/members/{stranger.pk}/role/", {"role": "conductor"}).status_code, 404)
+        self.client.force_login(make_user("conductor", organisation=self.church))
+        self.assertEqual(self.change(self.member, "conductor").status_code, 403)
+        self.assertNotContains(self.client.get("/members/"), "Change role")

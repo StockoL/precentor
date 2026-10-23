@@ -12,12 +12,22 @@
     </header>
     <ul role="list" class="flow" style="--flow-space: var(--spacing-xs);">
         {% for member in members %}
-        <li class="list-row">
+        <li class="list-row list-row--wrap">
             <div class="flow" style="--flow-space: var(--spacing-3xs);">
                 <p><strong>{{ member.name|default:member.email }}</strong>{% if member == user %} (you){% endif %}</p>
                 <p class="list-row__meta">{{ member.get_role_display }}{% if can.manage_organisation %} · {{ member.email }}{% endif %}</p>
             </div>
-            {% if member.is_owner %}<span class="badge badge--owner">Owner</span>{% endif %}
+            <div class="cluster">
+                {% if member.is_owner %}<span class="badge badge--owner">Owner</span>{% endif %}
+                {% if member.role_form %}
+                <form method="post" action="{% url 'members:change_role' member.pk %}" class="cluster form-inline">
+                    {% csrf_token %}
+                    <label class="visually-hidden" for="{{ member.role_form.role.id_for_label }}">Role for {{ member }}</label>
+                    {{ member.role_form.role }}
+                    <button class="btn-ghost" type="submit">Change role<span class="visually-hidden"> for {{ member }}</span></button>
+                </form>
+                {% endif %}
+            </div>
         </li>
         {% endfor %}
     </ul>

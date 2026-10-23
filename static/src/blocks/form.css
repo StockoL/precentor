@@ -97,6 +97,13 @@
     order: -1;
   }
 
+  /* A one-control form inside a row, such as a member's role: the
+     control keeps its natural width beside its button instead of
+     filling the line. */
+  form.form-inline :is(input, select) {
+    width: auto;
+  }
+
   /* A colour picker is a swatch, not a full-width field. */
   form input[type="color"] {
     width: 4rem;
