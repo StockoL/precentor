@@ -393,7 +393,8 @@ class ServiceRole(models.Model):
 class SlotTemplate(models.Model):
     """
     A named set of slots to add to a service in one go: Mass and Vespers
-    come ready-made (a data migration adds them), and a conductor can
+    come ready-made (each new church gets its own copies from
+    accounts.organisations), and a conductor can
     edit those or make more. The slots are plain lines of text, so the
     form is a textarea and needs no JavaScript.
     """

@@ -399,3 +399,39 @@ class ForOrganisationTests(TestCase):
         request = RequestFactory().get("/")
         request.organisation = ours
         self.assertEqual(list(own(Score, request)), [mine])
+
+
+class CreateOrganisationTests(TestCase):
+    def test_a_new_church_gets_its_settings_and_starters(self):
+        from core.models import SiteConfig
+        from ordo.models import UseType
+        from planning.models import SlotTemplate
+
+        from .organisations import STARTER_TEMPLATES, create_organisation
+
+        church = create_organisation("St Cecilia's")
+        self.assertEqual(church.name, "St Cecilia's")
+        self.assertTrue(SiteConfig.objects.filter(organisation=church).exists())
+        mass = SlotTemplate.objects.for_organisation(church).get(name="Mass")
+        self.assertEqual(mass.slots, STARTER_TEMPLATES["Mass"])
+        self.assertEqual(
+            list(UseType.objects.for_organisation(church).values_list("name", flat=True)),
+            ["General", "Mass", "Vespers"],
+        )
+
+    def test_each_church_gets_its_own_copies(self):
+        from planning.models import SlotTemplate
+
+        from .organisations import create_organisation
+
+        ours, theirs = create_organisation("St Cecilia's"), create_organisation("St Elsewhere")
+        SlotTemplate.objects.for_organisation(ours).filter(name="Mass").update(slot_names="Introit")
+        self.assertEqual(len(SlotTemplate.objects.for_organisation(theirs).get(name="Mass").slots), 10)
+
+    def test_nothing_is_left_behind_if_it_fails(self):
+        from .organisations import create_organisation
+
+        with mock.patch("core.models.SiteConfig.of", side_effect=RuntimeError):
+            with self.assertRaises(RuntimeError):
+                create_organisation("St Cecilia's")
+        self.assertFalse(Organisation.objects.exists())
