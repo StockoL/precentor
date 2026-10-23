@@ -1,8 +1,14 @@
+import hashlib
+import secrets
+from datetime import timedelta
+
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.db.models import Q
 from django.db.models.functions import Lower
 from django.utils import timezone
+
+from .querysets import OrganisationQuerySet
 
 
 class Organisation(models.Model):
@@ -120,3 +126,65 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.name
+
+
+class Invitation(models.Model):
+    """
+    A link, shared by hand, that lets one person join an organisation in a
+    given role. It works once and lasts a week. Only a fingerprint of its
+    secret is kept, so the stored rows can't be turned back into working
+    links; the link itself is shown once, when it's made.
+    """
+
+    LIFETIME = timedelta(days=7)
+
+    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="invitations")
+    objects = OrganisationQuerySet.as_manager()
+    role = models.CharField(max_length=20, choices=Role.choices)
+    note = models.CharField(
+        "who it's for", max_length=100, blank=True, help_text="Only for telling invitations apart, e.g. Anne, alto."
+    )
+    token_hash = models.CharField(max_length=64, unique=True, editable=False)
+    created_by = models.ForeignKey("User", null=True, on_delete=models.SET_NULL, related_name="+")
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    used_at = models.DateTimeField(null=True, blank=True)
+    used_by = models.ForeignKey("User", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
+
+    class Meta:
+        ordering = ["-created_at"]  # noqa
+
+    @staticmethod
+    def _fingerprint(token):
+        return hashlib.sha256(token.encode()).hexdigest()
+
+    @classmethod
+    def make(cls, *, organisation, role, created_by, note=""):
+        """A new invitation and the secret for its link, which is the only
+        time the secret exists outside the person's browser."""
+        token = secrets.token_urlsafe(32)
+        invitation = cls.objects.create(
+            organisation=organisation, role=role, created_by=created_by, note=note,
+            token_hash=cls._fingerprint(token), expires_at=timezone.now() + cls.LIFETIME,
+        )
+        return invitation, token
+
+    @classmethod
+    def usable(cls):
+        return cls.objects.filter(used_at__isnull=True, expires_at__gt=timezone.now())
+
+    @classmethod
+    def find(cls, token):
+        """The invitation a link's secret opens, if it still works; else None."""
+        return cls.usable().select_related("organisation").filter(token_hash=cls._fingerprint(token)).first()
+
+    def use(self, user):
+        """Mark it used by this person. True only for the first caller: the
+        update checks it's still unused, so two people joining at the same
+        moment can't both get in."""
+        now = timezone.now()
+        claimed = Invitation.usable().filter(pk=self.pk).update(used_at=now, used_by=user)
+        return claimed == 1
+
+    def __str__(self):
+        return f"{self.get_role_display()} invitation to {self.organisation}"

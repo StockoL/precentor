@@ -537,3 +537,47 @@ class SignUpPageTests(TestCase):
         self.assertContains(response, "Register your church")
         self.assertContains(response, 'autocomplete="new-password"')
         self.assertContains(response, 'href="/accounts/signup/">Register</a>')
+
+
+class InvitationTests(TestCase):
+    def setUp(self):
+        from .models import Invitation
+
+        self.Invitation = Invitation
+        self.church = make_organisation()
+        self.invitation, self.token = Invitation.make(
+            organisation=self.church, role="librarian", created_by=make_user(), note="Anne"
+        )
+
+    def test_the_link_opens_its_invitation_and_only_a_fingerprint_is_kept(self):
+        self.assertEqual(self.Invitation.find(self.token), self.invitation)
+        self.assertNotIn(self.token, self.invitation.token_hash)
+        self.assertEqual(len(self.invitation.token_hash), 64)
+        self.assertIsNone(self.Invitation.find("not-the-secret"))
+
+    def test_it_lasts_a_week(self):
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        self.assertAlmostEqual(
+            self.invitation.expires_at, timezone.now() + timedelta(days=7), delta=timedelta(minutes=1)
+        )
+        self.Invitation.objects.filter(pk=self.invitation.pk).update(expires_at=timezone.now())
+        self.assertIsNone(self.Invitation.find(self.token))
+
+    def test_it_works_once(self):
+        first, second = make_user(), make_user()
+        self.assertTrue(self.invitation.use(first))
+        # Someone holding the same loaded invitation loses the race.
+        self.assertFalse(self.invitation.use(second))
+        self.invitation.refresh_from_db()
+        self.assertEqual(self.invitation.used_by, first)
+        self.assertIsNone(self.Invitation.find(self.token))
+
+    def test_each_link_is_different(self):
+        _, other = self.Invitation.make(organisation=self.church, role="viewer", created_by=None)
+        self.assertNotEqual(self.token, other)
+
+    def test_invitations_belong_to_their_church(self):
+        self.assertEqual(list(self.Invitation.objects.for_organisation(make_organisation("St Elsewhere"))), [])
