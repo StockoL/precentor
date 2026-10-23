@@ -1,0 +1,27 @@
+/* ==========================================================================
+   BLOCK: COPY LINK
+   A link to pass on by hand, such as an invitation: a read-only box that
+   holds the whole address, so it can be selected and copied even
+   without JavaScript.
+   ========================================================================== */
+
+@layer blocks {
+  .copy-link label {
+    display: block;
+    font-weight: 600;
+    margin-block-end: var(--spacing-3xs);
+  }
+
+  .copy-link input {
+    display: block;
+    width: 100%;
+    max-width: var(--layout-measure, 60ch);
+    min-block-size: var(--layout-control-height);
+    padding-inline: var(--spacing-xs);
+    border: 1px solid var(--colors-border-strong);
+    border-radius: 4px;
+    background-color: var(--colors-surface-base);
+    color: var(--colors-text-base);
+    font-size: max(1rem, var(--typography-step--1));
+  }
+}
