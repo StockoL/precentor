@@ -66,14 +66,6 @@ class SiteConfig(models.Model):
         "show hymns and psalm on the music list", default=True
     )
 
-    def save(self, *args, **kwargs):
-        # Enforce singleton regardless of how this is constructed.
-        self.pk = 1
-        super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        pass  # the singleton row is never deleted
-
     def set_crest(self, data, content_type):
         """Store a processed crest. The version is a fingerprint of the
         image, so its address changes whenever the image does and
@@ -101,10 +93,16 @@ class SiteConfig(models.Model):
         return reverse("core:crest", args=[self.crest_version]) if self.has_crest else ""
 
     @classmethod
+    def of(cls, organisation):
+        """An organisation's settings, made with the defaults the first time
+        they're needed, so a new church needs no setting up."""
+        config, _ = cls.objects.get_or_create(organisation=organisation)
+        return config
+
+    @classmethod
     def get_solo(cls):
-        # Temporary: there is still one row for the whole site. Stage B2
-        # replaces each caller with its organisation's own settings, then
-        # this and the fixed primary key in save() go.
+        # Temporary: the one row from before each church had its own. Its
+        # callers are moving to SiteConfig.of(), and then this goes.
         obj, _ = cls.objects.get_or_create(pk=1)
         return obj
 

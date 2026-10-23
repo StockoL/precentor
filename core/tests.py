@@ -6,23 +6,25 @@ from .forms import SiteConfigForm
 from .models import SiteConfig
 
 
-class SiteConfigSingletonTests(TestCase):
-    def test_get_solo_creates_the_row_with_defaults(self):
-        config = SiteConfig.get_solo()
-        self.assertEqual(config.pk, 1)
-        self.assertEqual(config.house_accent_colour, "#8b1a2b")
+class SiteConfigOfTests(TestCase):
+    def test_a_churchs_settings_are_made_with_the_defaults_once(self):
+        from accounts.testing import make_organisation
+
+        church = make_organisation("St Cecilia's")
+        config = SiteConfig.of(church)
+        self.assertEqual((config.organisation, config.house_accent_colour), (church, "#8b1a2b"))
+        self.assertEqual(SiteConfig.of(church), config)
         self.assertEqual(SiteConfig.objects.count(), 1)
 
-    def test_saving_a_new_object_overwrites_the_one_row(self):
-        SiteConfig(church_name="St Mary's").save()
-        SiteConfig(church_name="St Anne's").save()
-        self.assertEqual(SiteConfig.objects.count(), 1)
-        self.assertEqual(SiteConfig.get_solo().church_name, "St Anne's")
+    def test_each_church_has_its_own(self):
+        from accounts.testing import make_organisation
 
-    def test_delete_leaves_the_row_in_place(self):
-        config = SiteConfig.get_solo()
-        config.delete()
-        self.assertTrue(SiteConfig.objects.filter(pk=1).exists())
+        ours = SiteConfig.of(make_organisation("St Cecilia's"))
+        ours.church_name = "St Cecilia's"
+        ours.save()
+        theirs = SiteConfig.of(make_organisation("St Elsewhere"))
+        self.assertNotEqual(ours, theirs)
+        self.assertEqual(theirs.church_name, "")
 
 
 class SiteConfigFormLabelTests(TestCase):
