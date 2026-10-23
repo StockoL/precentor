@@ -586,7 +586,7 @@ class ScoreFormOccasionChoicesTests(TestCase):
         from ordo.calendar_data import load_calendar_files
 
         load_calendar_files()
-        config = SiteConfig.get_solo()
+        config = SiteConfig.of(make_organisation())
         config.national_calendar = "wales"
         config.save()
 
@@ -596,7 +596,7 @@ class ScoreFormOccasionChoicesTests(TestCase):
     def test_only_the_churchs_calendar_is_offered(self):
         from .forms import ScoreForm
 
-        labels = self.labels(ScoreForm())
+        labels = self.labels(ScoreForm(instance=Score(organisation=make_organisation())))
         self.assertIn("St. David, Bishop & Confessor, Patron of Wales (1962)", labels)
         self.assertNotIn("Saint George, Martyr, Patron of England", labels)
 

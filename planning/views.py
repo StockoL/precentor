@@ -202,7 +202,7 @@ class ServiceCreateView(PlanningRequiredMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context["term"] = get_object_or_404(own(Term, self.request), pk=self.kwargs["term_pk"])
         # The suggestions use the church's national calendar.
-        context["site_config"] = SiteConfig.get_solo()
+        context["site_config"] = SiteConfig.of(self.request.organisation)
         return context
 
     def get_form_kwargs(self):
@@ -265,7 +265,7 @@ class ServiceUpdateView(PlanningRequiredMixin, OrganisationScopedMixin, UpdateVi
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["term"] = self.object.term
-        context["site_config"] = SiteConfig.get_solo()
+        context["site_config"] = SiteConfig.of(self.request.organisation)
         return context
 
 

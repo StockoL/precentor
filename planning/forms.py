@@ -45,7 +45,9 @@ class ServiceForm(forms.ModelForm):
         keep = []
         if self.instance.pk:
             keep = [self.instance.occasion_id, *self.instance.additional_occasions.values_list("pk", flat=True)]
-        choices = LiturgicalOccasion.objects.listable(SiteConfig.get_solo().national_calendar, keep)
+        # A new service has no organisation until it's saved, so ask its term's.
+        church = self.instance.term.organisation_id if self.instance.term_id else None
+        choices = LiturgicalOccasion.objects.listable(SiteConfig.national_calendar_of(church), keep)
         self.fields["occasion"].queryset = choices
         self.fields["additional_occasions"].queryset = choices
         # Say what blank means: the term's calendar, by name.

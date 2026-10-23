@@ -62,7 +62,7 @@ class ScoreForm(forms.ModelForm):
         # is already tagged with.
         keep = list(self.instance.suited_occasions.values_list("pk", flat=True)) if self.instance.pk else []
         self.fields["suited_occasions"].queryset = LiturgicalOccasion.objects.listable(
-            SiteConfig.get_solo().national_calendar, keep
+            SiteConfig.national_calendar_of(self.instance.organisation_id), keep
         )
 
     def clean_new_use_types(self):

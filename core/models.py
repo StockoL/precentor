@@ -100,6 +100,17 @@ class SiteConfig(models.Model):
         return config
 
     @classmethod
+    def national_calendar_of(cls, organisation_id):
+        """The church's national calendar, for the occasion menus: the
+        general one when the church isn't known or has no settings yet.
+        It only reads, so building a form never creates a settings row."""
+        default = cls._meta.get_field("national_calendar").default
+        if organisation_id is None:
+            return default
+        chosen = cls.objects.filter(organisation_id=organisation_id).values_list("national_calendar", flat=True)
+        return chosen.first() or default
+
+    @classmethod
     def get_solo(cls):
         # Temporary: the one row from before each church had its own. Its
         # callers are moving to SiteConfig.of(), and then this goes.

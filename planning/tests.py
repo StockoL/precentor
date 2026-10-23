@@ -902,7 +902,7 @@ class ServiceFormOccasionChoicesTests(TestCase):
         from ordo.calendar_data import load_calendar_files
 
         load_calendar_files()
-        config = SiteConfig.get_solo()
+        config = SiteConfig.of(make_organisation())
         config.national_calendar = "england"
         config.save()
         cls.term = make_term(
@@ -912,13 +912,21 @@ class ServiceFormOccasionChoicesTests(TestCase):
     def labels(self, form, field):
         return [label for _, label in form.fields[field].choices]
 
+    def new_service_form(self):
+        return ServiceForm(instance=Service(term=self.term))
+
     def test_englands_days_in_both_forms_and_not_another_countrys(self):
-        labels = self.labels(ServiceForm(), "occasion")
+        labels = self.labels(self.new_service_form(), "occasion")
         self.assertIn("Saint George, Martyr, Patron of England", labels)
         self.assertIn("St. George, Martyr, Patron of England (1962)", labels)
         self.assertNotIn("St. David, Bishop & Confessor, Patron of Wales (1962)", labels)
         # Both menus offer the same occasions; the single one starts blank.
-        self.assertEqual(labels[1:], self.labels(ServiceForm(), "additional_occasions"))
+        self.assertEqual(labels[1:], self.labels(self.new_service_form(), "additional_occasions"))
+
+    def test_another_churchs_calendar_is_not_used(self):
+        other = make_term(organisation=make_organisation("St Elsewhere"))
+        labels = self.labels(ServiceForm(instance=Service(term=other)), "occasion")
+        self.assertNotIn("Saint George, Martyr, Patron of England", labels)
 
     def test_a_services_own_occasions_stay_listed(self):
         david = LiturgicalOccasion.objects.get(calendar="wales", key="sancti:03-01wa")
