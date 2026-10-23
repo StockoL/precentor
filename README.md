@@ -533,9 +533,10 @@ my thanks to each.
 ## 12. Deployment
 
 Precentor runs on [Render](https://render.com), described in full by
-`render.yaml` at the root of the repository (a Render "Blueprint"). It
-creates a project called Precentor with a Production environment
-holding:
+`render.yaml` at the root of the repository (a Render "Blueprint"). The
+`Procfile` follows the course's Heroku convention, but the deployment
+itself is described by `render.yaml`. It creates a project called
+Precentor with a Production environment holding:
 
 - **The web service**, on Render's free plan, in Frankfurt. It sleeps
   after 15 minutes without visitors and takes about a minute to wake,
