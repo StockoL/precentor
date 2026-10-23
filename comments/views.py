@@ -8,6 +8,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import ListView
 
 from accounts.decorators import role_required
+from accounts.mixins import OrganisationScopedMixin
 from accounts.permissions import can_comment, can_delete_comments
 from precentor_project.utils import ajax_or_redirect
 
@@ -146,7 +147,7 @@ def delete_comment(request, comment_pk):
     return ajax_or_redirect(request, {comment_id: ""}, redirect_url)
 
 
-class CommentInboxView(LoginRequiredMixin, ListView):
+class CommentInboxView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
     model = Comment
     context_object_name = "comments"
     template_name = "comments/inbox.html"
@@ -156,7 +157,9 @@ class CommentInboxView(LoginRequiredMixin, ListView):
         # the same query, each kind of target (term, service, piece) in one
         # query of its own, and the reply count as an annotation.
         return (
-            Comment.objects.filter(is_open=True)
+            super()
+            .get_queryset()
+            .filter(is_open=True)
             .select_related("author")
             .prefetch_related("target")
             .annotate(reply_count=Count("replies"))

@@ -364,3 +364,21 @@ class CommentOrganisationTests(TestCase):
         comment = Comment.objects.create(author=make_user(), body="Copies?", target=term)
         reply = Comment.objects.create(author=make_user(), body="Twelve.", target=term, parent=comment)
         self.assertEqual((comment.organisation, reply.organisation), (church, church))
+
+
+class CommentsForOneChurchTests(TestCase):
+    def setUp(self):
+        self.ours, theirs = make_organisation("St Cecilia's"), make_organisation("St Elsewhere")
+        self.our_term = make_term(organisation=self.ours)
+        self.their_term = make_term(organisation=theirs)
+        self.me = make_user("conductor", organisation=self.ours)
+        self.mine = Comment.objects.create(author=self.me, body="Copies?", target=self.our_term)
+        self.theirs = Comment.objects.create(
+            author=make_user(organisation=theirs), body="Too long?", target=self.their_term
+        )
+        self.client.force_login(self.me)
+
+    def test_the_inbox_and_its_count_hold_only_our_comments(self):
+        response = self.client.get("/comments/inbox/")
+        self.assertEqual(list(response.context["comments"]), [self.mine])
+        self.assertEqual(response.context["open_comment_count"], 1)

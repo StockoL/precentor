@@ -33,7 +33,7 @@ def nav(request):
     if not user.is_authenticated:
         return {}
     return {
-        # Same set the inbox page lists: every open comment.
-        "open_comment_count": Comment.objects.filter(is_open=True).count(),
+        # Same set the inbox page lists: every open comment in the church.
+        "open_comment_count": Comment.objects.for_organisation(request.organisation).filter(is_open=True).count(),
         "nav_current": nav_current(request),
     }
