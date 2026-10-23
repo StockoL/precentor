@@ -11,22 +11,17 @@ spell can take about a minute while it wakes up. Anyone can try it by
 registering a church of their own on the sign-up page, so no login
 details are needed.
 
-> **Status:** All six Django apps (`accounts`, `library`, `ordo`,
-> `planning`, `comments`, `core`) are built and tested. Before
-> deploying, I worked through an overhaul, tracked phase by phase in
-> [`docs/overhaul_plan.md`](docs/overhaul_plan.md): I narrowed the
-> calendar to the Catholic one, rebuilt the type and spacing scales,
-> fixed the gaps in dark mode and keyboard access, settled the wording
-> the app uses, built a consistent set of components, reworked every
-> page, did the performance work, and loaded the real liturgical
-> calendars (§3.4). Since then I've replaced Django's user with my own:
-> people sign in by email, belong to an organisation, and hold one of
-> three roles, and every page shows them only what their role allows
-> (§5). It's deployed on Render at
-> [precentor.onrender.com](https://precentor.onrender.com) (§12). A
-> church can now register itself, and each sees only its own data (§5).
-> Still to come are inviting members, the CSV import and the final
-> documentation.
+> **Status:** Precentor is built and deployed. Churches register
+> themselves and each works only in its own data. Inside a church there
+> are accounts with email sign-in, three roles and an owner, who invites
+> people by link, changes their roles, removes them and makes reset
+> links (§5). The library of scores, term and service planning with
+> slots and pieces, the Ordo liturgical calendar for both forms of the
+> Roman Rite, comment threads, per-church settings with a crest, and the
+> printable music list are all in place. Before the accounts work I
+> overhauled the whole app, phase by phase, as recorded in
+> [`docs/overhaul_plan.md`](docs/overhaul_plan.md). The CSV import is
+> designed but not built (see Future work).
 >
 > The rest of this document keeps its original concept-and-reasoning
 > framing, because that reasoning is what the build followed. Where the
@@ -70,10 +65,12 @@ purpose".
 
 ## 2. Who This Is For
 
-This is a **single-tenant** tool, built for one church's choir or music
-department, not a multi-church platform. (A benefice with several
-choirs under one director is an interesting edge case, but it's out of
-scope for this project.)
+Precentor is for church choirs and music departments, and one
+installation serves many of them. Each church registers as its own
+organisation and only ever sees its own scores, terms and people (§5).
+A school or music department can register the same way. (A benefice
+with several choirs under one director is an interesting edge case,
+but one account belongs to one organisation, so it's out of scope.)
 
 There are three user roles, reflecting how the work is actually divided:
 
@@ -336,7 +333,7 @@ can't quietly drift apart.
 **Accounts.** People sign in with their email address and a password.
 Each person belongs to one organisation (a church, a music department
 or a school) and holds one role in it, and one of them is its owner,
-who will look after its members. I replaced Django's built-in user with
+who looks after its members. I replaced Django's built-in user with
 my own model before the database had any tables, because Django can't
 swap user models once they exist. The database itself refuses accounts
 that make no sense: someone in an organisation without a role, an
@@ -354,8 +351,7 @@ church starts with its own copies of the Mass and Vespers templates and
 the use types Mass, Vespers and General, which it can change without
 touching anyone else's. Until it has a term or a score, the Terms page
 shows a few first steps, each only if the person's role allows it.
-Until invitations exist, the admin pages are where further people are
-added.
+The owner then invites everyone else from the Members page.
 
 **Keeping churches apart.** Every church's scores, terms, services,
 templates, use types, comments and settings carry their organisation,
@@ -424,16 +420,17 @@ This remains a **"should have"**, not core to the MVP.
 
 ## 8. Out of Scope
 
-- Multi-tenancy (several churches or choirs in one installation).
+- One account belonging to several organisations. Each person
+  belongs to one church; someone who sings in two would need two
+  accounts.
 - Calendars other than the Roman one, such as the Church of England's
   Common Worship and Book of Common Prayer. Precentor originally
   modelled the Catholic and Church of England calendars side by side,
   with a tradition chosen per term. I narrowed it to the Catholic
-  calendar because Precentor is single-tenant: one installation serves
-  one church, and one church follows one tradition, so a per-term
+  calendar because one church follows one tradition, so a per-term
   choice added a field to every form, a second set of seed data and a
   second set of tests without helping any real user. A second tradition
-  remains possible future work, most simply as a site-wide setting, not
+  remains possible future work, most simply as each church's own setting, not
   a per-term choice.
 - A history or archive of past music lists.
 - An "active term" flag (the dates already show which term is current).
@@ -597,7 +594,5 @@ sends you to `https://`, and that the crest still shows on Settings.
 ---
 
 _The overhaul is recorded phase by phase in
-[`docs/overhaul_plan.md`](docs/overhaul_plan.md). What remains is
-keeping each organisation's data apart, the CSV import and the final
-documentation: screenshots, install and run instructions, and checking
-the finished app against `docs/user_stories.md`._
+[`docs/overhaul_plan.md`](docs/overhaul_plan.md). What remains is the
+CSV import and the other items under Future work._
