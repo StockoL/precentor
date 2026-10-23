@@ -446,3 +446,50 @@ class CreateOrganisationTests(TestCase):
             with self.assertRaises(RuntimeError):
                 create_organisation("St Cecilia's")
         self.assertFalse(Organisation.objects.exists())
+
+
+class SignUpFormTests(TestCase):
+    DATA = {
+        "church_name": "St Cecilia's",
+        "name": "Anne Byrd",
+        "email": "Anne@Example.com",
+        "password1": "a quiet cantor sings",
+        "password2": "a quiet cantor sings",
+    }
+
+    def form(self, **changes):
+        from .forms import SignUpForm
+
+        return SignUpForm(data={**self.DATA, **changes})
+
+    def test_makes_the_church_and_its_owner(self):
+        form = self.form()
+        self.assertTrue(form.is_valid(), form.errors)
+        user = form.save()
+        self.assertEqual(
+            (user.email, user.name, user.role, user.is_owner), ("anne@example.com", "Anne Byrd", "conductor", True)
+        )
+        self.assertEqual(user.organisation.name, "St Cecilia's")
+        self.assertTrue(user.organisation.slot_templates.filter(name="Mass").exists())
+        self.assertTrue(user.check_password("a quiet cantor sings"))
+
+    def test_an_address_already_used_in_any_case_is_refused(self):
+        make_user(email="anne@example.com")
+        self.assertIn("already has an account", self.form().errors["email"][0])
+
+    def test_every_field_is_needed(self):
+        for field in self.DATA:
+            with self.subTest(field=field):
+                self.assertIn(field, self.form(**{field: ""}).errors)
+
+    def test_the_passwords_must_match_and_follow_the_rules(self):
+        self.assertIn("password2", self.form(password2="something else entirely").errors)
+        self.assertIn("password2", self.form(password1="12345678", password2="12345678").errors)
+
+    def test_nothing_is_made_when_the_person_cant_be_saved(self):
+        form = self.form()
+        self.assertTrue(form.is_valid())
+        with mock.patch.object(User, "save", side_effect=IntegrityError):
+            with self.assertRaises(IntegrityError):
+                form.save()
+        self.assertFalse(Organisation.objects.filter(name="St Cecilia's").exists())
