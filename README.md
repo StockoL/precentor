@@ -591,6 +591,344 @@ Later deploys happen by themselves whenever `main` changes on GitHub.
 After one, it's worth checking that the login page loads, that `http://`
 sends you to `https://`, and that the crest still shows on Settings.
 
+## 13. Data model
+
+Six apps hold the data: `accounts` (organisations, people,
+invitations), `library` (scores), `planning` (terms, services, slots,
+pieces, templates, notices), `ordo` (the liturgical calendar and use
+types), `comments` and `core` (each church's settings). The reasoning
+behind each choice is in [`docs/models_plan.md`](docs/models_plan.md).
+
+### Relationships
+
+- An **organisation** (a church, school or music department) has many
+  users, invitations, scores, terms, slot templates and use types, and
+  one settings row.
+- A **term** has many services and notices. A **service** has many
+  slots (`ServiceRole`), and a **slot** has many proposed pieces
+  (`RolePiece`), each pointing at one score.
+- A service has one main **liturgical occasion** and any number of
+  additional ones. Occasions belong to a **liturgical season**. A score
+  can be tagged as suited to occasions, seasons and use types, which
+  ranks it higher when a piece is proposed.
+- **Comments** attach to a term, a service or a piece through one
+  generic relation (`content_type` and `object_id`), and a reply points
+  at the comment it answers.
+- The **liturgical calendar** (occasions and seasons) is shared by every
+  church and loaded by `manage.py load_calendar`. Everything else
+  belongs to one organisation. Services, notices, slots, pieces and
+  comments copy their organisation from what they belong to when
+  they're saved, so every query can be limited to one church the same
+  way.
+- A service's status and a score's "last sung" date are worked out when
+  they're needed, never stored.
+
+```mermaid
+erDiagram
+  %% See docs/models_plan.md for the reasoning behind these choices:
+  %% - COMMENT's link to TERM/SERVICE/ROLE_PIECE is one polymorphic
+  %%   GenericForeignKey in Django, shown here as three edges since
+  %%   erDiagram syntax can't express "one FK, any of three tables"
+  %% - applying a SLOT_TEMPLATE copies its slot names into new
+  %%   SERVICE_ROLE rows, which keep no link to it; the SERVICE only
+  %%   records which template it uses now
+  %% - every church's own data belongs to an ORGANISATION; services,
+  %%   slots, pieces, notices and comments copy theirs from what they
+  %%   belong to, so only the directly owned ones are drawn here
+  %% - a service's status and a score's "last sung" are worked out when
+  %%   needed, never stored, so they don't appear as columns
+  %% - LITURGICAL_OCCASION and LITURGICAL_SEASON are shared by every
+  %%   church and loaded by manage.py load_calendar
+  ORGANISATION ||--o{ USER : has
+  ORGANISATION ||--o{ INVITATION : sends
+  ORGANISATION ||--|| SITE_CONFIG : has
+  ORGANISATION ||--o{ TERM : owns
+  ORGANISATION ||--o{ SCORE : owns
+  ORGANISATION ||--o{ SLOT_TEMPLATE : owns
+  ORGANISATION ||--o{ USE_TYPE : owns
+  USER ||--o{ COMMENT : writes
+  TERM ||--o{ SERVICE : contains
+  TERM ||--o{ TERM_MARKER : has
+  LITURGICAL_OCCASION |o--o{ SERVICE : occurs_on
+  LITURGICAL_SEASON |o--o{ LITURGICAL_OCCASION : contains
+  SERVICE ||--o{ SERVICE_ROLE : has
+  SLOT_TEMPLATE |o--o{ SERVICE : used_by
+  SERVICE_ROLE ||--o{ ROLE_PIECE : holds
+  SCORE ||--o{ ROLE_PIECE : referenced_by
+  SCORE }o--o{ LITURGICAL_OCCASION : suits
+  SCORE }o--o{ LITURGICAL_SEASON : suits
+  SCORE }o--o{ USE_TYPE : suits
+  TERM ||--o{ COMMENT : about
+  SERVICE ||--o{ COMMENT : about
+  ROLE_PIECE ||--o{ COMMENT : about
+  COMMENT |o--o{ COMMENT : replies_to
+
+  ORGANISATION {
+    string name
+    datetime created_at
+  }
+  USER {
+    string email
+    string name
+    string role
+    bool is_owner
+    bool is_active
+  }
+  INVITATION {
+    string role
+    string note
+    string token_hash
+    datetime expires_at
+    datetime used_at
+  }
+  SITE_CONFIG {
+    string church_name
+    binary crest
+    string crest_style
+    string house_accent_colour
+    string national_calendar
+    string layout_style
+  }
+  TERM {
+    string name
+    date start_date
+    date end_date
+    string calendar_use
+  }
+  TERM_MARKER {
+    date date
+    string text
+  }
+  SERVICE {
+    date date
+    string service_type
+    string calendar_use
+    string hymns
+    string psalm
+  }
+  SERVICE_ROLE {
+    string role_name
+    int position
+    bool is_not_applicable
+  }
+  SLOT_TEMPLATE {
+    string name
+    text slot_names
+  }
+  ROLE_PIECE {
+    bool is_confirmed
+  }
+  SCORE {
+    string title
+    string composer_surname
+    string composer_other_names
+    string voicing
+    string language
+    int copies_owned
+    string filing_location
+    date last_sung_manual
+  }
+  USE_TYPE {
+    string name
+  }
+  LITURGICAL_SEASON {
+    string name
+  }
+  LITURGICAL_OCCASION {
+    string name
+    string key
+    string calendar_use
+    string calendar
+    string rank
+    string colour
+    string date_rule
+  }
+  COMMENT {
+    text body
+    bool is_open
+    datetime created_at
+  }
+```
+
+The same diagram is in [`docs/erd.mmd`](docs/erd.mmd).
+
+### Fields
+
+Every model also has an automatic `id` primary key.
+
+**accounts.Organisation**
+
+| Field        | Type          | Constraints | Purpose                                 |
+| ------------ | ------------- | ----------- | --------------------------------------- |
+| `name`       | CharField     | max 200     | The church, school or department's name |
+| `created_at` | DateTimeField | set on save | When it registered                      |
+
+**accounts.User** (replaces Django's user; signs in by email)
+
+| Field          | Type         | Constraints                    | Purpose                                       |
+| -------------- | ------------ | ------------------------------ | --------------------------------------------- |
+| `email`        | CharField    | unique, stored lowercase       | Sign-in name                                  |
+| `name`         | CharField    | optional, max 150              | Shown in the app                              |
+| `organisation` | ForeignKey   | optional, to Organisation      | Their church; empty only for a site superuser |
+| `role`         | CharField    | Conductor, Librarian or Viewer | What they may do                              |
+| `is_owner`     | BooleanField | default False                  | Manages members, invitations and reset links  |
+| `is_active`    | BooleanField | default True                   | False once the owner removes them             |
+
+It also has Django's own `password`, `last_login`, `is_staff`,
+`is_superuser` and `date_joined`.
+
+**accounts.Invitation**
+
+| Field                | Type                      | Constraints                    | Purpose                                                    |
+| -------------------- | ------------------------- | ------------------------------ | ---------------------------------------------------------- |
+| `organisation`       | ForeignKey                | to Organisation                | The church being joined                                    |
+| `role`               | CharField                 | Conductor, Librarian or Viewer | The role the person will have                              |
+| `note`               | CharField                 | optional, max 100              | Who it's for, to tell invitations apart                    |
+| `token_hash`         | CharField                 | unique, 64 characters          | SHA-256 of the link's secret; the secret itself isn't kept |
+| `created_by`         | ForeignKey                | to User, set null on delete    | Who made it                                                |
+| `created_at`         | DateTimeField             | set on save                    | When it was made                                           |
+| `expires_at`         | DateTimeField             | required                       | Seven days after it was made                               |
+| `used_at`, `used_by` | DateTimeField, ForeignKey | optional                       | When and by whom it was used; it works once                |
+
+**library.Score**
+
+| Field                                                       | Type                      | Constraints           | Purpose                              |
+| ----------------------------------------------------------- | ------------------------- | --------------------- | ------------------------------------ |
+| `organisation`                                              | ForeignKey                | to Organisation       | The church's library it's in         |
+| `title`                                                     | CharField                 | max 200               | Title                                |
+| `composer_surname`                                          | CharField                 | max 100               | Used for sorting                     |
+| `composer_other_names`                                      | CharField                 | optional, max 100     | Forenames and any particle           |
+| `arranger`, `editor`                                        | CharField                 | optional, max 200     | Arranger, and editor of this edition |
+| `voicing`                                                   | CharField                 | max 50                | As printed, e.g. SATB or SSATB       |
+| `soprano_parts`, `alto_parts`, `tenor_parts`, `bass_parts`  | PositiveSmallIntegerField | default 0             | How many parts of each voice         |
+| `language`                                                  | CharField                 | max 50                | e.g. Latin, English                  |
+| `copies_owned`                                              | PositiveIntegerField      | default 0             | How many copies the church has       |
+| `filing_location`                                           | CharField                 | optional, max 100     | Where the copies are kept            |
+| `duration_minutes`                                          | PositiveIntegerField      | optional              | Length                               |
+| `background`, `notes`                                       | TextField                 | optional              | The piece's history; rehearsal notes |
+| `range_soprano`, `range_alto`, `range_tenor`, `range_bass`  | CharField                 | optional, max 20      | Lowest to highest note               |
+| `last_sung_manual`                                          | DateField                 | optional              | History from before Precentor        |
+| `suited_use_types`                                          | ManyToMany                | to UseType            | Kinds of service it suits            |
+| `suited_seasons`                                            | ManyToMany                | to LiturgicalSeason   | Seasons it suits                     |
+| `suited_occasions`                                          | ManyToMany                | to LiturgicalOccasion | Particular days it suits             |
+
+**planning.Term**
+
+| Field                    | Type       | Constraints                    | Purpose                            |
+| ------------------------ | ---------- | ------------------------------ | ---------------------------------- |
+| `organisation`           | ForeignKey | to Organisation                | Whose term                         |
+| `name`                   | CharField  | max 100                        | e.g. Michaelmas 2026               |
+| `start_date`, `end_date` | DateField  | required                       | The term's dates                   |
+| `calendar_use`           | CharField  | Ordinary or Extraordinary Form | Which calendar its services follow |
+
+**planning.Service**
+
+| Field                  | Type       | Constraints                     | Purpose                          |
+| ---------------------- | ---------- | ------------------------------- | -------------------------------- |
+| `term`                 | ForeignKey | to Term                         | The term it's in                 |
+| `organisation`         | ForeignKey | copied from the term            | Whose service                    |
+| `date`                 | DateField  | required                        | When                             |
+| `service_type`         | CharField  | max 50                          | e.g. Sung Mass, Vespers          |
+| `occasion`             | ForeignKey | optional, to LiturgicalOccasion | The main day; sets the colour    |
+| `additional_occasions` | ManyToMany | to LiturgicalOccasion           | Other days it also marks         |
+| `calendar_use`         | CharField  | optional                        | Overrides the term's calendar    |
+| `hymns`, `psalm`       | CharField  | optional                        | Numbers for the music list       |
+| `slot_template`        | ForeignKey | optional, to SlotTemplate       | The template its slots came from |
+
+**planning.TermMarker** (a "notice" in the app)
+
+| Field          | Type       | Constraints          | Purpose                     |
+| -------------- | ---------- | -------------------- | --------------------------- |
+| `term`         | ForeignKey | to Term              | The term it's in            |
+| `organisation` | ForeignKey | copied from the term | Whose notice                |
+| `date`         | DateField  | required             | Where it falls in the term  |
+| `text`         | CharField  | max 200              | e.g. Half term, no services |
+
+**planning.ServiceRole** (a "slot" in the app)
+
+| Field               | Type                 | Constraints             | Purpose                          |
+| ------------------- | -------------------- | ----------------------- | -------------------------------- |
+| `service`           | ForeignKey           | to Service              | The service it's in              |
+| `organisation`      | ForeignKey           | copied from the service | Whose slot                       |
+| `role_name`         | CharField            | max 50                  | e.g. Introit, Offertory motet    |
+| `is_not_applicable` | BooleanField         | default False           | Marked N/A, so it needs no piece |
+| `position`          | PositiveIntegerField | default 0               | Order within the service         |
+
+**planning.RolePiece** (a proposed piece)
+
+| Field          | Type         | Constraints          | Purpose                    |
+| -------------- | ------------ | -------------------- | -------------------------- |
+| `service_role` | ForeignKey   | to ServiceRole       | The slot it's proposed for |
+| `organisation` | ForeignKey   | copied from the slot | Whose piece                |
+| `score`        | ForeignKey   | to Score             | The music                  |
+| `is_confirmed` | BooleanField | default False        | Proposed or confirmed      |
+
+**planning.SlotTemplate**
+
+| Field          | Type       | Constraints                      | Purpose                     |
+| -------------- | ---------- | -------------------------------- | --------------------------- |
+| `organisation` | ForeignKey | to Organisation                  | Whose template              |
+| `name`         | CharField  | max 50, unique within the church | e.g. Mass, Vespers          |
+| `slot_names`   | TextField  | required                         | One slot per line, in order |
+
+**ordo.LiturgicalOccasion** (shared by every church)
+
+| Field                          | Type       | Constraints                    | Purpose                                |
+| ------------------------------ | ---------- | ------------------------------ | -------------------------------------- |
+| `name`, `key`                  | CharField  | key unique within its calendar | Display name and stable identifier     |
+| `calendar_use`                 | CharField  | Ordinary or Extraordinary Form | Which form of the rite                 |
+| `calendar`                     | CharField  | general, England or Wales      | General or national calendar           |
+| `rank`, `precedence`, `colour` | CharField  | optional, fixed choices        | How it ranks, and its liturgical colour |
+| `season`                       | ForeignKey | optional, to LiturgicalSeason  | The season it falls in                 |
+
+Its date is worked out each year from `date_rule`, `date_rule_args`,
+`date_offset_days`, `fixed_month`, `fixed_day`, `easter_offset_days`,
+`is_moveable` and `transfers`; `is_proper_of_time` and
+`shares_with_memorials` decide what happens when two days fall
+together.
+
+**ordo.LiturgicalSeason** (shared): `name` (CharField, max 50).
+
+**ordo.UseType**: `organisation` (ForeignKey) and `name` (CharField,
+max 50), such as Mass, Vespers or General. Each church has its own.
+
+**comments.Comment**
+
+| Field                       | Type                             | Constraints            | Purpose                               |
+| --------------------------- | -------------------------------- | ---------------------- | ------------------------------------- |
+| `author`                    | ForeignKey                       | to User                | Who wrote it                          |
+| `organisation`              | ForeignKey                       | copied from its target | Whose comment                         |
+| `content_type`, `object_id` | ForeignKey, PositiveIntegerField | generic relation       | The term, service or piece it's about |
+| `parent`                    | ForeignKey                       | optional, to Comment   | The comment it replies to             |
+| `body`                      | TextField                        | required               | The text                              |
+| `is_open`                   | BooleanField                     | default True           | Closed once resolved                  |
+| `created_at`                | DateTimeField                    | set on save            | When                                  |
+
+**core.SiteConfig** (each church's settings)
+
+| Field                                  | Type                   | Constraints                        | Purpose                                 |
+| -------------------------------------- | ---------------------- | ---------------------------------- | --------------------------------------- |
+| `organisation`                         | OneToOneField          | to Organisation                    | One settings row per church             |
+| `church_name`                          | CharField              | optional, max 200                  | Heading of the music list               |
+| `crest`, `crest_type`, `crest_version` | BinaryField, CharField | optional                           | The crest image, kept in the database   |
+| `crest_style`                          | CharField              | logo or banner                     | How the crest is shown                  |
+| `house_accent_colour`                  | CharField              | hex colour, checked by a validator | Colour for services without an occasion |
+| `national_calendar`                    | CharField              | general, England or Wales          | Which national days are added           |
+| `layout_style`                         | CharField              | columns or simple                  | Music list layout                       |
+| `show_hymns_psalm`                     | BooleanField           | default True                       | Whether the music list shows them       |
+
+### Rules the database enforces
+
+- A user has an organisation and a role together, or neither (a
+  superuser has neither).
+- An owner belongs to an organisation, and is a Conductor or a
+  Librarian, never a Viewer.
+- An organisation has at most one owner.
+- Email addresses are unique whatever their capitals.
+- Slot template names are unique within each church.
+- An occasion's key is unique within its calendar.
+- An invitation's stored fingerprint is unique.
+
 ---
 
 _The overhaul is recorded phase by phase in

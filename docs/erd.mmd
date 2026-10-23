@@ -1,6 +1,5 @@
 erDiagram
   %% See docs/models_plan.md for the reasoning behind these choices:
-  %% - SCORE <-> LITURGICAL_OCCASION is a through-table (many-to-many)
   %% - COMMENT's link to TERM/SERVICE/ROLE_PIECE is one polymorphic
   %%   GenericForeignKey in Django, shown here as three edges since
   %%   erDiagram syntax can't express "one FK, any of three tables"
@@ -10,21 +9,33 @@ erDiagram
   %% - every church's own data belongs to an ORGANISATION; services,
   %%   slots, pieces, notices and comments copy theirs from what they
   %%   belong to, so only the directly owned ones are drawn here
+  %% - a service's status and a score's "last sung" are worked out when
+  %%   needed, never stored, so they don't appear as columns
+  %% - LITURGICAL_OCCASION and LITURGICAL_SEASON are shared by every
+  %%   church and loaded by manage.py load_calendar
   ORGANISATION ||--o{ USER : has
+  ORGANISATION ||--o{ INVITATION : sends
+  ORGANISATION ||--|| SITE_CONFIG : has
   ORGANISATION ||--o{ TERM : owns
   ORGANISATION ||--o{ SCORE : owns
   ORGANISATION ||--o{ SLOT_TEMPLATE : owns
+  ORGANISATION ||--o{ USE_TYPE : owns
   USER ||--o{ COMMENT : writes
   TERM ||--o{ SERVICE : contains
-  LITURGICAL_OCCASION ||--o{ SERVICE : occurs_on
+  TERM ||--o{ TERM_MARKER : has
+  LITURGICAL_OCCASION |o--o{ SERVICE : occurs_on
+  LITURGICAL_SEASON |o--o{ LITURGICAL_OCCASION : contains
   SERVICE ||--o{ SERVICE_ROLE : has
   SLOT_TEMPLATE |o--o{ SERVICE : used_by
   SERVICE_ROLE ||--o{ ROLE_PIECE : holds
   SCORE ||--o{ ROLE_PIECE : referenced_by
   SCORE }o--o{ LITURGICAL_OCCASION : suits
+  SCORE }o--o{ LITURGICAL_SEASON : suits
+  SCORE }o--o{ USE_TYPE : suits
   TERM ||--o{ COMMENT : about
   SERVICE ||--o{ COMMENT : about
   ROLE_PIECE ||--o{ COMMENT : about
+  COMMENT |o--o{ COMMENT : replies_to
 
   ORGANISATION {
     string name
@@ -35,28 +46,51 @@ erDiagram
     string name
     string role
     bool is_owner
+    bool is_active
+  }
+  INVITATION {
+    string role
+    string note
+    string token_hash
+    datetime expires_at
+    datetime used_at
+  }
+  SITE_CONFIG {
+    string church_name
+    binary crest
+    string crest_style
+    string house_accent_colour
+    string national_calendar
+    string layout_style
   }
   TERM {
     string name
     date start_date
     date end_date
+    string calendar_use
+  }
+  TERM_MARKER {
+    date date
+    string text
   }
   SERVICE {
     date date
     string service_type
-    string status
+    string calendar_use
+    string hymns
+    string psalm
   }
   SERVICE_ROLE {
     string role_name
     int position
-    string status
+    bool is_not_applicable
   }
   SLOT_TEMPLATE {
     string name
     text slot_names
   }
   ROLE_PIECE {
-    string status
+    bool is_confirmed
   }
   SCORE {
     string title
@@ -66,14 +100,25 @@ erDiagram
     string language
     int copies_owned
     string filing_location
+    date last_sung_manual
+  }
+  USE_TYPE {
+    string name
+  }
+  LITURGICAL_SEASON {
+    string name
   }
   LITURGICAL_OCCASION {
     string name
+    string key
     string calendar_use
+    string calendar
+    string rank
+    string colour
     string date_rule
   }
   COMMENT {
-    string author
-    string body
-    string status
+    text body
+    bool is_open
+    datetime created_at
   }
