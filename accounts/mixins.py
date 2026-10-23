@@ -41,3 +41,15 @@ class OrganisationCreateMixin:
         form = super().get_form(form_class)
         form.instance.organisation = self.request.user.organisation
         return form
+
+
+class OrganisationScopedMixin:
+    """
+    For list, detail, edit and delete views of a church's data: only rows
+    belonging to the person's organisation are found. Another church's row
+    is simply not there, so Django answers 404, not 403, and nobody learns
+    that it exists.
+    """
+
+    def get_queryset(self):
+        return super().get_queryset().for_organisation(self.request.organisation)

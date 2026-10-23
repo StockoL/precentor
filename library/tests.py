@@ -651,3 +651,28 @@ class ScoreOrganisationTests(TestCase):
         # A new "Benediction" for St Cecilia's, not St Elsewhere's reused.
         self.assertEqual([u.organisation for u in score.suited_use_types.all()], [church])
         self.assertEqual(UseType.objects.filter(name__iexact="benediction").count(), 2)
+
+
+class LibraryForOneChurchTests(TestCase):
+    """A church sees and changes only its own library."""
+
+    def setUp(self):
+        self.ours, theirs = make_organisation("St Cecilia's"), make_organisation("St Elsewhere")
+        self.mine = make_score(title="Ave verum", voicing="SATB", language="Latin", organisation=self.ours)
+        self.theirs = make_score(title="Hymn to the Trinity", voicing="SSA", language="Russian", organisation=theirs)
+        self.client.force_login(make_user("librarian", organisation=self.ours))
+
+    def test_the_list_and_its_menus_show_only_our_scores(self):
+        response = self.client.get("/library/")
+        self.assertEqual(list(response.context["scores"]), [self.mine])
+        self.assertEqual(list(response.context["languages"]), ["Latin"])
+        self.assertEqual([v["voicing"] for v in response.context["voicings"]], ["SATB"])
+
+    def test_another_churchs_score_is_not_found(self):
+        for url in (f"/library/{self.theirs.pk}/", f"/library/{self.theirs.pk}/edit/"):
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 404)
+        self.client.post(f"/library/{self.theirs.pk}/edit/", {"title": "Changed", "composer_surname": "X"})
+        self.client.post(f"/library/{self.theirs.pk}/delete/")
+        self.theirs.refresh_from_db()
+        self.assertEqual(self.theirs.title, "Hymn to the Trinity")

@@ -11,7 +11,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from accounts.mixins import OrganisationCreateMixin, RoleRequiredMixin
+from accounts.mixins import OrganisationCreateMixin, OrganisationScopedMixin, RoleRequiredMixin
 from accounts.permissions import can_edit_library
 from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 from precentor_project.mixins import DeletePageMixin
@@ -20,7 +20,7 @@ from .forms import ScoreForm
 from .models import Score, ScoreQuerySet
 
 
-class ScoreListView(LoginRequiredMixin, ListView):
+class ScoreListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
     model = Score
     context_object_name = "scores"
     paginate_by = 50
@@ -81,7 +81,7 @@ class ScoreListView(LoginRequiredMixin, ListView):
             else None
         )
         use_type = (
-            UseType.objects.filter(pk=use_type_pk).first()
+            UseType.objects.for_organisation(self.request.organisation).filter(pk=use_type_pk).first()
             if use_type_pk and use_type_pk.isdigit()
             else None
         )
@@ -106,8 +106,9 @@ class ScoreListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         # A blank language would add an option with the same empty value
         # as "Any", which the browser then shows as selected.
+        scores = Score.objects.for_organisation(self.request.organisation)
         context["languages"] = (
-            Score.objects.exclude(language="")
+            scores.exclude(language="")
             .values_list("language", flat=True)
             .distinct()
             .order_by("language")
@@ -116,13 +117,13 @@ class ScoreListView(LoginRequiredMixin, ListView):
         # The explicit order_by replaces the model's default ordering,
         # which would otherwise be added to the GROUP BY and split counts.
         context["voicings"] = (
-            Score.objects.exclude(voicing="")
+            scores.exclude(voicing="")
             .values("voicing")
             .annotate(count=Count("pk"))
             .order_by("voicing")
         )
         context["mixed_value"] = ScoreQuerySet.MIXED
-        context["mixed_count"] = Score.objects.with_voicing(ScoreQuerySet.MIXED).count()
+        context["mixed_count"] = scores.with_voicing(ScoreQuerySet.MIXED).count()
         context["query"] = self.request.GET.get("q", "").strip()
         context["selected_language"] = self.request.GET.get("language", "")
         context["selected_voicing"] = self.request.GET.get("voicing", "")
@@ -151,11 +152,11 @@ class ScoreListView(LoginRequiredMixin, ListView):
         return context
 
 
-class ScoreDetailView(LoginRequiredMixin, DetailView):
+class ScoreDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):
     model = Score
 
     def get_queryset(self):
-        return Score.objects.with_last_sung()
+        return super().get_queryset().with_last_sung()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -181,7 +182,8 @@ class ScoreFormMixin:
         context = super().get_context_data(**kwargs)
         # For the voicing field's <datalist> of suggestions.
         context["existing_voicings"] = (
-            Score.objects.exclude(voicing="")
+            Score.objects.for_organisation(self.request.organisation)
+            .exclude(voicing="")
             .order_by("voicing")
             .values_list("voicing", flat=True)
             .distinct()
@@ -194,12 +196,12 @@ class ScoreCreateView(LibraryEditRequiredMixin, OrganisationCreateMixin, ScoreFo
     form_class = ScoreForm
 
 
-class ScoreUpdateView(LibraryEditRequiredMixin, ScoreFormMixin, UpdateView):
+class ScoreUpdateView(LibraryEditRequiredMixin, OrganisationScopedMixin, ScoreFormMixin, UpdateView):
     model = Score
     form_class = ScoreForm
 
 
-class ScoreDeleteView(LibraryEditRequiredMixin, DeletePageMixin, DeleteView):
+class ScoreDeleteView(LibraryEditRequiredMixin, OrganisationScopedMixin, DeletePageMixin, DeleteView):
     model = Score
     success_url = reverse_lazy("library:score_list")
     gone_url = success_url
