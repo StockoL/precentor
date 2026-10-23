@@ -939,7 +939,7 @@ class MusicListCrestTests(TestCase):
         self.term = make_term(
             name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
         )
-        self.config = SiteConfig.get_solo()
+        self.config = SiteConfig.of(make_organisation())
         self.config.church_name = "St Cecilia's"
         self.config.save()
 

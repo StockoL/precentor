@@ -19,7 +19,7 @@ class SiteConfigUpdateView(RoleRequiredMixin, UpdateView):
     success_url = reverse_lazy("core:site_config_update")
 
     def get_object(self, queryset=None):
-        return SiteConfig.get_solo()
+        return SiteConfig.of(self.request.organisation)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -29,15 +29,16 @@ class SiteConfigUpdateView(RoleRequiredMixin, UpdateView):
 
 
 @require_safe
-def crest(request, version):
+def crest(request, organisation_pk, version):
     """
-    The church's crest, from the database. It's public branding, printed at
-    the top of the music list, so it needs no login. The version in the
-    address is a fingerprint of the image, so browsers can keep it for a
-    year: a new crest gets a new address, and an old address finds nothing.
+    A church's crest, from the database. It's public branding, printed at
+    the top of the music list, so it needs no login; the address names the
+    church. The version in the address is a fingerprint of the image, so
+    browsers can keep it for a year: a new crest gets a new address, and an
+    old address finds nothing.
     """
-    config = SiteConfig.get_solo()
-    if not config.has_crest or version != config.crest_version:
+    config = SiteConfig.objects.filter(organisation_id=organisation_pk).first()
+    if config is None or not config.has_crest or version != config.crest_version:
         raise Http404("No crest at this address.")
     response = HttpResponse(bytes(config.crest), content_type=config.crest_type)
     response["Cache-Control"] = "public, max-age=31536000, immutable"

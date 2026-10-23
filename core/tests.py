@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from accounts.testing import make_user
+from accounts.testing import make_organisation, make_user
 
 from .forms import SiteConfigForm
 from .models import SiteConfig
@@ -151,7 +151,7 @@ class SettingsAccessTests(TestCase):
             "layout_style": "columns", "national_calendar": "general_roman",
         })
         self.assertEqual(response.status_code, 403)
-        self.assertEqual(SiteConfig.get_solo().church_name, "")
+        self.assertEqual(SiteConfig.of(make_organisation()).church_name, "")
 
     def test_conductor_can_change_the_settings(self):
         self.client.force_login(make_user("conductor"))
@@ -161,7 +161,7 @@ class SettingsAccessTests(TestCase):
             "layout_style": "simple", "national_calendar": "england",
         })
         self.assertRedirects(response, self.url)
-        config = SiteConfig.get_solo()
+        config = SiteConfig.of(make_organisation())
         self.assertEqual(config.church_name, "St Mary's")
         self.assertEqual(config.house_accent_colour, "#123456")
         self.assertEqual(config.national_calendar, "england")
@@ -170,7 +170,7 @@ class SettingsAccessTests(TestCase):
 
 class NationalCalendarSettingTests(TestCase):
     def test_defaults_to_the_general_calendar(self):
-        self.assertEqual(SiteConfig.get_solo().national_calendar, "general_roman")
+        self.assertEqual(SiteConfig.of(make_organisation()).national_calendar, "general_roman")
 
     def test_settings_page_offers_each_calendar_with_its_help_text(self):
         self.client.force_login(make_user("conductor"))
@@ -185,16 +185,16 @@ class NationalCalendarSettingTests(TestCase):
 
 class CrestStorageTests(TestCase):
     def test_a_crest_is_kept_in_the_database_with_its_type(self):
-        config = SiteConfig.get_solo()
+        config = SiteConfig.of(make_organisation())
         config.set_crest(b"png bytes", "image/png")
         config.save()
-        config = SiteConfig.get_solo()
+        config = SiteConfig.of(make_organisation())
         self.assertEqual(bytes(config.crest), b"png bytes")
         self.assertEqual(config.crest_type, "image/png")
         self.assertTrue(config.has_crest)
 
     def test_the_version_changes_only_when_the_image_does(self):
-        config = SiteConfig.get_solo()
+        config = SiteConfig.of(make_organisation())
         config.set_crest(b"first", "image/png")
         first = config.crest_version
         config.set_crest(b"first", "image/png")
@@ -203,19 +203,19 @@ class CrestStorageTests(TestCase):
         self.assertNotEqual(config.crest_version, first)
 
     def test_clearing_leaves_no_crest(self):
-        config = SiteConfig.get_solo()
+        config = SiteConfig.of(make_organisation())
         config.set_crest(b"png bytes", "image/png")
         config.clear_crest()
         self.assertFalse(config.has_crest)
         self.assertEqual((bytes(config.crest), config.crest_type), (b"", ""))
 
     def test_a_new_site_starts_with_the_logo_style(self):
-        self.assertEqual(SiteConfig.get_solo().crest_style, "logo")
+        self.assertEqual(SiteConfig.of(make_organisation()).crest_style, "logo")
 
 
 class CrestViewTests(TestCase):
     def setUp(self):
-        config = SiteConfig.get_solo()
+        config = SiteConfig.of(make_organisation())
         config.set_crest(b"png bytes", "image/png")
         config.save()
         self.config = config
@@ -228,11 +228,11 @@ class CrestViewTests(TestCase):
         self.assertEqual(self.client.post(self.config.crest_url).status_code, 405)
 
     def test_an_old_address_or_no_crest_finds_nothing(self):
-        self.assertEqual(self.client.get("/settings/crest/000000000000/").status_code, 404)
+        self.assertEqual(self.client.get(f"/settings/crest/{self.config.organisation_id}/000000000000/").status_code, 404)
         self.config.clear_crest()
         self.config.save()
         self.assertEqual(self.config.crest_url, "")
-        self.assertEqual(self.client.get("/settings/crest/anything/").status_code, 404)
+        self.assertEqual(self.client.get(f"/settings/crest/{self.config.organisation_id}/anything/").status_code, 404)
 
 
 class CrestFormTests(TestCase):
@@ -250,7 +250,7 @@ class CrestFormTests(TestCase):
         data = {"house_accent_colour": "#8b1a2b", "crest_style": style, "layout_style": "columns",
                 "national_calendar": "general_roman", **extra}
         form = SiteConfigForm(data=data, files={"crest_file": upload} if upload else {},
-                              instance=SiteConfig.get_solo())
+                              instance=SiteConfig.of(make_organisation()))
         if form.is_valid():
             form.save()
         return form
@@ -260,12 +260,12 @@ class CrestFormTests(TestCase):
 
         from PIL import Image
 
-        return Image.open(BytesIO(bytes(SiteConfig.get_solo().crest))).size
+        return Image.open(BytesIO(bytes(SiteConfig.of(make_organisation()).crest))).size
 
     def test_each_style_is_processed_to_suit_it_and_stored(self):
         self.assertTrue(self.save("banner", self.upload((1000, 1000))).is_valid())
         self.assertEqual(self.crest_size(), (1600, 400))
-        self.assertEqual(SiteConfig.get_solo().crest_type, "image/jpeg")
+        self.assertEqual(SiteConfig.of(make_organisation()).crest_type, "image/jpeg")
         self.assertTrue(self.save("logo", self.upload((1200, 900))).is_valid())
         self.assertEqual(self.crest_size(), (600, 450))
 
@@ -273,13 +273,13 @@ class CrestFormTests(TestCase):
         self.save("logo", self.upload((400, 400)))
         form = self.save("banner")
         self.assertEqual(form.errors["crest_file"], ["Choose an image for the new style."])
-        self.assertEqual(SiteConfig.get_solo().crest_style, "logo")
+        self.assertEqual(SiteConfig.of(make_organisation()).crest_style, "logo")
 
     def test_remove_clears_the_crest_and_cannot_come_with_a_new_one(self):
         self.save("logo", self.upload((400, 400)))
         self.assertIn("remove_crest", self.save("logo", self.upload((400, 400)), remove_crest="on").errors)
         self.assertTrue(self.save("logo", remove_crest="on").is_valid())
-        self.assertFalse(SiteConfig.get_solo().has_crest)
+        self.assertFalse(SiteConfig.of(make_organisation()).has_crest)
 
     def test_an_upload_over_5_mb_or_too_small_is_refused(self):
         from django.core.files.uploadedfile import SimpleUploadedFile
@@ -287,7 +287,7 @@ class CrestFormTests(TestCase):
         big = SimpleUploadedFile("crest.png", b"x" * (5 * 1024 * 1024 + 1))
         self.assertEqual(self.save("logo", big).errors["crest_file"], ["Choose an image under 5 MB."])
         self.assertIn("at least 150px", self.save("logo", self.upload((400, 100))).errors["crest_file"][0])
-        self.assertFalse(SiteConfig.get_solo().has_crest)
+        self.assertFalse(SiteConfig.of(make_organisation()).has_crest)
 
 
 class SiteConfigOrganisationTests(TestCase):
@@ -326,3 +326,26 @@ class FillSettingsOrganisationTests(TestCase):
         self.run_migration()
         self.assertFalse(SiteConfig.objects.exists())
         self.assertFalse(Organisation.objects.exists())
+
+
+class SettingsForOneChurchTests(TestCase):
+    def test_each_church_changes_and_shows_only_its_own_settings_and_crest(self):
+        ours, theirs = make_organisation("St Cecilia's"), make_organisation("St Elsewhere")
+        their_settings = SiteConfig.of(theirs)
+        their_settings.set_crest(b"their crest", "image/png")
+        their_settings.save()
+
+        self.client.force_login(make_user("conductor", organisation=ours))
+        self.client.post("/settings/", {
+            "church_name": "St Cecilia's", "house_accent_colour": "#123456", "crest_style": "logo",
+            "layout_style": "simple", "national_calendar": "england",
+        })
+        self.assertEqual(SiteConfig.of(ours).church_name, "St Cecilia's")
+        their_settings.refresh_from_db()
+        self.assertEqual(their_settings.church_name, "")
+
+        # Their crest is at their own address, and nowhere under ours.
+        self.assertEqual(self.client.get(their_settings.crest_url).content, b"their crest")
+        self.assertEqual(
+            self.client.get(f"/settings/crest/{ours.pk}/{their_settings.crest_version}/").status_code, 404
+        )

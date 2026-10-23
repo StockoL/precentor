@@ -89,8 +89,8 @@ class SiteConfig(models.Model):
 
     @property
     def crest_url(self):
-        """Where the crest is served, with its version in the address."""
-        return reverse("core:crest", args=[self.crest_version]) if self.has_crest else ""
+        """Where the crest is served: the church's, at its current version."""
+        return reverse("core:crest", args=[self.organisation_id, self.crest_version]) if self.has_crest else ""
 
     @classmethod
     def of(cls, organisation):

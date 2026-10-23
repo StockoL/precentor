@@ -514,7 +514,7 @@ def toggle_confirm(request, piece_pk):
 def term_music_list(request, term_pk):
     term = get_object_or_404(own(Term, request), pk=term_pk)
     draft = request.GET.get("draft") == "1"
-    site_config = SiteConfig.get_solo()
+    site_config = SiteConfig.of(request.organisation)
 
     services = (
         term.services.select_related("occasion")
