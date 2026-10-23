@@ -7,6 +7,25 @@ MAX_CREST_UPLOAD = 5 * 1024 * 1024  # 5 MB, far more than any crest needs
 CONTENT_TYPES = {"png": "image/png", "jpg": "image/jpeg"}
 
 
+class ColourInput(forms.TextInput):
+    """
+    The browser's colour picker. HTML allows neither maxlength nor required
+    on one, so the two Django would add from the model field are left off.
+    A picker always holds a colour, and the model's validator still checks
+    whatever is sent.
+    """
+
+    input_type = "color"
+
+    def use_required_attribute(self, initial):
+        return False
+
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        context["widget"]["attrs"].pop("maxlength", None)
+        return context
+
+
 class SiteConfigForm(forms.ModelForm):
     # The crest itself isn't a model field the form edits directly: an
     # upload is checked and processed to suit the chosen style, then stored
@@ -31,7 +50,7 @@ class SiteConfigForm(forms.ModelForm):
         ]
         widgets = {  # noqa
             "crest_style": forms.RadioSelect,
-            "house_accent_colour": forms.TextInput(attrs={"type": "color"}),
+            "house_accent_colour": ColourInput,
         }
 
     def clean_crest_file(self):

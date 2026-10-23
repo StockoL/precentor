@@ -335,3 +335,11 @@ class SiteConfigAdminTests(TestCase):
         response = self.client.get("/admin/core/siteconfig/")
         self.assertContains(response, "St Cecilia&#x27;s")
         self.assertEqual(self.client.get("/admin/core/siteconfig/add/").status_code, 200)
+
+
+class ColourInputTests(TestCase):
+    def test_the_colour_picker_has_only_attributes_html_allows_on_it(self):
+        html = str(SiteConfigForm(instance=SiteConfig.of(make_organisation()))["house_accent_colour"])
+        self.assertIn('type="color"', html)
+        self.assertNotIn("maxlength", html)
+        self.assertNotIn("required", html)
