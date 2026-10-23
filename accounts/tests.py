@@ -131,6 +131,25 @@ class UserConstraintTests(TestCase):
             organisation=make_organisation(), role="viewer", is_owner=True,
         )
 
+    def test_an_organisation_has_one_owner(self):
+        church = make_organisation()
+        User.objects.create_user(
+            email="anne@example.com", organisation=church, role="conductor", is_owner=True
+        )
+        self.assert_refused(
+            "This organisation already has an owner.", organisation=church, role="librarian", is_owner=True
+        )
+
+    def test_each_organisation_can_have_its_own_owner(self):
+        for number, name in enumerate(["St Cecilia's", "St Elsewhere"]):
+            User.objects.create_user(
+                email=f"owner{number}@example.com",
+                organisation=make_organisation(name),
+                role="conductor",
+                is_owner=True,
+            )
+        self.assertEqual(User.objects.filter(is_owner=True).count(), 2)
+
     def test_an_email_address_is_taken_whatever_its_case(self):
         make_user(email="anne@example.com")
         self.assert_refused(

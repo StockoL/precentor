@@ -88,6 +88,15 @@ class User(AbstractBaseUser, PermissionsMixin):
                 name="user_owner_is_not_a_viewer",
                 violation_error_message="An owner must be a Conductor or a Librarian.",
             ),
+            # One owner per organisation, so "the owner" always means one
+            # person: handing over is a swap, and there's no last owner to
+            # lose by accident.
+            models.UniqueConstraint(
+                fields=["organisation"],
+                condition=Q(is_owner=True),
+                name="user_one_owner_per_organisation",
+                violation_error_message="This organisation already has an owner.",
+            ),
             # One account per address, however it's typed: Anne@Example.com
             # and anne@example.com are the same inbox.
             models.UniqueConstraint(
