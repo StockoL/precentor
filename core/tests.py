@@ -291,41 +291,17 @@ class CrestFormTests(TestCase):
 
 
 class SiteConfigOrganisationTests(TestCase):
-    def test_the_settings_belong_to_an_organisation(self):
-        from accounts.testing import make_organisation
-
+    def test_a_church_reaches_its_settings(self):
         church = make_organisation()
-        config = SiteConfig.get_solo()
-        config.organisation = church
-        config.save()
+        config = SiteConfig.of(church)
         church.refresh_from_db()
         self.assertEqual(church.settings, config)
 
+    def test_settings_must_belong_to_a_church(self):
+        from django.db import IntegrityError
 
-class FillSettingsOrganisationTests(TestCase):
-    """The fill-in migration, run against today's models."""
-
-    def run_migration(self):
-        import importlib
-
-        from django.apps import apps
-
-        importlib.import_module("core.migrations.0010_fill_settings_organisation").give_settings_an_organisation(apps, None)
-
-    def test_the_settings_row_joins_the_organisation(self):
-        from accounts.testing import make_organisation
-
-        church = make_organisation("St Cecilia's")
-        SiteConfig.get_solo()
-        self.run_migration()
-        self.assertEqual(SiteConfig.get_solo().organisation, church)
-
-    def test_no_settings_row_means_nothing_to_do(self):
-        from accounts.models import Organisation
-
-        self.run_migration()
-        self.assertFalse(SiteConfig.objects.exists())
-        self.assertFalse(Organisation.objects.exists())
+        with self.assertRaises(IntegrityError):
+            SiteConfig.objects.create()
 
 
 class SettingsForOneChurchTests(TestCase):

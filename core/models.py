@@ -25,10 +25,9 @@ LAYOUT_STYLE_CHOICES = [
 
 
 class SiteConfig(models.Model):
-    # Each organisation will have its own settings. Allowed to be empty only
-    # until the existing row is given one.
+    # Each organisation has its own settings, made by SiteConfig.of().
     organisation = models.OneToOneField(
-        "accounts.Organisation", null=True, blank=True, on_delete=models.CASCADE, related_name="settings"
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="settings"
     )
     church_name = models.CharField(
         max_length=200, blank=True, help_text="Shown at the top of the music list."
@@ -109,13 +108,6 @@ class SiteConfig(models.Model):
             return default
         chosen = cls.objects.filter(organisation_id=organisation_id).values_list("national_calendar", flat=True)
         return chosen.first() or default
-
-    @classmethod
-    def get_solo(cls):
-        # Temporary: the one row from before each church had its own. Its
-        # callers are moving to SiteConfig.of(), and then this goes.
-        obj, _ = cls.objects.get_or_create(pk=1)
-        return obj
 
     def __str__(self):
         return self.church_name or "Site configuration"
