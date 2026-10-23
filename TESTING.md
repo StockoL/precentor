@@ -126,7 +126,7 @@ To run them, see "Running it locally" in the README.
 | R02  | 768 pixels wide               | The same pages at 768 pixels                                                | The layout fills the width without gaps or overlaps                  | Not carried out before submission |
 | R03  | 1280 pixels wide              | The same pages at 1280 pixels                                               | The layout as in the README's screenshots                            | Pass: every page in the README's figures at 1280 pixels |
 | R04  | Keyboard alone                | Sign in, open a service, propose and confirm a piece, using only the keyboard | Every step reachable with Tab, Enter and the arrow keys, with a visible outline on each control | Pass for focus outlines (Figure 23); the whole keyboard journey not carried out before submission |
-| R05  | Dark mode                     | Switch the device to dark, then choose Dark in the user menu                | Every page readable, with the same contrast as in light              | Pass for the service page (Figure 22) and by browser tests; other pages not carried out before submission |
+| R05  | Dark mode                     | Switch the device to dark, then choose Dark in the user menu                | Every page readable, with the same contrast as in light              | Pass: the service page (Figure 22) and by browser tests; every other page checked by hand on 23 October |
 | R06  | Without JavaScript            | Turn JavaScript off; propose a piece, confirm it, remove a slot             | Each works through ordinary pages                                    | Pass: each is an ordinary form post, covered by automated tests without JavaScript |
 
 ## 7. Bugs found and fixed
