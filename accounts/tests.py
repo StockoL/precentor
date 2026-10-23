@@ -327,3 +327,22 @@ class MigrationSupportTests(TestCase):
         make_organisation("St Elsewhere")
         with self.assertRaises(SeveralOrganisationsError):
             organisation_for_existing_rows(self.apps)
+
+
+class UserWithOrganisationBackendTests(TestCase):
+    def test_the_signed_in_person_comes_with_their_organisation_in_one_query(self):
+        from .backends import UserWithOrganisationBackend
+
+        user = make_user(organisation=make_organisation("St Cecilia's"))
+        with self.assertNumQueries(1):
+            loaded = UserWithOrganisationBackend().get_user(user.pk)
+            self.assertEqual(loaded.organisation.name, "St Cecilia's")
+
+    def test_signing_in_still_works_and_a_deactivated_person_is_not_loaded(self):
+        from .backends import UserWithOrganisationBackend
+
+        user = make_user(email="anne@example.com", password="s3cret-pass")
+        self.assertTrue(self.client.login(username="Anne@Example.com", password="s3cret-pass"))
+        user.is_active = False
+        user.save()
+        self.assertIsNone(UserWithOrganisationBackend().get_user(user.pk))

@@ -199,6 +199,9 @@ STORAGES = {
 # the tables exist.
 AUTH_USER_MODEL = "accounts.User"
 
+# Django's sign-in, loading each person with their organisation.
+AUTHENTICATION_BACKENDS = ["accounts.backends.UserWithOrganisationBackend"]
+
 LOGIN_REDIRECT_URL = "planning:term_list"
 LOGOUT_REDIRECT_URL = "planning:term_list"
 
