@@ -325,3 +325,14 @@ class SettingsForOneChurchTests(TestCase):
         self.assertEqual(
             self.client.get(f"/settings/crest/{ours.pk}/{their_settings.crest_version}/").status_code, 404
         )
+
+
+class SiteConfigAdminTests(TestCase):
+    def test_settings_can_be_added_for_a_second_church(self):
+        from accounts.testing import make_superuser
+
+        SiteConfig.of(make_organisation("St Cecilia's"))
+        self.client.force_login(make_superuser())
+        response = self.client.get("/admin/core/siteconfig/")
+        self.assertContains(response, "St Cecilia&#x27;s")
+        self.assertEqual(self.client.get("/admin/core/siteconfig/add/").status_code, 200)
