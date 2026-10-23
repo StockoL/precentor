@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, BaseUserCreationForm
 from django.db import transaction
 
-from .models import Organisation, Role, User
+from .models import Invitation, Organisation, Role, User
 from .organisations import create_organisation
 
 
@@ -19,19 +19,13 @@ class EmailAuthenticationForm(AuthenticationForm):
     )
 
 
-class SignUpForm(BaseUserCreationForm):
+class NewPersonForm(BaseUserCreationForm):
     """
-    A new church and the person signing it up, who becomes its owner and a
-    Conductor. Django's base form checks the two passwords match, runs the
-    site's password rules and stores the password hashed.
+    What anyone joining Precentor gives: their name, email and a password.
+    Django's base form checks the two passwords match, runs the site's
+    password rules and stores the password hashed. Signing up a church and
+    accepting an invitation both build on this, so the rules are the same.
     """
-
-    church_name = forms.CharField(
-        label="Your church's name",
-        max_length=Organisation._meta.get_field("name").max_length,
-        widget=forms.TextInput(attrs={"autofocus": True, "autocomplete": "organization"}),
-        help_text="Or your school or music department. You can change it later.",
-    )
 
     class Meta:
         model = User
@@ -41,8 +35,6 @@ class SignUpForm(BaseUserCreationForm):
             "name": forms.TextInput(attrs={"autocomplete": "name"}),
             "email": forms.EmailInput(attrs={"autocomplete": "email"}),
         }
-
-    field_order = ["church_name", "name", "email", "password1", "password2"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -55,14 +47,29 @@ class SignUpForm(BaseUserCreationForm):
         )
         self.fields["password2"].label = "Password again"
         self.fields["password2"].help_text = ""
-        # The church's name comes first, so the cursor starts there.
+        # The cursor starts in the first field, not Django's choice of email.
         self.fields["email"].widget.attrs.pop("autofocus", None)
+        next(iter(self.fields.values())).widget.attrs["autofocus"] = True
 
     def clean_email(self):
         email = self.cleaned_data["email"].lower()
         if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("Someone already has an account with this email address. Try signing in.")
         return email
+
+
+class SignUpForm(NewPersonForm):
+    """A new church and the person signing it up, who becomes its owner
+    and a Conductor."""
+
+    church_name = forms.CharField(
+        label="Your church's name",
+        max_length=Organisation._meta.get_field("name").max_length,
+        widget=forms.TextInput(attrs={"autocomplete": "organization"}),
+        help_text="Or your school or music department. You can change it later.",
+    )
+
+    field_order = ["church_name", "name", "email", "password1", "password2"]
 
     @transaction.atomic
     def save(self):
@@ -73,4 +80,24 @@ class SignUpForm(BaseUserCreationForm):
         user.role = Role.CONDUCTOR
         user.is_owner = True
         user.save()
+        return user
+
+
+class JoinForm(NewPersonForm):
+    """Someone accepting an invitation, who joins its church in its role."""
+
+    def __init__(self, *args, invitation, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.invitation = invitation
+
+    @transaction.atomic
+    def save(self):
+        """The person, and the invitation marked used by them. If someone
+        else used it first, Invitation.Gone undoes the new account too."""
+        user = super().save(commit=False)
+        user.organisation = self.invitation.organisation
+        user.role = self.invitation.role
+        user.save()
+        if not self.invitation.use(user):
+            raise Invitation.Gone
         return user

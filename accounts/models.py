@@ -138,6 +138,10 @@ class Invitation(models.Model):
 
     LIFETIME = timedelta(days=7)
 
+    class Gone(Exception):
+        """The invitation was used, expired or cancelled before it could be
+        accepted."""
+
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, related_name="invitations")
     objects = OrganisationQuerySet.as_manager()
     role = models.CharField(max_length=20, choices=Role.choices)

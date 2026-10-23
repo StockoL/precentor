@@ -581,3 +581,51 @@ class InvitationTests(TestCase):
 
     def test_invitations_belong_to_their_church(self):
         self.assertEqual(list(self.Invitation.objects.for_organisation(make_organisation("St Elsewhere"))), [])
+
+
+class JoinFormTests(TestCase):
+    DATA = {k: v for k, v in SignUpFormTests.DATA.items() if k != "church_name"}
+
+    def setUp(self):
+        from .models import Invitation
+
+        self.church = make_organisation("St Cecilia's")
+        self.invitation, _ = Invitation.make(organisation=self.church, role="librarian", created_by=None)
+
+    def form(self, **changes):
+        from .forms import JoinForm
+
+        return JoinForm(data={**self.DATA, **changes}, invitation=self.invitation)
+
+    def test_joins_the_church_in_the_invited_role(self):
+        form = self.form()
+        self.assertTrue(form.is_valid(), form.errors)
+        user = form.save()
+        self.assertEqual((user.organisation, user.role, user.is_owner), (self.church, "librarian", False))
+        self.invitation.refresh_from_db()
+        self.assertEqual(self.invitation.used_by, user)
+
+    def test_it_asks_nothing_about_a_church_and_keeps_the_sign_up_rules(self):
+        self.assertNotIn("church_name", self.form().fields)
+        make_user(email="anne@example.com")
+        self.assertIn("already has an account", self.form().errors["email"][0])
+        self.assertIn("password2", self.form(password2="something else entirely").errors)
+
+    def test_no_account_is_left_if_the_invitation_went_first(self):
+        from .models import Invitation
+
+        form = self.form()
+        self.assertTrue(form.is_valid())
+        self.invitation.use(make_user())
+        with self.assertRaises(Invitation.Gone):
+            form.save()
+        self.assertFalse(User.objects.filter(email="anne@example.com").exists())
+
+    def test_the_cursor_starts_in_the_first_field(self):
+        from .forms import SignUpForm
+
+        self.assertTrue(self.form().fields["name"].widget.attrs.get("autofocus"))
+        sign_up = SignUpForm()
+        self.assertTrue(sign_up.fields["church_name"].widget.attrs.get("autofocus"))
+        self.assertNotIn("autofocus", sign_up.fields["name"].widget.attrs)
+        self.assertNotIn("autofocus", sign_up.fields["email"].widget.attrs)
