@@ -382,3 +382,27 @@ class CommentsForOneChurchTests(TestCase):
         response = self.client.get("/comments/inbox/")
         self.assertEqual(list(response.context["comments"]), [self.mine])
         self.assertEqual(response.context["open_comment_count"], 1)
+
+    def test_another_churchs_threads_cannot_be_joined_closed_or_deleted(self):
+        from django.contrib.auth import get_user_model
+        from django.contrib.contenttypes.models import ContentType
+
+        term_type = ContentType.objects.get_for_model(Term).id
+        self.theirs.is_open = False
+        self.theirs.save()
+        attempts = [
+            (f"/comments/add/{term_type}/{self.their_term.pk}/", {"body": "Hello"}),
+            # A reply to their comment, posted against our own term.
+            (f"/comments/add/{term_type}/{self.our_term.pk}/", {"body": "Hello", "parent_id": self.theirs.pk}),
+            (f"/comments/add/{term_type}/{self.our_term.pk}/", {"body": "Hello", "parent_id": "abc"}),
+            (f"/comments/{self.theirs.pk}/toggle-close/", {}),
+            (f"/comments/{self.theirs.pk}/delete/", {}),
+            # Something that isn't a church's term, service or piece.
+            (f"/comments/add/{ContentType.objects.get_for_model(get_user_model()).id}/{self.me.pk}/", {"body": "Hi"}),
+        ]
+        for url, data in attempts:
+            with self.subTest(url=url, data=data):
+                self.assertEqual(self.client.post(url, data).status_code, 404)
+        self.assertEqual(Comment.objects.count(), 2)
+        self.theirs.refresh_from_db()
+        self.assertFalse(self.theirs.is_open)

@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db.models import Count
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
@@ -10,11 +11,17 @@ from django.views.generic import ListView
 from accounts.decorators import role_required
 from accounts.mixins import OrganisationScopedMixin
 from accounts.permissions import can_comment, can_delete_comments
+from accounts.querysets import own
 from precentor_project.utils import ajax_or_redirect
 
 from .forms import CommentForm
 from .models import Comment
 from .utils import attach_reply_form
+
+
+# What a comment can be about, by "app.model". Named rather than imported,
+# so the comments app doesn't depend on planning.
+COMMENTABLE = {"planning.term", "planning.service", "planning.rolepiece"}
 
 
 def _comment_form_id(parent_id):
@@ -38,9 +45,16 @@ def _render_comment_form(request, form, content_type_id, object_id, parent_id):
 @require_POST
 def add_comment(request, content_type_id, object_id):
     content_type = get_object_or_404(ContentType, pk=content_type_id)
-    target = get_object_or_404(content_type.model_class(), pk=object_id)
+    if f"{content_type.app_label}.{content_type.model}" not in COMMENTABLE:
+        raise Http404("Comments can't be added to that.")
+    # The subject, and a reply's question, must be in the person's own church.
+    target = get_object_or_404(own(content_type.model_class(), request), pk=object_id)
     form = CommentForm(request.POST)
     parent_id = request.POST.get("parent_id") or None
+    if parent_id:
+        if not parent_id.isdigit():
+            raise Http404("No such comment.")
+        get_object_or_404(own(Comment, request), pk=parent_id, content_type=content_type, object_id=target.pk)
     redirect_url = request.META.get("HTTP_REFERER", "/")
 
     if form.is_valid():
@@ -101,7 +115,7 @@ def add_comment(request, content_type_id, object_id):
 @role_required(can_comment)
 @require_POST
 def toggle_close(request, comment_pk):
-    comment = get_object_or_404(Comment, pk=comment_pk)
+    comment = get_object_or_404(own(Comment, request), pk=comment_pk)
     comment.is_open = not comment.is_open
     comment.save()
     comment = attach_reply_form(comment)
@@ -125,7 +139,7 @@ def toggle_close(request, comment_pk):
 @role_required(can_delete_comments)
 @require_POST
 def delete_comment(request, comment_pk):
-    comment = get_object_or_404(Comment, pk=comment_pk)
+    comment = get_object_or_404(own(Comment, request), pk=comment_pk)
     redirect_url = request.META.get("HTTP_REFERER", "/")
 
     # Only closed comments can be deleted — the conductor has already
