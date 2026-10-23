@@ -32,15 +32,16 @@ class OrganisationCreateMixin:
     organisation. It comes from the person, never from the form, so nobody
     can put something into another church's data by editing a field.
 
-    It's set as the form is built, before the form checks anything, so a
-    form can check its data against the church's own, such as a template
-    name the church already uses.
+    The new thing is given to the form already belonging to the church, so
+    the form knows the church from the start: it can offer only the
+    church's own choices and check its data against the church's own, such
+    as a template name already in use.
     """
 
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        form.instance.organisation = self.request.user.organisation
-        return form
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["instance"] = self.model(organisation=self.request.organisation)
+        return kwargs
 
 
 class OrganisationScopedMixin:

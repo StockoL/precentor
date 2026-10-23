@@ -676,3 +676,15 @@ class LibraryForOneChurchTests(TestCase):
         self.client.post(f"/library/{self.theirs.pk}/delete/")
         self.theirs.refresh_from_db()
         self.assertEqual(self.theirs.title, "Hymn to the Trinity")
+
+    def test_the_score_form_offers_and_accepts_only_our_use_types(self):
+        ours = make_use_type("Communion", organisation=self.ours)
+        theirs = make_use_type("Funeral", organisation=self.theirs.organisation)
+        form = self.client.get("/library/add/").context["form"]
+        self.assertEqual(list(form.fields["suited_use_types"].queryset), [ours])
+
+        response = self.client.post("/library/add/", {
+            **NewUseTypeTests.BASE, "title": "Libera me", "suited_use_types": [theirs.pk],
+        })
+        self.assertIn("suited_use_types", response.context["form"].errors)
+        self.assertFalse(Score.objects.filter(title="Libera me").exists())

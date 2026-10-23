@@ -56,6 +56,8 @@ class ScoreForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Only the church's own use types to tick, and only those accepted.
+        self.fields["suited_use_types"].queryset = UseType.objects.for_organisation(self.instance.organisation_id)
         # The church's own calendar, in both forms, and whatever this score
         # is already tagged with.
         keep = list(self.instance.suited_occasions.values_list("pk", flat=True)) if self.instance.pk else []
