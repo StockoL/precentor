@@ -101,6 +101,30 @@ for an email and a password only, and makes an admin with no
 organisation and no role. Users are deleted with their organisation,
 and their comments with them.
 
+### Making a church
+
+`accounts/organisations.py` holds the one way a church comes into
+being. `create_organisation(name)` makes the `Organisation`, its
+`SiteConfig` row, its own Mass and Vespers templates and the use types
+Mass, Vespers and General, all inside one transaction, so a failure
+part way leaves nothing behind. The starters are plain constants in
+that module rather than imported from the old seeding migrations: app
+code shouldn't reach into migrations, and those only ever ran on the
+original single database. Each church gets copies, so editing its Mass
+template changes nobody else's. The admin's form builds the church
+before saving it, so the admin calls `set_up_organisation()` with that
+object instead; renaming a church there adds nothing.
+
+`SignUpForm` (in `accounts/forms.py`) builds on Django's
+`BaseUserCreationForm`, which already matches the two passwords, runs
+the site's password validators and hashes the result. It adds the
+church's name and the person's name, refuses an address already in use
+in any capitals, and saves the church and its first person together:
+the person becomes its owner and a Conductor. `SignUpView` signs them
+straight in. Sign-up is open to anyone; throttling it comes with the
+other abuse protections. Until a church has a term or a score, its
+Terms page lists the first steps the person's role allows.
+
 ### Every church's data carries its organisation
 
 Each model that holds a church's own data has a required
@@ -280,8 +304,10 @@ version joined through the tags, which listed a score with several
 tags once per tag. Each field has `help_text` with examples ("Mass,
 Vespers, General use"), since the `UseType` and `LiturgicalSeason`
 lists are otherwise invisible until they have entries. `ordo`'s
-`0004_seed_use_types_and_seasons` data migration seeds a starter set
-of both, revised for the Catholic-only scope by `0008` to `0010`. Full
+`0004_seed_use_types_and_seasons` data migration seeded a starter set
+of both, revised for the Catholic-only scope by `0008` to `0010`. Use
+types now belong to each church, and a new church gets Mass, Vespers
+and General from `create_organisation()` (see "Making a church"). Full
 `LiturgicalOccasion` data is a separate, larger content task, noted
 below.
 
@@ -636,9 +662,9 @@ class SlotTemplate(models.Model):
 ```
 
 A template is a named list of slots that a conductor adds to a service
-in one go. Mass and Vespers come from a data migration
-(`planning/0009`), which runs once, so editing or deleting them later
-is never undone. The slots are lines of text, not a related table: the
+in one go. Each church gets its own Mass and Vespers when it's made
+(see "Making a church"); they began as a data migration
+(`planning/0009`) from before there were churches. The slots are lines of text, not a related table: the
 form is a textarea that needs no JavaScript, and order is simply line
 order. Applying one copies the names into new `ServiceRole` rows,
 skipping names the service already has (ignoring case). The slots keep

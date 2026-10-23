@@ -16,9 +16,10 @@ _Milestone 3 project, Code Institute_
 > people sign in by email, belong to an organisation, and hold one of
 > three roles, and every page shows them only what their role allows
 > (§5). It's deployed on Render at
-> [precentor.onrender.com](https://precentor.onrender.com) (§12). Still
-> to come are keeping each organisation's data apart from the others',
-> the CSV import and the final documentation.
+> [precentor.onrender.com](https://precentor.onrender.com) (§12). A
+> church can now register itself, and each sees only its own data (§5).
+> Still to come are inviting members, the CSV import and the final
+> documentation.
 >
 > The rest of this document keeps its original concept-and-reasoning
 > framing, because that reasoning is what the build followed. Where the
@@ -336,8 +337,26 @@ owner outside one or who is only a viewer, or a second account for the
 same address typed in different capitals. Addresses are stored in
 lowercase and sign-in ignores case, so Anne@Example.com and
 anne@example.com are one person. A site superuser belongs to no
-organisation; the admin pages are where they add organisations and
-people until sign-up and invitations exist.
+organisation and gets no powers inside the app; the admin pages are
+theirs.
+
+**Registering a church.** Anyone can register their church from the
+login page. They give its name, their own name, an email address and a
+password, and become its owner and a Conductor, already signed in. The
+church starts with its own copies of the Mass and Vespers templates and
+the use types Mass, Vespers and General, which it can change without
+touching anyone else's. Until it has a term or a score, the Terms page
+shows a few first steps, each only if the person's role allows it.
+Until invitations exist, the admin pages are where further people are
+added.
+
+**Keeping churches apart.** Every church's scores, terms, services,
+templates, use types, comments and settings carry their organisation,
+and every page looks only within the signed-in person's own. Someone
+who types the address of another church's score or service gets a
+"404 Not Found", as if it didn't exist, rather than a "403 Forbidden"
+that would admit it does. The liturgical calendar is the one thing
+every church shares.
 
 ## 6. Comment Threads
 
