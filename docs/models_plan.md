@@ -101,6 +101,42 @@ for an email and a password only, and makes an admin with no
 organisation and no role. Users are deleted with their organisation,
 and their comments with them.
 
+### Every church's data carries its organisation
+
+Each model that holds a church's own data has a required
+`organisation` foreign key, deleted with the organisation: `Score`,
+`Term`, `SlotTemplate` and `UseType` are given theirs where they're
+made, and `Service`, `TermMarker`, `ServiceRole`, `RolePiece` and
+`Comment` copy theirs from what they belong to in `save()` (a service
+and a notice from their term, a slot from its service, a piece from its
+slot, a comment from its term, service or piece). Copying rather than
+reaching through the parent means every model can later be limited to
+one church with the same `filter(organisation=...)`, and doing it in
+`save()` means no view can set it wrongly. The liturgical seasons and
+occasions are shared by every church and have none; use types are the
+exception in `ordo`, being each church's own words.
+
+Where the app makes something directly, `OrganisationCreateMixin` sets
+the organisation from the signed-in person as the form is built, never
+from anything posted, so a form can check against the church's own
+data. The template form does: names are unique within a church (a
+`UniqueConstraint` on organisation and name), so two churches can each
+have a Mass, and the form says so plainly, as Django won't check a rule
+on a field the form doesn't show.
+
+The column was added empty, filled in, then made required, in that
+order, so existing rows were never left without one. The fill-in
+migrations share one rule (`accounts/migration_support.py`): rows join
+the one organisation if there is one, a new "My church" if there are
+none, and the migration stops if there are several. On a database with
+no organisations yet, the ready-made Mass and Vespers templates and the
+starting use types are removed instead, unless something uses them,
+since each organisation will get its own copies when it registers.
+`SiteConfig` has its one-to-one link to an organisation filled in the
+same way, but it stays optional until the views ask for their own
+organisation's settings, because `get_solo()` still makes the row on
+first use.
+
 ### `library.Score`
 
 ```python

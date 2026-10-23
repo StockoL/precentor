@@ -7,7 +7,13 @@ erDiagram
   %% - applying a SLOT_TEMPLATE copies its slot names into new
   %%   SERVICE_ROLE rows, which keep no link to it; the SERVICE only
   %%   records which template it uses now
+  %% - every church's own data belongs to an ORGANISATION; services,
+  %%   slots, pieces, notices and comments copy theirs from what they
+  %%   belong to, so only the directly owned ones are drawn here
   ORGANISATION ||--o{ USER : has
+  ORGANISATION ||--o{ TERM : owns
+  ORGANISATION ||--o{ SCORE : owns
+  ORGANISATION ||--o{ SLOT_TEMPLATE : owns
   USER ||--o{ COMMENT : writes
   TERM ||--o{ SERVICE : contains
   LITURGICAL_OCCASION ||--o{ SERVICE : occurs_on
