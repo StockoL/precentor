@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
-from accounts.forms import EmailAuthenticationForm
+from accounts.forms import EmailAuthenticationForm, NewPasswordForm
 from accounts.views import JoinView, SignUpView
 
 urlpatterns = [
@@ -32,7 +32,22 @@ urlpatterns = [
     ),
     path("accounts/signup/", SignUpView.as_view(), name="signup"),
     path("join/<str:token>/", JoinView.as_view(), name="join"),
-    path("accounts/", include("django.contrib.auth.urls")),
+    # Django's own account pages, listed one by one rather than included
+    # whole: its "email me a reset link" pages are left out, as Precentor
+    # sends no email. The owner makes reset links instead (accounts).
+    path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout"),
+    path("accounts/password_change/", auth_views.PasswordChangeView.as_view(), name="password_change"),
+    path(
+        "accounts/password_change/done/",
+        auth_views.PasswordChangeDoneView.as_view(),
+        name="password_change_done",
+    ),
+    path(
+        "accounts/reset/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(form_class=NewPasswordForm),
+        name="password_reset_confirm",
+    ),
+    path("accounts/reset/done/", auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
     path("members/", include("accounts.urls")),
     path("library/", include("library.urls")),
     path("ordo/", include("ordo.urls")),

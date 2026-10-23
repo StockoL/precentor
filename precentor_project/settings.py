@@ -85,13 +85,15 @@ SILENCED_SYSTEM_CHECKS = ["security.W021"]
 # Application definition
 
 INSTALLED_APPS = [
+    # Above the admin, whose own registration/ templates (the password reset
+    # pages) would otherwise be found first and win over Precentor's.
+    "accounts",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",  # required for comments.Comment's GenericForeignKey
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "accounts",
     "comments",
     "core",
     "library",

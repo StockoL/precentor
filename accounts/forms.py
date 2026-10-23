@@ -1,9 +1,24 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, BaseUserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, BaseUserCreationForm, SetPasswordForm
 from django.db import transaction
 
 from .models import Invitation, Organisation, Role, User
 from .organisations import create_organisation
+
+
+def plain_password_fields(form, first, second, label="Password"):
+    """
+    Django lists its password rules as bullet points under the first box
+    and labels the second "confirmation"; one plain line and "again" say
+    the same. The rules themselves are still checked in full.
+    """
+    form.fields[first].label = label
+    form.fields[first].help_text = (
+        "At least 8 characters, not all numbers, not a common password "
+        "and not too like your name or email."
+    )
+    form.fields[second].label = f"{label} again"
+    form.fields[second].help_text = ""
 
 
 class EmailAuthenticationForm(AuthenticationForm):
@@ -39,14 +54,7 @@ class NewPersonForm(BaseUserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["name"].required = True
-        # Django lists its password rules as bullet points; one plain line
-        # says the same. The rules themselves are still checked in full.
-        self.fields["password1"].help_text = (
-            "At least 8 characters, not all numbers, not a common password "
-            "and not too like your name or email."
-        )
-        self.fields["password2"].label = "Password again"
-        self.fields["password2"].help_text = ""
+        plain_password_fields(self, "password1", "password2")
         # The cursor starts in the first field, not Django's choice of email.
         self.fields["email"].widget.attrs.pop("autofocus", None)
         next(iter(self.fields.values())).widget.attrs["autofocus"] = True
@@ -143,3 +151,11 @@ class RoleForm(forms.ModelForm):
             field.error_messages["invalid_choice"] = (
                 "The owner must be a Conductor or a Librarian. Hand ownership to someone else first."
             )
+
+
+class NewPasswordForm(SetPasswordForm):
+    """Choosing a new password from a reset link."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        plain_password_fields(self, "new_password1", "new_password2", label="New password")

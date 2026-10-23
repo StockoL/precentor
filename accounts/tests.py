@@ -1091,3 +1091,42 @@ class ResetLinkTests(TestCase):
         self.assertEqual(self.client.post(f"/members/{stranger.pk}/reset-link/").status_code, 404)
         self.client.force_login(make_user("conductor", organisation=self.church))
         self.assertEqual(self.client.post(self.url).status_code, 403)
+
+
+class PasswordPagesTests(TestCase):
+    def test_the_email_me_a_link_pages_are_gone(self):
+        for url in ("/accounts/password_reset/", "/accounts/password_reset/done/"):
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_a_reset_link_shows_precentors_own_page_with_plain_help(self):
+        import re
+
+        owner = User.objects.create_user(
+            email="owner@example.com", organisation=make_organisation(), role="conductor", is_owner=True
+        )
+        member = make_user("viewer", organisation=owner.organisation)
+        self.client.force_login(owner)
+        page = self.client.post(f"/members/{member.pk}/reset-link/").content.decode()
+        path = re.search(r'value="http://testserver(/accounts/reset/[^"]+)"', page).group(1)
+        browser = self.client_class()
+        response = browser.get(path, follow=True)
+        self.assertContains(response, "Choose a new password")
+        self.assertContains(response, "New password again")
+        self.assertContains(response, "At least 8 characters")
+        self.assertNotContains(response, "<li>Your password")
+        response = browser.post(
+            response.redirect_chain[-1][0],
+            {"new_password1": "a fresh cantor sings", "new_password2": "a fresh cantor sings"},
+            follow=True,
+        )
+        self.assertContains(response, "Password saved")
+
+    def test_a_dead_link_says_what_to_do(self):
+        response = self.client.get("/accounts/reset/MQ/made-up-token/")
+        self.assertContains(response, "This reset link no longer works")
+        self.assertContains(response, "Ask whoever runs Precentor")
+
+    def test_logging_out_still_works(self):
+        self.client.force_login(make_user())
+        self.assertRedirects(self.client.post("/accounts/logout/"), "/", fetch_redirect_response=False)
