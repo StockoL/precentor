@@ -328,8 +328,8 @@ def apply_template(request, service_pk, template_pk):
     confirmed first. With JavaScript, a dialog asks and sends replace=1;
     without, this shows a page that asks.
     """
-    service = get_object_or_404(Service, pk=service_pk)
-    template = get_object_or_404(SlotTemplate, pk=template_pk)
+    service = get_object_or_404(own(Service, request), pk=service_pk)
+    template = get_object_or_404(own(SlotTemplate, request), pk=template_pk)
     replace = request.POST.get("replace") == "1"
     if service.asks_before_using(template) and not replace:
         return render(request, "planning/apply_template_confirm.html", {
@@ -370,7 +370,7 @@ class ServiceDeleteView(PlanningRequiredMixin, OrganisationScopedMixin, DeletePa
 @role_required(can_plan)
 @require_POST
 def add_role(request, service_pk):
-    service = get_object_or_404(Service, pk=service_pk)
+    service = get_object_or_404(own(Service, request), pk=service_pk)
     form = ServiceRoleForm(request.POST)
 
     if form.is_valid():
@@ -413,7 +413,7 @@ def _slots_fragment(request, service):
 def move_slot(request, role_pk):
     """Move a slot up or down one place (the Move up and Move down
     buttons, which work without JavaScript)."""
-    role = get_object_or_404(ServiceRole.objects.select_related("service"), pk=role_pk)
+    role = get_object_or_404(own(ServiceRole, request).select_related("service"), pk=role_pk)
     step = -1 if request.POST.get("direction") == "up" else 1
     role.service.move_slot(role, step)
     return ajax_or_redirect(request, _slots_fragment(request, role.service), role.service.get_absolute_url())
@@ -425,7 +425,7 @@ def remove_slot(request, role_pk):
     """Remove a slot. An empty one goes at once; one with pieces proposed
     asks first, in a dialog with JavaScript or on a page without, and is
     removed when the answer comes back with confirm=1."""
-    role = get_object_or_404(ServiceRole.objects.select_related("service"), pk=role_pk)
+    role = get_object_or_404(own(ServiceRole, request).select_related("service"), pk=role_pk)
     service = role.service
     if role.pieces.exists() and not request.POST.get("confirm"):
         return render(request, "planning/remove_slot_confirm.html", {"role": role, "service": service})
@@ -440,7 +440,7 @@ def remove_slot(request, role_pk):
 @require_POST
 def reorder_slots(request, service_pk):
     """Put the slots in a new order, sent after a drag as "id,id,id"."""
-    service = get_object_or_404(Service, pk=service_pk)
+    service = get_object_or_404(own(Service, request), pk=service_pk)
     try:
         pks = [int(pk) for pk in request.POST.get("order", "").split(",") if pk]
         service.set_slot_order(pks)
@@ -460,7 +460,7 @@ def add_piece(request, role_pk):
     ranked list of scores, so the service page never has to carry a full
     <select> per slot.
     """
-    role = get_object_or_404(ServiceRole.objects.select_related("service"), pk=role_pk)
+    role = get_object_or_404(own(ServiceRole, request).select_related("service"), pk=role_pk)
     is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
 
     if request.method != "POST":
@@ -496,7 +496,7 @@ def add_piece(request, role_pk):
 @role_required(can_plan)
 @require_POST
 def toggle_confirm(request, piece_pk):
-    piece = get_object_or_404(RolePiece, pk=piece_pk)
+    piece = get_object_or_404(own(RolePiece, request), pk=piece_pk)
     piece.is_confirmed = not piece.is_confirmed
     piece.save()
 
@@ -514,7 +514,7 @@ def toggle_confirm(request, piece_pk):
 
 @login_required
 def term_music_list(request, term_pk):
-    term = get_object_or_404(Term, pk=term_pk)
+    term = get_object_or_404(own(Term, request), pk=term_pk)
     draft = request.GET.get("draft") == "1"
     site_config = SiteConfig.get_solo()
 

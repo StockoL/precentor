@@ -1058,3 +1058,28 @@ class PlanningForOneChurchTests(TestCase):
         our_service = Service.objects.create(term=self.our_term, date=date(2026, 1, 11), service_type="Mass")
         response = self.client.get(our_service.get_absolute_url())
         self.assertEqual(response.context["slot_templates"], [self.our_template])
+
+    def test_the_planning_actions_cannot_reach_another_churchs_rows(self):
+        their_slot = ServiceRole.objects.create(service=self.their_service, role_name="Motet")
+        their_piece = RolePiece.objects.create(
+            service_role=their_slot, score=make_score(organisation=self.their_term.organisation)
+        )
+        our_service = Service.objects.create(term=self.our_term, date=date(2026, 1, 11), service_type="Mass")
+        posts = {
+            f"/services/{self.their_service.pk}/roles/add/": {"role_name": "Anthem"},
+            f"/roles/{their_slot.pk}/move/": {"direction": "up"},
+            f"/roles/{their_slot.pk}/remove/": {"confirm": "1"},
+            f"/services/{self.their_service.pk}/slots/order/": {"order": str(their_slot.pk)},
+            f"/roles/{their_slot.pk}/pieces/add/": {"score": their_piece.score_id},
+            f"/pieces/{their_piece.pk}/toggle-confirm/": {},
+            f"/services/{self.their_service.pk}/templates/{self.our_template.pk}/apply/": {},
+            f"/services/{our_service.pk}/templates/{self.their_template.pk}/apply/": {},
+        }
+        for url, data in posts.items():
+            with self.subTest(url=url):
+                self.assertEqual(self.client.post(url, data).status_code, 404)
+        self.assertEqual(self.client.get(f"/terms/{self.their_term.pk}/music-list/").status_code, 404)
+        their_piece.refresh_from_db()
+        self.assertFalse(their_piece.is_confirmed)
+        self.assertEqual(list(self.their_service.roles.values_list("role_name", flat=True)), ["Motet"])
+        self.assertFalse(our_service.roles.exists())
