@@ -249,3 +249,9 @@ class ForbiddenPageTests(TestCase):
         self.assertTemplateUsed(response, "403.html")
         self.assertContains(response, "<h1>Not available to you</h1>", status_code=403, html=True)
         self.assertContains(response, 'href="/"', status_code=403)
+
+
+class FaviconTests(TestCase):
+    def test_every_page_names_its_icon(self):
+        response = self.client.get("/accounts/login/")
+        self.assertContains(response, 'rel="icon" href="/static/src/images/favicon.svg" type="image/svg+xml"')
