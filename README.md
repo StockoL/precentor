@@ -1109,6 +1109,44 @@ the role column in §2 says who may use each one.
 - **Permissions** give a "Not available to you" page (403) that says
   why, and another church's records give "Page not found" (404).
 
+## 16. Security
+
+- **Secrets stay out of the repository.** `SECRET_KEY`, the database
+  address and the allowed hosts are read from environment variables. A
+  local `.env` file supplies them in development, and `.env` is ignored
+  by git. If `SECRET_KEY` is missing the site refuses to start, with a
+  message saying so, rather than running with a default.
+- **`DEBUG` is off unless it's switched on.** It's only on when the
+  environment says `DEBUG=True`, so a deploy that forgets it is safe.
+- **HTTPS once deployed.** With `DEBUG` off, plain `http://` requests are
+  redirected to `https://`, the session and CSRF cookies are only sent
+  over HTTPS, and browsers are told through HSTS to use HTTPS for this
+  site. `python manage.py check --deploy` reports no issues.
+- **Forms are protected against cross-site requests** by Django's CSRF
+  middleware: every form that changes something posts a CSRF token,
+  including the ones JavaScript sends.
+- **One permissions module.** Every check of who may do what lives in
+  `accounts/permissions.py`, used by views, by a decorator and mixin,
+  and by templates through `can`, so a button and the page behind it
+  always agree. A test holds the whole roles table from §2 against those
+  checks.
+- **Each church only reaches its own data.** Every query on a church's
+  data is limited to the signed-in person's organisation, which comes
+  from their account, never from the address or a form. Opening another
+  church's record by its address gives a 404, not a 403, so its
+  existence isn't confirmed. Forms only offer, and only accept, the
+  church's own scores, use types and templates.
+- **Passwords** are stored with Django's password hashers and checked
+  against its validators: at least eight characters, not all numbers,
+  not a common password and not too like the person's name or email.
+- **Invitations work once and expire after a week.** Only a SHA-256
+  fingerprint of each link's secret is stored, so the database can't be
+  used to make working links. Reset links are Django's own signed
+  tokens, which stop working once used, once the person signs in, or
+  after three days.
+- **Removing someone** switches their account off, which signs them out
+  on their next request.
+
 ---
 
 _The overhaul is recorded phase by phase in
