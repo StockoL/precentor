@@ -132,10 +132,42 @@ none, and the migration stops if there are several. On a database with
 no organisations yet, the ready-made Mass and Vespers templates and the
 starting use types are removed instead, unless something uses them,
 since each organisation will get its own copies when it registers.
-`SiteConfig` has its one-to-one link to an organisation filled in the
-same way, but it stays optional until the views ask for their own
-organisation's settings, because `get_solo()` still makes the row on
-first use.
+`SiteConfig` had its one-to-one link to an organisation filled in the
+same way, but stayed optional until every page read its own church's
+settings; then the shared `get_solo()` went and the link became
+required too (`core/0011`).
+
+### Each church sees only its own
+
+The column only matters if every query uses it, so the rule is that no
+view asks a church's model for all its rows. `OrganisationMiddleware`
+sets `request.organisation` from the signed-in person, never from the
+session, the address or a form, so nobody can choose which church they
+look at. The models' managers come from `OrganisationQuerySet`, whose
+`for_organisation()` is the one filter every view goes through:
+
+- class-based list, detail, edit and delete views add
+  `OrganisationScopedMixin`, which narrows `get_queryset()`;
+- function views look an object up with
+  `get_object_or_404(own(Model, request), pk=...)`;
+- form menus are narrowed in the form's `__init__`, before it checks
+  anything, so a hand-made request naming another church's score or use
+  type is refused, not just hidden. The score offered for a
+  slot comes from `Service.suggested_scores()`, which starts from the
+  service's own church;
+- a comment's target, and the comment it replies to, must both be the
+  church's own, and a reply must be on the same target.
+
+Another church's row is simply not found, so the answer is a 404, never
+a 403 that would admit it exists. The only exception is the crest,
+which is public branding at an address with the church's id in it.
+
+I finished with a search for every `.objects.` on a church's model
+outside tests and migrations. What remains is either already scoped or
+only reaches rows through ids taken from the church's own records: the
+comment counts on the Terms page, the "last sung" subquery, the
+suitability subqueries (the outer query is already the church's), and
+the slot reordering, which must list exactly the service's own slots.
 
 ### `library.Score`
 
@@ -664,6 +696,7 @@ LAYOUT_STYLE_CHOICES = [
 ]
 
 class SiteConfig(models.Model):
+    organisation = models.OneToOneField("accounts.Organisation", on_delete=models.CASCADE, related_name="settings")
     church_name = models.CharField(max_length=200, blank=True)
     crest = models.BinaryField(blank=True, default=b"", editable=False)  # the image itself
     crest_type = models.CharField(max_length=20, blank=True, editable=False)  # "image/png" or "image/jpeg"
@@ -674,23 +707,24 @@ class SiteConfig(models.Model):
     layout_style = models.CharField(max_length=20, choices=LAYOUT_STYLE_CHOICES, default="columns")
     show_hymns_psalm = models.BooleanField(default=True)
 
-    def save(self, *args, **kwargs):
-        self.pk = 1  # enforce singleton regardless of how it's constructed
-        super().save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        pass  # singleton row is never deleted
+    @classmethod
+    def of(cls, organisation):
+        config, _ = cls.objects.get_or_create(organisation=organisation)
+        return config
 
     @classmethod
-    def get_solo(cls):
-        obj, _ = cls.objects.get_or_create(pk=1)
-        return obj
+    def national_calendar_of(cls, organisation_id):
+        ...  # reads only; the default calendar when there's no row yet
 ```
 
-**A singleton without a new dependency:** a site only ever has one of
-these, so `pk` is pinned to `1` on every save and `get_solo()` is the
-one accessor every view uses. A package like `django-solo` would do
-the same, but it isn't worth a dependency for something this small.
+**One row per church.** This began as a singleton, with `pk` pinned to
+`1` and a `get_solo()` that every view used. Now each organisation has
+its own row, made with the defaults by `SiteConfig.of()` the first time
+it's needed, so a new church needs no setting up. The forms use
+`national_calendar_of()` instead, because building a form shouldn't
+create a row: it only reads, and falls back to the general calendar.
+The one-to-one link means the database itself refuses a second row for
+the same church, so the admin no longer has its own one-row check.
 
 **The national calendar is a site setting.** It belongs to the church,
 like its name and crest, and one church follows one national calendar,
