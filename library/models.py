@@ -5,12 +5,14 @@ from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse
 from django.utils import timezone
 
+from accounts.querysets import OrganisationQuerySet
+
 from .validators import tidy_vocal_range, validate_vocal_range
 
 RANGE_FIELDS = ("range_soprano", "range_alto", "range_tenor", "range_bass")
 
 
-class ScoreQuerySet(models.QuerySet):
+class ScoreQuerySet(OrganisationQuerySet):
     # The Voicing filter's value for "any four-part mixed".
     MIXED = "mixed"
 

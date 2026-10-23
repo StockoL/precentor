@@ -4,6 +4,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from accounts.querysets import OrganisationQuerySet
+
 
 class Comment(models.Model):
     author = models.ForeignKey(
@@ -22,6 +24,7 @@ class Comment(models.Model):
     organisation = models.ForeignKey(
         "accounts.Organisation", on_delete=models.CASCADE, related_name="comments"
     )
+    objects = OrganisationQuerySet.as_manager()
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

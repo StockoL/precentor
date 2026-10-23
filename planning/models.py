@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.formats import date_format
 
+from accounts.querysets import OrganisationQuerySet
 from library.models import Score
 from ordo.models import CALENDAR_USE_CHOICES
 
@@ -27,6 +28,7 @@ class Term(models.Model):
     organisation = models.ForeignKey(
         "accounts.Organisation", on_delete=models.CASCADE, related_name="terms"
     )
+    objects = OrganisationQuerySet.as_manager()
     name = models.CharField(max_length=100, help_text="e.g. Michaelmas 2026")
     start_date = models.DateField()
     end_date = models.DateField()
@@ -143,6 +145,7 @@ class Service(models.Model):
     organisation = models.ForeignKey(
         "accounts.Organisation", on_delete=models.CASCADE, related_name="services"
     )
+    objects = OrganisationQuerySet.as_manager()
     date = models.DateField()
     service_type = models.CharField(max_length=50, help_text="e.g. Sung Mass, Vespers")
     occasion = models.ForeignKey(
@@ -326,6 +329,7 @@ class TermMarker(models.Model):
     organisation = models.ForeignKey(
         "accounts.Organisation", on_delete=models.CASCADE, related_name="markers"
     )
+    objects = OrganisationQuerySet.as_manager()
     date = models.DateField()
     # "Notice" is the UI word for a TermMarker.
     text = models.CharField("notice", max_length=200)
@@ -347,6 +351,7 @@ class ServiceRole(models.Model):
     organisation = models.ForeignKey(
         "accounts.Organisation", on_delete=models.CASCADE, related_name="service_roles"
     )
+    objects = OrganisationQuerySet.as_manager()
     # "Slot" is the UI word for a ServiceRole.
     role_name = models.CharField("slot", max_length=50)
     is_not_applicable = models.BooleanField("not needed (N/A)", default=False)
@@ -397,6 +402,7 @@ class SlotTemplate(models.Model):
     organisation = models.ForeignKey(
         "accounts.Organisation", on_delete=models.CASCADE, related_name="slot_templates"
     )
+    objects = OrganisationQuerySet.as_manager()
     name = models.CharField(max_length=50, help_text="e.g. Mass, Vespers, Benediction")
     slot_names = models.TextField(
         "slots", help_text="One slot per line, in the order of the service."
@@ -456,6 +462,7 @@ class RolePiece(models.Model):
     organisation = models.ForeignKey(
         "accounts.Organisation", on_delete=models.CASCADE, related_name="role_pieces"
     )
+    objects = OrganisationQuerySet.as_manager()
     score = models.ForeignKey(
         "library.Score", on_delete=models.PROTECT, related_name="role_pieces"
     )

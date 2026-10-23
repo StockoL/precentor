@@ -2,6 +2,8 @@ from datetime import date, timedelta
 
 from django.db import models
 
+from accounts.querysets import OrganisationQuerySet
+
 from .dates import NATIONAL_SETTINGS, YearDates, apply_transfers
 
 COLOUR_CHOICES = [
@@ -89,6 +91,7 @@ class UseType(models.Model):
     organisation = models.ForeignKey(
         "accounts.Organisation", on_delete=models.CASCADE, related_name="use_types"
     )
+    objects = OrganisationQuerySet.as_manager()
     name = models.CharField(max_length=50)
 
     class Meta:

@@ -361,3 +361,28 @@ class OrganisationMiddlewareTests(TestCase):
     def test_signed_out_and_superusers_have_none(self):
         self.assertIsNone(self.organisation_on())
         self.assertIsNone(self.organisation_on(make_superuser()))
+
+
+class ForOrganisationTests(TestCase):
+    def test_every_model_holding_a_churchs_data_can_be_limited_to_one(self):
+        from django.apps import apps
+
+        tenant_models = [
+            model for model in apps.get_models()
+            if any(field.name == "organisation" and field.many_to_one for field in model._meta.fields)
+            and model is not User
+        ]
+        self.assertGreaterEqual(len(tenant_models), 9)
+        for model in tenant_models:
+            with self.subTest(model=model.__name__):
+                self.assertTrue(hasattr(model.objects, "for_organisation"))
+
+    def test_it_finds_only_that_churchs_rows_and_nothing_without_one(self):
+        from library.models import Score
+        from precentor_project.testing import make_score
+
+        ours, theirs = make_organisation("St Cecilia's"), make_organisation("St Elsewhere")
+        mine = make_score(title="Ave verum", organisation=ours)
+        make_score(title="Ave verum", organisation=theirs)
+        self.assertEqual(list(Score.objects.for_organisation(ours)), [mine])
+        self.assertFalse(Score.objects.for_organisation(None).exists())
