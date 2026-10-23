@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Join {{ invitation.organisation.name }} — Precentor{% endblock %}
+{% block extra_head %}
+{# No page transition, for the same reason as the login page: the page after signing in froze in automated testing. #}
+<style>
+  @view-transition {
+    navigation: none;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="cover">
+    <div class="center flow" data-intrinsic data-centered style="--center-max-width: 30ch;">
+        <h1>You're invited</h1>
+        <p>Join <strong>{{ invitation.organisation.name }}</strong> on Precentor as a {{ invitation.get_role_display }}.</p>
+        <form method="post" class="flow">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn-primary" type="submit">Join</button>
+        </form>
+        <p class="list-row__meta">Already have an account? <a href="{% url 'login' %}">Log in</a>.</p>
+    </div>
+</div>
+{% endblock %}

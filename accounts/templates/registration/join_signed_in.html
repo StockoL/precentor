@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}You're already signed in — Precentor{% endblock %}
+{% block content %}
+<div class="cover">
+    <div class="center flow" data-intrinsic data-centered style="--center-max-width: 30ch;">
+        <h1>You're already signed in</h1>
+        <p>Your account belongs to {{ request.organisation.name|default:"no church" }}, and each account belongs to one church. To join another, log out and use the invitation with a different email address.</p>
+        <p><a href="{% url 'planning:term_list' %}">Back to your terms</a></p>
+    </div>
+</div>
+{% endblock %}

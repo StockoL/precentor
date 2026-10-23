@@ -629,3 +629,54 @@ class JoinFormTests(TestCase):
         self.assertTrue(sign_up.fields["church_name"].widget.attrs.get("autofocus"))
         self.assertNotIn("autofocus", sign_up.fields["name"].widget.attrs)
         self.assertNotIn("autofocus", sign_up.fields["email"].widget.attrs)
+
+
+class JoinPageTests(TestCase):
+    DATA = JoinFormTests.DATA
+
+    def setUp(self):
+        from .models import Invitation
+
+        self.church = make_organisation("St Cecilia's")
+        self.invitation, token = Invitation.make(organisation=self.church, role="librarian", created_by=None)
+        self.url = f"/join/{token}/"
+
+    def test_the_page_names_the_church_and_role(self):
+        response = self.client.get(self.url)
+        self.assertContains(response, "Join <strong>St Cecilia&#x27;s</strong> on Precentor as a Librarian.")
+
+    def test_joining_signs_the_person_in_and_goes_home(self):
+        response = self.client.post(self.url, self.DATA)
+        self.assertRedirects(response, "/")
+        user = User.objects.get(email="anne@example.com")
+        self.assertEqual((user.organisation, user.role), (self.church, "librarian"))
+        self.assertEqual(int(self.client.session["_auth_user_id"]), user.pk)
+
+    def test_a_link_works_once(self):
+        self.client.post(self.url, self.DATA)
+        self.client.logout()
+        response = self.client.post(self.url, {**self.DATA, "email": "ben@example.com"})
+        self.assertContains(response, "This invitation no longer works", status_code=404)
+        self.assertFalse(User.objects.filter(email="ben@example.com").exists())
+
+    def test_every_dead_link_looks_the_same(self):
+        from django.utils import timezone
+
+        self.assertContains(self.client.get("/join/made-up/"), "no longer works", status_code=404)
+        self.invitation.__class__.objects.update(expires_at=timezone.now())
+        self.assertContains(self.client.get(self.url), "no longer works", status_code=404)
+
+    def test_someone_signed_in_cant_take_a_place(self):
+        self.client.force_login(make_user(organisation=make_organisation("St Elsewhere")))
+        response = self.client.post(self.url, {**self.DATA, "email": "ben@example.com"})
+        self.assertContains(response, "belongs to St Elsewhere")
+        self.assertFalse(User.objects.filter(email="ben@example.com").exists())
+        self.invitation.refresh_from_db()
+        self.assertIsNone(self.invitation.used_at)
+
+    def test_if_someone_else_got_there_first_nothing_is_made(self):
+        self.client.get(self.url)
+        with mock.patch("accounts.models.Invitation.use", return_value=False):
+            response = self.client.post(self.url, self.DATA)
+        self.assertContains(response, "no longer works", status_code=404)
+        self.assertFalse(User.objects.filter(email="anne@example.com").exists())

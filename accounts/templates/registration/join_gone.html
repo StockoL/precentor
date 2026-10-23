@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Invitation not found — Precentor{% endblock %}
+{% block content %}
+<div class="cover">
+    <div class="center flow" data-intrinsic data-centered style="--center-max-width: 30ch;">
+        <h1>This invitation no longer works</h1>
+        <p>It may have been used already, cancelled or left for more than a week. Ask whoever invited you for a new link.</p>
+        <p class="list-row__meta">Already have an account? <a href="{% url 'login' %}">Log in</a>.</p>
+    </div>
+</div>
+{% endblock %}

@@ -20,7 +20,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
 from accounts.forms import EmailAuthenticationForm
-from accounts.views import SignUpView
+from accounts.views import JoinView, SignUpView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -31,6 +31,7 @@ urlpatterns = [
         name="login",
     ),
     path("accounts/signup/", SignUpView.as_view(), name="signup"),
+    path("join/<str:token>/", JoinView.as_view(), name="join"),
     path("accounts/", include("django.contrib.auth.urls")),
     path("library/", include("library.urls")),
     path("ordo/", include("ordo.urls")),
