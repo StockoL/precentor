@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Members — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <header class="page-header">
+        <h1>Members</h1>
+        {% if can.manage_organisation %}
+        <div class="page-header__actions">
+            <a class="btn-primary" href="{% url 'members:invite' %}">Invite someone</a>
+        </div>
+        {% endif %}
+    </header>
+    <ul role="list" class="flow" style="--flow-space: var(--spacing-xs);">
+        {% for member in members %}
+        <li class="list-row">
+            <div class="flow" style="--flow-space: var(--spacing-3xs);">
+                <p><strong>{{ member.name|default:member.email }}</strong>{% if member == user %} (you){% endif %}</p>
+                <p class="list-row__meta">{{ member.get_role_display }}{% if can.manage_organisation %} · {{ member.email }}{% endif %}</p>
+            </div>
+            {% if member.is_owner %}<span class="badge badge--owner">Owner</span>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+
+    {% if can.manage_organisation %}
+    <h2>Waiting to join</h2>
+    <ul role="list" class="flow" style="--flow-space: var(--spacing-xs);">
+        {% for invitation in invitations %}
+        <li class="list-row">
+            <div class="flow" style="--flow-space: var(--spacing-3xs);">
+                <p><strong>{{ invitation.note|default:"Invitation" }}</strong></p>
+                <p class="list-row__meta">{{ invitation.get_role_display }} · link works until {{ invitation.expires_at|date:"j F" }}</p>
+            </div>
+        </li>
+        {% empty %}
+        <li class="empty-state">No invitations waiting. Invite someone and they'll appear here until they join.</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endblock %}

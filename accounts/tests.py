@@ -726,3 +726,66 @@ class InviteSomeonePageTests(TestCase):
 
         theirs, _ = Invitation.make(organisation=make_organisation("St Elsewhere"), role="viewer", created_by=None)
         self.assertEqual(self.client.get(f"/members/invitations/{theirs.pk}/").status_code, 404)
+
+
+class MembersPageTests(TestCase):
+    def setUp(self):
+        from .models import Invitation
+
+        self.church = make_organisation("St Cecilia's")
+        self.owner = User.objects.create_user(
+            email="owner@example.com", name="Anne Byrd", organisation=self.church, role="conductor", is_owner=True
+        )
+        self.viewer = make_user("viewer", organisation=self.church, email="ben@example.com")
+        self.viewer.name = "Ben Jonson"
+        self.viewer.save()
+        Invitation.make(organisation=self.church, role="librarian", created_by=self.owner, note="Cara, librarian")
+
+    def page(self, user):
+        self.client.force_login(user)
+        return self.client.get("/members/")
+
+    def test_everyone_sees_names_and_roles_and_the_owner(self):
+        response = self.page(self.viewer)
+        self.assertContains(response, "Anne Byrd")
+        self.assertContains(response, "Ben Jonson</strong> (you)")
+        self.assertContains(response, '<span class="badge badge--owner">Owner</span>', count=1)
+        self.assertNotContains(response, "owner@example.com")
+        self.assertNotContains(response, "Cara, librarian")
+        self.assertNotContains(response, 'href="/members/invite/"')
+
+    def test_the_owner_also_sees_addresses_and_waiting_invitations(self):
+        response = self.page(self.owner)
+        self.assertContains(response, "ben@example.com")
+        self.assertContains(response, "Cara, librarian")
+        self.assertContains(response, 'href="/members/invite/"')
+
+    def test_used_and_expired_invitations_and_other_churches_are_left_out(self):
+        from django.utils import timezone
+
+        from .models import Invitation
+
+        used, _ = Invitation.make(organisation=self.church, role="viewer", created_by=None, note="Used one")
+        used.use(make_user(organisation=self.church))
+        Invitation.make(organisation=self.church, role="viewer", created_by=None, note="Old one")
+        Invitation.objects.filter(note="Old one").update(expires_at=timezone.now())
+        elsewhere = make_organisation("St Elsewhere")
+        make_user(organisation=elsewhere, email="dan@example.com")
+        Invitation.make(organisation=elsewhere, role="viewer", created_by=None, note="Theirs")
+        response = self.page(self.owner)
+        for hidden in ("Used one", "Old one", "Theirs", "dan@example.com"):
+            with self.subTest(hidden=hidden):
+                self.assertNotContains(response, hidden)
+
+    def test_someone_removed_isnt_listed(self):
+        self.viewer.is_active = False
+        self.viewer.save()
+        self.assertNotContains(self.page(self.owner), "Ben Jonson")
+
+    def test_its_in_everyones_menu(self):
+        self.assertContains(self.page(self.viewer), 'href="/members/" aria-current="page">Members</a>')
+
+    def test_a_superuser_sees_nobody(self):
+        make_superuser()
+        response = self.page(make_superuser(email="root@example.com"))
+        self.assertEqual(list(response.context["members"]), [])

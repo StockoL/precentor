@@ -1,12 +1,13 @@
 from django.conf import settings
 from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView, FormView
+from django.views.generic import CreateView, DetailView, FormView, ListView
 
 from .forms import InvitationForm, JoinForm, SignUpForm
 from .mixins import OrganisationScopedMixin, RoleRequiredMixin
-from .models import Invitation
+from .models import Invitation, User
 from .permissions import can_manage_organisation
 
 # Where a new invitation's secret waits in the owner's session between
@@ -101,4 +102,30 @@ class InvitationLinkView(RoleRequiredMixin, OrganisationScopedMixin, DetailView)
         waiting = self.request.session.pop(NEW_INVITATION, None)
         if waiting and waiting["pk"] == self.object.pk:
             context["link"] = self.request.build_absolute_uri(reverse("join", args=[waiting["token"]]))
+        return context
+
+
+class MemberListView(LoginRequiredMixin, ListView):
+    """
+    Who's in the church. Everyone can see names and roles, so it's clear
+    who the conductor and librarian are; the owner also sees addresses
+    and the invitations still waiting to be used.
+    """
+
+    context_object_name = "members"
+    template_name = "accounts/member_list.html"
+
+    def get_queryset(self):
+        # A superuser belongs to no church, so has no members to list
+        # (filtering on an empty organisation would find the superusers).
+        if self.request.organisation is None:
+            return User.objects.none()
+        return User.objects.filter(organisation=self.request.organisation, is_active=True).order_by(
+            "-is_owner", "name", "email"
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if can_manage_organisation(self.request.user):
+            context["invitations"] = Invitation.usable().for_organisation(self.request.organisation)
         return context

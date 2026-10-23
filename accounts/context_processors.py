@@ -6,6 +6,7 @@ CHECKS = {
     "comment": permissions.can_comment,
     "manage_settings": permissions.can_manage_settings,
     "delete_comments": permissions.can_delete_comments,
+    "manage_organisation": permissions.can_manage_organisation,
 }
 
 

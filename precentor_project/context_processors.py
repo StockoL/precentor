@@ -6,6 +6,7 @@ NAV_SECTIONS = {
     "library": ("library", "score_list"),
     "comments": ("inbox", "inbox"),
     "core": ("settings", "site_config_update"),
+    "members": ("members", "member_list"),
 }
 
 

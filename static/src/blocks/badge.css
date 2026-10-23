@@ -27,6 +27,13 @@
     white-space: nowrap;
   }
 
+  /* The organisation's owner, on the members page. */
+  .badge--owner {
+    background-color: var(--colors-info-bg);
+    color: var(--colors-info-text);
+    border-color: var(--colors-info-border);
+  }
+
   /* Service.status */
   .badge--not_started {
     background-color: var(--colors-inactive-bg);
