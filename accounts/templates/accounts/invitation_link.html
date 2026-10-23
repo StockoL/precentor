@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Invitation link — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Invitation {% if invitation.note %}for {{ invitation.note }}{% else %}link{% endif %}</h1>
+    {% if link %}
+    <p>Send this link to the person you're inviting. They'll join as a {{ invitation.get_role_display }}. It works once and lasts until {{ invitation.expires_at|date:"j F, H:i" }}.</p>
+    <div class="copy-link">
+        <label for="invitation-link">Link</label>
+        <input id="invitation-link" type="text" value="{{ link }}" readonly>
+    </div>
+    <p><strong>This is the only time the link is shown.</strong> Precentor doesn't keep a copy, so if it's lost, make another.</p>
+    {% else %}
+    <p>This invitation's link has already been shown, and Precentor doesn't keep a copy. If it's been lost, make another.</p>
+    {% endif %}
+    <p><a href="{% url 'members:invite' %}">Invite someone else</a></p>
+</div>
+{% endblock %}

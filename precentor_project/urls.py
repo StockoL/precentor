@@ -33,6 +33,7 @@ urlpatterns = [
     path("accounts/signup/", SignUpView.as_view(), name="signup"),
     path("join/<str:token>/", JoinView.as_view(), name="join"),
     path("accounts/", include("django.contrib.auth.urls")),
+    path("members/", include("accounts.urls")),
     path("library/", include("library.urls")),
     path("ordo/", include("ordo.urls")),
     path("settings/", include("core.urls")),

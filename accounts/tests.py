@@ -680,3 +680,49 @@ class JoinPageTests(TestCase):
             response = self.client.post(self.url, self.DATA)
         self.assertContains(response, "no longer works", status_code=404)
         self.assertFalse(User.objects.filter(email="anne@example.com").exists())
+
+
+class InviteSomeonePageTests(TestCase):
+    def setUp(self):
+        self.church = make_organisation("St Cecilia's")
+        self.owner = User.objects.create_user(
+            email="owner@example.com", organisation=self.church, role="conductor", is_owner=True
+        )
+        self.client.force_login(self.owner)
+
+    def invite(self, **data):
+        return self.client.post("/members/invite/", {"role": "librarian", "note": "Anne", **data}, follow=True)
+
+    def test_the_owner_gets_a_working_link_once(self):
+        import re
+
+        from .models import Invitation
+
+        response = self.invite()
+        invitation = Invitation.objects.get()
+        self.assertEqual(
+            (invitation.organisation, invitation.role, invitation.note, invitation.created_by),
+            (self.church, "librarian", "Anne", self.owner),
+        )
+        token = re.search(r'value="http://testserver/join/([^/"]+)/"', response.content.decode()).group(1)
+        self.assertEqual(Invitation.find(token), invitation)
+        # Shown once: a refresh no longer has it.
+        again = self.client.get(f"/members/invitations/{invitation.pk}/")
+        self.assertNotContains(again, "/join/")
+        self.assertContains(again, "already been shown")
+
+    def test_viewer_is_offered_first(self):
+        self.assertContains(self.client.get("/members/invite/"), 'value="viewer" required id="id_role_2" checked')
+
+    def test_only_the_owner_can_invite(self):
+        for role in ("conductor", "librarian", "viewer"):
+            with self.subTest(role=role):
+                self.client.force_login(make_user(role, organisation=self.church))
+                self.assertEqual(self.client.get("/members/invite/").status_code, 403)
+                self.assertEqual(self.invite().status_code, 403)
+
+    def test_another_churchs_invitation_isnt_found(self):
+        from .models import Invitation
+
+        theirs, _ = Invitation.make(organisation=make_organisation("St Elsewhere"), role="viewer", created_by=None)
+        self.assertEqual(self.client.get(f"/members/invitations/{theirs.pk}/").status_code, 404)

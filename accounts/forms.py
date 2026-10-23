@@ -101,3 +101,24 @@ class JoinForm(NewPersonForm):
         if not self.invitation.use(user):
             raise Invitation.Gone
         return user
+
+
+class InvitationForm(forms.ModelForm):
+    """The owner choosing who to invite and as what."""
+
+    # What each role may do, beside its name, so the choice is clear.
+    ROLE_LABELS = {
+        Role.CONDUCTOR: "Conductor: plans terms, services and music",
+        Role.LIBRARIAN: "Librarian: looks after the library",
+        Role.VIEWER: "Viewer: sees everything and can comment",
+    }
+
+    class Meta:
+        model = Invitation
+        fields = ["role", "note"]  # noqa
+        widgets = {"role": forms.RadioSelect}  # noqa
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["role"].choices = list(self.ROLE_LABELS.items())
+        self.fields["role"].initial = Role.VIEWER

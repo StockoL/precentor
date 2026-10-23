@@ -1,10 +1,17 @@
 from django.conf import settings
 from django.contrib.auth import login
 from django.shortcuts import redirect, render
-from django.views.generic import CreateView, FormView
+from django.urls import reverse
+from django.views.generic import CreateView, DetailView, FormView
 
-from .forms import JoinForm, SignUpForm
+from .forms import InvitationForm, JoinForm, SignUpForm
+from .mixins import OrganisationScopedMixin, RoleRequiredMixin
 from .models import Invitation
+from .permissions import can_manage_organisation
+
+# Where a new invitation's secret waits in the owner's session between
+# making it and seeing its link, which happens once.
+NEW_INVITATION = "new_invitation"
 
 
 class SignUpView(CreateView):
@@ -59,3 +66,39 @@ class JoinView(FormView):
             return self.gone()
         login(self.request, user)
         return redirect(settings.LOGIN_REDIRECT_URL)
+
+
+class InvitationCreateView(RoleRequiredMixin, FormView):
+    """The owner invites someone. The link is shown on the next page, after
+    a redirect, so refreshing can't quietly make a second invitation."""
+
+    permission = can_manage_organisation
+    form_class = InvitationForm
+    template_name = "accounts/invitation_form.html"
+
+    def form_valid(self, form):
+        invitation, token = Invitation.make(
+            organisation=self.request.organisation,
+            role=form.cleaned_data["role"],
+            note=form.cleaned_data["note"],
+            created_by=self.request.user,
+        )
+        self.request.session[NEW_INVITATION] = {"pk": invitation.pk, "token": token}
+        return redirect("members:invitation_link", pk=invitation.pk)
+
+
+class InvitationLinkView(RoleRequiredMixin, OrganisationScopedMixin, DetailView):
+    """Shows a new invitation's link, once: the secret leaves the session as
+    it's shown, and only its fingerprint is kept anywhere."""
+
+    permission = can_manage_organisation
+    model = Invitation
+    context_object_name = "invitation"
+    template_name = "accounts/invitation_link.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        waiting = self.request.session.pop(NEW_INVITATION, None)
+        if waiting and waiting["pk"] == self.object.pk:
+            context["link"] = self.request.build_absolute_uri(reverse("join", args=[waiting["token"]]))
+        return context
