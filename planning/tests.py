@@ -1107,3 +1107,38 @@ class PlanningForOneChurchTests(TestCase):
         )
         self.assertEqual(response.status_code, 400)
         self.assertFalse(our_slot.pieces.exists())
+
+
+class GettingStartedTests(TestCase):
+    """A new church's Terms page offers first steps until it has a term or a score."""
+
+    def page(self, role):
+        self.client.force_login(make_user(role))
+        return self.client.get("/")
+
+    def test_a_conductor_sees_every_step(self):
+        response = self.page("conductor")
+        self.assertContains(response, "Getting started")
+        self.assertContains(response, 'href="/settings/"')
+        self.assertContains(response, 'href="/library/add/"')
+        self.assertContains(response, 'href="/terms/add/">Create a term')
+
+    def test_each_role_sees_only_what_it_can_do(self):
+        response = self.page("librarian")
+        self.assertContains(response, 'href="/library/add/"')
+        self.assertNotContains(response, 'href="/settings/"')
+        self.assertNotContains(response, 'href="/terms/add/">Create a term')
+        response = self.page("viewer")
+        self.assertContains(response, "once your conductor sets them up")
+        self.assertNotContains(response, 'href="/library/add/"')
+
+    def test_it_goes_once_there_is_a_score_or_a_term(self):
+        score = make_score()
+        self.assertNotContains(self.page("conductor"), "Getting started")
+        score.delete()
+        make_term()
+        self.assertNotContains(self.page("conductor"), "Getting started")
+
+    def test_another_churchs_music_doesnt_count(self):
+        make_score(organisation=make_organisation("St Elsewhere"))
+        self.assertContains(self.page("conductor"), "Getting started")

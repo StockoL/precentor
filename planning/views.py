@@ -27,6 +27,7 @@ from comments.forms import CommentForm
 from comments.models import Comment
 from comments.utils import attach_reply_forms
 from core.models import SiteConfig
+from library.models import Score
 from precentor_project.mixins import DeletePageMixin
 from precentor_project.utils import ajax_or_redirect
 
@@ -123,6 +124,9 @@ class TermListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
             key=lambda t: t.start_date,
             reverse=True,
         )
+        # A church with no terms and no music yet gets a few first steps
+        # instead; they go of their own accord once there's something.
+        context["getting_started"] = not terms and not own(Score, self.request).exists()
         return context
 
     @staticmethod

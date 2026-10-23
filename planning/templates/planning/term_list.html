@@ -17,6 +17,26 @@
         <li>{% include "planning/_term_card.html" %}</li>
         {% endfor %}
     </ul>
+    {% elif getting_started %}
+    <section class="empty-state flow" aria-labelledby="getting-started">
+        <h2 id="getting-started">Getting started</h2>
+        {% if can.plan or can.edit_library %}
+        <p>Precentor is ready for {{ request.organisation.name }}. A few first steps:</p>
+        <ol class="flow">
+            {% if can.manage_settings %}
+            <li><a href="{% url 'core:site_config_update' %}">Settings</a>: your church's name and crest for the music list, and your national calendar.</li>
+            {% endif %}
+            {% if can.edit_library %}
+            <li><a href="{% url 'library:score_create' %}">Add a score</a> to the library.</li>
+            {% endif %}
+            {% if can.plan %}
+            <li><a href="{% url 'planning:term_create' %}">Create a term</a>, such as Michaelmas 2026, and plan its services.</li>
+            {% endif %}
+        </ol>
+        {% else %}
+        <p>Nothing has been planned yet. Terms and their music will appear here once your conductor sets them up.</p>
+        {% endif %}
+    </section>
     {% elif not past_terms %}
     <div class="empty-state flow">
         <p>No terms yet. A term holds a run of services and their music, such as Michaelmas 2026.</p>
