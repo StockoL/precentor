@@ -360,7 +360,7 @@ class SlotOrderBrowserTest(PlaywrightTestCase):
 
     def order(self):
         return self.page.eval_on_selector_all(
-            "#roles-list > .role-block summary", "els => els.map(el => el.textContent.trim().replace(/^\W+/, ''))"
+            "#roles-list > .role-block summary", "els => els.map(el => el.textContent.trim().replace(/^\\W+/, ''))"
         )
 
     def test_move_buttons_reorder_without_a_reload_and_keep_focus(self):

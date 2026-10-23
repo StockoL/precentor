@@ -8,13 +8,11 @@ section 4.
 """
 
 import json
-from datetime import date
 
 from django.test import TestCase
 
 from .calendar import resolve_year
 from .calendar_data import ROMCAL_DIR, load_calendar_files
-from .models import LiturgicalOccasion
 
 # Days where Precentor and romcal keep different celebrations:
 # {day: ([Precentor's celebration], [romcal's])}. Holy Thursday, where

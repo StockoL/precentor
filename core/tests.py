@@ -135,7 +135,6 @@ class CrestProcessingTests(TestCase):
             process_logo_image(self.upload((400, 120)))
 
 
-
 class SettingsAccessTests(TestCase):
     url = "/settings/"
 
