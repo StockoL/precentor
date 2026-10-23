@@ -2,8 +2,10 @@ from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
-from django.urls import reverse
-from django.views.generic import CreateView, DetailView, FormView, ListView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView
+
+from precentor_project.mixins import DeletePageMixin
 
 from .forms import InvitationForm, JoinForm, SignUpForm
 from .mixins import OrganisationScopedMixin, RoleRequiredMixin
@@ -129,3 +131,20 @@ class MemberListView(LoginRequiredMixin, ListView):
         if can_manage_organisation(self.request.user):
             context["invitations"] = Invitation.usable().for_organisation(self.request.organisation)
         return context
+
+
+class InvitationCancelView(RoleRequiredMixin, OrganisationScopedMixin, DeletePageMixin, DeleteView):
+    """The owner cancels an invitation, which simply deletes it: its link
+    then gets the same "no longer works" page as any other."""
+
+    permission = can_manage_organisation
+    model = Invitation
+    context_object_name = "invitation"
+    template_name = "accounts/invitation_confirm_cancel.html"
+    success_url = reverse_lazy("members:member_list")
+    gone_url = success_url
+    gone_message = "That invitation has already been used or cancelled."
+
+    def get_queryset(self):
+        # One that's been used is the record of who joined, so it stays.
+        return super().get_queryset().filter(used_at__isnull=True)

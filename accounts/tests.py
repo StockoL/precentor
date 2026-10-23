@@ -789,3 +789,47 @@ class MembersPageTests(TestCase):
         make_superuser()
         response = self.page(make_superuser(email="root@example.com"))
         self.assertEqual(list(response.context["members"]), [])
+
+
+class CancelInvitationTests(TestCase):
+    def setUp(self):
+        from .models import Invitation
+
+        self.church = make_organisation("St Cecilia's")
+        self.owner = User.objects.create_user(
+            email="owner@example.com", organisation=self.church, role="conductor", is_owner=True
+        )
+        self.client.force_login(self.owner)
+        self.invitation, self.token = Invitation.make(
+            organisation=self.church, role="viewer", created_by=self.owner, note="Ben"
+        )
+        self.url = f"/members/invitations/{self.invitation.pk}/cancel/"
+
+    def test_the_owner_confirms_and_the_link_stops_working(self):
+        from .models import Invitation
+
+        self.assertContains(self.client.get(self.url), "Cancel the invitation for Ben?")
+        response = self.client.post(self.url)
+        self.assertRedirects(response, "/members/")
+        self.assertIsNone(Invitation.find(self.token))
+        self.client.logout()
+        self.assertContains(self.client.get(f"/join/{self.token}/"), "no longer works", status_code=404)
+
+    def test_each_waiting_invitation_offers_it(self):
+        self.assertContains(self.client.get("/members/"), f'href="{self.url}"')
+
+    def test_a_used_one_is_kept_as_the_record(self):
+        self.invitation.use(make_user(organisation=self.church))
+        response = self.client.post(self.url, follow=True)
+        self.assertContains(response, "already been used or cancelled")
+        self.assertTrue(self.invitation.__class__.objects.filter(pk=self.invitation.pk).exists())
+
+    def test_only_the_owner_and_only_their_own(self):
+        from .models import Invitation
+
+        self.client.force_login(make_user("conductor", organisation=self.church))
+        self.assertEqual(self.client.post(self.url).status_code, 403)
+        self.client.force_login(self.owner)
+        theirs, _ = Invitation.make(organisation=make_organisation("St Elsewhere"), role="viewer", created_by=None)
+        self.client.post(f"/members/invitations/{theirs.pk}/cancel/")
+        self.assertTrue(Invitation.objects.filter(pk=theirs.pk).exists())

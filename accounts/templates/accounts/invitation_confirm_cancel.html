@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Cancel invitation — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Cancel the invitation{% if invitation.note %} for {{ invitation.note }}{% endif %}?</h1>
+    <p>Its link will stop working. You can invite them again with a new one.</p>
+    <div class="cluster">
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn-danger" type="submit">Yes, cancel it</button>
+        </form>
+        <a class="btn-ghost" href="{% url 'members:member_list' %}">Keep it</a>
+    </div>
+</div>
+{% endblock %}

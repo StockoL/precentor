@@ -31,6 +31,7 @@
                 <p><strong>{{ invitation.note|default:"Invitation" }}</strong></p>
                 <p class="list-row__meta">{{ invitation.get_role_display }} · link works until {{ invitation.expires_at|date:"j F" }}</p>
             </div>
+            <a class="btn-danger" href="{% url 'members:invitation_cancel' invitation.pk %}">Cancel<span class="visually-hidden"> the invitation for {{ invitation.note|default:"this person" }}</span></a>
         </li>
         {% empty %}
         <li class="empty-state">No invitations waiting. Invite someone and they'll appear here until they join.</li>
