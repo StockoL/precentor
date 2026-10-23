@@ -16,13 +16,14 @@ from .models import Invitation, User
 from .permissions import can_manage_organisation
 
 
-def members_of(request):
-    """The active people in the signed-in person's church. A superuser
-    belongs to none, so has nobody (filtering on an empty organisation
-    would find the superusers)."""
+def members_of(request, active=True):
+    """The people in the signed-in person's church: those who can sign in,
+    or with active=False those who've been removed. A superuser belongs to
+    none, so has nobody (filtering on an empty organisation would find the
+    superusers)."""
     if request.organisation is None:
         return User.objects.none()
-    return User.objects.filter(organisation=request.organisation, is_active=True)
+    return User.objects.filter(organisation=request.organisation, is_active=active)
 
 
 # Where a new invitation's secret waits in the owner's session between
@@ -139,6 +140,7 @@ class MemberListView(LoginRequiredMixin, ListView):
             for member in context["members"]:
                 member.role_form = RoleForm(instance=member, auto_id=f"id_member_{member.pk}_%s")
             context["invitations"] = Invitation.usable().for_organisation(self.request.organisation)
+            context["former_members"] = members_of(self.request, active=False).order_by("name", "email")
         return context
 
 
@@ -195,3 +197,14 @@ class MemberRemoveView(RoleRequiredMixin, DeletePageMixin, DetailView):
         member.save(update_fields=["is_active"])
         messages.success(request, f"{member} has been removed. Their comments stay.")
         return redirect(self.gone_url)
+
+
+@role_required(can_manage_organisation)
+@require_POST
+def restore_member(request, pk):
+    """Bring back someone who was removed, in the role they had."""
+    member = get_object_or_404(members_of(request, active=False), pk=pk)
+    member.is_active = True
+    member.save(update_fields=["is_active"])
+    messages.success(request, f"{member} is back, as a {member.get_role_display()}.")
+    return redirect("members:member_list")

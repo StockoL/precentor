@@ -780,7 +780,7 @@ class MembersPageTests(TestCase):
     def test_someone_removed_isnt_listed(self):
         self.viewer.is_active = False
         self.viewer.save()
-        self.assertNotContains(self.page(self.owner), "Ben Jonson")
+        self.assertNotIn(self.viewer, self.page(self.owner).context["members"])
 
     def test_its_in_everyones_menu(self):
         self.assertContains(self.page(self.viewer), 'href="/members/" aria-current="page">Members</a>')
@@ -904,7 +904,7 @@ class RemoveMemberTests(TestCase):
         self.assertContains(response, "Ben Jonson has been removed. Their comments stay.")
         self.member.refresh_from_db()
         self.assertFalse(self.member.is_active)
-        self.assertNotContains(response, "ben@example.com")
+        self.assertNotIn(self.member, response.context["members"])
 
     def test_their_comments_stay(self):
         from comments.models import Comment
@@ -937,3 +937,45 @@ class RemoveMemberTests(TestCase):
         self.assertEqual(self.client.post(self.url).status_code, 403)
         self.member.refresh_from_db()
         self.assertTrue(self.member.is_active)
+
+
+class RestoreMemberTests(TestCase):
+    def setUp(self):
+        self.church = make_organisation("St Cecilia's")
+        self.owner = User.objects.create_user(
+            email="owner@example.com", organisation=self.church, role="conductor", is_owner=True
+        )
+        self.former = make_user("librarian", organisation=self.church, email="ben@example.com")
+        self.former.is_active = False
+        self.former.save()
+        self.url = f"/members/{self.former.pk}/restore/"
+        self.client.force_login(self.owner)
+
+    def test_the_owner_sees_former_members_and_brings_one_back(self):
+        page = self.client.get("/members/")
+        self.assertContains(page, "Former members")
+        self.assertContains(page, f'action="{self.url}"')
+        response = self.client.post(self.url, follow=True)
+        self.assertContains(response, "ben@example.com is back, as a Librarian.")
+        self.former.refresh_from_db()
+        self.assertTrue(self.former.is_active)
+        self.assertNotContains(response, "Former members")
+        self.assertTrue(self.client_class().login(username="ben@example.com", password="testpass123"))
+
+    def test_the_section_only_appears_when_someone_has_left(self):
+        self.client.post(self.url)
+        self.assertNotContains(self.client.get("/members/"), "Former members")
+
+    def test_others_dont_see_it_and_cant_restore(self):
+        self.client.force_login(make_user("conductor", organisation=self.church))
+        self.assertNotContains(self.client.get("/members/"), "Former members")
+        self.assertEqual(self.client.post(self.url).status_code, 403)
+
+    def test_only_by_post_and_only_the_churchs_own(self):
+        self.assertEqual(self.client.get(self.url).status_code, 405)
+        theirs = make_user("viewer", organisation=make_organisation("St Elsewhere"))
+        theirs.is_active = False
+        theirs.save()
+        self.assertEqual(self.client.post(f"/members/{theirs.pk}/restore/").status_code, 404)
+        theirs.refresh_from_db()
+        self.assertFalse(theirs.is_active)

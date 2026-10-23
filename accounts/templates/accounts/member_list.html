@@ -50,6 +50,25 @@
         <li class="empty-state">No invitations waiting. Invite someone and they'll appear here until they join.</li>
         {% endfor %}
     </ul>
+
+    {% if former_members %}
+    <h2>Former members</h2>
+    <p>They can't sign in. Restoring brings them back in the role they had.</p>
+    <ul role="list" class="flow" style="--flow-space: var(--spacing-xs);">
+        {% for member in former_members %}
+        <li class="list-row list-row--wrap">
+            <div class="flow" style="--flow-space: var(--spacing-3xs);">
+                <p><strong>{{ member.name|default:member.email }}</strong></p>
+                <p class="list-row__meta">{{ member.get_role_display }} · {{ member.email }}</p>
+            </div>
+            <form method="post" action="{% url 'members:restore' member.pk %}">
+                {% csrf_token %}
+                <button class="btn-ghost" type="submit">Restore<span class="visually-hidden"> {{ member }}</span></button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     {% endif %}
 </div>
 {% endblock %}
