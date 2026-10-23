@@ -1068,6 +1068,47 @@ development database:
    place of the 404 page, so for Figure 17 the script renders the page
    with `DEBUG` off through Django's test client and photographs that.
 
+## 15. Features and CRUD
+
+Each cell names the page, or the URL name in that app's `urls.py`, that
+does it. Every page is limited to the signed-in person's own church, and
+the role column in §2 says who may use each one.
+
+| Model                       | Create                                                    | Read                                               | Update                                                                                          | Delete                                                        | Locate                                                                     |
+| --------------------------- | --------------------------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Organisation                | Sign-up page (`signup`)                                   | Its name on every page and the music list          | Church name on Settings (`site_config_update`)                                                  | not available (admin only)                                    | not needed: everyone sees only their own                                   |
+| User                        | Joining by invitation (`join`); sign-up for the owner     | Members page (`member_list`)                       | Role (`change_role`), owner (`make_owner`), password by reset link (`reset_link`)               | Removed, not deleted (`remove`), and brought back (`restore`) | Members page                                                               |
+| Invitation                  | Invite someone (`invite`)                                 | Link shown once (`invitation_link`); Members page  | not available (cancel and make another)                                                         | Cancel (`invitation_cancel`)                                  | Members page, "Waiting to join"                                            |
+| Score                       | Add score (`score_create`)                                | Library (`score_list`), score page (`score_detail`) | Edit (`score_update`)                                                                          | Delete, after a confirmation (`score_delete`)                 | Search box, Language, Voicing, Suitable-for filters and sortable columns   |
+| Term                        | New term (`term_create`)                                  | Terms page (`term_list`), term page (`term_detail`) | Edit (`term_update`)                                                                           | Delete, after a confirmation (`term_delete`)                  | Terms page, current and upcoming first, past folded away                   |
+| Service                     | New service (`service_create`), occasion suggested from the date | Service page (`service_detail`), term page  | Edit (`service_update`)                                                                         | Delete, after a confirmation (`service_delete`)               | Term page in date order; previous and next links on each service           |
+| Notice (`TermMarker`)       | New notice (`marker_create`)                              | Term page and music list                           | Edit (`marker_update`)                                                                          | Delete (`marker_delete`)                                      | Term page                                                                  |
+| Slot (`ServiceRole`)        | Add a slot (`add_role`) or from a template (`apply_template`) | Service page                                   | Move (`move_slot`), drag to reorder (`reorder_slots`), mark N/A when adding                     | Remove (`remove_slot`), asking first if it has pieces         | Service page                                                               |
+| Piece (`RolePiece`)         | Propose a piece (`add_piece`)                             | Service page, score page history, music list       | Confirm and unconfirm (`toggle_confirm`)                                                        | not available on its own (removed with its slot)              | Service page; the score page lists where each score was used               |
+| Slot template               | New template (`slot_template_create`)                     | Templates page (`slot_template_list`)              | Edit (`slot_template_update`)                                                                   | Delete (`slot_template_delete`)                               | Templates page; buttons on each service                                    |
+| Use type                    | Typed on the score form                                   | Score page; Suitable-for filter                    | not available                                                                                   | not available                                                 | Library filter                                                             |
+| Comment                     | Comment or reply (`add_comment`)                          | Inbox (`inbox`); each term, service and piece      | Close and reopen (`toggle_close`); the text can't be edited                                     | Delete a closed thread (`delete_comment`)                     | Inbox of open threads; the count in the menu                               |
+| Settings (`SiteConfig`)     | Made with the church                                      | Settings page; the music list                      | Settings (`site_config_update`)                                                                 | not available                                                 | not needed: one per church                                                 |
+| Liturgical occasion, season | Loaded by `manage.py load_calendar`                       | Service pages, occasion menus, the music list      | not available (shared reference data)                                                           | not available                                                 | The service form suggests the day's occasions from its date                |
+
+### Validation and feedback
+
+- **Form errors** appear beside the field they belong to, and Django
+  marks that field `aria-invalid`, which screen readers announce and the
+  styles outline in red. Forms check what the database would refuse, such
+  as a template name already used in the church or an address already
+  registered, so the message is plain rather than a server error.
+- **Success and warning messages** appear after an action, such as
+  "Ben Jonson is now a Librarian." or "That invitation has already been
+  used or cancelled.", shown at the top of the next page.
+- **Deleting asks first.** Scores, terms, services, notices, templates,
+  invitations and members each have a confirmation page. Removing a slot
+  that has pieces asks in a dialog with JavaScript, or on a page
+  without. Going Back to a confirmation page for something already deleted leads
+  to its list with a message, not an error.
+- **Permissions** give a "Not available to you" page (403) that says
+  why, and another church's records give "Page not found" (404).
+
 ---
 
 _The overhaul is recorded phase by phase in
