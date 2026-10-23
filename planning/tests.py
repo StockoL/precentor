@@ -1012,3 +1012,49 @@ class PlanningOrganisationTests(TestCase):
         self.client.post("/templates/add/", {"name": "Compline", "slot_names": "Nunc dimittis"})
         self.assertEqual(Term.objects.get(name="Advent").organisation, church)
         self.assertEqual(SlotTemplate.objects.get(name="Compline").organisation, church)
+
+
+class PlanningForOneChurchTests(TestCase):
+    """A church sees and changes only its own terms, services, notices and
+    templates. Another church's are simply not found."""
+
+    def setUp(self):
+        self.ours, theirs = make_organisation("St Cecilia's"), make_organisation("St Elsewhere")
+        self.our_term = make_term(name="Our Lent", organisation=self.ours)
+        self.their_term = make_term(name="Their Lent", organisation=theirs)
+        self.their_service = Service.objects.create(term=self.their_term, date=date(2026, 1, 11), service_type="Mass")
+        self.their_notice = TermMarker.objects.create(term=self.their_term, date=date(2026, 2, 16), text="Half term")
+        self.our_template = make_slot_template(name="Mass", organisation=self.ours)
+        self.their_template = make_slot_template(name="Vespers", organisation=theirs)
+        self.client.force_login(make_user("conductor", organisation=self.ours))
+
+    def test_the_lists_show_only_ours(self):
+        self.assertEqual(list(self.client.get("/").context["terms"]), [self.our_term])
+        self.assertEqual(list(self.client.get("/templates/").context["slot_templates"]), [self.our_template])
+
+    def test_another_churchs_pages_are_not_found(self):
+        for url in (
+            f"/terms/{self.their_term.pk}/", f"/terms/{self.their_term.pk}/edit/",
+            f"/services/{self.their_service.pk}/", f"/services/{self.their_service.pk}/edit/",
+            f"/markers/{self.their_notice.pk}/edit/", f"/templates/{self.their_template.pk}/edit/",
+            f"/terms/{self.their_term.pk}/services/add/", f"/terms/{self.their_term.pk}/markers/add/",
+        ):
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_nothing_of_theirs_can_be_changed_or_deleted(self):
+        self.client.post(f"/terms/{self.their_term.pk}/edit/", {"name": "Changed"})
+        self.client.post(f"/terms/{self.their_term.pk}/services/add/", {"date": "2026-01-18", "service_type": "Mass"})
+        for url in (f"/services/{self.their_service.pk}/delete/", f"/markers/{self.their_notice.pk}/delete/",
+                    f"/templates/{self.their_template.pk}/delete/", f"/terms/{self.their_term.pk}/delete/"):
+            self.client.post(url)
+        self.their_term.refresh_from_db()
+        self.assertEqual(self.their_term.name, "Their Lent")
+        self.assertEqual(self.their_term.services.count(), 1)
+        self.assertTrue(TermMarker.objects.filter(pk=self.their_notice.pk).exists())
+        self.assertTrue(type(self.their_template).objects.filter(pk=self.their_template.pk).exists())
+
+    def test_the_service_page_offers_only_our_templates(self):
+        our_service = Service.objects.create(term=self.our_term, date=date(2026, 1, 11), service_type="Mass")
+        response = self.client.get(our_service.get_absolute_url())
+        self.assertEqual(response.context["slot_templates"], [self.our_template])

@@ -12,3 +12,9 @@ class OrganisationQuerySet(models.QuerySet):
 
     def for_organisation(self, organisation):
         return self.filter(organisation=organisation)
+
+
+def own(model, request):
+    """The request's church's own rows of a model, for looking one up from
+    an address: get_object_or_404(own(Term, request), pk=term_pk)."""
+    return model.objects.for_organisation(request.organisation)

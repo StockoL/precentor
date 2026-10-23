@@ -20,8 +20,9 @@ from django.views.generic import (
 )
 
 from accounts.decorators import role_required
-from accounts.mixins import OrganisationCreateMixin, RoleRequiredMixin
+from accounts.mixins import OrganisationCreateMixin, OrganisationScopedMixin, RoleRequiredMixin
 from accounts.permissions import can_plan
+from accounts.querysets import own
 from comments.forms import CommentForm
 from comments.models import Comment
 from comments.utils import attach_reply_forms
@@ -92,7 +93,7 @@ def describe_term(term, today):
         term.next_is_soon = (term.next_service.date - today).days <= SOON_DAYS
 
 
-class TermListView(LoginRequiredMixin, ListView):
+class TermListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
     model = Term
     context_object_name = "terms"
     template_name = "planning/term_list.html"
@@ -100,7 +101,7 @@ class TermListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         # Every term's services, slots and pieces in a fixed number of
         # queries, however many there are.
-        return Term.objects.prefetch_related(services_prefetch())
+        return super().get_queryset().prefetch_related(services_prefetch())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -154,11 +155,11 @@ class TermListView(LoginRequiredMixin, ListView):
         return counts
 
 
-class TermDetailView(LoginRequiredMixin, DetailView):
+class TermDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):
     model = Term
 
     def get_queryset(self):
-        return Term.objects.prefetch_related(services_prefetch())
+        return super().get_queryset().prefetch_related(services_prefetch())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -178,12 +179,12 @@ class TermCreateView(PlanningRequiredMixin, OrganisationCreateMixin, CreateView)
     form_class = TermForm
 
 
-class TermUpdateView(PlanningRequiredMixin, UpdateView):
+class TermUpdateView(PlanningRequiredMixin, OrganisationScopedMixin, UpdateView):
     model = Term
     form_class = TermForm
 
 
-class TermDeleteView(PlanningRequiredMixin, DeletePageMixin, DeleteView):
+class TermDeleteView(PlanningRequiredMixin, OrganisationScopedMixin, DeletePageMixin, DeleteView):
     model = Term
     success_url = reverse_lazy("planning:term_list")
     gone_url = success_url
@@ -199,7 +200,7 @@ class ServiceCreateView(PlanningRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["term"] = get_object_or_404(Term, pk=self.kwargs["term_pk"])
+        context["term"] = get_object_or_404(own(Term, self.request), pk=self.kwargs["term_pk"])
         # The suggestions use the church's national calendar.
         context["site_config"] = SiteConfig.get_solo()
         return context
@@ -208,11 +209,11 @@ class ServiceCreateView(PlanningRequiredMixin, CreateView):
         # The new service belongs to the term from the start, so the form
         # can name the term's calendar.
         kwargs = super().get_form_kwargs()
-        kwargs["instance"] = Service(term=get_object_or_404(Term, pk=self.kwargs["term_pk"]))
+        kwargs["instance"] = Service(term=get_object_or_404(own(Term, self.request), pk=self.kwargs["term_pk"]))
         return kwargs
 
 
-class ServiceDetailView(LoginRequiredMixin, DetailView):
+class ServiceDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):
     model = Service
     # The slots and pieces come with the service, so the status badge and
     # every slot read the same rows: a fixed number of queries however
@@ -234,7 +235,7 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
         # Each template knows whether using it would replace the slots, so
         # its button can ask first (service-detail.js).
         has_slots = bool(self.object.roles.all())
-        templates = list(SlotTemplate.objects.all())
+        templates = list(SlotTemplate.objects.for_organisation(self.request.organisation))
         for template in templates:
             template.replaces_slots = has_slots and self.object.slot_template_id != template.pk
         context["slot_templates"] = templates
@@ -257,7 +258,7 @@ class ServiceDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class ServiceUpdateView(PlanningRequiredMixin, UpdateView):
+class ServiceUpdateView(PlanningRequiredMixin, OrganisationScopedMixin, UpdateView):
     model = Service
     form_class = ServiceForm
 
@@ -271,7 +272,7 @@ class ServiceUpdateView(PlanningRequiredMixin, UpdateView):
 # --- Slot templates ---
 
 
-class SlotTemplateListView(PlanningRequiredMixin, ListView):
+class SlotTemplateListView(PlanningRequiredMixin, OrganisationScopedMixin, ListView):
     model = SlotTemplate
     context_object_name = "slot_templates"
 
@@ -305,12 +306,12 @@ class SlotTemplateCreateView(PlanningRequiredMixin, OrganisationCreateMixin, Ret
     form_class = SlotTemplateForm
 
 
-class SlotTemplateUpdateView(PlanningRequiredMixin, ReturnToServiceMixin, UpdateView):
+class SlotTemplateUpdateView(PlanningRequiredMixin, OrganisationScopedMixin, ReturnToServiceMixin, UpdateView):
     model = SlotTemplate
     form_class = SlotTemplateForm
 
 
-class SlotTemplateDeleteView(PlanningRequiredMixin, DeletePageMixin, DeleteView):
+class SlotTemplateDeleteView(PlanningRequiredMixin, OrganisationScopedMixin, DeletePageMixin, DeleteView):
     model = SlotTemplate
     success_url = reverse_lazy("planning:slot_template_list")
     gone_url = success_url
@@ -354,7 +355,7 @@ def apply_template(request, service_pk, template_pk):
     return redirect(service.get_absolute_url())
 
 
-class ServiceDeleteView(PlanningRequiredMixin, DeletePageMixin, DeleteView):
+class ServiceDeleteView(PlanningRequiredMixin, OrganisationScopedMixin, DeletePageMixin, DeleteView):
     model = Service
     gone_url = reverse_lazy("planning:term_list")
     gone_message = "That service has already been deleted."
@@ -561,18 +562,18 @@ class TermMarkerCreateView(PlanningRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["term"] = get_object_or_404(Term, pk=self.kwargs["term_pk"])
+        context["term"] = get_object_or_404(own(Term, self.request), pk=self.kwargs["term_pk"])
         return context
 
     def form_valid(self, form):
-        form.instance.term = get_object_or_404(Term, pk=self.kwargs["term_pk"])
+        form.instance.term = get_object_or_404(own(Term, self.request), pk=self.kwargs["term_pk"])
         return super().form_valid(form)
 
     def get_success_url(self):
         return self.object.term.get_absolute_url()
 
 
-class TermMarkerUpdateView(PlanningRequiredMixin, UpdateView):
+class TermMarkerUpdateView(PlanningRequiredMixin, OrganisationScopedMixin, UpdateView):
     model = TermMarker
     form_class = TermMarkerForm
 
@@ -585,7 +586,7 @@ class TermMarkerUpdateView(PlanningRequiredMixin, UpdateView):
         return self.object.term.get_absolute_url()
 
 
-class TermMarkerDeleteView(PlanningRequiredMixin, DeletePageMixin, DeleteView):
+class TermMarkerDeleteView(PlanningRequiredMixin, OrganisationScopedMixin, DeletePageMixin, DeleteView):
     model = TermMarker
     gone_url = reverse_lazy("planning:term_list")
     gone_message = "That notice has already been deleted."

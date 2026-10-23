@@ -386,3 +386,16 @@ class ForOrganisationTests(TestCase):
         make_score(title="Ave verum", organisation=theirs)
         self.assertEqual(list(Score.objects.for_organisation(ours)), [mine])
         self.assertFalse(Score.objects.for_organisation(None).exists())
+
+    def test_own_gives_the_requests_churchs_rows(self):
+        from library.models import Score
+        from precentor_project.testing import make_score
+
+        from .querysets import own
+
+        ours = make_organisation("St Cecilia's")
+        mine = make_score(organisation=ours)
+        make_score(organisation=make_organisation("St Elsewhere"))
+        request = RequestFactory().get("/")
+        request.organisation = ours
+        self.assertEqual(list(own(Score, request)), [mine])
