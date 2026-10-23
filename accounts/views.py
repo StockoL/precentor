@@ -1,9 +1,15 @@
+from datetime import timedelta
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from django.views.decorators.http import require_POST
 from django.views.generic import CreateView, DeleteView, DetailView, FormView, ListView
 
@@ -228,3 +234,27 @@ class MakeOwnerView(RoleRequiredMixin, DeletePageMixin, DetailView):
         request.user.hand_ownership_to(successor)
         messages.success(request, f"{successor} is now the owner.")
         return redirect(self.gone_url)
+
+
+@role_required(can_manage_organisation)
+@require_POST
+def reset_link(request, pk):
+    """
+    A link for a member to set a new password, which the owner passes on
+    by hand, as Precentor sends no email. It's Django's own reset link:
+    signed, so nothing is stored, and it stops working once it's used,
+    once they sign in, or after PASSWORD_RESET_TIMEOUT (three days).
+    """
+    member = get_object_or_404(members_of(request).exclude(pk=request.user.pk), pk=pk)
+    path = reverse(
+        "password_reset_confirm",
+        kwargs={
+            "uidb64": urlsafe_base64_encode(force_bytes(member.pk)),
+            "token": default_token_generator.make_token(member),
+        },
+    )
+    return render(request, "accounts/reset_link.html", {
+        "member": member,
+        "link": request.build_absolute_uri(path),
+        "expires_at": timezone.now() + timedelta(seconds=settings.PASSWORD_RESET_TIMEOUT),
+    })

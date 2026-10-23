@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Reset link for {{ member }} — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Reset link for {{ member }}</h1>
+    <p>Send this to {{ member }} yourself. It lets them choose a new password, and works once, until {{ expires_at|date:"j F, H:i" }}. It also stops working if they sign in first.</p>
+    <div class="copy-link">
+        <label for="reset-link">Link</label>
+        <input id="reset-link" type="text" value="{{ link }}" readonly>
+    </div>
+    <p>Anyone with this link can set {{ member }}'s password, so send it only to them.</p>
+    <p><a href="{% url 'members:member_list' %}">Back to members</a></p>
+</div>
+{% endblock %}

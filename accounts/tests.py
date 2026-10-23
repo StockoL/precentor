@@ -1047,3 +1047,47 @@ class HandOwnershipTests(TestCase):
     def test_only_the_owner(self):
         self.client.force_login(self.librarian)
         self.assertEqual(self.client.post(self.url).status_code, 403)
+
+
+class ResetLinkTests(TestCase):
+    def setUp(self):
+        self.church = make_organisation("St Cecilia's")
+        self.owner = User.objects.create_user(
+            email="owner@example.com", organisation=self.church, role="conductor", is_owner=True
+        )
+        self.member = make_user("librarian", organisation=self.church, email="ben@example.com")
+        self.url = f"/members/{self.member.pk}/reset-link/"
+        self.client.force_login(self.owner)
+
+    def link(self):
+        import re
+
+        response = self.client.post(self.url)
+        return re.search(r'value="http://testserver(/accounts/reset/[^"]+)"', response.content.decode()).group(1)
+
+    def test_the_link_lets_them_choose_a_new_password_once(self):
+        path = self.link()
+        member_browser = self.client_class()
+        # Django swaps the token for a session marker, then shows the form.
+        form_page = member_browser.get(path, follow=True)
+        self.assertContains(form_page, "new_password1")
+        member_browser.post(form_page.redirect_chain[-1][0], {
+            "new_password1": "a fresh cantor sings", "new_password2": "a fresh cantor sings",
+        })
+        self.assertTrue(self.client_class().login(username="ben@example.com", password="a fresh cantor sings"))
+        # Used once, it no longer works.
+        again = self.client_class().get(path, follow=True)
+        self.assertNotContains(again, "new_password1")
+
+    def test_each_member_but_the_owner_has_the_button(self):
+        page = self.client.get("/members/")
+        self.assertContains(page, f'action="{self.url}"')
+        self.assertNotContains(page, f'action="/members/{self.owner.pk}/reset-link/"')
+
+    def test_only_the_owner_only_by_post_and_only_their_own(self):
+        self.assertEqual(self.client.get(self.url).status_code, 405)
+        self.assertEqual(self.client.post(f"/members/{self.owner.pk}/reset-link/").status_code, 404)
+        stranger = make_user("viewer", organisation=make_organisation("St Elsewhere"))
+        self.assertEqual(self.client.post(f"/members/{stranger.pk}/reset-link/").status_code, 404)
+        self.client.force_login(make_user("conductor", organisation=self.church))
+        self.assertEqual(self.client.post(self.url).status_code, 403)

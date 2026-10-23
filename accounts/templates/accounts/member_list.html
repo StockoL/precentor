@@ -26,6 +26,12 @@
                     {{ member.role_form.role }}
                     <button class="btn-ghost" type="submit">Change role<span class="visually-hidden"> for {{ member }}</span></button>
                 </form>
+                {% if member != user %}
+                <form method="post" action="{% url 'members:reset_link' member.pk %}">
+                    {% csrf_token %}
+                    <button class="btn-ghost" type="submit">Reset link<span class="visually-hidden"> for {{ member }}</span></button>
+                </form>
+                {% endif %}
                 {% if not member.is_owner %}
                 {% if member.role != "viewer" %}
                 <a class="btn-ghost" href="{% url 'members:make_owner' member.pk %}">Make owner<span class="visually-hidden">: {{ member }}</span></a>
