@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, BaseUserCreationForm, SetPasswordForm
+from django.contrib.auth.forms import AuthenticationForm, BaseUserCreationForm, PasswordChangeForm, SetPasswordForm
 from django.db import transaction
 
 from .models import Invitation, Organisation, Role, User
@@ -158,4 +158,13 @@ class NewPasswordForm(SetPasswordForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        plain_password_fields(self, "new_password1", "new_password2", label="New password")
+
+
+class ChangePasswordForm(PasswordChangeForm):
+    """Changing your own password, with the same plain help as sign-up."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["old_password"].label = "Current password"
         plain_password_fields(self, "new_password1", "new_password2", label="New password")

@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
-from accounts.forms import EmailAuthenticationForm, NewPasswordForm
+from accounts.forms import ChangePasswordForm, EmailAuthenticationForm, NewPasswordForm
 from accounts.views import JoinView, SignUpView
 
 urlpatterns = [
@@ -36,7 +36,11 @@ urlpatterns = [
     # whole: its "email me a reset link" pages are left out, as Precentor
     # sends no email. The owner makes reset links instead (accounts).
     path("accounts/logout/", auth_views.LogoutView.as_view(), name="logout"),
-    path("accounts/password_change/", auth_views.PasswordChangeView.as_view(), name="password_change"),
+    path(
+        "accounts/password_change/",
+        auth_views.PasswordChangeView.as_view(form_class=ChangePasswordForm),
+        name="password_change",
+    ),
     path(
         "accounts/password_change/done/",
         auth_views.PasswordChangeDoneView.as_view(),

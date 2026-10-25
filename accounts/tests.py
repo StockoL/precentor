@@ -1130,3 +1130,36 @@ class PasswordPagesTests(TestCase):
     def test_logging_out_still_works(self):
         self.client.force_login(make_user())
         self.assertRedirects(self.client.post("/accounts/logout/"), "/", fetch_redirect_response=False)
+
+
+class ChangePasswordTests(TestCase):
+    def setUp(self):
+        self.user = make_user(email="anne@example.com", password="an old cantor sings")
+        self.client.force_login(self.user)
+
+    def test_the_page_is_precentors_own_with_plain_help(self):
+        response = self.client.get("/accounts/password_change/")
+        self.assertTemplateUsed(response, "registration/password_change_form.html")
+        self.assertContains(response, "Current password")
+        self.assertContains(response, "New password again")
+        self.assertContains(response, "At least 8 characters")
+        self.assertNotContains(response, "<li>Your password")
+
+    def test_changing_it_keeps_you_signed_in(self):
+        response = self.client.post("/accounts/password_change/", {
+            "old_password": "an old cantor sings",
+            "new_password1": "a new cantor sings",
+            "new_password2": "a new cantor sings",
+        }, follow=True)
+        self.assertContains(response, "Password changed")
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("a new cantor sings"))
+        self.assertEqual(self.client.get("/").status_code, 200)
+
+    def test_the_current_password_must_be_right(self):
+        response = self.client.post("/accounts/password_change/", {
+            "old_password": "not it",
+            "new_password1": "a new cantor sings",
+            "new_password2": "a new cantor sings",
+        })
+        self.assertIn("old_password", response.context["form"].errors)
