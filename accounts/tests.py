@@ -1163,3 +1163,13 @@ class ChangePasswordTests(TestCase):
             "new_password2": "a new cantor sings",
         })
         self.assertIn("old_password", response.context["form"].errors)
+
+
+class ChangePasswordLinkTests(TestCase):
+    def test_everyone_signed_in_has_the_link_and_it_marks_its_page(self):
+        self.client.force_login(make_user("viewer"))
+        self.assertContains(self.client.get("/"), 'href="/accounts/password_change/">Change password</a>')
+        self.assertContains(
+            self.client.get("/accounts/password_change/"),
+            'href="/accounts/password_change/" aria-current="page">Change password</a>',
+        )

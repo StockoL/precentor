@@ -89,6 +89,7 @@
                         {% if can.manage_settings %}
                         <a href="{% url 'core:site_config_update' %}"{% if nav_current.settings %} aria-current="{{ nav_current.settings }}"{% endif %}>Settings</a>
                         {% endif %}
+                        <a href="{% url 'password_change' %}"{% if request.resolver_match.url_name == "password_change" %} aria-current="page"{% endif %}>Change password</a>
                         <form method="post" action="{% url 'logout' %}">
                             {% csrf_token %}
                             <button type="submit">Log out</button>
