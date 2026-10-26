@@ -1,23 +1,29 @@
+import csv
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, F, ProtectedError
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
     DeleteView,
     DetailView,
+    FormView,
     ListView,
     UpdateView,
 )
 
+from accounts.decorators import role_required
 from accounts.mixins import OrganisationCreateMixin, OrganisationScopedMixin, RoleRequiredMixin
 from accounts.permissions import can_edit_library
 from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 from precentor_project.mixins import DeletePageMixin
 
-from .forms import ScoreForm
-from .models import Score, ScoreQuerySet
+from .forms import ScoreForm, ScoreImportForm
+from .importing import COLUMNS, IMPORT_EXAMPLE, MAX_BYTES, MAX_ROWS, ImportProblem, check_file, save_import
+from .models import Score, ScoreImport, ScoreQuerySet
 
 
 class ScoreListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
@@ -229,3 +235,61 @@ class ScoreDeleteView(LibraryEditRequiredMixin, OrganisationScopedMixin, DeleteP
             )
             return redirect(self.object.get_absolute_url())
         return redirect(self.get_success_url())
+
+
+@role_required(can_edit_library)
+def import_template(request):
+    """The headers of Precentor's import format, as a CSV to fill in. It's
+    made from COLUMNS, so it always matches what the import expects. The
+    byte-order mark at the start makes Excel open it as UTF-8."""
+    response = HttpResponse(content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = 'attachment; filename="precentor-library-template.csv"'
+    response.write("\ufeff")
+    csv.writer(response).writerow([header for header, _, _ in COLUMNS])
+    return response
+
+
+class ScoreImportView(LibraryEditRequiredMixin, FormView):
+    """Upload a spreadsheet. A file that can't work, or has no usable rows,
+    comes back with the reasons; otherwise the scores are saved as one
+    pending import and the result page shows what happened."""
+
+    form_class = ScoreImportForm
+    template_name = "library/score_import.html"
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            columns=COLUMNS, max_rows=MAX_ROWS, example=IMPORT_EXAMPLE, **kwargs
+        )
+
+    def form_valid(self, form):
+        upload = form.cleaned_data["file"]
+        # One byte past the limit is enough to know it's too big.
+        data = upload.read(MAX_BYTES + 1)
+        try:
+            checked = check_file(data, self.request.organisation)
+        except ImportProblem as problem:
+            form.add_error("file", str(problem))
+            return self.form_invalid(form)
+        if not checked.scores:
+            reasons = "; ".join(f"row {number}: {why}" for number, why in checked.skipped[:5])
+            form.add_error("file", f"None of the rows could be imported ({reasons}).")
+            return self.form_invalid(form)
+        batch = save_import(checked, self.request.organisation, self.request.user, upload.name)
+        return redirect("library:score_import_detail", pk=batch.pk)
+
+
+class ScoreImportDetailView(LibraryEditRequiredMixin, OrganisationScopedMixin, DetailView):
+    """What an import brought in: how many scores, the rows skipped and
+    why, likely duplicates, and how many still need a voicing."""
+
+    model = ScoreImport
+    context_object_name = "score_import"
+    template_name = "library/score_import_detail.html"
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            no_voicing=self.object.scores.filter(voicing="").count(),
+            unspecified=ScoreQuerySet.UNSPECIFIED,
+            **kwargs,
+        )

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Import your library — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Import your library from a spreadsheet</h1>
+    <p>Spreadsheets come in all shapes and sizes, and Precentor can't guess what yours means. To bring your library in, put it into Precentor's format first. It takes a few minutes and means the import just works.</p>
+    <ol class="flow">
+        <li><a href="{% url 'library:import_template' %}">Download the template</a>.</li>
+        <li>Copy your details into it, one score per row. Only <strong>Title</strong> and <strong>Composer surname</strong> are needed; leave anything you don't have blank.</li>
+        <li>Save it as a CSV. In Excel: Save As, then CSV UTF-8. In Google Sheets: File, Download, Comma-separated values.</li>
+        <li>Choose the file below and press Import.</li>
+    </ol>
+    <p>Nothing is final. Afterwards you'll see what was added and can keep it or remove the whole import in one go. Whatever you keep, you can edit any score and fill in what's missing at any time. Up to {{ max_rows|floatformat:"g" }} scores at a time.</p>
+
+    <h2>An example</h2>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Example rows">
+        <table class="data-table">
+            <thead>
+                <tr>{% for header, field, required in columns %}<th scope="col">{{ header }}{% if required %} (needed){% endif %}</th>{% endfor %}</tr>
+            </thead>
+            <tbody>
+                {% for row in example %}
+                <tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="flow">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn-primary" type="submit">Import</button>
+    </form>
+</div>
+{% endblock %}

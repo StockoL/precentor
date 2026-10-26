@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Import from {{ score_import.original_filename }} — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    {% with report=score_import.report %}
+    <h1>{{ report.imported }} score{{ report.imported|pluralize }} imported from {{ score_import.original_filename }}</h1>
+    {% if report.read_as_windows_1252 %}
+    <p>The file was saved in an older Excel format, so accented letters may need checking.</p>
+    {% endif %}
+    {% if report.skipped %}
+    <h2>{{ report.skipped|length }} row{{ report.skipped|pluralize }} skipped</h2>
+    <ul>
+        {% for number, why in report.skipped %}<li>Row {{ number }}: {{ why }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+    {% if report.duplicates %}
+    <h2>{{ report.duplicates|length }} look{{ report.duplicates|length|pluralize:"s," }} like scores you already have</h2>
+    <p>They've been imported anyway, as you may have more than one copy or edition.</p>
+    <ul>
+        {% for title in report.duplicates %}<li>{{ title }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+    {% if report.ignored_columns %}
+    <p>These columns weren't recognised and were left out: {{ report.ignored_columns|join:", " }}.</p>
+    {% endif %}
+    {% if no_voicing %}
+    <p>{{ no_voicing }} of them {{ no_voicing|pluralize:"has,have" }} no voicing yet. <a href="{% url 'library:score_list' %}?voicing={{ unspecified }}">See the scores without one</a>.</p>
+    {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}

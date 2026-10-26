@@ -101,3 +101,12 @@ class ScoreForm(forms.ModelForm):
 
             self.save_m2m = save_m2m_and_new_use_types
         return score
+
+
+class ScoreImportForm(forms.Form):
+    """The spreadsheet to import, saved as CSV."""
+
+    file = forms.FileField(
+        label="Your CSV file",
+        widget=forms.ClearableFileInput(attrs={"accept": ".csv,text/csv"}),
+    )

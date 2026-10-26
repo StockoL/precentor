@@ -181,3 +181,65 @@ class SavingTests(TestCase):
         with self.assertRaises(ValueError):
             self.save("Title,Composer surname", ",Byrd")
         self.assertFalse(ScoreImport.objects.exists())
+
+
+class ImportPagesTests(TestCase):
+    def setUp(self):
+        from accounts.testing import make_organisation, make_user
+
+        self.church = make_organisation()
+        self.librarian = make_user("librarian", organisation=self.church)
+        self.client.force_login(self.librarian)
+
+    def upload(self, *lines, name="library.csv"):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        return self.client.post("/library/import/", {"file": SimpleUploadedFile(name, csv_bytes(*lines))}, follow=True)
+
+    def test_the_template_has_every_header_and_opens_in_excel(self):
+        from .importing import COLUMNS
+
+        response = self.client.get("/library/import/template/")
+        self.assertEqual(response["Content-Type"], "text/csv; charset=utf-8")
+        self.assertIn("attachment", response["Content-Disposition"])
+        text = response.content.decode("utf-8")
+        self.assertTrue(text.startswith("\ufeff"))
+        self.assertEqual(text.lstrip("\ufeff").strip(), ",".join(header for header, _, _ in COLUMNS))
+
+    def test_the_page_explains_the_format_with_an_example(self):
+        response = self.client.get("/library/import/")
+        self.assertContains(response, "Download the template")
+        self.assertContains(response, "Title (needed)")
+        self.assertContains(response, "Rorate caeli")
+        self.assertContains(response, 'enctype="multipart/form-data"')
+
+    def test_importing_shows_what_happened(self):
+        response = self.upload(
+            "Title,Composer surname,Voicing,Shelf mark", "Ave verum,Byrd,SATB,3", ",Tallis,,", "Locus iste,Bruckner,,"
+        )
+        self.assertContains(response, "2 scores imported from library.csv")
+        self.assertContains(response, "Row 3: no title")
+        self.assertContains(response, "Shelf mark")
+        self.assertContains(response, "1 of them has no voicing yet")
+        self.assertContains(response, "?voicing=unspecified")
+
+    def test_a_file_that_cant_work_comes_back_with_the_reason(self):
+        from .models import ScoreImport
+
+        response = self.upload("Title,Voicing", "Ave,SATB")
+        self.assertContains(response, "no Composer surname column")
+        response = self.upload("Title,Composer surname", ",Byrd")
+        self.assertContains(response, "None of the rows could be imported (row 2: no title)")
+        self.assertFalse(ScoreImport.objects.exists())
+
+    def test_viewers_cant_import_and_another_churchs_import_isnt_found(self):
+        from accounts.testing import make_organisation, make_user
+
+        from .models import ScoreImport
+
+        theirs = ScoreImport.objects.create(organisation=make_organisation("St Elsewhere"), original_filename="x.csv")
+        self.assertEqual(self.client.get(f"/library/import/{theirs.pk}/").status_code, 404)
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        for url in ("/library/import/", "/library/import/template/"):
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 403)

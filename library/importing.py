@@ -39,6 +39,13 @@ COLUMNS = [
     ("Last sung", "last_sung_manual", False),
 ]
 
+# Three rows for the import page to show as an example, one per column.
+IMPORT_EXAMPLE = [
+    ["Ave verum corpus", "Byrd", "William", "", "", "SATB", "Latin", "24", "Cabinet 1", "4", "2025-06-22"],
+    ["Locus iste", "Bruckner", "Anton", "", "", "SATB", "Latin", "", "", "", ""],
+    ["Rorate caeli", "Anon.", "", "", "", "", "", "", "", "", ""],
+]
+
 MAX_BYTES = 2 * 1024 * 1024
 MAX_ROWS = 5000
 SEPARATORS = (",", ";", "\t")
