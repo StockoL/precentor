@@ -49,3 +49,11 @@ def can_manage_organisation(user):
     """Members, invitations, reset links, ownership, and deleting the
     organisation: the owner's alone, whatever their role."""
     return _role(user) is not None and user.is_owner
+
+
+def can_remove_import(user, score_import):
+    """Removing a pending import as a whole: whoever made it, while they
+    can still edit the library, or any Conductor."""
+    if _has_role(user, "conductor"):
+        return True
+    return can_edit_library(user) and score_import.created_by_id == user.pk

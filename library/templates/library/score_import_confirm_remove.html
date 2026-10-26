@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Remove an import — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Remove the import from {{ score_import.original_filename }}?</h1>
+    <p>This deletes the {{ removing }} score{{ removing|pluralize }} it added, including any changes made to them since.</p>
+    {% if in_use %}
+    <p>{{ in_use }} of its scores {{ in_use|pluralize:"is,are" }} already planned into services, so {{ in_use|pluralize:"it,they" }}'ll be kept.</p>
+    {% endif %}
+    <div class="cluster">
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn-danger" type="submit">Yes, remove them</button>
+        </form>
+        <a class="btn-ghost" href="{% url 'library:score_import_detail' score_import.pk %}">Keep them</a>
+    </div>
+</div>
+{% endblock %}

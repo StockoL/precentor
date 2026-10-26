@@ -279,3 +279,76 @@ class KeepImportTests(TestCase):
         self.assertEqual(self.client.post(self.url).status_code, 404)
         self.client.force_login(make_user("viewer", organisation=self.church))
         self.assertEqual(self.client.post(self.url).status_code, 403)
+
+
+class RemoveImportTests(TestCase):
+    def setUp(self):
+        from accounts.testing import make_organisation, make_user
+
+        from .importing import check_file, save_import
+
+        self.church = make_organisation()
+        self.maker = make_user("librarian", organisation=self.church)
+        checked = check_file(csv_bytes("Title,Composer surname", "Ave verum,Byrd", "Locus iste,Bruckner"), self.church)
+        self.batch = save_import(checked, self.church, self.maker, "library.csv")
+        self.url = f"/library/import/{self.batch.pk}/remove/"
+        self.client.force_login(self.maker)
+
+    def test_who_may_remove_it(self):
+        from accounts.permissions import can_remove_import
+        from accounts.testing import make_user
+
+        cases = {
+            "the librarian who made it": (self.maker, True),
+            "a conductor": (make_user("conductor", organisation=self.church), True),
+            "another librarian": (make_user("librarian", organisation=self.church), False),
+            "a viewer": (make_user("viewer", organisation=self.church), False),
+        }
+        for who, (user, allowed) in cases.items():
+            with self.subTest(who=who):
+                self.assertIs(can_remove_import(user, self.batch), allowed)
+
+    def test_it_asks_first_then_removes_and_says_so(self):
+        from .models import Score, ScoreImport
+
+        page = self.client.get(self.url)
+        self.assertContains(page, "This deletes the 2 scores it added, including any changes made to them since.")
+        self.assertContains(self.client.get(f"/library/import/{self.batch.pk}/"), f'href="{self.url}"')
+        response = self.client.post(self.url, follow=True)
+        self.assertRedirects(response, "/library/")
+        self.assertContains(response, "Removed 2 scores imported from library.csv.")
+        self.assertFalse(Score.objects.exists())
+        self.assertFalse(ScoreImport.objects.exists())
+
+    def test_a_score_already_planned_is_kept_and_the_page_says_so(self):
+        from datetime import date
+
+        from planning.models import RolePiece, Service, ServiceRole
+        from precentor_project.testing import make_term
+
+        from .models import Score
+
+        service = Service.objects.create(term=make_term(organisation=self.church), date=date(2026, 1, 11),
+                                         service_type="Sung Mass")
+        RolePiece.objects.create(service_role=ServiceRole.objects.create(service=service, role_name="Introit"),
+                                 score=Score.objects.get(title="Ave verum"))
+        self.assertContains(self.client.get(self.url), "1 of its scores is already planned into services")
+        response = self.client.post(self.url, follow=True)
+        self.assertContains(response, "Removed 1 score imported from library.csv. 1 is planned into services, so kept.")
+        self.assertEqual(list(Score.objects.values_list("title", flat=True)), ["Ave verum"])
+
+    def test_someone_else_is_refused_and_nothing_goes(self):
+        from accounts.testing import make_user
+
+        from .models import Score
+
+        self.client.force_login(make_user("librarian", organisation=self.church))
+        self.assertEqual(self.client.post(self.url).status_code, 403)
+        self.assertNotContains(self.client.get(f"/library/import/{self.batch.pk}/"), f'href="{self.url}"')
+        self.assertEqual(Score.objects.count(), 2)
+
+    def test_going_back_after_removing_or_keeping_leads_to_the_library(self):
+        self.batch.keep()
+        response = self.client.get(self.url, follow=True)
+        self.assertRedirects(response, "/library/")
+        self.assertContains(response, "That import has already been removed or kept.")

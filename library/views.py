@@ -1,10 +1,12 @@
 import csv
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.db.models import Count, F, ProtectedError
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.defaultfilters import pluralize
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_POST
@@ -19,7 +21,7 @@ from django.views.generic import (
 
 from accounts.decorators import role_required
 from accounts.mixins import OrganisationCreateMixin, OrganisationScopedMixin, RoleRequiredMixin
-from accounts.permissions import can_edit_library
+from accounts.permissions import can_edit_library, can_remove_import
 from accounts.querysets import own
 from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 from precentor_project.mixins import DeletePageMixin
@@ -292,6 +294,7 @@ class ScoreImportDetailView(LibraryEditRequiredMixin, OrganisationScopedMixin, D
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(
+            can_remove=can_remove_import(self.request.user, self.object),
             no_voicing=self.object.scores.filter(voicing="").count(),
             unspecified=ScoreQuerySet.UNSPECIFIED,
             **kwargs,
@@ -308,3 +311,33 @@ def keep_import(request, pk):
     count = score_import.scores.count()
     messages.success(request, f"Kept {count} score{pluralize(count)} from {score_import.original_filename}.")
     return redirect("library:score_list")
+
+
+@login_required
+def remove_import(request, pk):
+    """
+    Remove a pending import: its scores are deleted, except any already
+    planned into a service, which are kept. Asks first. If the import has
+    already been removed or kept (Back, or a second click), the person
+    goes to the library with a message rather than a "not found" page.
+    """
+    score_import = own(ScoreImport, request).filter(pk=pk, status=ScoreImport.PENDING).first()
+    if score_import is None:
+        messages.info(request, "That import has already been removed or kept.")
+        return redirect("library:score_list")
+    if not can_remove_import(request.user, score_import):
+        raise PermissionDenied
+    if request.method == "POST":
+        name = score_import.original_filename
+        deleted, kept = score_import.remove()
+        message = f"Removed {deleted} score{pluralize(deleted)} imported from {name}."
+        if kept:
+            message += f" {kept} {pluralize(kept, 'is,are')} planned into services, so kept."
+        messages.success(request, message)
+        return redirect("library:score_list")
+    in_use = score_import.scores.filter(role_pieces__isnull=False).distinct().count()
+    return render(request, "library/score_import_confirm_remove.html", {
+        "score_import": score_import,
+        "removing": score_import.scores.count() - in_use,
+        "in_use": in_use,
+    })

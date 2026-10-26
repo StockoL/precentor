@@ -150,6 +150,7 @@ ADDRESSES = {
     "library:score_delete": lambda a, b: [{"pk": b["score"].pk}],
     "library:score_import_detail": lambda a, b: [{"pk": b["score_import"].pk}],
     "library:keep_import": lambda a, b: [{"pk": b["score_import"].pk}],
+    "library:remove_import": lambda a, b: [{"pk": b["score_import"].pk}],
     "planning:term_update": lambda a, b: [{"pk": b["term"].pk}],
     "planning:term_delete": lambda a, b: [{"pk": b["term"].pk}],
     "planning:term_detail": lambda a, b: [{"pk": b["term"].pk}],
