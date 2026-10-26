@@ -1,4 +1,4 @@
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, TestCase
 
 from .importing import MAX_BYTES, MAX_ROWS, ImportProblem, read_rows
 
@@ -63,3 +63,60 @@ class ReadingTheFileTests(SimpleTestCase):
         too_many = csv_bytes("Title,Composer surname", *(["Ave,Byrd"] * (MAX_ROWS + 1)))
         with self.assertRaisesMessage(ImportProblem, "more than 5,000 scores"):
             read_rows(too_many)
+
+
+class CheckingRowsTests(TestCase):
+    def check(self, *lines):
+        from accounts.testing import make_organisation
+
+        from .importing import check_file
+
+        return check_file(csv_bytes(*lines), make_organisation())
+
+    def test_good_rows_become_unsaved_scores_for_the_church(self):
+        from .models import Score
+
+        checked = self.check(
+            "Title,Composer surname,Voicing,Language,Copies owned,Duration (minutes),Last sung",
+            "Ave verum,Byrd,SATB,Latin,24,4,2026-03-15",
+        )
+        score = checked.scores[0]
+        self.assertEqual((score.title, score.copies_owned, score.duration_minutes), ("Ave verum", 24, 4))
+        self.assertEqual(str(score.last_sung_manual), "2026-03-15")
+        self.assertIsNone(score.pk)
+        self.assertEqual(score.organisation.name, "Test Church")
+        self.assertFalse(Score.objects.exists())
+
+    def test_only_title_and_composer_are_needed(self):
+        checked = self.check("Title,Composer surname,Voicing,Copies owned", "Ave verum,Byrd,,")
+        score = checked.scores[0]
+        self.assertEqual((score.voicing, score.copies_owned), ("", 0))
+
+    def test_dates_either_way_round(self):
+        checked = self.check("Title,Composer surname,Last sung", "A,Byrd,15/03/2026", "B,Byrd,2026-03-15")
+        self.assertEqual({str(score.last_sung_manual) for score in checked.scores}, {"2026-03-15"})
+
+    def test_bad_rows_are_skipped_with_their_row_number_and_a_plain_reason(self):
+        checked = self.check(
+            "Title,Composer surname,Copies owned,Last sung",
+            ",Byrd,,",
+            "Ave,Byrd,lots,",
+            "Ave,Byrd,,next week",
+            "Locus iste,Bruckner,,",
+        )
+        self.assertEqual([score.title for score in checked.scores], ["Locus iste"])
+        self.assertEqual([number for number, _ in checked.skipped], [2, 3, 4])
+        self.assertEqual(checked.skipped[0][1], "no title")
+        self.assertIn("Copies owned:", checked.skipped[1][1])
+        self.assertIn("Last sung: write it as 2026-03-15 or 15/03/2026", checked.skipped[2][1])
+
+    def test_an_over_long_value_is_skipped(self):
+        checked = self.check("Title,Composer surname", f"{'x' * 201},Byrd")
+        self.assertIn("Title:", checked.skipped[0][1])
+
+    def test_part_counts_come_from_a_plain_voicing(self):
+        checked = self.check(
+            "Title,Composer surname,Voicing", "A,Byrd,SSATB", "B,Byrd,SATB.SATB", "C,Byrd,Unison", "D,Byrd,"
+        )
+        counts = [(s.soprano_parts, s.alto_parts, s.tenor_parts, s.bass_parts) for s in checked.scores]
+        self.assertEqual(counts, [(2, 1, 1, 1), (2, 2, 2, 2), (0, 0, 0, 0), (0, 0, 0, 0)])

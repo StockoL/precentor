@@ -3,13 +3,22 @@ Importing a library from a spreadsheet saved as CSV, in Precentor's own
 format: one score per row, under the headers in COLUMNS. Nothing here
 touches a request or a page, so it can be tested with plain strings.
 
-This part reads the file: it decodes it, works out the separator and
-matches the headers. A file that can't work at all, such as one missing a
+First the file is read: decoded, its separator worked out and its
+headers matched. A file that can't work at all, such as one missing a
 required column, stops with ImportProblem before any row is looked at.
+Then each row is checked by the same rules as the score form, and the
+rows that fail are kept with the reason, to show the person.
 """
 
 import csv
 import io
+import re
+from dataclasses import dataclass
+from dataclasses import field as dataclass_field
+
+from django import forms
+
+from .models import Score
 
 # The columns, in the order the template gives them: (header, score field,
 # required). The template, the header check and the instructions all read
@@ -103,3 +112,83 @@ def read_rows(data):
                   for field, position in positions.items()}
         rows.append((number, values))
     return rows, fallback, ignored
+
+
+# Checking each row.
+
+class ScoreImportRowForm(forms.ModelForm):
+    """
+    One row, checked by the same rules as the score form: lengths, whole
+    numbers and the model's own clean(). Copies owned may be blank (0), and
+    the last-sung date may be written either way round.
+    """
+
+    class Meta:
+        model = Score
+        fields = [field for _, field, _ in COLUMNS]  # noqa
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["copies_owned"].required = False
+        self.fields["last_sung_manual"].input_formats = ["%Y-%m-%d", "%d/%m/%Y"]
+        self.fields["last_sung_manual"].error_messages["invalid"] = "write it as 2026-03-15 or 15/03/2026"
+
+    def clean_copies_owned(self):
+        return self.cleaned_data["copies_owned"] or 0
+
+
+# A voicing made only of S, A, T and B (with separators) says how many
+# parts of each there are; anything else, such as "Unison", doesn't.
+PLAIN_VOICING = re.compile(r"^[SATB]+([.\s/+-][SATB]+)*$")
+
+
+def parts_from_voicing(score):
+    """Fill in the part counts from a plain voicing, as the spreadsheet has
+    no columns for them, so "any four-part mixed" finds imported scores
+    too: SSATB is 2, 1, 1, 1 and SATB.SATB is 2, 2, 2, 2."""
+    voicing = score.voicing.strip().upper()
+    if PLAIN_VOICING.match(voicing):
+        score.soprano_parts, score.alto_parts, score.tenor_parts, score.bass_parts = (
+            voicing.count(letter) for letter in "SATB"
+        )
+
+
+@dataclass
+class CheckedFile:
+    """What a file holds once every row is checked: the scores ready to
+    save (not saved yet), the rows skipped and why, the headers that
+    weren't recognised, and whether it was read as older Excel's encoding."""
+
+    scores: list = dataclass_field(default_factory=list)
+    skipped: list = dataclass_field(default_factory=list)
+    ignored_columns: list = dataclass_field(default_factory=list)
+    read_as_windows_1252: bool = False
+
+
+def reason(form):
+    """Why a row was skipped, in the spreadsheet's own words: "no title",
+    or the column and what's wrong with it."""
+    headers = {field: header for header, field, _ in COLUMNS}
+    parts = []
+    for name, errors in form.errors.items():
+        header = headers.get(name, "")
+        for error in errors.as_data():
+            if error.code == "required":
+                parts.append(f"no {header.lower()}")
+            else:
+                parts.append(f"{header}: {error.messages[0]}" if header else error.messages[0])
+    return "; ".join(parts)
+
+
+def check_file(data, organisation):
+    """Read the file and check every row, for one church's library."""
+    rows, fallback, ignored = read_rows(data)
+    checked = CheckedFile(ignored_columns=ignored, read_as_windows_1252=fallback)
+    for number, values in rows:
+        form = ScoreImportRowForm(data=values, instance=Score(organisation=organisation))
+        if form.is_valid():
+            parts_from_voicing(form.instance)
+            checked.scores.append(form.instance)
+        else:
+            checked.skipped.append((number, reason(form)))
+    return checked
