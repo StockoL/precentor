@@ -101,8 +101,11 @@ alone:
 lowercases the domain, and the manager's `get_by_natural_key` matches
 with `email__iexact`, so sign-in ignores case. `createsuperuser` asks
 for an email and a password only, and makes an admin with no
-organisation and no role. Users are deleted with their organisation,
-and their comments with them. Removing someone from a church doesn't
+organisation and no role. Users are deleted with their organisation.
+Someone who deletes their own account leaves their comments behind:
+`Comment.author` is set to empty (`SET_NULL`), and `author_name` shows
+"A former member", so threads still read sensibly but nothing identifies
+them. Removing someone from a church doesn't
 delete them: it sets `is_active` to false, so their comments keep their
 name, and Django's sign-in refuses them from their next request.
 
@@ -166,6 +169,26 @@ the person becomes its owner and a Conductor. `SignUpView` signs them
 straight in. Sign-up is open to anyone, up to five churches an hour
 from one network address. Until a church has a term or a score, its
 Terms page lists the first steps the person's role allows.
+
+### Leaving
+
+- **A member deletes their own account** from a link on the Change
+  password page, after giving their password (`DeleteAccountForm`).
+  They're signed out, the account is deleted and their comments stay as
+  "A former member". The owner can't do this: a church always needs an
+  owner, so they're told to hand ownership over or delete the church.
+- **The owner deletes the church** from a link at the foot of Settings.
+  The page shows how much will go (`Organisation.contents()`) and asks
+  for the church's name, ignoring capitals and spaces at the ends. A
+  planned piece protects its score (`PROTECT`), which made deleting a
+  church fail, so `Organisation.delete()` deletes the church's pieces
+  first and then the rest, in one transaction. The admin's delete page
+  goes through it too; its "delete selected" action doesn't, so it
+  still refuses a church with planned pieces.
+- **A privacy page** (`/privacy/`, linked from every page's footer and
+  from sign-up) says what's kept, the cookies, the limits on trying,
+  where it's hosted and how to leave, and names each church's owner as
+  the person to ask.
 
 ### Caching, cookies and limits
 
@@ -796,7 +819,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
 class Comment(models.Model):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)  # empty once they delete their account
     body = models.TextField("comment")
     is_open = models.BooleanField(default=True)
     parent = models.ForeignKey(

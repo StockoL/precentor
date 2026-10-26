@@ -417,6 +417,13 @@ touching anyone else's. Until it has a term or a score, the Terms page
 shows a few first steps, each only if the person's role allows it.
 The owner then invites everyone else from the Members page.
 
+**Leaving.** Anyone but the owner can delete their own account, after
+giving their password; their comments stay, credited to "A former
+member". The owner can delete the whole church, after typing its name,
+which deletes everything in it and every member's account. A privacy
+page, linked from every page's footer, says what's kept and how to have
+it deleted.
+
 **Keeping churches apart.** Every church's scores, terms, services,
 templates, use types, comments and settings carry their organisation,
 and every page looks only within the signed-in person's own. Someone
@@ -988,7 +995,7 @@ max 50), such as Mass, Vespers or General. Each church has its own.
 
 | Field                       | Type                             | Constraints            | Purpose                               |
 | --------------------------- | -------------------------------- | ---------------------- | ------------------------------------- |
-| `author`                    | ForeignKey                       | to User                | Who wrote it                          |
+| `author`                    | ForeignKey                       | optional, to User      | Who wrote it; empty once they delete their account, shown as "A former member" |
 | `organisation`              | ForeignKey                       | copied from its target | Whose comment                         |
 | `content_type`, `object_id` | ForeignKey, PositiveIntegerField | generic relation       | The term, service or piece it's about |
 | `parent`                    | ForeignKey                       | optional, to Comment   | The comment it replies to             |
@@ -1080,8 +1087,8 @@ the role column in §2 says who may use each one.
 
 | Model                       | Create                                                    | Read                                               | Update                                                                                          | Delete                                                        | Locate                                                                     |
 | --------------------------- | --------------------------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| Organisation                | Sign-up page (`signup`)                                   | Its name on every page and the music list          | Church name on Settings (`site_config_update`)                                                  | not available (admin only)                                    | not needed: everyone sees only their own                                   |
-| User                        | Joining by invitation (`join`); sign-up for the owner     | Members page (`member_list`)                       | Role (`change_role`), owner (`make_owner`), own password (`password_change`) or by reset link (`reset_link`) | Removed, not deleted (`remove`), and brought back (`restore`) | Members page                                                               |
+| Organisation                | Sign-up page (`signup`)                                   | Its name on every page and the music list          | Church name on Settings (`site_config_update`)                                                  | The owner, after typing its name (`delete_church`)           | not needed: everyone sees only their own                                   |
+| User                        | Joining by invitation (`join`); sign-up for the owner     | Members page (`member_list`)                       | Role (`change_role`), owner (`make_owner`), own password (`password_change`) or by reset link (`reset_link`) | Removed, not deleted (`remove`), and brought back (`restore`); their own account, after their password (`delete_account`) | Members page                                                               |
 | Invitation                  | Invite someone (`invite`)                                 | Link shown once (`invitation_link`); Members page  | not available (cancel and make another)                                                         | Cancel (`invitation_cancel`)                                  | Members page, "Waiting to join"                                            |
 | Score                       | Add score (`score_create`)                                | Library (`score_list`), score page (`score_detail`) | Edit (`score_update`)                                                                          | Delete, after a confirmation (`score_delete`)                 | Search box, Language, Voicing, Suitable-for filters and sortable columns   |
 | Term                        | New term (`term_create`)                                  | Terms page (`term_list`), term page (`term_detail`) | Edit (`term_update`)                                                                           | Delete, after a confirmation (`term_delete`)                  | Terms page, current and upcoming first, past folded away                   |
@@ -1257,8 +1264,6 @@ What's designed or wanted but not built yet:
 - **Email.** Invitations and reset links are passed on by hand because
   Precentor sends no email. With a mail provider they could be sent
   directly, and people could reset their own passwords.
-- **The rest of the account work:** letting an owner delete their
-  church and a member delete their own account.
 
 ## 20. Technologies used
 
@@ -1313,7 +1318,7 @@ each change before it was committed.
 
 [`docs/testing.md`](docs/testing.md) has the full record. In short:
 
-- **584 automated tests** cover the models, views, forms, permissions,
+- **599 automated tests** cover the models, views, forms, permissions,
   each church's own data and the liturgical calendar. 49 of them are
   browser tests, which start a real server and drive Chromium through
   Playwright, so the JavaScript is tested too.

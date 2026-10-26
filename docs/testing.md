@@ -11,7 +11,7 @@ automated test named. Anything I didn't get to before submission says so.
 
 | Check                       | What I used                                                                                     | What it found                                                                                                               | Resolved?                                                                                                                                         |
 | --------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 584 tests, all passing (26 October 2026, at `a22e5fa`)                                                                | Nothing to resolve                                                                                                                                |
+| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 599 tests, all passing (26 October 2026, at `f2e3163`)                                                                | Nothing to resolve                                                                                                                                |
 | Deployment settings         | `python manage.py check --deploy` with `DEBUG` off                                              | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve                                                                                                                                |
 | Python style                | `flake8` with a line length of 120, excluding `venv` and migrations                             | 22 findings: two unused imports, one extra blank line, one invalid escape (`\W` in a test string), 16 long lines, a variable named `l`, a lambda assigned to a name | Resolved the unused imports, the blank line and the escape in `1f2e618`. Left the 16 long lines (121 to 139 characters, mostly test data), the `l` in `ordo/utils.py` and the lambda in a test, as they don't affect behaviour |
 | Leftover debugging          | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app. The two scripts in `tools/` print what they've done, on purpose                                     | Nothing to resolve                                                                                                                                |
@@ -54,15 +54,15 @@ were the only things keeping Best practices and SEO below 100.
 
 ## 4. Automated tests
 
-The suite has 584 tests, run on 26 October 2026 at commit `a22e5fa`;
+The suite has 599 tests, run on 26 October 2026 at commit `f2e3163`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
 | File                                      | Tests | What it covers                                                                                                     |
 | ----------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------ |
-| `accounts/tests.py`                       | 129   | Users, the database rules on accounts, the roles table, sign-in, sign-up, invitations, the members page, roles, removing and restoring people, ownership, reset links, changing your own password, the limits on wrong passwords and on registering |
+| `accounts/tests.py`                       | 139   | Users, the database rules on accounts, the roles table, sign-in, sign-up, invitations, the members page, roles, removing and restoring people, ownership, reset links, changing your own password, the limits on wrong passwords and on registering, deleting your own account and deleting the church |
 | `accounts/test_browser.py`                | 2     | The Copy link button, and what happens when the browser refuses the clipboard                                    |
-| `comments/tests.py`                       | 30    | Adding, replying to, closing and deleting comments; the Inbox; each church's own comments                          |
+| `comments/tests.py`                       | 33    | Adding, replying to, closing and deleting comments; the Inbox; each church's own comments, and comments kept as "A former member"                          |
 | `comments/test_browser.py`                | 3     | Comment threads, deleting a comment, and closed threads as a Viewer sees them, in the browser                     |
 | `core/tests.py`                           | 32    | Settings, the crest upload and processing, the crest's address, each church's own settings                         |
 | `library/tests.py`                        | 61    | Scores, the library's search, filters and sorting, suitability ranking, "last sung", each church's own library     |
@@ -79,7 +79,7 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | `planning/test_remove_slot.py`            | 6     | Removing slots, asking first when they have pieces                                                                 |
 | `planning/test_service_form.py`           | 3     | The service form's calendar choice                                                                                 |
 | `planning/test_browser.py`                | 21    | The service page in the browser: the score picker, confirming, dragging slots, dialogs                             |
-| `precentor_project/tests.py`              | 24    | The base template, the navigation and its wording, the Inbox count, the user menu, the 403 page, and never storing signed-in pages                |
+| `precentor_project/tests.py`              | 26    | The base template, the navigation and its wording, the Inbox count, the user menu, the 403 page, never storing signed-in pages, and the privacy page and footer                |
 | `precentor_project/test_browser.py`       | 15    | Signing in, type and control sizes, checkboxes, Settings, the user menu, page transitions and the skip link, in the browser |
 | `precentor_project/test_delete_pages.py`  | 5     | Going Back to a delete page after deleting                                                                         |
 | `precentor_project/test_isolation.py`     | 7     | Two complete churches: every address with an id tried as the other church, every page checked for the other church's text, and every model and route covered |
@@ -121,6 +121,9 @@ To run them, see "Running it locally" in the README.
 | M27  | Error pages                | Open an address that doesn't exist                                                                            | Precentor's own 404 page                                                                        | Pass: in the browser with `DEBUG` off (Figure 17) |
 | M28  | Too many wrong passwords   | Sign in to one address with a wrong password six times                                                        | The sixth is refused with "Too many wrong passwords", even with the right password, for 15 minutes | Pass: in the browser on 26 October, and by automated tests |
 | M29  | Too many registrations     | Register six churches from one network within an hour                                                         | The sixth is refused with "try again in an hour" and nothing is created | Pass: in the browser on 26 October, and by automated tests |
+| M30  | Delete your own account    | As a member, Change password, Delete your account, give the password                                          | Signed out, the account gone, their comments shown as "A former member"; the owner is told to hand over first | Pass: by automated tests; the pages checked in the browser on 26 October |
+| M31  | Delete the church          | As the owner, Settings, Delete this church, type its name                                                     | The page lists what will go; a wrong name is refused; the right one deletes everything and signs out | Pass: by automated tests; the page and a wrong name checked in the browser on 26 October |
+| M32  | Privacy page               | Follow Privacy in the footer, signed in and out                                                                | The page explains what's kept and how to leave                       | Pass: in the browser on 26 October |
 
 ## 6. Responsiveness, usability and the keyboard
 
