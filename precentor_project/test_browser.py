@@ -219,6 +219,17 @@ class UserMenuBrowserTest(PlaywrightTestCase):
         assert self.page.evaluate(theme) is None
         assert self.page.evaluate("localStorage.getItem('precentor-theme')") is None
 
+    def test_open_menu_fits_on_a_phone_when_the_nav_wraps(self):
+        # The menu shows the person's email when they have no name, long
+        # enough to push it onto its own line at 360 pixels; the panel
+        # must still open within the screen.
+        self.page.set_viewport_size({"width": 360, "height": 800})
+        self.log_in_as("viewer")
+        self.page.click(".user-menu summary")
+        box = self.page.locator(".user-menu__panel").bounding_box()
+        assert box["x"] >= 0, box
+        assert box["x"] + box["width"] <= 360, box
+
     def test_open_menu_is_drawn_above_the_page(self):
         from datetime import date, timedelta
 

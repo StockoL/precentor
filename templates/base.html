@@ -70,7 +70,8 @@
     <header class="wrapper">
         <nav class="site-nav cluster" style="--cluster-justify: space-between;" aria-label="Main">
             <a href="{% url 'planning:term_list' %}">Precentor</a>
-            <div class="cluster" style="--gutter: var(--spacing-s);">
+            {# Right-aligned, so when the links wrap on a phone the user menu stays at the right and its panel, which opens leftwards, stays on screen. #}
+            <div class="cluster" style="--gutter: var(--spacing-s); --cluster-justify: flex-end;">
                 {% if user.is_authenticated %}
                 <a href="{% url 'planning:term_list' %}"{% if nav_current.terms %} aria-current="{{ nav_current.terms }}"{% endif %}>Terms</a>
                 <a href="{% url 'library:score_list' %}"{% if nav_current.library %} aria-current="{{ nav_current.library }}"{% endif %}>Library</a>
