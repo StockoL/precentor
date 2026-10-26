@@ -61,9 +61,13 @@ class ScoreListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
 
         if query:
             queryset = queryset.search(query)
-        if language:
+        if language == ScoreQuerySet.UNSPECIFIED:
+            queryset = queryset.filter(language="")
+        elif language:
             queryset = queryset.filter(language__iexact=language)
-        if voicing:
+        if voicing == ScoreQuerySet.UNSPECIFIED:
+            queryset = queryset.filter(voicing="")
+        elif voicing:
             queryset = queryset.with_voicing(voicing)
 
         occasion_pk = self.request.GET.get("suited_occasion")
@@ -122,6 +126,11 @@ class ScoreListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
             .annotate(count=Count("pk"))
             .order_by("voicing")
         )
+        # How many have no language or voicing yet, so they can be found
+        # and filled in; each menu offers this only when there are some.
+        context["unspecified_value"] = ScoreQuerySet.UNSPECIFIED
+        context["unspecified_language_count"] = scores.filter(language="").count()
+        context["unspecified_voicing_count"] = scores.filter(voicing="").count()
         context["mixed_value"] = ScoreQuerySet.MIXED
         context["mixed_count"] = scores.with_voicing(ScoreQuerySet.MIXED).count()
         context["query"] = self.request.GET.get("q", "").strip()

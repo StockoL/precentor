@@ -20,6 +20,9 @@
             <label for="language">Language</label>
             <select name="language" id="language">
                 <option value="">Any</option>
+                {% if unspecified_language_count %}
+                <option value="{{ unspecified_value }}"{% if selected_language == unspecified_value %} selected{% endif %}>(unspecified) ({{ unspecified_language_count }})</option>
+                {% endif %}
                 {% for lang in languages %}
                 <option value="{{ lang }}"{% if lang == selected_language %} selected{% endif %}>{{ lang }}</option>
                 {% endfor %}
@@ -30,6 +33,9 @@
             <select name="voicing" id="voicing">
                 <option value="">Any</option>
                 <option value="{{ mixed_value }}"{% if selected_voicing == mixed_value %} selected{% endif %}>Any four-part mixed ({{ mixed_count }})</option>
+                {% if unspecified_voicing_count %}
+                <option value="{{ unspecified_value }}"{% if selected_voicing == unspecified_value %} selected{% endif %}>(unspecified) ({{ unspecified_voicing_count }})</option>
+                {% endif %}
                 {% for option in voicings %}
                 <option value="{{ option.voicing }}"{% if option.voicing == selected_voicing %} selected{% endif %}>{{ option.voicing }} ({{ option.count }})</option>
                 {% endfor %}

@@ -15,6 +15,8 @@ RANGE_FIELDS = ("range_soprano", "range_alto", "range_tenor", "range_bass")
 class ScoreQuerySet(OrganisationQuerySet):
     # The Voicing filter's value for "any four-part mixed".
     MIXED = "mixed"
+    # The Voicing and Language filters' value for scores without one.
+    UNSPECIFIED = "unspecified"
 
     def search(self, query):
         """
@@ -128,8 +130,10 @@ class Score(models.Model):
     editor = models.CharField(
         max_length=200, blank=True, help_text="Of this edition, e.g. Stockton"
     )
+    # Voicing and language help with planning, but a score is usable
+    # without them: only the title and composer are needed.
     voicing = models.CharField(
-        max_length=50, help_text="As printed, e.g. SATB, SSATB, SATB.SATB"
+        max_length=50, blank=True, help_text="As printed, e.g. SATB, SSATB, SATB.SATB"
     )
     # Part counts make voicing filterable without parsing the free text.
     soprano_parts = models.PositiveSmallIntegerField(
@@ -140,7 +144,7 @@ class Score(models.Model):
     alto_parts = models.PositiveSmallIntegerField("altos", default=0)
     tenor_parts = models.PositiveSmallIntegerField("tenors", default=0)
     bass_parts = models.PositiveSmallIntegerField("basses", default=0)
-    language = models.CharField(max_length=50, help_text="e.g. Latin, English")
+    language = models.CharField(max_length=50, blank=True, help_text="e.g. Latin, English")
     copies_owned = models.PositiveIntegerField(default=0)
     filing_location = models.CharField(
         max_length=100, blank=True, help_text="Where the copies are kept, e.g. By-01"

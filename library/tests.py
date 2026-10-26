@@ -688,3 +688,40 @@ class LibraryForOneChurchTests(TestCase):
         })
         self.assertIn("suited_use_types", response.context["form"].errors)
         self.assertFalse(Score.objects.filter(title="Libera me").exists())
+
+
+class OptionalVoicingAndLanguageTests(TestCase):
+    """Only the title and composer are needed; voicing and language help
+    with planning but can be filled in later."""
+
+    def setUp(self):
+        self.client.force_login(make_user("librarian"))
+        make_score(title="Complete", composer_surname="Byrd", voicing="SATB", language="Latin")
+        make_score(title="No voicing", composer_surname="Tallis", voicing="", language="English")
+        make_score(title="Bare", composer_surname="Anon.", voicing="", language="")
+
+    def test_a_score_needs_only_a_title_and_composer(self):
+        from .forms import ScoreForm
+
+        form = ScoreForm(
+            data={"title": "Ave verum", "composer_surname": "Byrd", "copies_owned": 0,
+                  "soprano_parts": 0, "alto_parts": 0, "tenor_parts": 0, "bass_parts": 0},
+            instance=Score(organisation=make_organisation()),
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_the_filters_offer_unspecified_with_its_count(self):
+        response = self.client.get("/library/")
+        self.assertContains(response, '<option value="unspecified">(unspecified) (1)</option>', html=True)
+        self.assertContains(response, '<option value="unspecified">(unspecified) (2)</option>', html=True)
+
+    def titles(self, **filters):
+        return sorted(score.title for score in self.client.get("/library/", filters).context["scores"])
+
+    def test_choosing_unspecified_finds_only_those(self):
+        self.assertEqual(self.titles(voicing="unspecified"), ["Bare", "No voicing"])
+        self.assertEqual(self.titles(language="unspecified"), ["Bare"])
+
+    def test_unspecified_isnt_offered_when_everything_has_one(self):
+        Score.objects.filter(voicing="").update(voicing="SATB", language="Latin")
+        self.assertNotContains(self.client.get("/library/"), "(unspecified)")
