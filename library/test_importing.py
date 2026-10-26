@@ -120,3 +120,64 @@ class CheckingRowsTests(TestCase):
         )
         counts = [(s.soprano_parts, s.alto_parts, s.tenor_parts, s.bass_parts) for s in checked.scores]
         self.assertEqual(counts, [(2, 1, 1, 1), (2, 2, 2, 2), (0, 0, 0, 0), (0, 0, 0, 0)])
+
+
+class SavingTests(TestCase):
+    def setUp(self):
+        from accounts.testing import make_organisation, make_user
+
+        self.church = make_organisation()
+        self.user = make_user("librarian", organisation=self.church)
+
+    def save(self, *lines):
+        from .importing import check_file, save_import
+
+        return save_import(check_file(csv_bytes(*lines), self.church), self.church, self.user, "library.csv")
+
+    def test_good_rows_are_saved_together_as_one_pending_import(self):
+        batch = self.save("Title,Composer surname,Voicing", "Ave verum,Byrd,SATB", ",Tallis,", "Locus iste,Bruckner,")
+        self.assertTrue(batch.is_pending)
+        self.assertEqual((batch.created_by, batch.original_filename), (self.user, "library.csv"))
+        self.assertEqual(sorted(batch.scores.values_list("title", flat=True)), ["Ave verum", "Locus iste"])
+        self.assertEqual(batch.report["imported"], 2)
+        self.assertEqual(batch.report["skipped"], [[3, "no title"]])
+
+    def test_likely_duplicates_are_noted_not_refused(self):
+        from precentor_project.testing import make_score
+
+        make_score(organisation=self.church, title="Ave Verum", composer_surname="BYRD")
+        batch = self.save("Title,Composer surname", "ave verum,byrd", "Locus iste,Bruckner")
+        self.assertEqual(batch.scores.count(), 2)
+        self.assertEqual(batch.report["duplicates"], ["ave verum (byrd)"])
+
+    def test_another_churchs_scores_dont_count_as_duplicates(self):
+        from accounts.testing import make_organisation
+        from precentor_project.testing import make_score
+
+        make_score(organisation=make_organisation("St Elsewhere"), title="Ave verum", composer_surname="Byrd")
+        self.assertEqual(self.save("Title,Composer surname", "Ave verum,Byrd").report["duplicates"], [])
+
+    def test_the_encoding_and_ignored_columns_are_reported(self):
+        from .importing import check_file, save_import
+
+        data = csv_bytes("Title,Composer surname,Shelf mark", "Ave,Duruflé,3", encoding="cp1252")
+        batch = save_import(check_file(data, self.church), self.church, self.user, "old.csv")
+        self.assertTrue(batch.report["read_as_windows_1252"])
+        self.assertEqual(batch.report["ignored_columns"], ["Shelf mark"])
+
+    def test_nothing_is_saved_if_writing_the_scores_fails(self):
+        from unittest import mock
+
+        from .models import Score, ScoreImport
+
+        with mock.patch.object(Score.objects, "bulk_create", side_effect=RuntimeError):
+            with self.assertRaises(RuntimeError):
+                self.save("Title,Composer surname", "Ave verum,Byrd")
+        self.assertFalse(ScoreImport.objects.exists())
+
+    def test_a_file_with_no_usable_rows_makes_no_import(self):
+        from .models import ScoreImport
+
+        with self.assertRaises(ValueError):
+            self.save("Title,Composer surname", ",Byrd")
+        self.assertFalse(ScoreImport.objects.exists())

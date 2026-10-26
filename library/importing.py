@@ -7,7 +7,8 @@ First the file is read: decoded, its separator worked out and its
 headers matched. A file that can't work at all, such as one missing a
 required column, stops with ImportProblem before any row is looked at.
 Then each row is checked by the same rules as the score form, and the
-rows that fail are kept with the reason, to show the person.
+rows that fail are kept with the reason, to show the person. Last, the
+good rows are saved together as one import that can be kept or removed.
 """
 
 import csv
@@ -17,8 +18,9 @@ from dataclasses import dataclass
 from dataclasses import field as dataclass_field
 
 from django import forms
+from django.db import transaction
 
-from .models import Score
+from .models import Score, ScoreImport
 
 # The columns, in the order the template gives them: (header, score field,
 # required). The template, the header check and the instructions all read
@@ -192,3 +194,44 @@ def check_file(data, organisation):
         else:
             checked.skipped.append((number, reason(form)))
     return checked
+
+
+# Saving.
+
+def duplicate_key(score):
+    return (score.title.strip().casefold(), score.composer_surname.strip().casefold())
+
+
+@transaction.atomic
+def save_import(checked, organisation, user, filename):
+    """
+    Save a checked file as one pending import, all or nothing: the batch,
+    then every good row at once. Rows that look like scores the church
+    already has (same title and composer, whatever the capitals) are noted
+    for the person, not refused, as two copies or editions are allowed.
+    A file with no usable rows makes no import at all.
+    """
+    if not checked.scores:
+        raise ValueError("There are no scores to import.")
+    existing = {duplicate_key(score) for score in Score.objects.for_organisation(organisation)}
+    batch = ScoreImport.objects.create(
+        organisation=organisation,
+        created_by=user,
+        original_filename=filename[:255],
+        report={
+            "imported": len(checked.scores),
+            # As lists, the form JSON keeps them in.
+            "skipped": [[number, why] for number, why in checked.skipped],
+            "ignored_columns": checked.ignored_columns,
+            "read_as_windows_1252": checked.read_as_windows_1252,
+            "duplicates": [
+                f"{score.title} ({score.composer_surname})"
+                for score in checked.scores
+                if duplicate_key(score) in existing
+            ],
+        },
+    )
+    for score in checked.scores:
+        score.import_batch = batch
+    Score.objects.bulk_create(checked.scores)
+    return batch
