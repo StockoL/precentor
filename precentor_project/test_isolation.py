@@ -16,7 +16,7 @@ from accounts.models import Invitation, User
 from accounts.organisations import create_organisation
 from comments.models import Comment
 from core.models import SiteConfig
-from library.models import Score
+from library.models import Score, ScoreImport
 from ordo.models import UseType
 from planning.models import RolePiece, Service, ServiceRole, SlotTemplate, Term, TermMarker
 
@@ -60,10 +60,14 @@ def build_church(marker):
     marker_row = TermMarker.objects.create(term=term, date=date(2026, 12, 1), text=f"{marker} notice")
     comment = Comment.objects.create(author=owner, target=service, body=f"{marker} comment")
     invitation, _ = Invitation.make(organisation=church, role="viewer", created_by=owner, note=f"{marker} invitation")
+    score_import = ScoreImport.objects.create(
+        organisation=church, created_by=owner, original_filename=f"{marker} library.csv"
+    )
     return {
         "church": church, "settings": settings, "owner": owner, "member": member, "former": former,
         "score": score, "use_type": use_type, "template": template, "term": term, "service": service,
         "slot": slot, "piece": piece, "marker": marker_row, "comment": comment, "invitation": invitation,
+        "score_import": score_import,
     }
 
 

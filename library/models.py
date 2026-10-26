@@ -1,5 +1,5 @@
 from django.apps import apps
-from django.db import models
+from django.db import models, transaction
 from django.db.models import BooleanField, Case, OuterRef, Q, Subquery, When
 from django.db.models.functions import Coalesce, Greatest
 from django.urls import reverse
@@ -206,6 +206,11 @@ class Score(models.Model):
         related_name="suited_scores",
         help_text="Specific named days, e.g. Fourth Sunday of Advent, Corpus Christi",
     )
+    # The import this score came from, if any; scores added by hand have
+    # none. While the import is pending it can be removed as one batch.
+    import_batch = models.ForeignKey(
+        "ScoreImport", null=True, blank=True, on_delete=models.SET_NULL, related_name="scores"
+    )
 
     objects = ScoreQuerySet.as_manager()
 
@@ -250,3 +255,63 @@ class Score(models.Model):
 
     def get_absolute_url(self):
         return reverse("library:score_detail", kwargs={"pk": self.pk})
+
+
+class ScoreImport(models.Model):
+    """
+    One spreadsheet imported into a church's library. Its scores are
+    ordinary scores from the start, but while the import is pending it can
+    be removed as a whole, in case the file wasn't what was meant. Keeping
+    it ends that: the scores stay as they are, and from then on are only
+    deleted one by one.
+    """
+
+    PENDING, KEPT = "pending", "kept"
+
+    organisation = models.ForeignKey(
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="score_imports"
+    )
+    objects = OrganisationQuerySet.as_manager()
+    created_by = models.ForeignKey(
+        "accounts.User", null=True, on_delete=models.SET_NULL, related_name="score_imports"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    original_filename = models.CharField(max_length=255)
+    status = models.CharField(max_length=10, choices=[(PENDING, "Pending"), (KEPT, "Kept")], default=PENDING)
+    # What the result page reports: rows skipped and why, likely duplicates,
+    # and whether the file had to be read as an older Excel encoding.
+    report = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]  # noqa
+
+    @property
+    def is_pending(self):
+        return self.status == self.PENDING
+
+    def keep(self):
+        """Close the batch for good: its scores are ordinary scores now."""
+        self.status = self.KEPT
+        self.save(update_fields=["status"])
+
+    @transaction.atomic
+    def remove(self):
+        """
+        Delete the batch's scores and then the batch, all or nothing. A
+        score already planned into a service is protected, so it's kept
+        and just unlinked from the batch. Returns (deleted, kept_in_use).
+        Only a pending batch can be removed.
+        """
+        if not self.is_pending:
+            raise ValueError("A kept import can't be removed as a batch.")
+        in_use = self.scores.filter(role_pieces__isnull=False).distinct()
+        kept_in_use = in_use.count()
+        in_use.update(import_batch=None)
+        deleted = self.scores.count()
+        self.scores.all().delete()
+        self.delete()
+        return deleted, kept_in_use
+
+    def __str__(self):
+        return f"{self.original_filename} ({self.created_at:%d %b %Y})"
+

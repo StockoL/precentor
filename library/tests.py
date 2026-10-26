@@ -725,3 +725,60 @@ class OptionalVoicingAndLanguageTests(TestCase):
     def test_unspecified_isnt_offered_when_everything_has_one(self):
         Score.objects.filter(voicing="").update(voicing="SATB", language="Latin")
         self.assertNotContains(self.client.get("/library/"), "(unspecified)")
+
+
+class ScoreImportBatchTests(TestCase):
+    def setUp(self):
+        from .models import ScoreImport
+
+        self.church = make_organisation()
+        self.batch = ScoreImport.objects.create(organisation=self.church, original_filename="library.csv")
+        self.scores = [
+            make_score(organisation=self.church, title=f"Imported {n}", import_batch=self.batch) for n in range(3)
+        ]
+        self.by_hand = make_score(organisation=self.church, title="Added by hand")
+
+    def plan(self, score):
+        from datetime import date
+
+        from planning.models import RolePiece, Service, ServiceRole
+
+        from precentor_project.testing import make_term
+
+        service = Service.objects.create(term=make_term(organisation=self.church), date=date(2026, 1, 11),
+                                         service_type="Sung Mass")
+        RolePiece.objects.create(service_role=ServiceRole.objects.create(service=service, role_name="Introit"),
+                                 score=score)
+
+    def test_a_new_import_is_pending(self):
+        self.assertTrue(self.batch.is_pending)
+        self.assertEqual(self.batch.scores.count(), 3)
+
+    def test_removing_deletes_its_scores_and_itself_but_not_others(self):
+        from .models import ScoreImport
+
+        self.assertEqual(self.batch.remove(), (3, 0))
+        self.assertFalse(ScoreImport.objects.exists())
+        self.assertEqual(list(Score.objects.values_list("title", flat=True)), ["Added by hand"])
+
+    def test_a_score_already_planned_is_kept_and_unlinked(self):
+        self.plan(self.scores[0])
+        self.assertEqual(self.batch.remove(), (2, 1))
+        kept = Score.objects.get(title="Imported 0")
+        self.assertIsNone(kept.import_batch)
+
+    def test_keeping_closes_it_for_good(self):
+        self.batch.keep()
+        self.batch.refresh_from_db()
+        self.assertFalse(self.batch.is_pending)
+        with self.assertRaises(ValueError):
+            self.batch.remove()
+        self.assertEqual(Score.objects.count(), 4)
+
+    def test_deleting_the_person_who_imported_keeps_the_record(self):
+        user = make_user("librarian", organisation=self.church)
+        self.batch.created_by = user
+        self.batch.save()
+        user.delete()
+        self.batch.refresh_from_db()
+        self.assertIsNone(self.batch.created_by)
