@@ -11,14 +11,14 @@ automated test named. Anything I didn't get to before submission says so.
 
 | Check                       | What I used                                                                                     | What it found                                                                                                               | Resolved?                                                                                                                                         |
 | --------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 553 tests, all passing (23 October 2026, at `7b6fab4`)                                                                | Nothing to resolve                                                                                                                                |
+| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 560 tests, all passing (26 October 2026, at `0b5cce3`)                                                                | Nothing to resolve                                                                                                                                |
 | Deployment settings         | `python manage.py check --deploy` with `DEBUG` off                                              | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve                                                                                                                                |
 | Python style                | `flake8` with a line length of 120, excluding `venv` and migrations                             | 22 findings: two unused imports, one extra blank line, one invalid escape (`\W` in a test string), 16 long lines, a variable named `l`, a lambda assigned to a name | Resolved the unused imports, the blank line and the escape in `1f2e618`. Left the 16 long lines (121 to 139 characters, mostly test data), the `l` in `ordo/utils.py` and the lambda in a test, as they don't affect behaviour |
 | Leftover debugging          | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app. The two scripts in `tools/` print what they've done, on purpose                                     | Nothing to resolve                                                                                                                                |
 | Files that shouldn't be tracked | `git ls-files`, searched for `.env`, database files, keys, `venv` and uploaded media; `git grep` for literal secret keys and passwords | None tracked. The only passwords in the code are test values and the demo church's password in `tools/`, used only for the screenshots | `*.sqlite3` added to `.gitignore` in `442ef09`, so the screenshots database can't be committed                                                    |
 | HTML validation             | [W3C Nu HTML Checker](https://validator.w3.org/nu/), sent the rendered HTML of 13 pages (section 2) | 4 errors on 3 pages and 18 warnings. Two errors on Settings were real: `maxlength` and `required` on the colour picker. Two were `@view-transition`, a CSS rule the checker doesn't know yet. The warnings are all "the list role is unnecessary" | Fixed the colour picker in `7abd14c`. `@view-transition` is valid CSS, newer than the checker. The `role="list"` is deliberate: Safari stops announcing a list as a list when its bullets are removed, so the role puts that back |
 | CSS validation              | [W3C CSS Validator](https://jigsaw.w3.org/css-validator/), every one of the 41 files in `static/src/`, CSS level 3 profile | 38 files with no errors. 6 errors in 3 files, all newer CSS the validator doesn't recognise yet: `@container` and `container-type` (music list), `view-transition-name` (navigation) and `@view-transition` (global styles) | Nothing to fix: each is supported by current browsers; the validator lags behind them |
-| JavaScript                  | [ESLint](https://eslint.org/) 8.57 with its recommended rules, for browser ES modules, over all 12 files in `static/src/js/` | No errors and no warnings                                                                                                    | Nothing to resolve. The JavaScript is also exercised by the 46 browser tests                                                                      |
+| JavaScript                  | [ESLint](https://eslint.org/) 8.57 with its recommended rules, for browser ES modules, over all 12 files in `static/src/js/` | No errors and no warnings                                                                                                    | Nothing to resolve. The JavaScript is also exercised by the 49 browser tests                                                                      |
 | Lighthouse                  | [Lighthouse](https://developer.chrome.com/docs/lighthouse/) 12.2 in Chromium, five pages, desktop and mobile (section 3) | Accessibility 100 on every page. Best practices 96: a console error for the missing `/favicon.ico`. SEO 90: no meta description | Added a favicon in `0b642e4` and a meta description in `7b6fab4`. Performance on mobile (69 to 92) is measured on a slowed-down simulated phone; the lower scores are the longer pages, the service page and the library |
 
 ## 2. HTML validation by page
@@ -54,13 +54,14 @@ were the only things keeping Best practices and SEO below 100.
 
 ## 4. Automated tests
 
-The suite has 553 tests, run on 23 October 2026 at commit `7b6fab4`;
+The suite has 560 tests, run on 26 October 2026 at commit `0b5cce3`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
 | File                                      | Tests | What it covers                                                                                                     |
 | ----------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------ |
-| `accounts/tests.py`                       | 115   | Users, the database rules on accounts, the roles table, sign-in, sign-up, invitations, the members page, roles, removing and restoring people, ownership, reset links |
+| `accounts/tests.py`                       | 119   | Users, the database rules on accounts, the roles table, sign-in, sign-up, invitations, the members page, roles, removing and restoring people, ownership, reset links, changing your own password |
+| `accounts/test_browser.py`                | 2     | The Copy link button, and what happens when the browser refuses the clipboard                                    |
 | `comments/tests.py`                       | 30    | Adding, replying to, closing and deleting comments; the Inbox; each church's own comments                          |
 | `comments/test_browser.py`                | 3     | Comment threads, deleting a comment, and closed threads as a Viewer sees them, in the browser                     |
 | `core/tests.py`                           | 32    | Settings, the crest upload and processing, the crest's address, each church's own settings                         |
@@ -79,7 +80,7 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | `planning/test_service_form.py`           | 3     | The service form's calendar choice                                                                                 |
 | `planning/test_browser.py`                | 21    | The service page in the browser: the score picker, confirming, dragging slots, dialogs                             |
 | `precentor_project/tests.py`              | 20    | The base template, the navigation and its wording, the Inbox count, the user menu and the 403 page                |
-| `precentor_project/test_browser.py`       | 14    | Signing in, type and control sizes, checkboxes, Settings, the user menu, page transitions and the skip link, in the browser |
+| `precentor_project/test_browser.py`       | 15    | Signing in, type and control sizes, checkboxes, Settings, the user menu, page transitions and the skip link, in the browser |
 | `precentor_project/test_delete_pages.py`  | 5     | Going Back to a delete page after deleting                                                                         |
 | `precentor_project/test_settings.py`      | 8     | Production settings: the secret key check, hosts, HTTPS                                                            |
 | `precentor_project/test_testing.py`       | 2     | The shared test helpers                                                                                            |
@@ -150,6 +151,8 @@ testing, fixed, and covered by a test where it could be.
 | `5b2f8ff` | Going Back after a delete reopened the delete page, which then showed "Page not found"    |
 | `afe7ee3` | The planning actions could reach another church's slots and pieces by their address       |
 | `f4ec027` | A comment could be added to another church's term, service or piece                       |
+| `6b65a6c` | The change-password pages still had the admin's look, and nothing linked to them (fixed with `5ca663b`) |
+| `e9ee61f` | On a phone, with a longer name, the user menu's panel opened off the left of the screen    |
 
 **Left unfixed:** the 16 long lines, the variable `l` and the lambda
 found by flake8 (see section 1). None affects how the app works.
@@ -158,7 +161,6 @@ found by flake8 (see section 1). None affects how the app works.
 
 | Bug                                                                                                                                            | Effect                                                                                                         | Why it's not fixed yet                                                                  |
 | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| The "change your password" pages (`/accounts/password_change/`) still have Django admin's look, and nothing in the app links to them           | Someone who wants a new password asks the owner for a reset link, which works, rather than changing it themselves | Restyling them and adding a menu link is new work, left until after submission          |
 | A signed-in site superuser who opens an invitation link is told their account "belongs to no church"                                           | Only affects the site's administrator, who has no church by design                                             | Cosmetic; the link is still refused, which is correct                                   |
 | Mobile performance on the longest pages is lower: 69 for a service with ten slots and 75 for the library (section 3)                           | Those pages take longer to become usable on a slow phone                                                       | Would need the pages split or loaded in parts; not attempted before submission          |
 

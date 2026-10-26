@@ -82,14 +82,17 @@ and the owner flag sit on the user rather than on a separate
 membership table; memberships across several organisations are future
 scope.
 
-Four database constraints keep the rows sensible, each in its own
-migration (`accounts/0002` to `0005`) so each can be read and reverted
+Five database constraints keep the rows sensible, each in its own
+migration (`accounts/0002` to `0006`) so each can be read and reverted
 alone:
 
 - an organisation and a role go together, or neither does (a superuser
   has neither);
 - an owner belongs to an organisation;
 - an owner is a Conductor or a Librarian, never a Viewer;
+- an organisation has at most one owner (a `UniqueConstraint` on the
+  organisation, counting only rows where `is_owner` is true), so "the
+  owner" is always one person and handing over is a swap;
 - email addresses are unique ignoring case (`UniqueConstraint(Lower("email"))`).
   The field keeps `unique=True` as well, because Django's system check
   requires it on the `USERNAME_FIELD`.
@@ -99,7 +102,46 @@ lowercases the domain, and the manager's `get_by_natural_key` matches
 with `email__iexact`, so sign-in ignores case. `createsuperuser` asks
 for an email and a password only, and makes an admin with no
 organisation and no role. Users are deleted with their organisation,
-and their comments with them.
+and their comments with them. Removing someone from a church doesn't
+delete them: it sets `is_active` to false, so their comments keep their
+name, and Django's sign-in refuses them from their next request.
+
+### Members and invitations
+
+`accounts.Invitation` lets one person join a church in a given role. It
+has the organisation, the role, an optional note ("who it's for"), who
+made it, when, an `expires_at` seven days later, and `used_at` and
+`used_by`. `Invitation.make()` creates a random secret with
+`secrets.token_urlsafe(32)` and stores only its SHA-256 fingerprint
+(`token_hash`, unique), so the database can't be turned back into
+working links; the link is shown to the owner once, carried from the
+form to the next page in the session and removed as it's shown.
+`Invitation.find()` matches a link's fingerprint against unused,
+unexpired invitations, and `use()` claims one with a single conditional
+`UPDATE`, so two people using the same link at once can't both get in.
+Cancelling deletes the row; a used one stays, as the record of who
+joined.
+
+`JoinForm` shares a base, `NewPersonForm`, with `SignUpForm`, so the
+name, email and password rules are the same. Joining creates the person
+in the invitation's church and role, and if the link was claimed first
+the whole save is undone (`Invitation.Gone` inside `transaction.atomic`).
+
+The Members page lists the church's active people for everyone, with
+names, roles and the owner badge. The owner also sees addresses,
+invitations waiting to be used, former members, and the controls:
+change a role (`RoleForm`, which leaves Viewer out of the owner's own
+menu), remove and restore, make someone else the owner, and make a
+reset link. `User.hand_ownership_to()` clears the old owner's flag
+before setting the new one, inside a transaction, as the one-owner
+rule would refuse two owners even for a moment. Reset links are
+Django's own signed tokens from `default_token_generator`, so nothing
+is stored and a link stops working once used, once the person signs
+in, or after three days. Django's "email me a link" pages are left out
+of the URLs, as Precentor sends no email; everyone can change their own
+password from the user menu. Invitation and reset links have a Copy
+link button (`copy-link.js`), and the read-only box they sit in still
+works without JavaScript.
 
 ### Making a church
 

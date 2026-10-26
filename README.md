@@ -1077,7 +1077,7 @@ the role column in §2 says who may use each one.
 | Model                       | Create                                                    | Read                                               | Update                                                                                          | Delete                                                        | Locate                                                                     |
 | --------------------------- | --------------------------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | Organisation                | Sign-up page (`signup`)                                   | Its name on every page and the music list          | Church name on Settings (`site_config_update`)                                                  | not available (admin only)                                    | not needed: everyone sees only their own                                   |
-| User                        | Joining by invitation (`join`); sign-up for the owner     | Members page (`member_list`)                       | Role (`change_role`), owner (`make_owner`), password by reset link (`reset_link`)               | Removed, not deleted (`remove`), and brought back (`restore`) | Members page                                                               |
+| User                        | Joining by invitation (`join`); sign-up for the owner     | Members page (`member_list`)                       | Role (`change_role`), owner (`make_owner`), own password (`password_change`) or by reset link (`reset_link`) | Removed, not deleted (`remove`), and brought back (`restore`) | Members page                                                               |
 | Invitation                  | Invite someone (`invite`)                                 | Link shown once (`invitation_link`); Members page  | not available (cancel and make another)                                                         | Cancel (`invitation_cancel`)                                  | Members page, "Waiting to join"                                            |
 | Score                       | Add score (`score_create`)                                | Library (`score_list`), score page (`score_detail`) | Edit (`score_update`)                                                                          | Delete, after a confirmation (`score_delete`)                 | Search box, Language, Voicing, Suitable-for filters and sortable columns   |
 | Term                        | New term (`term_create`)                                  | Terms page (`term_list`), term page (`term_detail`) | Edit (`term_update`)                                                                           | Delete, after a confirmation (`term_delete`)                  | Terms page, current and upcoming first, past folded away                   |
@@ -1301,8 +1301,8 @@ each change before it was committed.
 
 [`TESTING.md`](TESTING.md) has the full record. In short:
 
-- **553 automated tests** cover the models, views, forms, permissions,
-  each church's own data and the liturgical calendar. 46 of them are
+- **560 automated tests** cover the models, views, forms, permissions,
+  each church's own data and the liturgical calendar. 49 of them are
   browser tests, which start a real server and drive Chromium through
   Playwright, so the JavaScript is tested too.
 - **Validation:** the W3C HTML and CSS validators, ESLint for the
