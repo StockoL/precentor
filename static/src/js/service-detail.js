@@ -178,6 +178,20 @@ function initServiceDetail() {
       return;
     }
 
+    // Only the badge changes, so focus stays on the Change kind button.
+    if (form.matches(".ajax-change-kind")) {
+      event.preventDefault();
+      const kind = form.querySelector("select").selectedOptions[0].textContent;
+      try {
+        const data = await postForm(form.action, new FormData(form));
+        applyFragments(data.fragments);
+        showToast(`Now shown as ${kind}.`, "success");
+      } catch (err) {
+        showToast("Couldn't change that slot's kind. Try again.", "danger");
+      }
+      return;
+    }
+
     if (form.matches(".ajax-move-slot")) {
       event.preventDefault();
       const { slotName, direction } = form.dataset;

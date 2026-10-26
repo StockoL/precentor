@@ -363,6 +363,18 @@ class SlotOrderBrowserTest(PlaywrightTestCase):
             "#roles-list > .role-block .role-block__name", "els => els.map(el => el.textContent.trim())"
         )
 
+    def test_changing_a_kind_redraws_only_the_badge(self):
+        introit = self.roles[0]
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.evaluate("window.__marker = true")
+        self.page.select_option(f"#kind-{introit.pk}", "hymn")
+        self.page.click(f"#change-kind-{introit.pk}")
+        self.page.wait_for_function(f"document.getElementById('kind-badge-{introit.pk}').textContent === 'Hymn'")
+        assert self.page.evaluate("window.__marker") is True
+        assert self.page.evaluate("document.activeElement.id") == f"change-kind-{introit.pk}"
+        introit.refresh_from_db()
+        assert introit.kind == "hymn"
+
     def test_move_buttons_reorder_without_a_reload_and_keep_focus(self):
         self.page.goto(f"/services/{self.service.pk}/")
         self.page.evaluate("window.__marker = true")
