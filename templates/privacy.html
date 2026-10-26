@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Privacy — Precentor{% endblock %}
+{% block description %}What Precentor keeps about you and your church, and how to have it deleted.{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Privacy</h1>
+    <p>Precentor keeps only what it needs to plan a church's music, and each church sees only its own.</p>
+
+    <h2>What's kept about you</h2>
+    <ul>
+        <li>Your email address, to sign in with, and your name, shown to the rest of your church.</li>
+        <li>Your role in the church, and whether you're its owner.</li>
+        <li>Your password, stored only as a hash: nobody, including the site's administrator, can read it.</li>
+        <li>When you joined and when you last signed in.</li>
+        <li>The comments you write, with your name.</li>
+    </ul>
+
+    <h2>What's kept about your church</h2>
+    <p>Its name, crest and settings, its library of scores, its terms, services and their music, its notices and comments, and invitations waiting to be used. Only your church's members can see any of it.</p>
+
+    <h2>Cookies and your browser</h2>
+    <ul>
+        <li><strong>sessionid</strong> keeps you signed in, for up to two weeks.</li>
+        <li><strong>csrftoken</strong> protects forms from being sent by another site.</li>
+        <li>If you choose Light or Dark in the menu, your browser remembers it on your own device.</li>
+    </ul>
+    <p>There's no analytics, tracking or advertising, and Precentor sends no email.</p>
+
+    <h2>Keeping it safe</h2>
+    <p>To stop passwords being guessed and the site being filled by scripts, Precentor counts wrong passwords for an address and registrations from a network for a short time. It keeps a fingerprint of the address, never the address itself, and the counts expire within an hour. Precentor is hosted by Render, in Frankfurt.</p>
+
+    <h2>Leaving</h2>
+    <ul>
+        <li>You can delete your own account from the Change password page. Your name, email and password go; your comments stay, so the conversations still make sense, but they say "A former member".</li>
+        <li>If your church's owner removes you, you can't sign in, but your account is kept so they can bring you back. It's deleted with the church.</li>
+        <li>The owner can delete the church, which deletes everything in it and every member's account.</li>
+    </ul>
+
+    <h2>Questions</h2>
+    <p>Each church's owner looks after its people and its data, so ask them first.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+/* ==========================================================================
+   BLOCK: SITE FOOTER
+   A quiet line at the foot of every page, under a rule, for links that
+   belong to the site rather than to a church (the privacy page). It sits
+   inside the page's wrapper, so its rule lines up with the content.
+   ========================================================================== */
+
+@layer blocks {
+  /* A paragraph, so the global measure would stop the rule at 60ch;
+     lifted, as it should run the width of the page like the header's. */
+  .site-footer {
+    max-width: none;
+    margin-block-start: var(--spacing-xl);
+    padding-block: var(--spacing-s);
+    border-block-start: 1px solid var(--colors-border-subtle);
+    color: var(--colors-text-muted);
+    font-size: var(--typography-step--1);
+  }
+
+  .site-footer a {
+    color: inherit;
+  }
+}

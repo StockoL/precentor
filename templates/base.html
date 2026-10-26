@@ -42,6 +42,7 @@
     <link rel="stylesheet" href="{% static 'src/blocks/button.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/nav.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/skip-link.css' %}">
+    <link rel="stylesheet" href="{% static 'src/blocks/site-footer.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/page-header.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/user-menu.css' %}">
     <link rel="stylesheet" href="{% static 'src/blocks/detail-list.css' %}">
@@ -115,5 +116,8 @@
         {% endif %}
         {% block content %}{% endblock %}
     </main>
+    <footer class="wrapper">
+        <p class="site-footer"><a href="{% url 'privacy' %}">Privacy</a></p>
+    </footer>
 </body>
 </html>

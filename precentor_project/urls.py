@@ -18,12 +18,14 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
+from django.views.generic import TemplateView
 
 from accounts.forms import ChangePasswordForm, NewPasswordForm
 from accounts.views import JoinView, SignInView, SignUpView, delete_account, delete_church
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("privacy/", TemplateView.as_view(template_name="privacy.html"), name="privacy"),
     # Signing in by email, with a limit on wrong passwords (accounts).
     path("accounts/login/", SignInView.as_view(), name="login"),
     path("accounts/signup/", SignUpView.as_view(), name="signup"),

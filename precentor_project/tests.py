@@ -291,3 +291,17 @@ class NoStoreWhenSignedInTests(TestCase):
         self.client.force_login(make_user("viewer", organisation=church))
         response = self.client.get(settings.crest_url)
         self.assertEqual(response["Cache-Control"], "public, max-age=31536000, immutable")
+
+
+class PrivacyPageTests(TestCase):
+    def test_anyone_can_read_it(self):
+        response = self.client.get("/privacy/")
+        self.assertContains(response, "<h1>Privacy</h1>", html=True)
+        for fact in ("sessionid", "csrftoken", "no analytics", "Frankfurt", "A former member", "owner"):
+            with self.subTest(fact=fact):
+                self.assertContains(response, fact)
+
+    def test_every_page_links_to_it_and_sign_up_mentions_it(self):
+        self.assertContains(self.client.get("/accounts/login/"), '<p class="site-footer">')
+        self.assertContains(self.client.get("/accounts/login/"), 'href="/privacy/">Privacy</a>')
+        self.assertContains(self.client.get("/accounts/signup/"), 'href="/privacy/">How your details are kept</a>')
