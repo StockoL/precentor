@@ -1228,3 +1228,37 @@ class SignInLimitTests(TestCase):
         from .throttling import _key
 
         self.assertNotIn("anne", _key("sign-in", "anne@example.com"))
+
+
+class SignUpLimitTests(TestCase):
+    def register(self, number, address="203.0.113.7"):
+        data = {**SignUpFormTests.DATA, "email": f"owner{number}@example.com", "church_name": f"Church {number}"}
+        client = self.client_class()
+        return client.post("/accounts/signup/", data, HTTP_X_FORWARDED_FOR=f"10.0.0.1, {address}")
+
+    def test_five_churches_an_hour_from_one_address(self):
+        for number in range(5):
+            self.assertRedirects(self.register(number), "/")
+        response = self.register(5)
+        self.assertContains(response, "try again in an hour", status_code=429)
+        self.assertFalse(Organisation.objects.filter(name="Church 5").exists())
+
+    def test_another_address_can_still_register(self):
+        for number in range(5):
+            self.register(number)
+        self.assertRedirects(self.register(5, address="198.51.100.9"), "/")
+
+    def test_mistakes_on_the_form_dont_count(self):
+        for number in range(6):
+            self.client_class().post("/accounts/signup/", {"church_name": "Incomplete"},
+                                     HTTP_X_FORWARDED_FOR="203.0.113.7")
+        self.assertRedirects(self.register(0), "/")
+
+    def test_only_the_last_forwarded_address_is_trusted(self):
+        from django.test import RequestFactory
+
+        from .throttling import client_address
+
+        request = RequestFactory().get("/", HTTP_X_FORWARDED_FOR="1.2.3.4, 203.0.113.7")
+        self.assertEqual(client_address(request), "203.0.113.7")
+        self.assertEqual(client_address(RequestFactory().get("/")), "127.0.0.1")

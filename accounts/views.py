@@ -22,6 +22,7 @@ from .forms import EmailAuthenticationForm, InvitationForm, JoinForm, RoleForm, 
 from .mixins import OrganisationScopedMixin, RoleRequiredMixin
 from .models import Invitation, Role, User
 from .permissions import can_manage_organisation
+from .throttling import client_address, limit_reached, record_attempt
 
 
 def members_of(request, active=True):
@@ -54,10 +55,14 @@ class SignInView(LoginView):
 
 
 class SignUpView(CreateView):
-    """Register a church: its first person is signed straight in."""
+    """Register a church: its first person is signed straight in. At most a
+    few churches an hour can be registered from one network address, so
+    the site can't be filled by a script."""
 
     form_class = SignUpForm
     template_name = "registration/signup.html"
+    SIGN_UP_LIMIT = 5
+    SIGN_UP_WINDOW = 60 * 60  # seconds
 
     def dispatch(self, request, *args, **kwargs):
         # Someone signed in already has a church.
@@ -65,8 +70,17 @@ class SignUpView(CreateView):
             return redirect(settings.LOGIN_REDIRECT_URL)
         return super().dispatch(request, *args, **kwargs)
 
+    def post(self, request, *args, **kwargs):
+        if limit_reached("sign-up", client_address(request), self.SIGN_UP_LIMIT):
+            self.object = None  # as CreateView's own post() sets it
+            context = self.get_context_data(form=self.get_form(), too_many=True)
+            return self.render_to_response(context, status=429)
+        return super().post(request, *args, **kwargs)
+
     def form_valid(self, form):
         login(self.request, form.save())
+        # Only churches actually registered count, not mistakes on the form.
+        record_attempt("sign-up", client_address(self.request), self.SIGN_UP_WINDOW)
         return redirect(settings.LOGIN_REDIRECT_URL)
 
 
