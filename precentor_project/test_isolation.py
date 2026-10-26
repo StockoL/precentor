@@ -97,26 +97,32 @@ class EveryChurchModelIsCoveredTests(TwoChurchesMixin, TestCase):
                     self.assertTrue(rows.exists())
 
 
-def int_routes():
-    """Every route in the project whose address carries a number, by its
-    full name (namespace:name). The admin site is left out: it's for the
-    site's superusers, who belong to no church."""
+def all_routes():
+    """Every route in the project, as {namespace:name: its pattern}. The
+    admin site is left out: it's for the site's superusers, who belong to
+    no church."""
     from django.urls import URLPattern, URLResolver, get_resolver
 
-    found = set()
+    found = {}
 
-    def walk(patterns, namespace=""):
+    def walk(patterns, namespace="", prefix=""):
         for pattern in patterns:
             if isinstance(pattern, URLResolver):
                 if str(pattern.pattern).startswith("admin"):
                     continue
                 inner = pattern.namespace or ""
-                walk(pattern.url_patterns, f"{namespace}:{inner}".strip(":") if inner else namespace)
-            elif isinstance(pattern, URLPattern) and "<int:" in str(pattern.pattern):
-                found.add(f"{namespace}:{pattern.name}" if namespace else pattern.name)
+                walk(pattern.url_patterns, f"{namespace}:{inner}".strip(":") if inner else namespace,
+                     prefix + str(pattern.pattern))
+            elif isinstance(pattern, URLPattern):
+                found[f"{namespace}:{pattern.name}" if namespace else pattern.name] = prefix + str(pattern.pattern)
 
     walk(get_resolver().url_patterns)
     return found
+
+
+def int_routes():
+    """The routes whose address carries a number."""
+    return {name for name, pattern in all_routes().items() if "<int:" in pattern}
 
 
 def content_type_id(row):
@@ -223,3 +229,47 @@ class AnotherChurchsAddressesTests(TwoChurchesMixin, TestCase):
                         self.assertNotEqual(response.status_code, 200, "another church's page was shown")
                         self.assertNotIn(b"B-ONLY", response.content)
         self.assertEqual(snapshot(self.b["church"]), before, "church B's data was changed")
+
+
+# Routes with other parameters, which can't be listed for a church.
+TOKEN_ROUTES = {
+    "join": "an invitation's secret, checked by its own tests",
+    "password_reset_confirm": "Django's signed reset token, checked by its own tests",
+}
+
+
+class OwnPagesShowNothingOfAnotherChurchTests(TwoChurchesMixin, TestCase):
+    """Church A's own pages must never list or mention church B's rows, in
+    menus, lists or counts, even though B's own addresses are shut."""
+
+    def assert_nothing_of_b(self, url):
+        response = self.client.get(url, follow=True)
+        html = response.content.decode()
+        found = html.find("B-ONLY")
+        # Only the text around the leak, so a failure stays readable.
+        self.assertEqual(found, -1, f"{url} mentions church B: ...{html[max(found - 80, 0):found + 40]}...")
+
+    def test_pages_without_an_id(self):
+        from django.urls import reverse
+
+        self.client.force_login(self.a["owner"])
+        plain = [name for name, pattern in all_routes().items() if "<" not in pattern]
+        for name in plain:
+            with self.subTest(route=name):
+                self.assert_nothing_of_b(reverse(name))
+
+    def test_church_as_own_pages_with_an_id(self):
+        from django.urls import reverse
+
+        self.client.force_login(self.a["owner"])
+        for name, addresses in ADDRESSES.items():
+            # The same table, turned round to point at church A's own rows.
+            for kwargs in addresses(self.b, self.a):
+                with self.subTest(route=name, kwargs=kwargs):
+                    self.assert_nothing_of_b(reverse(name, kwargs=kwargs))
+
+    def test_every_route_is_covered_by_one_check_or_another(self):
+        covered = set(ADDRESSES) | set(NOT_CHURCH_DATA) | set(TOKEN_ROUTES)
+        plain = {name for name, pattern in all_routes().items() if "<" not in pattern}
+        self.assertEqual(sorted(set(all_routes()) - covered - plain), [], "Add these routes to the isolation test")
+
