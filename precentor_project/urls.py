@@ -20,7 +20,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
 from accounts.forms import ChangePasswordForm, NewPasswordForm
-from accounts.views import JoinView, SignInView, SignUpView
+from accounts.views import JoinView, SignInView, SignUpView, delete_account
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -42,6 +42,7 @@ urlpatterns = [
         auth_views.PasswordChangeDoneView.as_view(),
         name="password_change_done",
     ),
+    path("accounts/delete/", delete_account, name="delete_account"),
     path(
         "accounts/reset/<uidb64>/<token>/",
         auth_views.PasswordResetConfirmView.as_view(form_class=NewPasswordForm),

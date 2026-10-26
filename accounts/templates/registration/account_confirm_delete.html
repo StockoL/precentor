@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Delete your account — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Delete your account?</h1>
+    <p>Your name, email address and password will be deleted, and you won't be able to sign in. Anything you've written in comments stays, so the conversations still make sense, but it will say "A former member" instead of your name.</p>
+    <p>This can't be undone. Your church can invite you again later as a new member.</p>
+    <form method="post" class="flow">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="cluster">
+            <button class="btn-danger" type="submit">Delete my account</button>
+            <a class="btn-ghost" href="{% url 'planning:term_list' %}">Keep it</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

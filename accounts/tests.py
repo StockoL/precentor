@@ -1262,3 +1262,46 @@ class SignUpLimitTests(TestCase):
         request = RequestFactory().get("/", HTTP_X_FORWARDED_FOR="1.2.3.4, 203.0.113.7")
         self.assertEqual(client_address(request), "203.0.113.7")
         self.assertEqual(client_address(RequestFactory().get("/")), "127.0.0.1")
+
+
+class DeleteOwnAccountTests(TestCase):
+    def setUp(self):
+        self.church = make_organisation("St Cecilia's")
+        self.owner = User.objects.create_user(
+            email="owner@example.com", password="testpass123", organisation=self.church, role="conductor", is_owner=True
+        )
+        self.member = make_user("librarian", organisation=self.church, email="ben@example.com")
+        self.client.force_login(self.member)
+
+    def test_with_the_right_password_the_account_goes_and_they_are_signed_out(self):
+        response = self.client.post("/accounts/delete/", {"password": "testpass123"})
+        self.assertContains(response, "Your account has been deleted")
+        self.assertFalse(User.objects.filter(email="ben@example.com").exists())
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_a_wrong_password_deletes_nothing(self):
+        response = self.client.post("/accounts/delete/", {"password": "not mine"})
+        self.assertContains(response, "That isn&#x27;t your password.")
+        self.assertTrue(User.objects.filter(email="ben@example.com").exists())
+
+    def test_the_owner_is_told_to_hand_over_first(self):
+        self.client.force_login(self.owner)
+        response = self.client.get("/accounts/delete/")
+        self.assertContains(response, "You're the owner of St Cecilia&#x27;s")
+        self.assertNotContains(response, 'name="password"')
+        self.client.post("/accounts/delete/", {"password": "testpass123"})
+        self.assertTrue(User.objects.filter(pk=self.owner.pk).exists())
+
+    def test_their_comments_stay_as_a_former_members(self):
+        from comments.models import Comment
+        from precentor_project.testing import make_term
+
+        comment = Comment.objects.create(author=self.member, target=make_term(organisation=self.church), body="Ready.")
+        self.client.post("/accounts/delete/", {"password": "testpass123"})
+        comment.refresh_from_db()
+        self.assertEqual(comment.author_name, "A former member")
+
+    def test_its_found_from_the_change_password_page_and_needs_signing_in(self):
+        self.assertContains(self.client.get("/accounts/password_change/"), 'href="/accounts/delete/"')
+        self.client.logout()
+        self.assertRedirects(self.client.get("/accounts/delete/"), "/accounts/login/?next=/accounts/delete/")

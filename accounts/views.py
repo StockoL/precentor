@@ -2,7 +2,8 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView
@@ -18,7 +19,7 @@ from django.views.generic import CreateView, DeleteView, DetailView, FormView, L
 from precentor_project.mixins import DeletePageMixin
 
 from .decorators import role_required
-from .forms import EmailAuthenticationForm, InvitationForm, JoinForm, RoleForm, SignUpForm
+from .forms import DeleteAccountForm, EmailAuthenticationForm, InvitationForm, JoinForm, RoleForm, SignUpForm
 from .mixins import OrganisationScopedMixin, RoleRequiredMixin
 from .models import Invitation, Role, User
 from .permissions import can_manage_organisation
@@ -288,3 +289,25 @@ def reset_link(request, pk):
         "link": request.build_absolute_uri(path),
         "expires_at": timezone.now() + timedelta(seconds=settings.PASSWORD_RESET_TIMEOUT),
     })
+
+
+@login_required
+def delete_account(request):
+    """
+    Someone deletes their own account, after giving their password. They're
+    signed out first, then the account goes; their comments stay, credited
+    to "A former member". The owner can't leave this way: the church needs
+    an owner, so they hand ownership over or delete the church first.
+    """
+    if request.user.is_owner:
+        return render(request, "registration/account_delete_owner.html")
+    form = DeleteAccountForm(request.POST or None, user=request.user)
+    if request.method == "POST" and form.is_valid():
+        user = request.user
+        logout(request)
+        user.delete()
+        # Signing out clears the session, so a message wouldn't survive a
+        # redirect; the page says it instead.
+        return render(request, "registration/account_deleted.html")
+    return render(request, "registration/account_confirm_delete.html", {"form": form})
+

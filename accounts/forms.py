@@ -197,3 +197,23 @@ class ChangePasswordForm(PasswordChangeForm):
         super().__init__(*args, **kwargs)
         self.fields["old_password"].label = "Current password"
         plain_password_fields(self, "new_password1", "new_password2", label="New password")
+
+
+class DeleteAccountForm(forms.Form):
+    """Asks for the person's password before their account is deleted, so
+    nobody at a computer left signed in can do it for them."""
+
+    password = forms.CharField(
+        label="Your password", widget=forms.PasswordInput(attrs={"autocomplete": "current-password"})
+    )
+
+    def __init__(self, *args, user, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+    def clean_password(self):
+        password = self.cleaned_data["password"]
+        if not self.user.check_password(password):
+            raise forms.ValidationError("That isn't your password.")
+        return password
+

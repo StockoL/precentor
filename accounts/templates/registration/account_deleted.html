@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Account deleted — Precentor{% endblock %}
+{% block content %}
+<div class="cover">
+    <div class="center flow" data-intrinsic data-centered style="--center-max-width: 30ch;">
+        <h1>Your account has been deleted</h1>
+        <p>Thank you for using Precentor.</p>
+        <p class="list-row__meta"><a href="{% url 'login' %}">Log in</a> with another account, or <a href="{% url 'signup' %}">register a church</a>.</p>
+    </div>
+</div>
+{% endblock %}

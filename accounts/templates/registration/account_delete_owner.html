@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Delete your account — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>You're the owner of {{ request.organisation.name }}</h1>
+    <p>A church always needs an owner, so you can't delete your account while you are one. Either hand ownership to a Conductor or Librarian from the Members page, then come back here, or delete the church itself, with everything in it.</p>
+    <div class="cluster">
+        <a class="btn-primary" href="{% url 'members:member_list' %}">Go to Members</a>
+    </div>
+</div>
+{% endblock %}
