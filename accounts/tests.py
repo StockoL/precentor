@@ -1173,3 +1173,58 @@ class ChangePasswordLinkTests(TestCase):
             self.client.get("/accounts/password_change/"),
             'href="/accounts/password_change/" aria-current="page">Change password</a>',
         )
+
+
+class SignInLimitTests(TestCase):
+    def setUp(self):
+        self.user = make_user(email="anne@example.com", password="the right password")
+
+    def sign_in(self, password, email="anne@example.com"):
+        return self.client.post("/accounts/login/", {"username": email, "password": password})
+
+    def test_five_wrong_passwords_lock_the_address_even_against_the_right_one(self):
+        for _ in range(5):
+            self.assertEqual(self.sign_in("wrong").status_code, 200)
+        response = self.sign_in("the right password")
+        self.assertEqual(response.status_code, 429)
+        self.assertContains(response, "Too many wrong passwords", status_code=429)
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_capitals_dont_get_round_it(self):
+        for _ in range(5):
+            self.sign_in("wrong", email="Anne@Example.com")
+        self.assertEqual(self.sign_in("the right password").status_code, 429)
+
+    def test_another_address_is_unaffected(self):
+        make_user(email="ben@example.com", password="bens password")
+        for _ in range(5):
+            self.sign_in("wrong")
+        self.assertRedirects(self.sign_in("bens password", email="ben@example.com"), "/")
+
+    def test_signing_in_clears_the_count(self):
+        for _ in range(4):
+            self.sign_in("wrong")
+        self.assertRedirects(self.sign_in("the right password"), "/")
+        self.client.logout()
+        for _ in range(4):
+            self.sign_in("wrong")
+        self.assertRedirects(self.sign_in("the right password"), "/")
+
+    def test_the_lock_lifts_once_the_window_has_passed(self):
+        import time
+
+        from .forms import EmailAuthenticationForm
+
+        # Long enough to outlast checking six passwords, which is slow on
+        # purpose; short enough not to hold the suite up.
+        with mock.patch.object(EmailAuthenticationForm, "LOCKED_FOR", 3):
+            for _ in range(5):
+                self.sign_in("wrong")
+            self.assertEqual(self.sign_in("the right password").status_code, 429)
+            time.sleep(3.5)
+            self.assertRedirects(self.sign_in("the right password"), "/")
+
+    def test_the_cache_holds_a_fingerprint_not_the_address(self):
+        from .throttling import _key
+
+        self.assertNotIn("anne", _key("sign-in", "anne@example.com"))

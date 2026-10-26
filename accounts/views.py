@@ -3,8 +3,10 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import LoginView
+from django.core.exceptions import NON_FIELD_ERRORS
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -16,7 +18,7 @@ from django.views.generic import CreateView, DeleteView, DetailView, FormView, L
 from precentor_project.mixins import DeletePageMixin
 
 from .decorators import role_required
-from .forms import InvitationForm, JoinForm, RoleForm, SignUpForm
+from .forms import EmailAuthenticationForm, InvitationForm, JoinForm, RoleForm, SignUpForm
 from .mixins import OrganisationScopedMixin, RoleRequiredMixin
 from .models import Invitation, Role, User
 from .permissions import can_manage_organisation
@@ -35,6 +37,20 @@ def members_of(request, active=True):
 # Where a new invitation's secret waits in the owner's session between
 # making it and seeing its link, which happens once.
 NEW_INVITATION = "new_invitation"
+
+
+class SignInView(LoginView):
+    """Django's sign-in, by email. A refused attempt for an address that's
+    had too many wrong passwords answers 429 Too Many Requests, so the
+    status says what happened as well as the message."""
+
+    authentication_form = EmailAuthenticationForm
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        if form.has_error(NON_FIELD_ERRORS, code="throttled"):
+            response.status_code = 429
+        return response
 
 
 class SignUpView(CreateView):

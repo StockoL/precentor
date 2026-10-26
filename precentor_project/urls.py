@@ -19,17 +19,13 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
-from accounts.forms import ChangePasswordForm, EmailAuthenticationForm, NewPasswordForm
-from accounts.views import JoinView, SignUpView
+from accounts.forms import ChangePasswordForm, NewPasswordForm
+from accounts.views import JoinView, SignInView, SignUpView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    # Ahead of Django's own auth URLs, so the login page asks for an email.
-    path(
-        "accounts/login/",
-        auth_views.LoginView.as_view(authentication_form=EmailAuthenticationForm),
-        name="login",
-    ),
+    # Signing in by email, with a limit on wrong passwords (accounts).
+    path("accounts/login/", SignInView.as_view(), name="login"),
     path("accounts/signup/", SignUpView.as_view(), name="signup"),
     path("join/<str:token>/", JoinView.as_view(), name="join"),
     # Django's own account pages, listed one by one rather than included

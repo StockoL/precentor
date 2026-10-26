@@ -4,6 +4,7 @@ from django.db import transaction
 
 from .models import Invitation, Organisation, Role, User
 from .organisations import create_organisation
+from .throttling import clear_attempts, limit_reached, record_attempt
 
 
 def plain_password_fields(form, first, second, label="Password"):
@@ -32,6 +33,34 @@ class EmailAuthenticationForm(AuthenticationForm):
         label="Email address",
         widget=forms.EmailInput(attrs={"autofocus": True, "autocomplete": "email"}),
     )
+
+    # After this many wrong passwords for one address, signing in to it is
+    # refused for a while, so a password can't be guessed by trying.
+    FAILED_LIMIT = 5
+    LOCKED_FOR = 15 * 60  # seconds after the last wrong password
+
+    error_messages = {
+        **AuthenticationForm.error_messages,
+        "throttled": (
+            "Too many wrong passwords for this address. Wait 15 minutes and try again, "
+            "or ask whoever runs Precentor for your church for a reset link."
+        ),
+    }
+
+    def clean(self):
+        email = (self.cleaned_data.get("username") or "").lower()
+        if email and limit_reached("sign-in", email, self.FAILED_LIMIT):
+            # Refused before the password is even checked, so guessing
+            # gains nothing while it lasts.
+            raise forms.ValidationError(self.error_messages["throttled"], code="throttled")
+        try:
+            cleaned = super().clean()
+        except forms.ValidationError:
+            if email:
+                record_attempt("sign-in", email, self.LOCKED_FOR)
+            raise
+        clear_attempts("sign-in", email)
+        return cleaned
 
 
 class NewPersonForm(BaseUserCreationForm):
