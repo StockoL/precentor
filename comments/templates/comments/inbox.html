@@ -8,7 +8,7 @@
         <li class="list-row">
             <div class="flow" style="--flow-space: var(--spacing-3xs);">
                 {# Each subject knows its own page, so comments needn't know about terms or services. #}
-                <p><strong>{{ comment.author }}</strong> on <a href="{{ comment.target.get_absolute_url }}">{{ comment.target }}</a></p>
+                <p><strong>{{ comment.author_name }}</strong> on <a href="{{ comment.target.get_absolute_url }}">{{ comment.target }}</a></p>
                 <p>{{ comment.body }}</p>
                 <p class="list-row__meta">{{ comment.created_at|date:"DATETIME_FORMAT" }} · {% if comment.reply_count %}{{ comment.reply_count }} repl{{ comment.reply_count|pluralize:"y,ies" }}{% else %}No replies yet{% endif %}</p>
             </div>

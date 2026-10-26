@@ -406,3 +406,40 @@ class CommentsForOneChurchTests(TestCase):
         self.assertEqual(Comment.objects.count(), 2)
         self.theirs.refresh_from_db()
         self.assertFalse(self.theirs.is_open)
+
+
+class FormerMemberCommentTests(TestCase):
+    """Someone who deletes their account leaves their comments behind,
+    credited to "A former member", so the threads still read sensibly."""
+
+    def setUp(self):
+        from planning.models import Service
+
+        self.term = make_term()
+        self.service = Service.objects.create(term=self.term, date=date(2026, 1, 11), service_type="Sung Mass")
+        self.leaver = make_user("librarian")
+        self.leaver.name = "Ben Jonson"
+        self.leaver.save()
+        self.comment = Comment.objects.create(author=self.leaver, target=self.service, body="Copies are ready.")
+        Comment.objects.create(author=make_user("conductor"), target=self.service, body="Thanks.", parent=self.comment)
+        Comment.objects.create(author=self.leaver, target=self.service, body="Any time.", parent=self.comment)
+
+    def test_the_comments_stay_and_no_longer_name_them(self):
+        self.leaver.delete()
+        self.assertEqual(Comment.objects.count(), 3)
+        self.comment.refresh_from_db()
+        self.assertIsNone(self.comment.author)
+        self.assertEqual(self.comment.author_name, "A former member")
+        self.assertIn("A former member", str(self.comment))
+
+    def test_the_pages_show_a_former_member(self):
+        self.leaver.delete()
+        self.client.force_login(make_user("viewer"))
+        for url in (self.service.get_absolute_url(), "/comments/inbox/"):
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertContains(response, "A former member")
+                self.assertNotContains(response, "Ben Jonson")
+
+    def test_a_present_author_is_still_named(self):
+        self.assertEqual(self.comment.author_name, "Ben Jonson")

@@ -8,8 +8,10 @@ from accounts.querysets import OrganisationQuerySet
 
 
 class Comment(models.Model):
+    # Empty once the author deletes their account: the comment stays, so
+    # the thread still makes sense, but nothing identifies who wrote it.
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="comments"
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="comments"
     )
     body = models.TextField("comment")
     is_open = models.BooleanField(default=True)
@@ -34,8 +36,12 @@ class Comment(models.Model):
         self.organisation_id = self.target.organisation_id
         super().save(*args, **kwargs)
 
+    @property
+    def author_name(self):
+        return str(self.author) if self.author_id else "A former member"
+
     def __str__(self):
-        return f"Comment by {self.author} on {self.target}"
+        return f"Comment by {self.author_name} on {self.target}"
 
     def clean(self):
         """Enforce flat threading: a reply cannot itself be replied to."""

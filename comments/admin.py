@@ -5,7 +5,7 @@ from .models import Comment
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ["author", "target", "display_state", "created_at"]  # noqa
+    list_display = ["author_name", "target", "display_state", "created_at"]  # noqa
     list_filter = ["is_open"]  # noqa
 
     def display_state(self, obj):
