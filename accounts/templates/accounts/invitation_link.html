@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Invitation link — Precentor{% endblock %}
+{% block extra_js %}
+<script type="module" src="{% static 'src/js/copy-link.js' %}"></script>
+{% endblock %}
 {% block content %}
 <div class="flow">
     <h1>Invitation {% if invitation.note %}for {{ invitation.note }}{% else %}link{% endif %}</h1>

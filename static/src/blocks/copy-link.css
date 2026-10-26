@@ -2,7 +2,8 @@
    BLOCK: COPY LINK
    A link to pass on by hand, such as an invitation: a read-only box that
    holds the whole address, so it can be selected and copied even
-   without JavaScript.
+   without JavaScript. With it, copy-link.js adds a Copy link button
+   below the box.
    ========================================================================== */
 
 @layer blocks {
@@ -23,5 +24,9 @@
     background-color: var(--colors-surface-base);
     color: var(--colors-text-base);
     font-size: max(1rem, var(--typography-step--1));
+  }
+
+  .copy-link .btn {
+    margin-block-start: var(--spacing-2xs);
   }
 }

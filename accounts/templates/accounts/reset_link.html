@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Reset link for {{ member }} — Precentor{% endblock %}
+{% block extra_js %}
+<script type="module" src="{% static 'src/js/copy-link.js' %}"></script>
+{% endblock %}
 {% block content %}
 <div class="flow">
     <h1>Reset link for {{ member }}</h1>
