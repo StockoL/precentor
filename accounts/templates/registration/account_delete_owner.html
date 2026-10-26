@@ -6,6 +6,7 @@
     <p>A church always needs an owner, so you can't delete your account while you are one. Either hand ownership to a Conductor or Librarian from the Members page, then come back here, or delete the church itself, with everything in it.</p>
     <div class="cluster">
         <a class="btn-primary" href="{% url 'members:member_list' %}">Go to Members</a>
+        <a class="btn-danger" href="{% url 'delete_church' %}">Delete the church</a>
     </div>
 </div>
 {% endblock %}

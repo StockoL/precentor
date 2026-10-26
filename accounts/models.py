@@ -20,6 +20,28 @@ class Organisation(models.Model):
     def __str__(self):
         return self.name
 
+    @transaction.atomic
+    def delete(self, *args, **kwargs):
+        """Delete the church and everything in it, all or nothing. A planned
+        piece protects its score from being deleted on its own, so with the
+        whole church going the pieces go first and the scores can follow.
+        (The admin's "delete selected" action skips this method.)"""
+        from django.apps import apps
+
+        apps.get_model("planning", "RolePiece").objects.filter(organisation=self).delete()
+        return super().delete(*args, **kwargs)
+
+    def contents(self):
+        """How much of each kind of thing the church holds, for the page
+        that asks before it's deleted."""
+        return {
+            "members": self.users.count(),
+            "scores": self.scores.count(),
+            "terms": self.terms.count(),
+            "services": self.services.count(),
+            "comments": self.comments.count(),
+        }
+
 
 class Role(models.TextChoices):
     CONDUCTOR = "conductor", "Conductor"

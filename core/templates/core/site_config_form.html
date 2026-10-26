@@ -30,5 +30,8 @@
         <p>{{ form.show_hymns_psalm }} {{ form.show_hymns_psalm.label_tag }}</p>
         <button class="btn-primary" type="submit">Save</button>
     </form>
+    {% if can.manage_organisation %}
+    <p class="list-row__meta">Closing down? <a href="{% url 'delete_church' %}">Delete this church</a>, with everything in it.</p>
+    {% endif %}
 </div>
 {% endblock %}

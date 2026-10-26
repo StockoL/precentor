@@ -19,7 +19,7 @@ from django.views.generic import CreateView, DeleteView, DetailView, FormView, L
 from precentor_project.mixins import DeletePageMixin
 
 from .decorators import role_required
-from .forms import DeleteAccountForm, EmailAuthenticationForm, InvitationForm, JoinForm, RoleForm, SignUpForm
+from .forms import DeleteAccountForm, DeleteChurchForm, EmailAuthenticationForm, InvitationForm, JoinForm, RoleForm, SignUpForm
 from .mixins import OrganisationScopedMixin, RoleRequiredMixin
 from .models import Invitation, Role, User
 from .permissions import can_manage_organisation
@@ -310,4 +310,22 @@ def delete_account(request):
         # redirect; the page says it instead.
         return render(request, "registration/account_deleted.html")
     return render(request, "registration/account_confirm_delete.html", {"form": form})
+
+
+@role_required(can_manage_organisation)
+def delete_church(request):
+    """
+    The owner deletes the church and everything in it: its library, terms,
+    services, comments, settings and every member's account. The page says
+    how much will go and asks for the church's name first. Everyone in it
+    is signed out, as their accounts go too.
+    """
+    church = request.organisation
+    form = DeleteChurchForm(request.POST or None, organisation=church)
+    if request.method == "POST" and form.is_valid():
+        name = church.name
+        logout(request)
+        church.delete()
+        return render(request, "accounts/church_deleted.html", {"name": name})
+    return render(request, "accounts/church_confirm_delete.html", {"form": form, "contents": church.contents()})
 

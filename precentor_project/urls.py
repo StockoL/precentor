@@ -20,7 +20,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
 from accounts.forms import ChangePasswordForm, NewPasswordForm
-from accounts.views import JoinView, SignInView, SignUpView, delete_account
+from accounts.views import JoinView, SignInView, SignUpView, delete_account, delete_church
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -52,6 +52,7 @@ urlpatterns = [
     path("members/", include("accounts.urls")),
     path("library/", include("library.urls")),
     path("ordo/", include("ordo.urls")),
+    path("settings/delete/", delete_church, name="delete_church"),
     path("settings/", include("core.urls")),
     path("", include("planning.urls")),
     path("comments/", include("comments.urls")),

@@ -217,3 +217,21 @@ class DeleteAccountForm(forms.Form):
             raise forms.ValidationError("That isn't your password.")
         return password
 
+
+class DeleteChurchForm(forms.Form):
+    """The owner types the church's name to confirm, as one click is too
+    easy for something that can't be undone. Capitals and spaces at the
+    ends don't matter: it's a check of intent, not of typing."""
+
+    name = forms.CharField(label="Type the church's name to confirm")
+
+    def __init__(self, *args, organisation, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.organisation = organisation
+
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        if name.strip().casefold() != self.organisation.name.strip().casefold():
+            raise forms.ValidationError("That isn't the church's name.")
+        return name
+

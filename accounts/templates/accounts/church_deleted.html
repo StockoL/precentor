@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Church deleted — Precentor{% endblock %}
+{% block content %}
+<div class="cover">
+    <div class="center flow" data-intrinsic data-centered style="--center-max-width: 30ch;">
+        <h1>{{ name }} has been deleted</h1>
+        <p>Everything in it has gone, and so have its members' accounts. Thank you for using Precentor.</p>
+        <p class="list-row__meta"><a href="{% url 'signup' %}">Register a church</a> to start again.</p>
+    </div>
+</div>
+{% endblock %}

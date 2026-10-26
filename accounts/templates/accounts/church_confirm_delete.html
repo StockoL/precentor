@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Delete {{ request.organisation.name }} — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Delete {{ request.organisation.name }}?</h1>
+    <p>Everything in it will be deleted, and it can't be undone:</p>
+    <ul>
+        <li>{{ contents.scores }} score{{ contents.scores|pluralize }} in the library</li>
+        <li>{{ contents.terms }} term{{ contents.terms|pluralize }} and {{ contents.services }} service{{ contents.services|pluralize }}, with their slots and pieces</li>
+        <li>{{ contents.comments }} comment{{ contents.comments|pluralize }}</li>
+        <li>the settings and crest</li>
+        <li>the accounts of all {{ contents.members }} member{{ contents.members|pluralize }}, including yours: everyone will be signed out</li>
+    </ul>
+    <form method="post" class="flow">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="cluster">
+            <button class="btn-danger" type="submit">Delete the church</button>
+            <a class="btn-ghost" href="{% url 'core:site_config_update' %}">Keep it</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

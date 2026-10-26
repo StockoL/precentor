@@ -1305,3 +1305,64 @@ class DeleteOwnAccountTests(TestCase):
         self.assertContains(self.client.get("/accounts/password_change/"), 'href="/accounts/delete/"')
         self.client.logout()
         self.assertRedirects(self.client.get("/accounts/delete/"), "/accounts/login/?next=/accounts/delete/")
+
+
+class DeleteChurchTests(TestCase):
+    def setUp(self):
+        from datetime import date
+
+        from comments.models import Comment
+        from library.models import Score
+        from planning.models import RolePiece, Service, ServiceRole, Term
+
+        from .organisations import create_organisation
+
+        self.church = create_organisation("St Cecilia's")
+        self.owner = User.objects.create_user(
+            email="owner@example.com", password="testpass123", organisation=self.church, role="conductor", is_owner=True
+        )
+        self.member = make_user("viewer", organisation=self.church)
+        # A planned piece, whose score is protected from being deleted alone.
+        score = Score.objects.create(organisation=self.church, title="Ave", composer_surname="Byrd",
+                                     voicing="SATB", language="Latin")
+        term = Term.objects.create(organisation=self.church, name="Advent", start_date=date(2026, 11, 29),
+                                   end_date=date(2026, 12, 24), calendar_use="current")
+        service = Service.objects.create(term=term, date=date(2026, 12, 6), service_type="Sung Mass")
+        RolePiece.objects.create(service_role=ServiceRole.objects.create(service=service, role_name="Introit"),
+                                 score=score)
+        Comment.objects.create(author=self.member, target=service, body="Ready.")
+        self.elsewhere = make_user("conductor", organisation=make_organisation("St Elsewhere"))
+        self.client.force_login(self.owner)
+
+    def test_the_page_says_how_much_will_go(self):
+        response = self.client.get("/settings/delete/")
+        self.assertContains(response, "1 score in the library")
+        self.assertContains(response, "1 term and 1 service")
+        self.assertContains(response, "1 comment")
+        self.assertContains(response, "all 2 members, including yours")
+
+    def test_typing_the_name_deletes_everything_and_signs_out(self):
+        from library.models import Score
+        from planning.models import RolePiece
+
+        response = self.client.post("/settings/delete/", {"name": "  st cecilia's "})
+        self.assertContains(response, "St Cecilia&#x27;s has been deleted")
+        self.assertFalse(Organisation.objects.filter(name="St Cecilia's").exists())
+        self.assertFalse(User.objects.filter(pk__in=[self.owner.pk, self.member.pk]).exists())
+        self.assertEqual((Score.objects.count(), RolePiece.objects.count()), (0, 0))
+        self.assertNotIn("_auth_user_id", self.client.session)
+        # Another church is untouched.
+        self.assertTrue(User.objects.filter(pk=self.elsewhere.pk).exists())
+
+    def test_the_wrong_name_deletes_nothing(self):
+        response = self.client.post("/settings/delete/", {"name": "St Elsewhere"})
+        self.assertContains(response, "That isn&#x27;t the church&#x27;s name.")
+        self.assertTrue(Organisation.objects.filter(pk=self.church.pk).exists())
+
+    def test_only_the_owner(self):
+        self.client.force_login(self.member)
+        self.assertEqual(self.client.post("/settings/delete/", {"name": "St Cecilia's"}).status_code, 403)
+        self.assertTrue(Organisation.objects.filter(pk=self.church.pk).exists())
+
+    def test_its_linked_from_settings_for_the_owner(self):
+        self.assertContains(self.client.get("/settings/"), 'href="/settings/delete/"')
