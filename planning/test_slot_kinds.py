@@ -1,4 +1,4 @@
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, TestCase
 
 from .slot_kinds import KIND_CHOICES, NAMES, PROPER_PART_CHOICES, classify
 
@@ -42,3 +42,38 @@ class ClassifyTests(SimpleTestCase):
             with self.subTest(name=name):
                 self.assertIn(kind, kinds)
                 self.assertIn(part, parts)
+
+
+class SlotKindOnSaveTests(TestCase):
+    def setUp(self):
+        from datetime import date
+
+        from precentor_project.testing import make_term
+
+        from .models import Service
+
+        self.service = Service.objects.create(term=make_term(), date=date(2026, 1, 11), service_type="Sung Mass")
+
+    def add(self, name, **fields):
+        from .models import ServiceRole
+
+        return ServiceRole.objects.create(service=self.service, role_name=name, **fields)
+
+    def test_a_new_slot_is_classified_from_its_name(self):
+        slot = self.add("Introit")
+        self.assertEqual((slot.kind, slot.proper_part), ("proper", "introit"))
+        self.assertEqual(slot.get_kind_display(), "Proper")
+
+    def test_a_kind_chosen_by_hand_is_kept(self):
+        slot = self.add("Introit", kind="hymn")
+        self.assertEqual(slot.kind, "hymn")
+        slot.save()
+        slot.refresh_from_db()
+        self.assertEqual(slot.kind, "hymn")
+
+    def test_a_template_makes_classified_slots(self):
+        from precentor_project.testing import make_slot_template
+
+        template = make_slot_template(organisation=self.service.organisation, slot_names="Kyrie\nCommunion hymn")
+        template.apply_to(self.service)
+        self.assertEqual(list(self.service.roles.values_list("kind", flat=True)), ["ordinary", "hymn"])

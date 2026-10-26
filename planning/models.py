@@ -10,6 +10,8 @@ from accounts.querysets import OrganisationQuerySet
 from library.models import Score
 from ordo.models import CALENDAR_USE_CHOICES
 
+from .slot_kinds import KIND_CHOICES, PROPER_PART_CHOICES, classify
+
 
 def comment_count_on(model, pks):
     """
@@ -354,6 +356,13 @@ class ServiceRole(models.Model):
     objects = OrganisationQuerySet.as_manager()
     # "Slot" is the UI word for a ServiceRole.
     role_name = models.CharField("slot", max_length=50)
+    # What it holds, for showing and grouping it, and for a proper, which
+    # one. Left blank, save() works both out from the name.
+    kind = models.CharField(
+        max_length=10, choices=KIND_CHOICES, blank=True,
+        help_text="Leave it to be worked out from the slot's name.",
+    )
+    proper_part = models.CharField(max_length=20, choices=PROPER_PART_CHOICES, blank=True)
     is_not_applicable = models.BooleanField("not needed (N/A)", default=False)
     # The slot's place in the service; a new slot goes at the end, and the
     # conductor can move it (Move up and Move down, or drag).
@@ -364,6 +373,8 @@ class ServiceRole(models.Model):
 
     def save(self, *args, **kwargs):
         self.organisation_id = self.service.organisation_id
+        if not self.kind:
+            self.kind, self.proper_part = classify(self.role_name)
         if self._state.adding and not self.position:
             last = self.service.roles.aggregate(models.Max("position"))["position__max"]
             self.position = (last or 0) + 1
