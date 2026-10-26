@@ -95,3 +95,131 @@ class EveryChurchModelIsCoveredTests(TwoChurchesMixin, TestCase):
                 for church in (self.a, self.b):
                     rows = model.objects.filter(organisation=church["church"])
                     self.assertTrue(rows.exists())
+
+
+def int_routes():
+    """Every route in the project whose address carries a number, by its
+    full name (namespace:name). The admin site is left out: it's for the
+    site's superusers, who belong to no church."""
+    from django.urls import URLPattern, URLResolver, get_resolver
+
+    found = set()
+
+    def walk(patterns, namespace=""):
+        for pattern in patterns:
+            if isinstance(pattern, URLResolver):
+                if str(pattern.pattern).startswith("admin"):
+                    continue
+                inner = pattern.namespace or ""
+                walk(pattern.url_patterns, f"{namespace}:{inner}".strip(":") if inner else namespace)
+            elif isinstance(pattern, URLPattern) and "<int:" in str(pattern.pattern):
+                found.add(f"{namespace}:{pattern.name}" if namespace else pattern.name)
+
+    walk(get_resolver().url_patterns)
+    return found
+
+
+def content_type_id(row):
+    from django.contrib.contenttypes.models import ContentType
+
+    return ContentType.objects.get_for_model(row).pk
+
+
+# For each route with an id in it: the addresses that point at church B's
+# rows, as church A would type them. a and b are build_church()'s rows.
+ADDRESSES = {
+    "members:change_role": lambda a, b: [{"pk": b["member"].pk}],
+    "members:remove": lambda a, b: [{"pk": b["member"].pk}],
+    "members:restore": lambda a, b: [{"pk": b["former"].pk}],
+    "members:reset_link": lambda a, b: [{"pk": b["member"].pk}],
+    "members:make_owner": lambda a, b: [{"pk": b["member"].pk}],
+    "members:invitation_link": lambda a, b: [{"pk": b["invitation"].pk}],
+    "members:invitation_cancel": lambda a, b: [{"pk": b["invitation"].pk}],
+    "library:score_detail": lambda a, b: [{"pk": b["score"].pk}],
+    "library:score_update": lambda a, b: [{"pk": b["score"].pk}],
+    "library:score_delete": lambda a, b: [{"pk": b["score"].pk}],
+    "planning:term_update": lambda a, b: [{"pk": b["term"].pk}],
+    "planning:term_delete": lambda a, b: [{"pk": b["term"].pk}],
+    "planning:term_detail": lambda a, b: [{"pk": b["term"].pk}],
+    "planning:service_create": lambda a, b: [{"term_pk": b["term"].pk}],
+    "planning:service_detail": lambda a, b: [{"pk": b["service"].pk}],
+    "planning:service_update": lambda a, b: [{"pk": b["service"].pk}],
+    "planning:service_delete": lambda a, b: [{"pk": b["service"].pk}],
+    "planning:term_music_list": lambda a, b: [{"term_pk": b["term"].pk}],
+    "planning:marker_create": lambda a, b: [{"term_pk": b["term"].pk}],
+    "planning:marker_update": lambda a, b: [{"pk": b["marker"].pk}],
+    "planning:marker_delete": lambda a, b: [{"pk": b["marker"].pk}],
+    "planning:add_role": lambda a, b: [{"service_pk": b["service"].pk}],
+    # Both halves: B's service with A's template, and A's service with B's.
+    "planning:apply_template": lambda a, b: [
+        {"service_pk": b["service"].pk, "template_pk": a["template"].pk},
+        {"service_pk": a["service"].pk, "template_pk": b["template"].pk},
+    ],
+    "planning:slot_template_update": lambda a, b: [{"pk": b["template"].pk}],
+    "planning:slot_template_delete": lambda a, b: [{"pk": b["template"].pk}],
+    "planning:add_piece": lambda a, b: [{"role_pk": b["slot"].pk}],
+    "planning:move_slot": lambda a, b: [{"role_pk": b["slot"].pk}],
+    "planning:remove_slot": lambda a, b: [{"role_pk": b["slot"].pk}],
+    "planning:reorder_slots": lambda a, b: [{"service_pk": b["service"].pk}],
+    "planning:toggle_confirm": lambda a, b: [{"piece_pk": b["piece"].pk}],
+    "comments:add_comment": lambda a, b: [
+        {"content_type_id": content_type_id(b[name]), "object_id": b[name].pk} for name in ("term", "service", "piece")
+    ],
+    "comments:toggle_close": lambda a, b: [{"comment_pk": b["comment"].pk}],
+    "comments:delete_comment": lambda a, b: [{"comment_pk": b["comment"].pk}],
+}
+
+# Routes with a number in them that aren't about one church's rows.
+NOT_CHURCH_DATA = {
+    "core:crest": "the crest is public branding, served to anyone at a versioned address",
+}
+
+# Everything a form on these pages might read, so a POST that got through
+# would change something the snapshot would catch.
+POST_DATA = {
+    "role": "viewer", "role_name": "A tried", "name": "A tried", "title": "A tried", "text": "A tried",
+    "body": "A tried", "slot_names": "A tried", "service_type": "A tried", "date": "2026-12-13",
+    "start_date": "2026-11-29", "end_date": "2026-12-24", "calendar_use": "current", "confirm": "1",
+    "replace": "1", "direction": "up", "order": "", "composer_surname": "A tried", "voicing": "SATB",
+    "language": "Latin",
+}
+
+
+def snapshot(church):
+    """Every row of a church's data, as plain values, to compare before and
+    after. last_login changes on any sign-in, so it's left out."""
+    rows = {}
+    for model in tenant_models():
+        values = model.objects.filter(organisation=church).order_by("pk").values()
+        rows[model.__name__] = [{k: v for k, v in row.items() if k != "last_login"} for row in values]
+    return rows
+
+
+class EveryAddressIsCheckedTests(TwoChurchesMixin, TestCase):
+    def test_every_route_with_an_id_is_listed(self):
+        unlisted = sorted(int_routes() - set(ADDRESSES) - set(NOT_CHURCH_DATA))
+        self.assertEqual(unlisted, [], "Add these routes to ADDRESSES in the isolation test")
+
+
+class AnotherChurchsAddressesTests(TwoChurchesMixin, TestCase):
+    """Church A's owner, who can do everything in their own church, tries
+    every address that points at church B's rows."""
+
+    def test_nothing_of_church_bs_can_be_seen_or_changed(self):
+        from django.urls import reverse
+
+        post_data = dict(POST_DATA, score=self.a["score"].pk)
+        self.client.force_login(self.a["owner"])
+        before = snapshot(self.b["church"])
+        for name, addresses in ADDRESSES.items():
+            for kwargs in addresses(self.a, self.b):
+                url = reverse(name, kwargs=kwargs)
+                for method in ("get", "post"):
+                    with self.subTest(route=name, url=url, method=method):
+                        if method == "get":
+                            response = self.client.get(url)
+                        else:
+                            response = self.client.post(url, post_data)
+                        self.assertNotEqual(response.status_code, 200, "another church's page was shown")
+                        self.assertNotIn(b"B-ONLY", response.content)
+        self.assertEqual(snapshot(self.b["church"]), before, "church B's data was changed")
