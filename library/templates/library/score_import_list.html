@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Imports — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <header class="page-header">
+        <h1>Imports</h1>
+        <div class="page-header__actions">
+            <a class="btn-primary" href="{% url 'library:score_import' %}">Import a spreadsheet</a>
+        </div>
+    </header>
+    <ul role="list" class="flow" style="--flow-space: var(--spacing-xs);">
+        {% for one in imports %}
+        <li class="list-row list-row--wrap">
+            <div class="flow" style="--flow-space: var(--spacing-3xs);">
+                <p><a href="{% url 'library:score_import_detail' one.pk %}">{{ one.original_filename }}</a></p>
+                <p class="list-row__meta">{{ one.created_at|date:"j F Y" }} · {{ one.score_count }} score{{ one.score_count|pluralize }}{% if one.created_by %} · by {{ one.created_by }}{% endif %}</p>
+            </div>
+            {% if one.is_pending %}
+            <span class="badge badge--in_progress">Waiting</span>
+            {% else %}
+            <span class="badge badge--complete">Kept</span>
+            {% endif %}
+        </li>
+        {% empty %}
+        <li class="empty-state">No imports yet. Importing a spreadsheet brings a whole library in at once.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

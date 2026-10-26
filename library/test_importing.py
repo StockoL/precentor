@@ -395,3 +395,41 @@ class LibraryImportLinksTests(TestCase):
         self.assertContains(response, 'class="callout"', count=1)
         self.assertContains(response, "2 imports are waiting for you to keep or remove:")
         self.assertContains(response, f'href="/library/import/{second.pk}/">more.csv (')
+
+
+class ImportListTests(TestCase):
+    def setUp(self):
+        from accounts.testing import make_organisation, make_user
+
+        from .importing import check_file, save_import
+
+        self.church = make_organisation()
+        self.librarian = make_user("librarian", organisation=self.church)
+        self.librarian.name = "Tom Ashby"
+        self.librarian.save()
+        self.kept = save_import(check_file(csv_bytes("Title,Composer surname", "Ave,Byrd"), self.church),
+                                self.church, self.librarian, "older.csv")
+        self.kept.keep()
+        self.waiting = save_import(check_file(csv_bytes("Title,Composer surname", "A,Byrd", "B,Tallis"), self.church),
+                                   self.church, self.librarian, "newer.csv")
+        self.client.force_login(self.librarian)
+
+    def test_waiting_imports_come_first_with_their_details(self):
+        response = self.client.get("/library/imports/")
+        self.assertEqual(list(response.context["imports"]), [self.waiting, self.kept])
+        self.assertContains(response, "2 scores · by Tom Ashby")
+        self.assertContains(response, "Waiting")
+        self.assertContains(response, "Kept")
+
+    def test_its_linked_from_the_import_page(self):
+        self.assertContains(self.client.get("/library/import/"), 'href="/library/imports/">See earlier imports</a>')
+
+    def test_only_the_churchs_own_and_not_for_viewers(self):
+        from accounts.testing import make_organisation, make_user
+
+        from .models import ScoreImport
+
+        ScoreImport.objects.create(organisation=make_organisation("St Elsewhere"), original_filename="theirs.csv")
+        self.assertNotContains(self.client.get("/library/imports/"), "theirs.csv")
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        self.assertEqual(self.client.get("/library/imports/").status_code, 403)

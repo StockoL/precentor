@@ -349,3 +349,22 @@ def remove_import(request, pk):
         "removing": score_import.scores.count() - in_use,
         "in_use": in_use,
     })
+
+
+class ScoreImportListView(LibraryEditRequiredMixin, OrganisationScopedMixin, ListView):
+    """The church's imports: those waiting to be kept or removed first,
+    then the newest."""
+
+    model = ScoreImport
+    context_object_name = "imports"
+    template_name = "library/score_import_list.html"
+
+    def get_queryset(self):
+        # "pending" sorts after "kept", so status descending puts the
+        # waiting ones first.
+        return (
+            super().get_queryset()
+            .select_related("created_by")
+            .annotate(score_count=Count("scores"))
+            .order_by("-status", "-created_at")
+        )

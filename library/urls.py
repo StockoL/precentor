@@ -11,6 +11,7 @@ urlpatterns = [
     path("<int:pk>/edit/", views.ScoreUpdateView.as_view(), name="score_update"),
     path("<int:pk>/delete/", views.ScoreDeleteView.as_view(), name="score_delete"),
     path("import/", views.ScoreImportView.as_view(), name="score_import"),
+    path("imports/", views.ScoreImportListView.as_view(), name="score_import_list"),
     path("import/template/", views.import_template, name="import_template"),
     path("import/<int:pk>/", views.ScoreImportDetailView.as_view(), name="score_import_detail"),
     path("import/<int:pk>/keep/", views.keep_import, name="keep_import"),
