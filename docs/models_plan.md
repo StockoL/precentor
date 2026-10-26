@@ -163,9 +163,40 @@ the site's password validators and hashes the result. It adds the
 church's name and the person's name, refuses an address already in use
 in any capitals, and saves the church and its first person together:
 the person becomes its owner and a Conductor. `SignUpView` signs them
-straight in. Sign-up is open to anyone; throttling it comes with the
-other abuse protections. Until a church has a term or a score, its
+straight in. Sign-up is open to anyone, up to five churches an hour
+from one network address. Until a church has a term or a score, its
 Terms page lists the first steps the person's role allows.
+
+### Caching, cookies and limits
+
+Nothing a church owns is cached on the server. The one cache is a table
+in the database (`DatabaseCache`, made by `createcachetable` in the
+build), and it holds only counts of attempts, so both worker processes
+share them and they survive a restart. `accounts/throttling.py` keeps
+each count under a SHA-256 fingerprint of what's counted, so the table
+never holds an email address in plain text, and sets each count's
+expiry itself, since `cache.incr()` would fall back to the default.
+
+- **Signing in:** after five wrong passwords for one address, the sign-in
+  form refuses that address for 15 minutes after the last one, before the
+  password is checked, and `SignInView` answers 429. Signing in clears
+  the count, and capitals don't get round it.
+- **Registering:** after five churches registered from one network
+  address in an hour, `SignUpView` refuses the next with a 429. Only
+  churches actually made count. The address is the last entry of
+  `X-Forwarded-For`, the one the host's proxy adds, as earlier entries
+  could be made up. That Render's proxy adds the visitor's address last
+  is my reading of how such proxies work, not something I've confirmed
+  from Render's documentation or the live logs.
+
+`NoStoreWhenSignedInMiddleware` gives every response to someone signed
+in `Cache-Control: private, no-store`, decided before the view runs so
+logging out is covered, and leaves alone a response that sets its own
+caching, which is how the crest keeps its year-long public cache. The
+cookie settings are written out in `settings.py` even where they're
+Django's defaults: the session cookie is HttpOnly, both cookies are
+SameSite=Lax, and both are Secure once deployed. The CSRF cookie stays
+readable by scripts because `ajax.js` sends its value with each request.
 
 ### Every church's data carries its organisation
 

@@ -1150,6 +1150,15 @@ the role column in §2 says who may use each one.
   after three days.
 - **Removing someone** switches their account off, which signs them out
   on their next request.
+- **Limits on trying.** Five wrong passwords lock that address for 15
+  minutes, before any further password is even checked, and one network
+  can register at most five churches an hour. The counts are kept under
+  a fingerprint, never the email address itself.
+- **Signed-in pages aren't stored.** Every response to someone signed in
+  says `private, no-store`, so a browser or proxy keeps no copy for the
+  next person at a shared computer. The session cookie can't be read by
+  page scripts, and neither cookie is sent with a form posted from
+  another site.
 
 ## 17. Running it locally
 
@@ -1248,9 +1257,8 @@ What's designed or wanted but not built yet:
 - **Email.** Invitations and reset links are passed on by hand because
   Precentor sends no email. With a mail provider they could be sent
   directly, and people could reset their own passwords.
-- **The rest of the account work:** limiting repeated sign-in attempts
-  and letting an owner delete their church and a member delete their own
-  account.
+- **The rest of the account work:** letting an owner delete their
+  church and a member delete their own account.
 
 ## 20. Technologies used
 
@@ -1305,7 +1313,7 @@ each change before it was committed.
 
 [`docs/testing.md`](docs/testing.md) has the full record. In short:
 
-- **567 automated tests** cover the models, views, forms, permissions,
+- **584 automated tests** cover the models, views, forms, permissions,
   each church's own data and the liturgical calendar. 49 of them are
   browser tests, which start a real server and drive Chromium through
   Playwright, so the JavaScript is tested too.
