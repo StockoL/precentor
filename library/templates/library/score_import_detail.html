@@ -27,5 +27,15 @@
     <p>{{ no_voicing }} of them {{ no_voicing|pluralize:"has,have" }} no voicing yet. <a href="{% url 'library:score_list' %}?voicing={{ unspecified }}">See the scores without one</a>.</p>
     {% endif %}
     {% endwith %}
+
+    {% if score_import.is_pending %}
+    <form method="post" action="{% url 'library:keep_import' score_import.pk %}" class="flow">
+        {% csrf_token %}
+        <p>Happy with these? Keep them, and they become ordinary scores in the library. After that the import can't be removed as a whole, though any score can still be edited or deleted on its own.</p>
+        <button class="btn-primary" type="submit">Keep these scores</button>
+    </form>
+    {% else %}
+    <p>These scores have been kept, and are ordinary scores in the library now.</p>
+    {% endif %}
 </div>
 {% endblock %}

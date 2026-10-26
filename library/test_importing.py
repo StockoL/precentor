@@ -243,3 +243,39 @@ class ImportPagesTests(TestCase):
         for url in ("/library/import/", "/library/import/template/"):
             with self.subTest(url=url):
                 self.assertEqual(self.client.get(url).status_code, 403)
+
+
+class KeepImportTests(TestCase):
+    def setUp(self):
+        from accounts.testing import make_organisation, make_user
+
+        from .importing import check_file, save_import
+
+        self.church = make_organisation()
+        user = make_user("librarian", organisation=self.church)
+        self.client.force_login(user)
+        checked = check_file(csv_bytes("Title,Composer surname", "Ave verum,Byrd", "Locus iste,Bruckner"), self.church)
+        self.batch = save_import(checked, self.church, user, "library.csv")
+        self.url = f"/library/import/{self.batch.pk}/keep/"
+
+    def test_the_result_page_offers_it_and_says_what_it_means(self):
+        response = self.client.get(f"/library/import/{self.batch.pk}/")
+        self.assertContains(response, f'action="{self.url}"')
+        self.assertContains(response, "can't be removed as a whole")
+
+    def test_keeping_closes_the_import_and_says_so(self):
+        response = self.client.post(self.url, follow=True)
+        self.assertRedirects(response, "/library/")
+        self.assertContains(response, "Kept 2 scores from library.csv.")
+        self.batch.refresh_from_db()
+        self.assertFalse(self.batch.is_pending)
+        self.assertContains(self.client.get(f"/library/import/{self.batch.pk}/"), "have been kept")
+
+    def test_keeping_twice_or_by_get_or_as_a_viewer_does_nothing(self):
+        from accounts.testing import make_user
+
+        self.assertEqual(self.client.get(self.url).status_code, 405)
+        self.client.post(self.url)
+        self.assertEqual(self.client.post(self.url).status_code, 404)
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        self.assertEqual(self.client.post(self.url).status_code, 403)

@@ -4,8 +4,10 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, F, ProtectedError
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
+from django.template.defaultfilters import pluralize
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -18,6 +20,7 @@ from django.views.generic import (
 from accounts.decorators import role_required
 from accounts.mixins import OrganisationCreateMixin, OrganisationScopedMixin, RoleRequiredMixin
 from accounts.permissions import can_edit_library
+from accounts.querysets import own
 from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 from precentor_project.mixins import DeletePageMixin
 
@@ -293,3 +296,15 @@ class ScoreImportDetailView(LibraryEditRequiredMixin, OrganisationScopedMixin, D
             unspecified=ScoreQuerySet.UNSPECIFIED,
             **kwargs,
         )
+
+
+@role_required(can_edit_library)
+@require_POST
+def keep_import(request, pk):
+    """Keep a pending import's scores for good. Only a pending import of
+    the church's own can be found, so keeping twice is a 404, not an error."""
+    score_import = get_object_or_404(own(ScoreImport, request), pk=pk, status=ScoreImport.PENDING)
+    score_import.keep()
+    count = score_import.scores.count()
+    messages.success(request, f"Kept {count} score{pluralize(count)} from {score_import.original_filename}.")
+    return redirect("library:score_list")
