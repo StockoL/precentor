@@ -320,12 +320,12 @@ class Score(models.Model):
     composer_other_names = models.CharField(max_length=100, blank=True)
     arranger = models.CharField(max_length=200, blank=True)
     editor = models.CharField(max_length=200, blank=True)
-    voicing = models.CharField(max_length=50)  # free text, e.g. "SATB", "SSATB", "SATB.SATB"
+    voicing = models.CharField(max_length=50, blank=True)  # free text, e.g. "SATB", "SSATB", "SATB.SATB"
     soprano_parts = models.PositiveSmallIntegerField(default=0)
     alto_parts = models.PositiveSmallIntegerField(default=0)
     tenor_parts = models.PositiveSmallIntegerField(default=0)
     bass_parts = models.PositiveSmallIntegerField(default=0)
-    language = models.CharField(max_length=50)
+    language = models.CharField(max_length=50, blank=True)
     copies_owned = models.PositiveIntegerField(default=0)
     filing_location = models.CharField(max_length=100, blank=True)
     duration_minutes = models.PositiveIntegerField(blank=True, null=True)
@@ -337,6 +337,7 @@ class Score(models.Model):
     suited_use_types = models.ManyToManyField("ordo.UseType", blank=True, related_name="suited_scores")
     suited_seasons = models.ManyToManyField("ordo.LiturgicalSeason", blank=True, related_name="suited_scores")
     suited_occasions = models.ManyToManyField("ordo.LiturgicalOccasion", blank=True, related_name="suited_scores")
+    import_batch = models.ForeignKey("ScoreImport", null=True, blank=True, on_delete=models.SET_NULL, related_name="scores")
 
     @property
     def composer(self):
@@ -443,6 +444,59 @@ parsing free text.
 which parts belong to which choir. The part counts describe a single
 choir's texture; double-choir pieces are recorded accurately only in
 the free-text `voicing` field. The README lists this as a scope limit.
+
+**Voicing and language optional:** only the title and the
+composer's surname are needed now. A church importing an old catalogue
+rarely has every voicing and language to hand, and the alternative, a
+placeholder such as "Unknown", would fill the Voicing and Language
+filters with junk. Each filter gains an "(unspecified)" choice with its
+count instead, so the gaps are easy to find and fill. Migration `0018`.
+
+### `library.ScoreImport`
+
+```python
+class ScoreImport(models.Model):
+    PENDING, KEPT = "pending", "kept"
+
+    organisation = models.ForeignKey("accounts.Organisation", on_delete=models.CASCADE, related_name="score_imports")
+    created_by = models.ForeignKey("accounts.User", null=True, on_delete=models.SET_NULL, related_name="score_imports")
+    created_at = models.DateTimeField(auto_now_add=True)
+    original_filename = models.CharField(max_length=255)
+    status = models.CharField(max_length=10, choices=[(PENDING, "Pending"), (KEPT, "Kept")], default=PENDING)
+    report = models.JSONField(default=dict, blank=True)  # skipped rows, likely duplicates, encoding
+
+    def keep(self): ...
+    def remove(self): ...
+```
+
+One spreadsheet brought into a church's library (migration `0019`). Its
+scores are ordinary scores from the moment they're saved, linked back
+through `Score.import_batch`. While the import is pending it can be
+removed as a whole, in case the file wasn't the one meant; `keep()`
+closes it, and from then on scores are only deleted one by one.
+
+**Removing keeps what's in use:** `remove()` runs in one transaction.
+Scores already planned into a service are unlinked and kept, because
+`RolePiece.score` is `PROTECT` and a service's history matters more than
+a tidy undo; the rest are deleted, then the batch. It returns both
+counts, which the confirmation message reports.
+
+**`created_by` is `SET_NULL`:** if the person who imported leaves, the
+import and its scores stay with the church. Removing a pending import is
+open to whoever made it, while they can still edit the library, or any
+Conductor (`can_remove_import`).
+
+**The format lives in code, not the database:** `library/importing.py`
+holds `COLUMNS`, the one list of headers that the template download, the
+header check, the import page's example and the export all read. Each
+row is checked by `ScoreImportRowForm`, a `ModelForm` over just those
+fields, so the import can't accept a value the score form would refuse.
+Good rows are written with one `bulk_create` inside the same transaction
+as the batch, so a failure never leaves half an import. The export,
+`export_rows()`, writes the same columns back out, guarding any cell that
+starts with `=`, `+`, `-` or `@` with an apostrophe so a spreadsheet
+won't run it as a formula; the import takes the apostrophe off again, so
+an exported file round-trips unchanged.
 
 ### `ordo.LiturgicalOccasion`
 
