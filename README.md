@@ -1283,7 +1283,7 @@ PostgreSQL database described by `render.yaml`.
   the [W3C HTML](https://validator.w3.org/nu/) and
   [CSS](https://jigsaw.w3.org/css-validator/) validators and
   [Lighthouse](https://developer.chrome.com/docs/lighthouse/), for the
-  checks in [`TESTING.md`](TESTING.md)
+  checks in [`docs/testing.md`](docs/testing.md)
 - Git and GitHub, for version control
 
 **Images:** [Inkscape](https://inkscape.org/) and
@@ -1299,7 +1299,7 @@ each change before it was committed.
 
 ## 21. Testing
 
-[`TESTING.md`](TESTING.md) has the full record. In short:
+[`docs/testing.md`](docs/testing.md) has the full record. In short:
 
 - **560 automated tests** cover the models, views, forms, permissions,
   each church's own data and the liturgical calendar. 49 of them are
