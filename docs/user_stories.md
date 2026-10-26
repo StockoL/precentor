@@ -54,6 +54,14 @@ These user stories drive the design and functionality of Precentor.
   a concern directly to the conductor.
 - As a librarian, I want to see a simple inbox of all open comments, so
   I know at a glance what still needs attention.
+- As a librarian, I want to bring our existing library in from the
+  spreadsheet we already keep, so I don't have to type hundreds of
+  scores in again.
+- As a librarian, I want to see which rows of my file were skipped and
+  why, and to undo the whole import if it went wrong, so a messy
+  spreadsheet can't leave a mess in the library.
+- As a librarian, I want to download the whole library as a
+  spreadsheet, so I have a copy of my own and can tidy it in bulk.
 
 ## Viewer (a singer, a clergy colleague, an assistant)
 
