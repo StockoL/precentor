@@ -79,6 +79,21 @@ def tidy(header):
     return " ".join(header.split()).casefold()
 
 
+# A spreadsheet runs a cell that starts with one of these as a formula, so
+# a title typed as "=HYPERLINK(...)" would become a live link in an
+# exported file. On the way out such a cell gets an apostrophe in front,
+# which keeps it as text; on the way back in the apostrophe comes off.
+FORMULA_STARTS = ("=", "+", "-", "@")
+
+
+def guard(text):
+    return "'" + text if text.startswith(FORMULA_STARTS) else text
+
+
+def unguard(text):
+    return text[1:] if text.startswith("'") and text[1:].startswith(FORMULA_STARTS) else text
+
+
 def read_rows(data):
     """
     The file's rows as dictionaries keyed by score field, each with the
@@ -117,7 +132,7 @@ def read_rows(data):
             continue
         if len(rows) == MAX_ROWS:
             raise ImportProblem(f"The file has more than {MAX_ROWS:,} scores. Split it and import each part.")
-        values = {field: (cells[position].strip() if position < len(cells) else "")
+        values = {field: (unguard(cells[position].strip()) if position < len(cells) else "")
                   for field, position in positions.items()}
         rows.append((number, values))
     return rows, fallback, ignored
@@ -249,10 +264,11 @@ def save_import(checked, organisation, user, filename):
 def export_rows(scores):
     """
     The header row, then one row per score in the import's own columns, so
-    an exported file imports again as it is. Blanks stay blank, and a date
-    comes out as 2026-03-15, one of the two ways the import reads one.
+    an exported file imports again as it is. Blanks stay blank, a date
+    comes out as 2026-03-15, one of the two ways the import reads one, and
+    nothing can run as a formula.
     """
     yield [header for header, _, _ in COLUMNS]
     for score in scores:
         values = (getattr(score, field) for _, field, _ in COLUMNS)
-        yield ["" if value is None else str(value) for value in values]
+        yield ["" if value is None else guard(str(value)) for value in values]

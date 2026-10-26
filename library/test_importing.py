@@ -490,9 +490,12 @@ class ExportTests(TestCase):
     def test_an_exported_file_imports_into_an_empty_church_unchanged(self):
         from accounts.testing import make_organisation, make_user
 
+        from precentor_project.testing import make_score
+
         from .importing import COLUMNS, check_file, save_import
         from .models import Score
 
+        make_score(organisation=self.church, title="+1 (a title that looks like a formula)")
         empty = make_organisation("St Elsewhere")
         checked = check_file(self.export().content, empty)
         self.assertEqual(checked.skipped, [])
@@ -503,6 +506,19 @@ class ExportTests(TestCase):
             return list(Score.objects.for_organisation(church).order_by("title").values_list(*fields))
 
         self.assertEqual(library(empty), library(self.church))
+
+    def test_nothing_in_the_file_can_run_as_a_formula(self):
+        from precentor_project.testing import make_score
+
+        make_score(organisation=self.church, title='=HYPERLINK("http://example.com")', composer_surname="@Byrd")
+        text = self.export().content.decode("utf-8")
+        self.assertIn("'=HYPERLINK", text)
+        self.assertIn("'@Byrd", text)
+
+    def test_the_import_takes_the_apostrophe_off_again(self):
+        rows, _, _ = read_rows(csv_bytes("Title,Composer surname", "'=Sum,'-Anon", "'Tis the season,Rutter"))
+        self.assertEqual([values["title"] for _, values in rows], ["=Sum", "'Tis the season"])
+        self.assertEqual(rows[0][1]["composer_surname"], "-Anon")
 
     def test_the_library_links_to_the_export(self):
         self.assertContains(self.client.get("/library/"), 'href="/library/export/"')
