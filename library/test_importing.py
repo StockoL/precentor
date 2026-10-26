@@ -352,3 +352,46 @@ class RemoveImportTests(TestCase):
         response = self.client.get(self.url, follow=True)
         self.assertRedirects(response, "/library/")
         self.assertContains(response, "That import has already been removed or kept.")
+
+
+class LibraryImportLinksTests(TestCase):
+    def setUp(self):
+        from accounts.testing import make_organisation, make_user
+
+        from .importing import check_file, save_import
+
+        self.church = make_organisation()
+        self.librarian = make_user("librarian", organisation=self.church)
+        checked = check_file(csv_bytes("Title,Composer surname", "Ave verum,Byrd", "Locus iste,Bruckner"), self.church)
+        self.batch = save_import(checked, self.church, self.librarian, "library.csv")
+
+    def test_the_library_offers_import_and_mentions_a_waiting_one(self):
+        self.client.force_login(self.librarian)
+        response = self.client.get("/library/")
+        self.assertContains(response, 'href="/library/import/">Import</a>')
+        self.assertContains(response, "An import is waiting for you: library.csv, 2 scores.")
+        self.assertContains(response, f'href="/library/import/{self.batch.pk}/">Review it</a>')
+
+    def test_once_kept_the_banner_goes(self):
+        self.batch.keep()
+        self.client.force_login(self.librarian)
+        self.assertNotContains(self.client.get("/library/"), "An import is waiting")
+
+    def test_viewers_see_neither(self):
+        from accounts.testing import make_user
+
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        response = self.client.get("/library/")
+        self.assertNotContains(response, 'href="/library/import/">Import</a>')
+        self.assertNotContains(response, "An import is waiting")
+
+    def test_several_waiting_imports_share_one_notice(self):
+        from .importing import check_file, save_import
+
+        second = save_import(check_file(csv_bytes("Title,Composer surname", "Os justi,Bruckner"), self.church),
+                             self.church, self.librarian, "more.csv")
+        self.client.force_login(self.librarian)
+        response = self.client.get("/library/")
+        self.assertContains(response, 'class="callout"', count=1)
+        self.assertContains(response, "2 imports are waiting for you to keep or remove:")
+        self.assertContains(response, f'href="/library/import/{second.pk}/">more.csv (')

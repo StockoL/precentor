@@ -6,10 +6,21 @@
         <h1>Library</h1>
         {% if can.edit_library %}
         <div class="page-header__actions">
+            <a class="btn" href="{% url 'library:score_import' %}">Import</a>
             <a class="btn-primary" href="{% url 'library:score_create' %}">New score</a>
         </div>
         {% endif %}
     </header>
+
+    {# One notice however many imports are waiting, so they can't stack up. #}
+    {% with waiting=pending_imports %}
+    {% if waiting|length == 1 %}
+    <p class="callout" role="status">An import is waiting for you: {{ waiting.0.original_filename }}, {{ waiting.0.score_count }} score{{ waiting.0.score_count|pluralize }}. <a href="{% url 'library:score_import_detail' waiting.0.pk %}">Review it</a> to keep or remove it.</p>
+    {% elif waiting %}
+    <p class="callout" role="status">{{ waiting|length }} imports are waiting for you to keep or remove:
+        {% for one in waiting %}<a href="{% url 'library:score_import_detail' one.pk %}">{{ one.original_filename }} ({{ one.created_at|date:"j M" }}, {{ one.score_count }} score{{ one.score_count|pluralize }})</a>{% if not forloop.last %}, {% endif %}{% endfor %}.</p>
+    {% endif %}
+    {% endwith %}
 
     <form method="get" role="search" class="toolbar">
         <div class="toolbar__search">

@@ -1,0 +1,18 @@
+/* ==========================================================================
+   BLOCK: CALLOUT
+   A short notice in the flow of a page that asks for something to be
+   done, such as an import waiting to be kept or removed. Calm rather
+   than alarming: the information colours, with a stronger left edge.
+   ========================================================================== */
+
+@layer blocks {
+  .callout {
+    max-width: none;
+    padding: var(--spacing-xs) var(--spacing-s);
+    border: 1px solid var(--colors-info-border);
+    border-inline-start-width: 4px;
+    border-radius: 6px;
+    background-color: var(--colors-info-bg);
+    color: var(--colors-text-base);
+  }
+}

@@ -142,6 +142,14 @@ class ScoreListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
         context["unspecified_value"] = ScoreQuerySet.UNSPECIFIED
         context["unspecified_language_count"] = scores.filter(language="").count()
         context["unspecified_voicing_count"] = scores.filter(voicing="").count()
+        # Imports still waiting to be kept or removed, for the people who
+        # can do either, so one isn't forgotten.
+        if can_edit_library(self.request.user):
+            context["pending_imports"] = (
+                ScoreImport.objects.for_organisation(self.request.organisation)
+                .filter(status=ScoreImport.PENDING)
+                .annotate(score_count=Count("scores"))
+            )
         context["mixed_value"] = ScoreQuerySet.MIXED
         context["mixed_count"] = scores.with_voicing(ScoreQuerySet.MIXED).count()
         context["query"] = self.request.GET.get("q", "").strip()
