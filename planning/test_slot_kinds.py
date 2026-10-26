@@ -77,3 +77,31 @@ class SlotKindOnSaveTests(TestCase):
         template = make_slot_template(organisation=self.service.organisation, slot_names="Kyrie\nCommunion hymn")
         template.apply_to(self.service)
         self.assertEqual(list(self.service.roles.values_list("kind", flat=True)), ["ordinary", "hymn"])
+
+
+class ClassifyExistingSlotsTests(TestCase):
+    def test_slots_from_before_kinds_are_classified_and_others_left(self):
+        import importlib
+        from datetime import date
+
+        from django.apps import apps
+
+        from precentor_project.testing import make_term
+
+        from .models import Service, ServiceRole
+
+        migration = importlib.import_module("planning.migrations.0020_classify_existing_slots")
+        service = Service.objects.create(term=make_term(), date=date(2026, 1, 11), service_type="Sung Mass")
+        for name in ["Introit", "Communion hymn", "Procession"]:
+            ServiceRole.objects.create(service=service, role_name=name)
+        chosen = ServiceRole.objects.create(service=service, role_name="Gradual", kind="psalm")
+        # update() skips save(), so these are as slots were before the migration.
+        ServiceRole.objects.exclude(pk=chosen.pk).update(kind="", proper_part="")
+
+        migration.classify_existing(apps, None)
+        self.assertEqual(list(service.roles.values_list("role_name", "kind", "proper_part")), [
+            ("Introit", "proper", "introit"),
+            ("Communion hymn", "hymn", ""),
+            ("Procession", "other", ""),
+            ("Gradual", "psalm", ""),
+        ])
