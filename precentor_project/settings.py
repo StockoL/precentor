@@ -110,6 +110,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     # After authentication, which it reads the person from.
     "accounts.middleware.OrganisationMiddleware",
+    # Also after authentication: it needs to know who's signed in.
+    "precentor_project.middleware.NoStoreWhenSignedInMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]

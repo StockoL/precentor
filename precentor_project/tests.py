@@ -260,3 +260,34 @@ class FaviconTests(TestCase):
 class MetaDescriptionTests(TestCase):
     def test_every_page_describes_the_site(self):
         self.assertContains(self.client.get("/accounts/login/"), '<meta name="description" content="Precentor plans')
+
+
+class NoStoreWhenSignedInTests(TestCase):
+    def test_signed_in_pages_are_never_stored(self):
+        self.client.force_login(make_user("conductor"))
+        for url in ("/", "/library/", "/members/"):
+            with self.subTest(url=url):
+                cache_control = self.client.get(url)["Cache-Control"]
+                self.assertIn("private", cache_control)
+                self.assertIn("no-store", cache_control)
+
+    def test_logging_out_is_covered_too(self):
+        self.client.force_login(make_user("viewer"))
+        self.assertIn("no-store", self.client.post("/accounts/logout/")["Cache-Control"])
+
+    def test_signed_out_pages_are_left_alone(self):
+        # The sign-up page sets no caching of its own (the login page
+        # does: Django marks it never_cache).
+        self.assertFalse(self.client.get("/accounts/signup/").has_header("Cache-Control"))
+
+    def test_the_crest_keeps_its_own_public_cache(self):
+        from accounts.testing import make_organisation
+        from core.models import SiteConfig
+
+        church = make_organisation()
+        settings = SiteConfig.of(church)
+        settings.set_crest(b"crest", "image/png")
+        settings.save()
+        self.client.force_login(make_user("viewer", organisation=church))
+        response = self.client.get(settings.crest_url)
+        self.assertEqual(response["Cache-Control"], "public, max-age=31536000, immutable")
