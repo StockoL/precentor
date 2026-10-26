@@ -314,4 +314,3 @@ class ScoreImport(models.Model):
 
     def __str__(self):
         return f"{self.original_filename} ({self.created_at:%d %b %Y})"
-
