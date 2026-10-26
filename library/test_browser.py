@@ -88,3 +88,49 @@ class LibraryForViewersBrowserTest(PlaywrightTestCase):
         assert self.page.locator("h1", has_text="Ave verum").is_visible()
         assert self.page.locator(f"a[href='/library/{score.pk}/edit/']").count() == 0
         assert self.page.locator(f"a[href='/library/{score.pk}/delete/']").count() == 0
+
+
+class ImportFormBrowserTest(PlaywrightTestCase):
+    """The import page's script: the chosen file's size, a warning before
+    uploading one that's too big, and no second import from a double
+    click."""
+
+    def setUp(self):
+        super().setUp()
+        self.page.emulate_media(reduced_motion="reduce")
+        self.log_in_as("librarian")
+        self.page.goto("/library/import/")
+
+    def choose(self, name, content):
+        self.page.set_input_files("#id_file", {"name": name, "mimeType": "text/csv", "buffer": content})
+
+    def test_choosing_a_file_says_how_big_it_is(self):
+        self.choose("library.csv", b"Title,Composer surname\r\nAve verum,Byrd\r\n")
+        assert self.page.inner_text("[role=status]") == "library.csv, 1 KB."
+        assert self.page.is_enabled("main button[type=submit]")
+
+    def test_a_file_over_the_limit_is_flagged_before_uploading(self):
+        from .importing import MAX_BYTES
+
+        self.choose("huge.csv", b"x" * (MAX_BYTES + 1))
+        assert "more than the 2.0 MB limit" in self.page.inner_text("[role=status]")
+        assert not self.page.is_enabled("main button[type=submit]")
+
+    def test_while_importing_the_button_cant_be_pressed_again(self):
+        # Count each submit and cancel it, so the page stays put and can be
+        # looked at as it would be mid-upload. This listener is added after
+        # the page's own, so the page's runs first.
+        self.page.evaluate("""() => {
+            window.submits = 0;
+            document.querySelector("form[data-max-bytes]").addEventListener("submit", (event) => {
+                window.submits += 1;
+                event.preventDefault();
+            });
+        }""")
+        self.choose("library.csv", b"Title,Composer surname\r\nAve verum,Byrd\r\n")
+        button = "main button[type=submit]"
+        self.page.click(button)
+        assert self.page.inner_text(button) == "Importing…"
+        # force skips Playwright's wait for the button to be enabled again.
+        self.page.click(button, force=True)
+        assert self.page.evaluate("window.submits") == 1

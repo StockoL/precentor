@@ -272,7 +272,7 @@ class ScoreImportView(LibraryEditRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(
-            columns=COLUMNS, max_rows=MAX_ROWS, example=IMPORT_EXAMPLE, **kwargs
+            columns=COLUMNS, max_rows=MAX_ROWS, max_bytes=MAX_BYTES, example=IMPORT_EXAMPLE, **kwargs
         )
 
     def form_valid(self, form):

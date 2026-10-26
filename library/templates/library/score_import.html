@@ -1,5 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Import your library — Precentor{% endblock %}
+{% block extra_js %}
+<script type="module" src="{% static 'src/js/import-form.js' %}"></script>
+{% endblock %}
 {% block content %}
 <div class="flow">
     <h1>Import your library from a spreadsheet</h1>
@@ -27,7 +31,7 @@
         </table>
     </div>
 
-    <form method="post" enctype="multipart/form-data" class="flow">
+    <form method="post" enctype="multipart/form-data" class="flow" data-max-bytes="{{ max_bytes }}">
         {% csrf_token %}
         {{ form.as_p }}
         <button class="btn-primary" type="submit">Import</button>
