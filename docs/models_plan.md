@@ -235,6 +235,28 @@ comment counts on the Terms page, the "last sung" subquery, the
 suitability subqueries (the outer query is already the church's), and
 the slot reordering, which must list exactly the service's own slots.
 
+That search was a one-off, so a test now does the same job every time
+the suite runs (`precentor_project/test_isolation.py`). It builds two
+churches with one of everything, every piece of the second's text
+marked `B-ONLY`, and then:
+
+- finds the models that hold a church's data by their `organisation`
+  field and fails if the builder doesn't make one of each, so a new
+  model can't be missed;
+- opens and posts to every address with an id in it, as the first
+  church's owner, aimed at the second church's rows: nothing may be
+  shown, and every one of the second church's rows must be unchanged
+  afterwards;
+- opens every page without an id, and every one of the first church's
+  own pages, and fails if `B-ONLY` appears anywhere, which catches leaks
+  through lists, menus and the piece picker;
+- fails if any route in the project isn't covered by one of those
+  checks or a written exemption (the public crest, and the two pages
+  reached by a token).
+
+Breaking `for_organisation()` on purpose makes it fail at once, naming
+each route that leaked.
+
 ### `library.Score`
 
 ```python

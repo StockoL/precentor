@@ -423,7 +423,9 @@ and every page looks only within the signed-in person's own. Someone
 who types the address of another church's score or service gets a
 "404 Not Found", as if it didn't exist, rather than a "403 Forbidden"
 that would admit it does. The liturgical calendar is the one thing
-every church shares.
+every church shares. A test tries every address in the app as another
+church, and checks every page for anything of the other church's, so
+it stays true as pages are added.
 
 **In the app.** The owner invites people from the Members page. The link is shown once, to send by hand, and the new member joins in the role it names. Anyone without a permission sees a plain explanation, and another church's records simply don't exist for them.
 
@@ -1242,11 +1244,9 @@ What's designed or wanted but not built yet:
 - **Email.** Invitations and reset links are passed on by hand because
   Precentor sends no email. With a mail provider they could be sent
   directly, and people could reset their own passwords.
-- **The rest of the account work:** limiting repeated sign-in attempts,
-  letting an owner delete their church and a member delete their own
-  account, and one test that tries every route as another church. Each
-  view is already tested for another church's records; the single sweep
-  would keep that true as new pages are added.
+- **The rest of the account work:** limiting repeated sign-in attempts
+  and letting an owner delete their church and a member delete their own
+  account.
 
 ## 20. Technologies used
 
@@ -1301,7 +1301,7 @@ each change before it was committed.
 
 [`docs/testing.md`](docs/testing.md) has the full record. In short:
 
-- **560 automated tests** cover the models, views, forms, permissions,
+- **567 automated tests** cover the models, views, forms, permissions,
   each church's own data and the liturgical calendar. 49 of them are
   browser tests, which start a real server and drive Chromium through
   Playwright, so the JavaScript is tested too.

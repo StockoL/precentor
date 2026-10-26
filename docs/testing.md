@@ -11,7 +11,7 @@ automated test named. Anything I didn't get to before submission says so.
 
 | Check                       | What I used                                                                                     | What it found                                                                                                               | Resolved?                                                                                                                                         |
 | --------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 560 tests, all passing (26 October 2026, at `0b5cce3`)                                                                | Nothing to resolve                                                                                                                                |
+| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 567 tests, all passing (26 October 2026, at `6bbcce5`)                                                                | Nothing to resolve                                                                                                                                |
 | Deployment settings         | `python manage.py check --deploy` with `DEBUG` off                                              | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve                                                                                                                                |
 | Python style                | `flake8` with a line length of 120, excluding `venv` and migrations                             | 22 findings: two unused imports, one extra blank line, one invalid escape (`\W` in a test string), 16 long lines, a variable named `l`, a lambda assigned to a name | Resolved the unused imports, the blank line and the escape in `1f2e618`. Left the 16 long lines (121 to 139 characters, mostly test data), the `l` in `ordo/utils.py` and the lambda in a test, as they don't affect behaviour |
 | Leftover debugging          | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app. The two scripts in `tools/` print what they've done, on purpose                                     | Nothing to resolve                                                                                                                                |
@@ -54,7 +54,7 @@ were the only things keeping Best practices and SEO below 100.
 
 ## 4. Automated tests
 
-The suite has 560 tests, run on 26 October 2026 at commit `0b5cce3`;
+The suite has 567 tests, run on 26 October 2026 at commit `6bbcce5`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
@@ -82,6 +82,7 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | `precentor_project/tests.py`              | 20    | The base template, the navigation and its wording, the Inbox count, the user menu and the 403 page                |
 | `precentor_project/test_browser.py`       | 15    | Signing in, type and control sizes, checkboxes, Settings, the user menu, page transitions and the skip link, in the browser |
 | `precentor_project/test_delete_pages.py`  | 5     | Going Back to a delete page after deleting                                                                         |
+| `precentor_project/test_isolation.py`     | 7     | Two complete churches: every address with an id tried as the other church, every page checked for the other church's text, and every model and route covered |
 | `precentor_project/test_settings.py`      | 8     | Production settings: the secret key check, hosts, HTTPS                                                            |
 | `precentor_project/test_testing.py`       | 2     | The shared test helpers                                                                                            |
 
