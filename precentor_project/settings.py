@@ -76,6 +76,19 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "3600"))
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
+# Cookies. These are Django's defaults, written out so they can be seen
+# and tested, and so a change of default can't loosen them unnoticed.
+# Page scripts can't read the session cookie, and neither cookie is sent
+# with a form posted from another site.
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+# The CSRF cookie stays readable by scripts on purpose: ajax.js sends its
+# value in the X-CSRFToken header with each request, as Django documents.
+# Another site's page still can't read it, which is what the protection
+# rests on: a request must send back the value only this site can see.
+CSRF_COOKIE_HTTPONLY = False
+
 # Joining the browsers' HSTS preload list is for a domain's owner to apply
 # for, and is close to permanent. A host's shared address can't join, and
 # a custom domain should only join on purpose, so the check stays quiet.

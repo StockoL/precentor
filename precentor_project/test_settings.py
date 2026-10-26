@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 from django.conf import settings
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, TestCase
 
 
 def start_django(code="", **env):
@@ -88,3 +88,20 @@ class HttpsSettingsTests(SimpleTestCase):
             cwd=settings.BASE_DIR, capture_output=True, text=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
+
+
+class CookieSettingsTests(TestCase):
+    def test_the_session_cookie_is_hidden_from_scripts_and_kept_to_this_site(self):
+        from accounts.testing import make_user
+
+        make_user(email="anne@example.com", password="testpass123")
+        response = self.client.post("/accounts/login/", {"username": "anne@example.com", "password": "testpass123"})
+        session = response.cookies["sessionid"]
+        self.assertTrue(session["httponly"])
+        self.assertEqual(session["samesite"], "Lax")
+
+    def test_the_csrf_cookie_is_kept_to_this_site_but_readable_by_the_page(self):
+        response = self.client.get("/accounts/signup/")
+        csrf = response.cookies["csrftoken"]
+        self.assertEqual(csrf["samesite"], "Lax")
+        self.assertFalse(csrf["httponly"])
