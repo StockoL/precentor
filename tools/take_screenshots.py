@@ -10,7 +10,7 @@ DATABASE_URL:
     python manage.py runserver 8766
     python tools/take_screenshots.py
 
-The images go to docs/screenshots/, numbered in the order the README shows
+The images go to docs/screenshots/, numbered in the order this script takes
 them, and are reduced to 256 colours if they would be over 300 KB.
 """
 
@@ -41,6 +41,14 @@ PASSWORD = "demo-precentor-2026"
 DESKTOP = {"width": 1280, "height": 800}
 MOBILE = {"width": 390, "height": 844}
 LIMIT = 300 * 1024
+IMPORT_FILE = "\r\n".join([
+    "Title,Composer surname,Composer other names,Voicing,Language,Copies owned,Filing location",
+    "Ave Maria,Parsons,Robert,SATB,Latin,20,Cabinet 1",
+    "Ubi caritas,Duruflé,Maurice,SATB,Latin,24,Cabinet 2",
+    "Bogoroditse Devo,Rachmaninoff,Sergei,,Church Slavonic,18,Cabinet 3",
+    ",Victoria,Tomás Luis de,SATB,Latin,12,Cabinet 3",
+    "Christus factus est,Anerio,Felice,,Latin,16,Cabinet 1",
+]).encode("utf-8")
 
 
 def save(png, name):
@@ -131,6 +139,20 @@ def main():
         page.wait_for_load_state("networkidle")
         save(page.screenshot(), "10-score-form-errors.png")
         shot(page, f"/library/{score.pk}/delete/", "11-delete-confirmation.png", full_page=False)
+        # Importing: a small file with a row missing its title, a score the
+        # church already has and some without a voicing. The import is
+        # removed afterwards through its own page, so its notice doesn't
+        # appear in the later screenshots.
+        page.goto(BASE + "/library/import/")
+        page.set_input_files("#id_file", {"name": "our-library.csv", "mimeType": "text/csv", "buffer": IMPORT_FILE})
+        save(page.screenshot(full_page=True), "24-import.png")
+        page.click("main button.btn-primary")
+        page.wait_for_url("**/library/import/*/")
+        page.wait_for_load_state("networkidle")
+        save(page.screenshot(full_page=True), "25-import-result.png")
+        page.click("text=Remove this import")
+        page.click("main button.btn-danger")
+        page.wait_for_url(BASE + "/library/")
         shot(page, f"/terms/{advent.pk}/music-list/", "12-music-list.png")
         shot(page, "/comments/inbox/", "13-inbox.png")
         shot(page, "/settings/", "14-settings.png")

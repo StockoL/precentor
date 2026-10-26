@@ -127,9 +127,9 @@ seasons and occasions they suit.
 
 **In the app.** The librarian adds scores, finds them again with search and filters, and keeps each one's details up to date.
 
-![The library table filtered to scores suited to Advent, with columns for composer, voicing, language, copies and last sung](docs/screenshots/08-library-filtered.png)
+![The library table with the scores suited to Advent ranked first, with columns for composer, voicing, language, copies and last sung](docs/screenshots/08-library-filtered.png)
 
-_Figure 4. The library filtered to music suited to Advent, with the last-sung date for each score._
+_Figure 4. The library with music suited to Advent ranked first, and the last-sung date for each score._
 
 ![A score's page for Parsons' Ave Maria showing its details and the services it has been planned for](docs/screenshots/09-score.png)
 
@@ -158,6 +158,14 @@ removed as a whole. Removing it deletes its scores again, except any
 already planned into a service. Export, beside Import, downloads the
 whole library in the same columns, so it can be kept as a copy, tidied
 in a spreadsheet and brought back in.
+
+![The import page with its four steps, an example table of the columns, and a chosen file named our-library.csv shown as 1 KB](docs/screenshots/24-import.png)
+
+_Figure 8. Importing: the steps, an example of the columns, and the chosen file's size before it uploads._
+
+![The result of an import: 4 scores imported, one row skipped for having no title, two that look like scores already in the library, and a note that 2 have no voicing yet, with Keep and Remove buttons](docs/screenshots/25-import-result.png)
+
+_Figure 9. What an import brought in, what it skipped and why, and the choice to keep or remove it._
 
 ### 3.2 Term, Service, and Slots
 
@@ -214,15 +222,15 @@ mark N/A or remove like any other.
 
 ![The Terms page with Michaelmas 2026, current and complete, and Advent 2026, upcoming, each with a progress bar](docs/screenshots/04-terms.png)
 
-_Figure 8. The Terms page: each term's progress at a glance._
+_Figure 10. The Terms page: each term's progress at a glance._
 
 ![The Advent 2026 term page listing ten services, each marked Complete, In progress or Not started, followed by notices and a comment](docs/screenshots/05-term.png)
 
-_Figure 9. A term: its services in date order with their status, its notices and its comments._
+_Figure 11. A term: its services in date order with their status, its notices and its comments._
 
 ![The Sung Mass for the First Sunday of Advent, with slots from the Mass template holding confirmed pieces, the Gloria and Credo marked N/A, the template buttons and a comment](docs/screenshots/06-service.png)
 
-_Figure 10. A service: the occasion worked out from its date, slots added from the Mass template, confirmed pieces and two slots marked N/A._
+_Figure 12. A service: the occasion worked out from its date, slots added from the Mass template, confirmed pieces and two slots marked N/A._
 
 ### 3.3 Proposing and Confirming
 
@@ -256,7 +264,7 @@ term and see at once which services still need attention.
 
 ![A service page with a slot's score search box open and a list of matching scores beneath it](docs/screenshots/07-propose-a-piece.png)
 
-_Figure 11. Proposing a piece from the slot's search box._
+_Figure 13. Proposing a piece from the slot's search box._
 
 ### 3.4 Ordo (the Liturgical Calendar)
 
@@ -384,11 +392,11 @@ state:
 
 ![The Advent 2026 music list in three columns, headed by the church's crest and name, with each service's pieces and the notices between services](docs/screenshots/12-music-list.png)
 
-_Figure 12. The public music list for Advent, with Public, Draft and Print at the foot._
+_Figure 14. The public music list for Advent, with Public, Draft and Print at the foot._
 
 ![The Settings page with the church's name, national calendar, crest style, the current crest, accent colour and music list layout](docs/screenshots/14-settings.png)
 
-_Figure 13. Settings: the church's name, crest and calendar, which the music list uses._
+_Figure 15. Settings: the church's name, crest and calendar, which the music list uses._
 
 ## 5. Roles and Permissions, Revisited
 
@@ -454,19 +462,19 @@ it stays true as pages are added.
 
 ![An invitation link for Anne, alto, in a read-only box, with the role, the expiry date and a note that it is only shown once](docs/screenshots/15-invitation-link.png)
 
-_Figure 14. An invitation link, shown once for the owner to pass on._
+_Figure 16. An invitation link, shown once for the owner to pass on._
 
 ![The Members page listing the conductor, librarian and viewer with their roles, the owner badge and the owner's controls, and an invitation waiting to be used](docs/screenshots/16-members.png)
 
-_Figure 15. The Members page as the owner sees it._
+_Figure 17. The Members page as the owner sees it._
 
 ![A Not available to you page shown to a Viewer who tried to create a term](docs/screenshots/17-forbidden.png)
 
-_Figure 16. A Viewer trying to create a term gets a 403 page that says why._
+_Figure 18. A Viewer trying to create a term gets a 403 page that says why._
 
 ![A Page not found page shown to another church's member who opened this church's score by its address](docs/screenshots/18-not-found.png)
 
-_Figure 17. Someone from another church opening this church's score by its address gets a 404, as if it didn't exist._
+_Figure 19. Someone from another church opening this church's score by its address gets a 404, as if it didn't exist._
 
 ## 6. Comment Threads
 
@@ -504,7 +512,7 @@ This remains a **"should have"**, not core to the MVP.
 
 ![The Inbox listing open comment threads with who wrote them and which term or service they are about](docs/screenshots/13-inbox.png)
 
-_Figure 18. The Inbox of open threads._
+_Figure 20. The Inbox of open threads._
 
 ## 7. Scope Discipline (MoSCoW)
 
@@ -1051,23 +1059,23 @@ The figures above sit in the sections they illustrate. These show the same app o
 
 ![The Terms page on a phone 390 pixels wide, with the term cards stacked in one column](docs/screenshots/19-mobile-terms.png)
 
-_Figure 19. The Terms page on a phone._
+_Figure 21. The Terms page on a phone._
 
 ![A service page on a phone, with each slot's buttons wrapping under its name](docs/screenshots/20-mobile-service.png)
 
-_Figure 20. A service on a phone._
+_Figure 22. A service on a phone._
 
 ![The library on a phone, with the filters above the table](docs/screenshots/21-mobile-library.png)
 
-_Figure 21. The library on a phone; the table scrolls within its own box rather than widening the page._
+_Figure 23. The library on a phone; the table scrolls within its own box rather than widening the page._
 
 ![The First Sunday of Advent service page in dark colours](docs/screenshots/22-dark-service.png)
 
-_Figure 22. A service in dark mode, which follows the device's setting or the choice in the user menu._
+_Figure 24. A service in dark mode, which follows the device's setting or the choice in the user menu._
 
 ![The Terms page with a visible outline round the Terms link after pressing Tab](docs/screenshots/23-keyboard-focus.png)
 
-_Figure 23. Keyboard focus: links and buttons show an outline when reached with Tab._
+_Figure 25. Keyboard focus: links and buttons show an outline when reached with Tab._
 
 ### How the screenshots were made
 
@@ -1090,10 +1098,12 @@ development database:
    `DATABASE_URL`, drives Chromium through Playwright (already used for
    the browser tests). It registers a new church for Figures 1 to 3,
    signs in as the demo Conductor and Viewer for the rest, and saves
-   each page at 1280 by 800 or, for the phone figures, 390 by 844.
+   each page at 1280 by 800 or, for the phone figures, 390 by 844. For
+   Figures 8 and 9 it imports a small file, then removes the import
+   through its own page, so the demo church is left as it was.
    Images over 300 KB are reduced to 256 colours.
 5. My local `.env` turns `DEBUG` on, which shows Django's debug page in
-   place of the 404 page, so for Figure 17 the script renders the page
+   place of the 404 page, so for Figure 19 the script renders the page
    with `DEBUG` off through Django's test client and photographs that.
 
 ## 15. Features and CRUD
