@@ -20,8 +20,8 @@ details are needed.
 > Roman Rite, comment threads, per-church settings with a crest, and the
 > printable music list are all in place. Before the accounts work I
 > overhauled the whole app, phase by phase, as recorded in
-> [`docs/overhaul_plan.md`](docs/overhaul_plan.md). The CSV import is
-> designed but not built (see [Future work](#19-future-work)).
+> [`docs/overhaul_plan.md`](docs/overhaul_plan.md). A library can also
+> be imported from a spreadsheet and exported again (§3.1).
 >
 > The rest of this document keeps its original concept-and-reasoning
 > framing, because that reasoning is what the build followed. Where the
@@ -77,7 +77,7 @@ There are three user roles, reflecting how the work is actually divided:
 | Role                        | Can change                                                                                           | Can see    |
 | --------------------------- | ---------------------------------------------------------------------------------------------------- | ---------- |
 | **Conductor**               | Planning (terms, services, slots, proposing, confirming, N/A), slot templates, the library, Settings | Everything |
-| **Librarian / Music Admin** | The library: scores, copies owned, filing location                                                   | Everything |
+| **Librarian / Music Admin** | The library: scores, copies owned, filing location, importing and exporting it                       | Everything |
 | **Viewer**                  | Nothing, apart from taking part in comments                                                          | Everything |
 
 Everyone takes part in the comment threads (see §6). A site superuser
@@ -142,6 +142,22 @@ _Figure 6. Adding a score: each missing field is named beside the box that needs
 ![A confirmation page asking whether to delete the Ave Maria score](docs/screenshots/11-delete-confirmation.png)
 
 _Figure 7. Deleting always asks first._
+
+**Bringing a library in, and taking it out.** Most churches already keep
+their library in a spreadsheet, and typing hundreds of scores in again
+would put them off before they started. Import, on the Library page,
+explains Precentor's format, offers a template with the right headers
+and shows three example rows. Only the title and the composer's surname
+are needed. The file is checked before anything is saved: a row that
+breaks the same rules as the score form is skipped, with its row number
+and the reason; rows that look like scores the church already has are
+pointed out but kept, as a church may own two editions; and the result
+page says how many scores still have no voicing, with a link to them.
+The import then waits, with a notice on the Library, until it's kept or
+removed as a whole. Removing it deletes its scores again, except any
+already planned into a service. Export, beside Import, downloads the
+whole library in the same columns, so it can be kept as a copy, tidied
+in a spreadsheet and brought back in.
 
 ### 3.2 Term, Service, and Slots
 
@@ -513,7 +529,7 @@ _Figure 18. The Inbox of open threads._
 - CCLI/copyright licence reporting export
 - Choir roster awareness (auto-filtering by available voice parts)
 - Smart repertoire suggestions (voicing + season + not-sung-recently)
-- Bulk CSV import of a legacy library
+- Bulk CSV import of a legacy library (built, with an export in the same format)
 
 ## 8. Out of Scope
 
@@ -589,8 +605,9 @@ not oversights, when an assessor reads this document.
   how it was checked against its sources.
 - [`docs/ordo_plan.md`](docs/ordo_plan.md): the earlier design of the
   occasion suggestions and the score suitability tags.
-- [`docs/score_import_plan.md`](docs/score_import_plan.md): the design
-  for importing a library from a spreadsheet, not yet built.
+- [`docs/score_import_plan.md`](docs/score_import_plan.md): earlier
+  designs for importing a library from a spreadsheet, superseded by the
+  simpler import I built (§3.1).
 - [`docs/overhaul_plan.md`](docs/overhaul_plan.md): the overhaul before
   deployment, phase by phase, with a log of what each phase found.
 - [`docs/acknowledgements.md`](docs/acknowledgements.md): every outside
@@ -1090,7 +1107,8 @@ the role column in §2 says who may use each one.
 | Organisation                | Sign-up page (`signup`)                                   | Its name on every page and the music list          | Church name on Settings (`site_config_update`)                                                  | The owner, after typing its name (`delete_church`)           | not needed: everyone sees only their own                                   |
 | User                        | Joining by invitation (`join`); sign-up for the owner     | Members page (`member_list`)                       | Role (`change_role`), owner (`make_owner`), own password (`password_change`) or by reset link (`reset_link`) | Removed, not deleted (`remove`), and brought back (`restore`); their own account, after their password (`delete_account`) | Members page                                                               |
 | Invitation                  | Invite someone (`invite`)                                 | Link shown once (`invitation_link`); Members page  | not available (cancel and make another)                                                         | Cancel (`invitation_cancel`)                                  | Members page, "Waiting to join"                                            |
-| Score                       | Add score (`score_create`)                                | Library (`score_list`), score page (`score_detail`) | Edit (`score_update`)                                                                          | Delete, after a confirmation (`score_delete`)                 | Search box, Language, Voicing, Suitable-for filters and sortable columns   |
+| Score                       | Add score (`score_create`), or many at once by importing   | Library (`score_list`), score page (`score_detail`), or all as a CSV (`export_library`) | Edit (`score_update`)                                                                          | Delete, after a confirmation (`score_delete`)                 | Search box, Language, Voicing, Suitable-for filters and sortable columns   |
+| Import (`ScoreImport`)      | Import a spreadsheet (`score_import`), from the template (`import_template`) | Result page (`score_import_detail`), Imports list (`score_import_list`) | Keep it (`keep_import`)                                                                          | Remove it and its scores, after a confirmation (`remove_import`) | Imports list, waiting ones first; a notice on the Library while one waits |
 | Term                        | New term (`term_create`)                                  | Terms page (`term_list`), term page (`term_detail`) | Edit (`term_update`)                                                                           | Delete, after a confirmation (`term_delete`)                  | Terms page, current and upcoming first, past folded away                   |
 | Service                     | New service (`service_create`), occasion suggested from the date | Service page (`service_detail`), term page  | Edit (`service_update`)                                                                         | Delete, after a confirmation (`service_delete`)               | Term page in date order; previous and next links on each service           |
 | Notice (`TermMarker`)       | New notice (`marker_create`)                              | Term page and music list                           | Edit (`marker_update`)                                                                          | Delete (`marker_delete`)                                      | Term page                                                                  |
@@ -1113,7 +1131,7 @@ the role column in §2 says who may use each one.
   "Ben Jonson is now a Librarian." or "That invitation has already been
   used or cancelled.", shown at the top of the next page.
 - **Deleting asks first.** Scores, terms, services, notices, templates,
-  invitations and members each have a confirmation page. Removing a slot
+  invitations, members and imports each have a confirmation page. Removing a slot
   that has pieces asks in a dialog with JavaScript, or on a page
   without. Going Back to a confirmation page for something already deleted leads
   to its list with a message, not an error.
@@ -1166,6 +1184,12 @@ the role column in §2 says who may use each one.
   next person at a shared computer. The session cookie can't be read by
   page scripts, and neither cookie is sent with a form posted from
   another site.
+- **Imported files are checked, not trusted.** A file over 2 MB or 5,000
+  rows is refused, every row goes through the same form as a score added
+  by hand, and the import is saved in one transaction, so a failure
+  leaves nothing behind. In an export, a cell that starts with `=`, `+`,
+  `-` or `@` gets an apostrophe in front, so a spreadsheet opens it as
+  text instead of running it as a formula.
 
 ## 17. Running it locally
 
@@ -1245,12 +1269,6 @@ Everything below is read in `precentor_project/settings.py`.
 
 What's designed or wanted but not built yet:
 
-- **Importing a library from a spreadsheet.** A church with hundreds of
-  scores has to type each one in, so bulk import is the one real gap in
-  handling large amounts of data. The import is designed: a CSV in
-  Precentor's own columns, checked row by row, kept or removed as one
-  batch, with an export in the same columns. An earlier version of the
-  design is in [`docs/score_import_plan.md`](docs/score_import_plan.md).
 - **Hymn books and hymns.** Hymns are typed as numbers on the service
   form today. Hymn books as library entries, with hymns and tunes that
   build up through use, would let them be searched and suggested.
@@ -1318,8 +1336,8 @@ each change before it was committed.
 
 [`docs/testing.md`](docs/testing.md) has the full record. In short:
 
-- **599 automated tests** cover the models, views, forms, permissions,
-  each church's own data and the liturgical calendar. 49 of them are
+- **660 automated tests** cover the models, views, forms, permissions,
+  each church's own data, the import and export, and the liturgical calendar. 52 of them are
   browser tests, which start a real server and drive Chromium through
   Playwright, so the JavaScript is tested too.
 - **Validation:** the W3C HTML and CSS validators, ESLint for the
@@ -1335,5 +1353,5 @@ each change before it was committed.
 ---
 
 _The overhaul is recorded phase by phase in
-[`docs/overhaul_plan.md`](docs/overhaul_plan.md). What remains is the
-CSV import and the other items under Future work._
+[`docs/overhaul_plan.md`](docs/overhaul_plan.md). What remains is
+under Future work._
