@@ -433,3 +433,76 @@ class ImportListTests(TestCase):
         self.assertNotContains(self.client.get("/library/imports/"), "theirs.csv")
         self.client.force_login(make_user("viewer", organisation=self.church))
         self.assertEqual(self.client.get("/library/imports/").status_code, 403)
+
+
+class ExportTests(TestCase):
+    def setUp(self):
+        import datetime
+
+        from accounts.testing import make_organisation, make_user
+        from precentor_project.testing import make_score
+
+        self.church = make_organisation()
+        self.client.force_login(make_user("librarian", organisation=self.church))
+        make_score(
+            organisation=self.church, title="Ave verum corpus", composer_surname="Byrd",
+            composer_other_names="William", editor="Skinner", voicing="SATB", language="Latin",
+            copies_owned=24, filing_location="Cabinet 1, drawer 2", duration_minutes=4,
+            last_sung_manual=datetime.date(2025, 6, 22),
+        )
+        make_score(organisation=self.church, title="Rorate caeli", composer_surname="Anon.")
+
+    def export(self):
+        return self.client.get("/library/export/")
+
+    def test_the_file_uses_the_import_columns_and_opens_in_excel(self):
+        import csv
+
+        from .importing import COLUMNS
+
+        response = self.export()
+        self.assertEqual(response["Content-Type"], "text/csv; charset=utf-8")
+        self.assertRegex(response["Content-Disposition"], r'attachment; filename="precentor-library-\d{4}-\d{2}-\d{2}\.csv"')
+        text = response.content.decode("utf-8")
+        self.assertTrue(text.startswith("﻿"))
+        rows = list(csv.reader(text.lstrip("﻿").splitlines()))
+        self.assertEqual(rows[0], [header for header, _, _ in COLUMNS])
+        # By composer: Anon. sorts before Byrd. Blanks stay blank.
+        self.assertEqual(rows[1], ["Rorate caeli", "Anon.", "", "", "", "", "", "0", "", "", ""])
+        self.assertEqual(rows[2], [
+            "Ave verum corpus", "Byrd", "William", "", "Skinner", "SATB", "Latin",
+            "24", "Cabinet 1, drawer 2", "4", "2025-06-22",
+        ])
+
+    def test_only_the_churchs_own_scores_go_out(self):
+        from accounts.testing import make_organisation
+        from precentor_project.testing import make_score
+
+        make_score(organisation=make_organisation("St Elsewhere"), title="Theirs only")
+        self.assertNotIn("Theirs only", self.export().content.decode("utf-8"))
+
+    def test_a_viewer_cant_export(self):
+        from accounts.testing import make_user
+
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        self.assertEqual(self.export().status_code, 403)
+
+    def test_an_exported_file_imports_into_an_empty_church_unchanged(self):
+        from accounts.testing import make_organisation, make_user
+
+        from .importing import COLUMNS, check_file, save_import
+        from .models import Score
+
+        empty = make_organisation("St Elsewhere")
+        checked = check_file(self.export().content, empty)
+        self.assertEqual(checked.skipped, [])
+        save_import(checked, empty, make_user("librarian", organisation=empty), "export.csv")
+        fields = [field for _, field, _ in COLUMNS]
+
+        def library(church):
+            return list(Score.objects.for_organisation(church).order_by("title").values_list(*fields))
+
+        self.assertEqual(library(empty), library(self.church))
+
+    def test_the_library_links_to_the_export(self):
+        self.assertContains(self.client.get("/library/"), 'href="/library/export/"')

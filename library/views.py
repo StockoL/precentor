@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.defaultfilters import pluralize
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.views.generic import (
     CreateView,
@@ -27,7 +28,9 @@ from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 from precentor_project.mixins import DeletePageMixin
 
 from .forms import ScoreForm, ScoreImportForm
-from .importing import COLUMNS, IMPORT_EXAMPLE, MAX_BYTES, MAX_ROWS, ImportProblem, check_file, save_import
+from .importing import (
+    COLUMNS, IMPORT_EXAMPLE, MAX_BYTES, MAX_ROWS, ImportProblem, check_file, export_rows, save_import,
+)
 from .models import Score, ScoreImport, ScoreQuerySet
 
 
@@ -259,6 +262,21 @@ def import_template(request):
     response["Content-Disposition"] = 'attachment; filename="precentor-library-template.csv"'
     response.write("\ufeff")
     csv.writer(response).writerow([header for header, _, _ in COLUMNS])
+    return response
+
+
+@role_required(can_edit_library)
+def export_library(request):
+    """The church's whole library as a CSV in the import's own format, so
+    it can be kept as a copy, edited in a spreadsheet or imported again.
+    The date in the file name tells one copy from another."""
+    scores = own(Score, request).order_by("composer_surname", "title")
+    response = HttpResponse(content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = (
+        f'attachment; filename="precentor-library-{timezone.localdate().isoformat()}.csv"'
+    )
+    response.write("﻿")
+    csv.writer(response).writerows(export_rows(scores))
     return response
 
 

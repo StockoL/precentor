@@ -242,3 +242,17 @@ def save_import(checked, organisation, user, filename):
         score.import_batch = batch
     Score.objects.bulk_create(checked.scores)
     return batch
+
+
+# Exporting.
+
+def export_rows(scores):
+    """
+    The header row, then one row per score in the import's own columns, so
+    an exported file imports again as it is. Blanks stay blank, and a date
+    comes out as 2026-03-15, one of the two ways the import reads one.
+    """
+    yield [header for header, _, _ in COLUMNS]
+    for score in scores:
+        values = (getattr(score, field) for _, field, _ in COLUMNS)
+        yield ["" if value is None else str(value) for value in values]
