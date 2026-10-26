@@ -156,6 +156,16 @@ WSGI_APPLICATION = "precentor_project.wsgi.application"
 
 DATABASES = {"default": dj_database_url.config(default="sqlite:///db.sqlite3")}
 
+# The cache holds only the counts of sign-in and sign-up attempts, never a
+# church's data. It's a table in the database, made by createcachetable,
+# so the counts are shared by every worker process and survive a restart.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "precentor_cache",
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators

@@ -19,11 +19,13 @@ projects:
             # The free plan has no separate pre-deploy step, so migrations
             # and the calendar run here, after the packages and static
             # files. load_calendar is safe to run on every deploy: it adds
-            # and updates days, and keeps any a service already uses.
+            # and updates days, and keeps any a service already uses, and
+            # createcachetable only makes the cache's table if it's missing.
             buildCommand: >-
               pip install -r requirements.txt &&
               python manage.py collectstatic --no-input &&
               python manage.py migrate --no-input &&
+              python manage.py createcachetable &&
               python manage.py load_calendar
             startCommand: gunicorn precentor_project.wsgi:application
             healthCheckPath: /accounts/login/

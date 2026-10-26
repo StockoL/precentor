@@ -636,7 +636,9 @@ Precentor with a Production environment holding:
   after 15 minutes without visitors and takes about a minute to wake,
   which is fine for a project with a handful of users. Each deploy
   installs the requirements, collects the static files, runs the
-  migrations and loads the liturgical calendar, then starts the site
+  migrations, makes the cache table if it's missing (it holds the
+  counts that limit sign-in attempts) and loads the liturgical
+  calendar, then starts the site
   with gunicorn. The free plan has no separate pre-deploy step, so all
   of that happens in the build.
 - **The database**, Postgres 17 on the smallest paid plan, because a
@@ -1180,10 +1182,12 @@ need Python 3.14 and git.
    ```
 
 4. Set up the database, which is a local SQLite file unless
-   `DATABASE_URL` says otherwise, and load the liturgical calendar:
+   `DATABASE_URL` says otherwise, with its cache table, and load the
+   liturgical calendar:
 
    ```powershell
    python manage.py migrate
+   python manage.py createcachetable
    python manage.py load_calendar
    ```
 

@@ -105,3 +105,12 @@ class CookieSettingsTests(TestCase):
         csrf = response.cookies["csrftoken"]
         self.assertEqual(csrf["samesite"], "Lax")
         self.assertFalse(csrf["httponly"])
+
+
+class CacheSettingsTests(TestCase):
+    def test_the_cache_is_a_table_in_the_database(self):
+        from django.core.cache import cache
+
+        self.assertEqual(settings.CACHES["default"]["BACKEND"], "django.core.cache.backends.db.DatabaseCache")
+        cache.set("cache-check", 3, 60)
+        self.assertEqual(cache.get("cache-check"), 3)

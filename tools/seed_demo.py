@@ -114,6 +114,7 @@ def fill(new_service, scores, confirmed=True, not_applicable=()):
 
 def main():
     call_command("migrate", verbosity=0)
+    call_command("createcachetable", verbosity=0)
     call_command("load_calendar", verbosity=0)
     Organisation.objects.filter(name=CHURCH).delete()
     User.objects.filter(email__endswith="@stealred.example").delete()
