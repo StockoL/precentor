@@ -105,3 +105,23 @@ class ClassifyExistingSlotsTests(TestCase):
             ("Procession", "other", ""),
             ("Gradual", "psalm", ""),
         ])
+
+
+class KindBadgeTests(TestCase):
+    def test_each_slot_shows_its_kind(self):
+        from datetime import date
+
+        from accounts.testing import make_user
+        from precentor_project.testing import make_term
+
+        from .models import Service, ServiceRole
+
+        viewer = make_user("viewer")
+        term = make_term(organisation=viewer.organisation)
+        service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        ServiceRole.objects.create(service=service, role_name="Introit")
+        ServiceRole.objects.create(service=service, role_name="Recessional hymn")
+        self.client.force_login(viewer)
+        response = self.client.get(service.get_absolute_url())
+        self.assertContains(response, '<span class="badge badge--kind">Proper</span>', html=True)
+        self.assertContains(response, '<span class="badge badge--kind">Hymn</span>', html=True)

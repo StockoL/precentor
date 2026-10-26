@@ -27,6 +27,18 @@
     white-space: nowrap;
   }
 
+  /* A slot's kind (Proper, Hymn and so on). One muted style for every
+     kind, with only the label to tell them apart, so it doesn't compete
+     with the status colours on the same row. */
+  .badge--kind {
+    background-color: transparent;
+    color: var(--colors-text-muted);
+    border-color: var(--colors-border-strong);
+    font-weight: 500;
+    vertical-align: middle;
+    margin-inline-start: var(--spacing-3xs);
+  }
+
   /* The organisation's owner, on the members page. */
   .badge--owner {
     background-color: var(--colors-info-bg);
