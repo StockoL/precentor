@@ -5,12 +5,15 @@ for cataloguing compilations. I worked the reasoning out before
 writing any code, because the feature had grown complex enough to
 need it.
 
-> **Status, October 2026:** not built. Bulk import is listed as
-> future work in the README. This document records the design so it's
-> ready when I come back to it. It has been updated for model changes
-> made since it was written: the composer is now split into
-> `composer_surname` and `composer_other_names`, and the rehearsal
-> lead-time tag has been dropped.
+> **Status, 26 October 2026: superseded.** I built a simpler import
+> than any of the designs below: a CSV in Precentor's own fixed
+> columns, checked row by row by the same rules as the score form,
+> saved as one batch that can be kept or removed, and an export in the
+> same columns. The README (§3.1) describes it, and
+> [`models_plan.md`](models_plan.md) covers `ScoreImport` and the
+> reasoning. Matching any spreadsheet's own columns, and the compilation
+> tools, are not built. I've kept this document as a record of how the
+> design got there.
 
 This is the third design the feature has been through. I've kept the
 earlier ones below, marked as superseded, in the same spirit as the
