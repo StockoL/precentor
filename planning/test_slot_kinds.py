@@ -119,12 +119,13 @@ class KindBadgeTests(TestCase):
         viewer = make_user("viewer")
         term = make_term(organisation=viewer.organisation)
         service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
-        ServiceRole.objects.create(service=service, role_name="Introit")
-        ServiceRole.objects.create(service=service, role_name="Recessional hymn")
+        introit = ServiceRole.objects.create(service=service, role_name="Introit")
+        hymn = ServiceRole.objects.create(service=service, role_name="Recessional hymn")
         self.client.force_login(viewer)
         response = self.client.get(service.get_absolute_url())
-        self.assertContains(response, '<span class="badge badge--kind">Proper</span>', html=True)
-        self.assertContains(response, '<span class="badge badge--kind">Hymn</span>', html=True)
+        badge = '<span id="kind-badge-{}" class="badge badge--kind">{}</span>'
+        self.assertContains(response, badge.format(introit.pk, "Proper"), html=True)
+        self.assertContains(response, badge.format(hymn.pk, "Hymn"), html=True)
 
 
 class AddSlotKindTests(TestCase):
@@ -156,3 +157,48 @@ class AddSlotKindTests(TestCase):
         response = self.client.get(self.service.get_absolute_url())
         self.assertContains(response, '<option value="" selected>From the slot&#x27;s name</option>', html=True)
         self.assertContains(response, '<option value="antiphon">Antiphon</option>', html=True)
+
+
+class ChangeKindTests(TestCase):
+    def setUp(self):
+        from datetime import date
+
+        from accounts.testing import make_user
+        from precentor_project.testing import make_term
+
+        from .models import Service, ServiceRole
+
+        self.conductor = make_user("conductor")
+        self.client.force_login(self.conductor)
+        term = make_term(organisation=self.conductor.organisation)
+        self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        self.slot = ServiceRole.objects.create(service=self.service, role_name="Introit")
+        self.url = f"/roles/{self.slot.pk}/kind/"
+
+    def test_without_javascript_it_changes_and_says_so(self):
+        response = self.client.post(self.url, {"kind": "hymn"}, follow=True)
+        self.slot.refresh_from_db()
+        self.assertEqual((self.slot.kind, self.slot.proper_part), ("hymn", "introit"))
+        self.assertContains(response, "The Introit is now shown as Hymn.")
+
+    def test_with_javascript_only_the_badge_comes_back(self):
+        response = self.client.post(self.url, {"kind": "motet"}, headers={"X-Requested-With": "XMLHttpRequest"})
+        self.assertEqual(list(response.json()["fragments"]), [f"kind-badge-{self.slot.pk}"])
+        self.assertIn(">Motet<", response.json()["fragments"][f"kind-badge-{self.slot.pk}"])
+
+    def test_a_kind_that_isnt_listed_is_refused(self):
+        response = self.client.post(self.url, {"kind": "responsory"}, headers={"X-Requested-With": "XMLHttpRequest"})
+        self.assertEqual(response.status_code, 400)
+        self.slot.refresh_from_db()
+        self.assertEqual(self.slot.kind, "proper")
+
+    def test_only_a_conductor_can_change_it(self):
+        from accounts.testing import make_user
+
+        self.client.force_login(make_user("librarian", organisation=self.conductor.organisation))
+        self.assertEqual(self.client.post(self.url, {"kind": "hymn"}).status_code, 403)
+
+    def test_each_slot_has_the_select_with_its_kind_chosen(self):
+        response = self.client.get(self.service.get_absolute_url())
+        self.assertContains(response, f'<select id="kind-{self.slot.pk}" name="kind">')
+        self.assertContains(response, '<option value="proper" selected>Proper</option>', html=True)

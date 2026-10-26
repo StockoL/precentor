@@ -355,6 +355,7 @@ class ServiceRole(models.Model):
     )
     objects = OrganisationQuerySet.as_manager()
     # "Slot" is the UI word for a ServiceRole.
+    KINDS = KIND_CHOICES  # for the Kind select on each slot
     role_name = models.CharField("slot", max_length=50)
     # What it holds, for showing and grouping it, and for a proper, which
     # one. Left blank, save() works both out from the name.

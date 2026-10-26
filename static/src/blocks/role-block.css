@@ -55,7 +55,7 @@
     --gutter: var(--spacing-2xs);
   }
 
-  .role-block__actions button {
+  .role-block__actions :is(button, select) {
     font-size: var(--typography-step--2);
     min-block-size: auto;
     padding-block: var(--spacing-3xs);

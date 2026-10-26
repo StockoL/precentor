@@ -425,6 +425,24 @@ def move_slot(request, role_pk):
 
 @role_required(can_plan)
 @require_POST
+def change_kind(request, role_pk):
+    """Change how a slot is shown and grouped, such as an Introit sung as
+    a hymn. Its proper part stays, as it's still the Introit."""
+    role = get_object_or_404(own(ServiceRole, request).select_related("service"), pk=role_pk)
+    kind = request.POST.get("kind")
+    url = role.service.get_absolute_url()
+    if kind not in dict(ServiceRole.KINDS):
+        return ajax_or_redirect(request, {}, url, error_message="Choose one of the kinds listed.", status=400)
+    role.kind = kind
+    role.save(update_fields=["kind"])
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest":
+        messages.success(request, f"The {role.role_name} is now shown as {role.get_kind_display()}.")
+    badge = render_to_string("planning/_kind_badge.html", {"role": role}, request=request)
+    return ajax_or_redirect(request, {f"kind-badge-{role.pk}": badge}, url)
+
+
+@role_required(can_plan)
+@require_POST
 def remove_slot(request, role_pk):
     """Remove a slot. An empty one goes at once; one with pieces proposed
     asks first, in a dialog with JavaScript or on a page without, and is

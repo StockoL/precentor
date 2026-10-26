@@ -172,6 +172,7 @@ ADDRESSES = {
     "planning:slot_template_delete": lambda a, b: [{"pk": b["template"].pk}],
     "planning:add_piece": lambda a, b: [{"role_pk": b["slot"].pk}],
     "planning:move_slot": lambda a, b: [{"role_pk": b["slot"].pk}],
+    "planning:change_kind": lambda a, b: [{"role_pk": b["slot"].pk}],
     "planning:remove_slot": lambda a, b: [{"role_pk": b["slot"].pk}],
     "planning:reorder_slots": lambda a, b: [{"service_pk": b["service"].pk}],
     "planning:toggle_confirm": lambda a, b: [{"piece_pk": b["piece"].pk}],
