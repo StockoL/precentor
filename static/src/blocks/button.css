@@ -103,6 +103,13 @@
     outline-offset: 2px;
   }
 
+  /* A disabled button is faded and ignores the pointer, so it doesn't
+     lift or change colour on hover as if it could still be pressed. */
+  button:disabled {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     button,
     .btn,
