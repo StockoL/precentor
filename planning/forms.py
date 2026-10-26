@@ -6,6 +6,7 @@ from ordo.models import LiturgicalOccasion
 from precentor_project.widgets import NativeDateInput
 
 from .models import RolePiece, Service, ServiceRole, SlotTemplate, Term, TermMarker
+from .slot_kinds import KIND_CHOICES
 
 
 class TermForm(forms.ModelForm):
@@ -67,9 +68,12 @@ class TermMarkerForm(forms.ModelForm):
 
 
 class ServiceRoleForm(forms.ModelForm):
+    """Adding a slot. Its kind can be chosen, or left for the slot's name
+    to decide when it's saved, which suits most slots."""
+
     class Meta:
         model = ServiceRole
-        fields = ["role_name", "is_not_applicable"]  # noqa
+        fields = ["role_name", "kind", "is_not_applicable"]  # noqa
         widgets = {  # noqa
             "role_name": forms.TextInput(
                 attrs={
@@ -78,6 +82,11 @@ class ServiceRoleForm(forms.ModelForm):
                 }
             ),
         }
+        help_texts = {"kind": ""}  # noqa
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["kind"].choices = [("", "From the slot's name")] + KIND_CHOICES
 
 
 class SlotTemplateForm(forms.ModelForm):

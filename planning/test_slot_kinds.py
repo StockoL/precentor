@@ -125,3 +125,34 @@ class KindBadgeTests(TestCase):
         response = self.client.get(service.get_absolute_url())
         self.assertContains(response, '<span class="badge badge--kind">Proper</span>', html=True)
         self.assertContains(response, '<span class="badge badge--kind">Hymn</span>', html=True)
+
+
+class AddSlotKindTests(TestCase):
+    def setUp(self):
+        from datetime import date
+
+        from accounts.testing import make_user
+        from precentor_project.testing import make_term
+
+        from .models import Service
+
+        conductor = make_user("conductor")
+        self.client.force_login(conductor)
+        term = make_term(organisation=conductor.organisation)
+        self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+
+    def add(self, **data):
+        self.client.post(f"/services/{self.service.pk}/roles/add/", data)
+        return self.service.roles.get()
+
+    def test_left_blank_the_kind_comes_from_the_name(self):
+        slot = self.add(role_name="Introit", kind="")
+        self.assertEqual((slot.kind, slot.proper_part), ("proper", "introit"))
+
+    def test_a_chosen_kind_is_kept(self):
+        self.assertEqual(self.add(role_name="Introit", kind="hymn").kind, "hymn")
+
+    def test_the_form_offers_the_kinds_with_the_name_first(self):
+        response = self.client.get(self.service.get_absolute_url())
+        self.assertContains(response, '<option value="" selected>From the slot&#x27;s name</option>', html=True)
+        self.assertContains(response, '<option value="antiphon">Antiphon</option>', html=True)

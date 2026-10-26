@@ -340,7 +340,7 @@ class ServiceDetailProposePieceRankingTests(TestCase):
 
         self.assertContains(response, 'id="score-options"', count=1)
         self.assertContains(response, "Zzz Untagged", count=1)
-        self.assertNotContains(response, "<select")
+        self.assertNotContains(response, '<select name="score"')
         # Each slot links to its own propose page for when JavaScript is off.
         for role in self.service.roles.all():
             self.assertContains(response, reverse("planning:add_piece", args=[role.pk]))
