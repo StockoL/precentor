@@ -496,6 +496,11 @@ class SlotTemplate(models.Model):
         return added, already_there
 
 
+# Said by the database's rule and by the propose form, which has to check
+# it itself (RolePieceForm.clean): one wording for both.
+ONE_PIECE_MESSAGE = "Choose one: a score, a hymn number or a reference."
+
+
 class RolePiece(models.Model):
     # A piece's place in a score's history. The raw value names the CSS
     # class (badge--sung); the label is what people see.
@@ -513,10 +518,14 @@ class RolePiece(models.Model):
         "accounts.Organisation", on_delete=models.CASCADE, related_name="role_pieces"
     )
     objects = OrganisationQuerySet.as_manager()
-    # A piece is a score from the library or, for hymns, psalms and chant
-    # that aren't in it, a short reference such as "NEH 123". Never both.
+    # A piece is one of three: a score from the library, a hymn by its
+    # number in one of the church's hymnals, or, for anything else such as
+    # a psalm or chant, a short reference typed in. Never more than one.
     score = models.ForeignKey(
         "library.Score", null=True, blank=True, on_delete=models.PROTECT, related_name="role_pieces"
+    )
+    hymn_entry = models.ForeignKey(
+        "library.HymnEntry", null=True, blank=True, on_delete=models.PROTECT, related_name="role_pieces"
     )
     reference = models.CharField(max_length=200, blank=True, help_text='e.g. "NEH 123" or "Psalm 150, tone 4"')
     is_confirmed = models.BooleanField(default=False)
@@ -527,12 +536,12 @@ class RolePiece(models.Model):
         constraints = [  # noqa
             models.CheckConstraint(
                 condition=(
-                    models.Q(score__isnull=False, reference="")
-                    | (models.Q(score__isnull=True) & ~models.Q(reference=""))
+                    models.Q(score__isnull=False, hymn_entry__isnull=True, reference="")
+                    | models.Q(score__isnull=True, hymn_entry__isnull=False, reference="")
+                    | (models.Q(score__isnull=True, hymn_entry__isnull=True) & ~models.Q(reference=""))
                 ),
-                name="role_piece_score_or_reference",
-                # Django checks this in a form too, so this is its message.
-                violation_error_message="Choose a score or type a reference, not both.",
+                name="role_piece_one_of_three",
+                violation_error_message=ONE_PIECE_MESSAGE,
             ),
         ]
 
@@ -543,9 +552,13 @@ class RolePiece(models.Model):
 
     @property
     def title(self):
-        """What the piece is called wherever it's shown: the score, or the
-        reference as typed."""
-        return str(self.score) if self.score_id else self.reference
+        """What the piece is called wherever it's shown: the score, the
+        hymn's book and number ("NEH 53"), or the reference as typed."""
+        if self.score_id:
+            return str(self.score)
+        if self.hymn_entry_id:
+            return str(self.hymn_entry)
+        return self.reference
 
     def __str__(self):
         return f"{self.title} ({'confirmed' if self.is_confirmed else 'proposed'})"

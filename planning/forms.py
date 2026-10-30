@@ -5,7 +5,7 @@ from ordo.fields import OccasionChoiceField, OccasionMultipleChoiceField
 from ordo.models import LiturgicalOccasion, UseType
 from precentor_project.widgets import NativeDateInput
 
-from .models import RolePiece, Service, ServiceRole, SlotTemplate, Term, TermMarker
+from .models import ONE_PIECE_MESSAGE, RolePiece, Service, ServiceRole, SlotTemplate, Term, TermMarker
 from .slot_kinds import KIND_CHOICES
 from .suggestions import facts_for, grouped, slot_use_type
 
@@ -150,6 +150,19 @@ class RolePieceForm(forms.ModelForm):
         else:
             self.fields["score"].label = "Score"
             self.fields["reference"].label = "Or type a reference"
+
+    def clean(self):
+        """
+        Exactly one of a score or a reference. The database has the same
+        rule, but Django leaves a rule out of a form's checks when it
+        names a field the form doesn't show, and hymn_entry is set from a
+        book and number rather than shown, so the form says it itself.
+        """
+        cleaned = super().clean()
+        given = [bool(cleaned.get("score")), bool(cleaned.get("reference"))]
+        if given.count(True) != 1:
+            raise forms.ValidationError(ONE_PIECE_MESSAGE)
+        return cleaned
 
     def show_suggestions(self):
         """For the propose page: the score list in the suggestion groups,

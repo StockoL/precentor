@@ -35,7 +35,7 @@ class ScoreOrReferenceTests(ReferencePieceTestMixin, TestCase):
                 RolePiece.objects.create(service_role=self.slot, **fields)
 
     def test_the_rule_gives_its_message_before_the_database_is_asked(self):
-        message = "Choose a score or type a reference, not both."
+        message = "Choose one: a score, a hymn number or a reference."
         for fields in ({}, {"score": self.score, "reference": "NEH 123"}):
             with self.subTest(fields=fields), self.assertRaisesMessage(ValidationError, message):
                 RolePiece(service_role=self.slot, **fields).validate_constraints()
@@ -83,7 +83,7 @@ class ProposeReferenceTests(ReferencePieceTestMixin, TestCase):
         for data in ({"score": "", "reference": ""}, {"score": self.score.pk, "reference": "NEH 123"}):
             with self.subTest(data=data):
                 response = self.client.post(self.url, data)
-                self.assertContains(response, "Choose a score or type a reference, not both.", count=1)
+                self.assertContains(response, "Choose one: a score, a hymn number or a reference.", count=1)
         self.assertFalse(RolePiece.objects.exists())
 
     def test_a_hymn_slot_asks_for_the_reference_first(self):
@@ -109,7 +109,9 @@ class HymnsAndPsalmIntoSlotsTests(ReferencePieceTestMixin, TestCase):
     def pieces(self, service):
         return [
             (piece.service_role.role_name, piece.service_role.kind, piece.reference, piece.is_confirmed)
-            for piece in RolePiece.objects.filter(service_role__service=service).order_by("service_role__position", "id")
+            for piece in RolePiece.objects.filter(service_role__service=service).order_by(
+                "service_role__position", "id"
+            )
         ]
 
     def test_hymns_become_one_slot_and_the_psalm_another(self):
@@ -142,7 +144,8 @@ class HymnsAndPsalmIntoSlotsTests(ReferencePieceTestMixin, TestCase):
 class MusicListArrangementTests(ReferencePieceTestMixin, TestCase):
     def setUp(self):
         super().setUp()
-        for name, reference in (("Introit", "Ad te levavi"), ("Kyrie", "Missa de Angelis"), ("Communion", "Dominus dabit")):
+        pieces = (("Introit", "Ad te levavi"), ("Kyrie", "Missa de Angelis"), ("Communion", "Dominus dabit"))
+        for name, reference in pieces:
             slot = ServiceRole.objects.create(service=self.service, role_name=name)
             RolePiece.objects.create(service_role=slot, reference=reference, is_confirmed=True)
         RolePiece.objects.create(service_role=self.slot, reference="NEH 1", is_confirmed=True)
@@ -174,3 +177,29 @@ class MusicListArrangementTests(ReferencePieceTestMixin, TestCase):
         self.client.force_login(self.conductor)
         response = self.client.get(f"/terms/{self.service.term.pk}/music-list/")
         self.assertEqual(response.content.decode().count("<dl>"), 2)
+
+
+class HymnPieceTests(ReferencePieceTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        from library.models import Hymnal, HymnEntry
+
+        neh = Hymnal.objects.create(organisation=self.church, name="New English Hymnal", short_name="NEH")
+        self.entry = HymnEntry.find_or_make(neh, "53")
+
+    def test_a_hymn_piece_is_titled_by_book_and_number(self):
+        piece = RolePiece.objects.create(service_role=self.slot, hymn_entry=self.entry, is_confirmed=True)
+        self.assertEqual((piece.title, str(piece)), ("NEH 53", "NEH 53 (confirmed)"))
+        self.assertEqual(self.service.music_list_rows()[0]["pieces"], ["NEH 53"])
+
+    def test_only_one_of_the_three(self):
+        both = ({"hymn_entry": self.entry, "reference": "NEH 53"}, {"hymn_entry": self.entry, "score": self.score})
+        for fields in both:
+            with self.subTest(fields=fields), self.assertRaises(IntegrityError), transaction.atomic():
+                RolePiece.objects.create(service_role=self.slot, **fields)
+
+    def test_the_pew_sheet_prints_the_number(self):
+        RolePiece.objects.create(service_role=self.slot, hymn_entry=self.entry, is_confirmed=True)
+        self.client.force_login(self.conductor)
+        response = self.client.get(f"/services/{self.service.pk}/sheet/")
+        self.assertContains(response, '<p class="pew-sheet__piece">NEH 53</p>', html=True)

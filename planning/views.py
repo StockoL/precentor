@@ -224,7 +224,7 @@ class ServiceDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView)
     # every slot read the same rows: a fixed number of queries however
     # many slots there are.
     queryset = Service.objects.select_related("term", "occasion__season").prefetch_related(
-        "roles__pieces__score"
+        "roles__pieces__score", "roles__pieces__hymn_entry__hymnal"
     )
 
     def get_context_data(self, **kwargs):
@@ -398,7 +398,7 @@ def add_role(request, service_pk):
 
 def _slots_fragment(request, service):
     """The service's slot list, redrawn after a slot moves or goes."""
-    roles = service.roles.prefetch_related("pieces__score")
+    roles = service.roles.prefetch_related("pieces__score", "pieces__hymn_entry__hymnal")
     return {
         "roles-list": render_to_string(
             "planning/_roles_list.html", {"roles": roles, "service": service}, request=request
@@ -536,7 +536,10 @@ def service_pew_sheet(request, pk):
     left off with a plain GET form; both are on until the form is used.
     """
     service = get_object_or_404(
-        own(Service, request).select_related("occasion").prefetch_related("roles__pieces__score"), pk=pk
+        own(Service, request).select_related("occasion").prefetch_related(
+            "roles__pieces__score", "roles__pieces__hymn_entry__hymnal"
+        ),
+        pk=pk,
     )
     chosen = "shown" in request.GET
     options = {
@@ -559,7 +562,7 @@ def term_music_list(request, term_pk):
 
     services = (
         term.services.select_related("occasion")
-        .prefetch_related("roles__pieces__score", "additional_occasions")
+        .prefetch_related("roles__pieces__score", "roles__pieces__hymn_entry__hymnal", "additional_occasions")
         .order_by("date")
     )
     markers = term.markers.order_by("date")
