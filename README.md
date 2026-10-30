@@ -167,6 +167,18 @@ _Figure 8. Importing: the steps, an example of the columns, and the chosen file'
 
 _Figure 9. What an import brought in, what it skipped and why, and the choice to keep or remove it._
 
+**Texts.** A score can also hold the words it sets, a translation and
+who made the translation, for the pew sheet (§4). The score's page
+shows the text and translation side by side. They're typed by the
+church, and the form asks for only texts it's entitled to reproduce:
+the liturgical Latin is public domain, but many translations aren't.
+
+**Library completeness.** A page linked from the Library counts the
+scores with no voicing and with no language, each count linking to the
+Library's own filter so the numbers agree, and lists the scores planned
+as a motet or antiphon that have no text yet. None of it is required,
+and a count of nothing reads as done.
+
 ### 3.2 Term, Service, and Slots
 
 A **Term** is a named container with a date range (e.g. "Lent 2027").
@@ -255,12 +267,21 @@ slot or per service, which allows cases like two motets in one service,
 or a mixed setting. A confirmed piece can always be **unconfirmed**
 again; nothing is a one-way door.
 
-Pieces are proposed from a search box in each slot, with the scores
-suited to the service's occasion or season listed first. Without
-JavaScript, each slot has a "Propose a piece" link instead, which
-opens a short page with one list of scores in the same order. That
-keeps the service page small: it carries the library once, not once
-for every slot.
+Pieces are proposed from a search box in each slot, which lists the
+whole library in groups: **Suggested**, then **Suggested, sung
+recently**, then the other scores, with any sung recently last of all.
+A score is suggested when it's tagged for the service's occasion, its
+season, or the slot's use (a use type named like the slot, such as
+Communion, or like its kind, such as Motet), and the occasion counts
+for more than the season, the season for more than the use. Each
+score says why in a short line under its name: "For Advent", "Last
+sung 14 weeks ago", "Already planned this term". Nothing is ever left
+out of the list: suggestions only reorder it and explain, because the
+tool can't know that an untagged score won't suit. Without JavaScript,
+each slot has a "Propose a piece" link instead, which opens a short
+page with the same groups and reasons in one list. That keeps the
+service page small: it carries the library once, not once for every
+slot.
 
 Marking a slot **N/A** counts as a planning decision, just as
 confirming does. It means "I've considered this and there's nothing
@@ -275,7 +296,7 @@ A service's overall status is **derived**, not stored:
 This status powers the Terms page's overview, so a conductor can scan a
 term and see at once which services still need attention.
 
-**In the app.** Typing in a slot's search box lists the library, with scores suited to the service ranked first. Choosing one proposes it; Confirm settles it.
+**In the app.** Typing in a slot's search box lists the library in its groups, each score with its reasons. Choosing one proposes it; Confirm settles it. A score with no voicing says so quietly on its row, with a link to add one that comes back to the service afterwards.
 
 ![A service page with a slot's score search box open and a list of matching scores beneath it](docs/screenshots/07-propose-a-piece.png)
 
@@ -355,6 +376,11 @@ or conductor check how often something has been repeated. The same
 piece can fill several slots, or repeat across different services and
 terms.
 
+When pieces are suggested, a score sung within the church's **repeat
+window** (eight weeks unless Settings says otherwise) moves below the
+others and says when it was sung. It isn't hidden: sometimes a piece
+is repeated on purpose.
+
 ## 4. The Public Music List
 
 Modelled on a real example (a termly printed list from a parish
@@ -413,6 +439,15 @@ _Figure 14. The public music list for Advent, with Public, Draft and Print at th
 ![The Settings page with the church's name, national calendar, crest style, the current crest, accent colour and music list layout](docs/screenshots/14-settings.png)
 
 _Figure 15. Settings: the church's name, crest and calendar, which the music list uses._
+
+**The pew sheet.** Each service also has a sheet for the congregation,
+linked from its page for every role. It prints the service's confirmed
+music in order: hymns and psalms as their references, other pieces by
+title and composer, and each motet's text beside its translation, with
+the credit beneath. Texts and composers can be left off with a plain
+form whose choices go in the address, so it needs no JavaScript. It
+uses the music list's styles, so it prints the same way: white, with
+the controls hidden, whichever theme is on.
 
 ## 5. Roles and Permissions, Revisited
 
@@ -868,6 +903,8 @@ erDiagram
     int copies_owned
     string filing_location
     date last_sung_manual
+    text text
+    text translation
   }
   USE_TYPE {
     string name
@@ -947,6 +984,7 @@ It also has Django's own `password`, `last_login`, `is_staff`,
 | `filing_location`                                           | CharField                 | optional, max 100     | Where the copies are kept            |
 | `duration_minutes`                                          | PositiveIntegerField      | optional              | Length                               |
 | `background`, `notes`                                       | TextField                 | optional              | The piece's history; rehearsal notes |
+| `text`, `translation`, `translation_credit`                 | TextField, CharField      | optional              | The words, for the pew sheet         |
 | `range_soprano`, `range_alto`, `range_tenor`, `range_bass`  | CharField                 | optional, max 20      | Lowest to highest note               |
 | `last_sung_manual`                                          | DateField                 | optional              | History from before Precentor        |
 | `suited_use_types`                                          | ManyToMany                | to UseType            | Kinds of service it suits            |
@@ -1060,6 +1098,7 @@ max 50), such as Mass, Vespers or General. Each church has its own.
 | `national_calendar`                    | CharField              | general, England or Wales          | Which national days are added           |
 | `layout_style`                         | CharField              | columns or simple                  | Music list layout                       |
 | `music_list_arrangement`               | CharField              | service order or propers beside    | How each service's music is arranged    |
+| `repeat_window_weeks`                  | PositiveSmallIntegerField | 1 to 104, default 8             | How recent counts as "sung recently"    |
 | `show_hymns_psalm`                     | BooleanField           | default True                       | No longer used; to be dropped           |
 
 ### Rules the database enforces
@@ -1139,10 +1178,10 @@ the role column in §2 says who may use each one.
 | Organisation                | Sign-up page (`signup`)                                   | Its name on every page and the music list          | Church name on Settings (`site_config_update`)                                                  | The owner, after typing its name (`delete_church`)           | not needed: everyone sees only their own                                   |
 | User                        | Joining by invitation (`join`); sign-up for the owner     | Members page (`member_list`)                       | Role (`change_role`), owner (`make_owner`), own password (`password_change`) or by reset link (`reset_link`) | Removed, not deleted (`remove`), and brought back (`restore`); their own account, after their password (`delete_account`) | Members page                                                               |
 | Invitation                  | Invite someone (`invite`)                                 | Link shown once (`invitation_link`); Members page  | not available (cancel and make another)                                                         | Cancel (`invitation_cancel`)                                  | Members page, "Waiting to join"                                            |
-| Score                       | Add score (`score_create`), or many at once by importing   | Library (`score_list`), score page (`score_detail`), or all as a CSV (`export_library`) | Edit (`score_update`)                                                                          | Delete, after a confirmation (`score_delete`)                 | Search box, Language, Voicing, Suitable-for filters and sortable columns   |
+| Score                       | Add score (`score_create`), or many at once by importing   | Library (`score_list`), score page (`score_detail`), or all as a CSV (`export_library`) | Edit (`score_update`)                                                                          | Delete, after a confirmation (`score_delete`)                 | Search box, Language, Voicing, Suitable-for filters and sortable columns; the completeness page (`completeness`) |
 | Import (`ScoreImport`)      | Import a spreadsheet (`score_import`), from the template (`import_template`) | Result page (`score_import_detail`), Imports list (`score_import_list`) | Keep it (`keep_import`)                                                                          | Remove it and its scores, after a confirmation (`remove_import`) | Imports list, waiting ones first; a notice on the Library while one waits |
 | Term                        | New term (`term_create`)                                  | Terms page (`term_list`), term page (`term_detail`) | Edit (`term_update`)                                                                           | Delete, after a confirmation (`term_delete`)                  | Terms page, current and upcoming first, past folded away                   |
-| Service                     | New service (`service_create`), occasion suggested from the date | Service page (`service_detail`), term page  | Edit (`service_update`)                                                                         | Delete, after a confirmation (`service_delete`)               | Term page in date order; previous and next links on each service           |
+| Service                     | New service (`service_create`), occasion suggested from the date | Service page (`service_detail`), term page, pew sheet (`service_pew_sheet`) | Edit (`service_update`)                                                                         | Delete, after a confirmation (`service_delete`)               | Term page in date order; previous and next links on each service           |
 | Notice (`TermMarker`)       | New notice (`marker_create`)                              | Term page and music list                           | Edit (`marker_update`)                                                                          | Delete (`marker_delete`)                                      | Term page                                                                  |
 | Slot (`ServiceRole`)        | Add a slot (`add_role`) or from a template (`apply_template`) | Service page                                   | Move (`move_slot`), drag to reorder (`reorder_slots`), change kind (`change_kind`), mark N/A when adding | Remove (`remove_slot`), asking first if it has pieces         | Service page                                                               |
 | Piece (`RolePiece`)         | Propose a score or type a reference (`add_piece`)         | Service page, score page history, music list       | Confirm and unconfirm (`toggle_confirm`)                                                        | not available on its own (removed with its slot)              | Service page; the score page lists where each score was used               |
@@ -1222,6 +1261,10 @@ the role column in §2 says who may use each one.
   leaves nothing behind. In an export, a cell that starts with `=`, `+`,
   `-` or `@` gets an apostrophe in front, so a spreadsheet opens it as
   text instead of running it as a formula.
+- **Going back is only ever to this site.** A form that returns to the
+  page it was opened from, such as editing a score from a service, only
+  follows that address if it's a page on this site, so a crafted link
+  can't send someone elsewhere after they save.
 
 ## 17. Running it locally
 
@@ -1304,12 +1347,6 @@ What's designed or wanted but not built yet:
 - **Hymn books and hymns.** Hymns are typed as references in a slot
   today, such as "NEH 123". Hymn books as library entries, with hymns and tunes that
   build up through use, would let them be searched and suggested.
-- **Suggestions that give their reasons.** The piece picker already
-  ranks suitable scores first; a panel would group them and say why
-  each one appears, and warn when something was sung recently.
-- **Motet texts and a pew sheet.** Storing a motet's text and
-  translation, and printing them side by side on a sheet for the
-  congregation.
 - **A rebuilt music list,** with a choice of paper sizes and columns.
 - **Email.** Invitations and reset links are passed on by hand because
   Precentor sends no email. With a mail provider they could be sent
