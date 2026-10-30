@@ -41,6 +41,13 @@
     </section>
     {% endif %}
 
+    {% if score.text or score.translation %}
+    <section class="flow">
+        <h2>Text</h2>
+        {% include "library/_parallel_text.html" with text=score.text translation=score.translation credit=score.translation_credit %}
+    </section>
+    {% endif %}
+
     {% if score.range_soprano or score.range_alto or score.range_tenor or score.range_bass %}
     <section class="flow">
         <h2>Vocal ranges</h2>

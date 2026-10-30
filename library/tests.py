@@ -786,3 +786,25 @@ class ScoreImportBatchTests(TestCase):
         user.delete()
         self.batch.refresh_from_db()
         self.assertIsNone(self.batch.created_by)
+
+
+class ScoreTextTests(TestCase):
+    def setUp(self):
+        self.viewer = make_user("viewer")
+        self.client.force_login(self.viewer)
+
+    def test_the_page_shows_the_text_beside_its_translation(self):
+        score = make_score(
+            organisation=self.viewer.organisation, title="Ave verum corpus",
+            text="Ave verum corpus,\nnatum de Maria Virgine", translation="Hail, true body,\nborn of the Virgin Mary",
+            translation_credit="Tr. the choir",
+        )
+        response = self.client.get(f"/library/{score.pk}/")
+        self.assertContains(response, "<h2>Text</h2>", html=True)
+        original = '<p class="parallel-text__original">Ave verum corpus,<br>natum de Maria Virgine</p>'
+        self.assertContains(response, original, html=True)
+        self.assertContains(response, '<p class="parallel-text__credit">Tr. the choir</p>', html=True)
+
+    def test_no_text_means_no_section(self):
+        score = make_score(organisation=self.viewer.organisation, title="Locus iste")
+        self.assertNotContains(self.client.get(f"/library/{score.pk}/"), "<h2>Text</h2>", html=True)

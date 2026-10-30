@@ -1,0 +1,28 @@
+/* ==========================================================================
+   BLOCK: PARALLEL TEXT
+   A sung text beside its translation, on a score's page and the pew
+   sheet. Side by side when there's room for two readable columns, one
+   above the other when there isn't. The credit sits under both.
+   ========================================================================== */
+
+@layer blocks {
+  .parallel-text {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: var(--spacing-s) var(--spacing-l);
+  }
+
+  .parallel-text p {
+    margin: 0;
+  }
+
+  .parallel-text__translation {
+    font-style: italic;
+  }
+
+  .parallel-text__credit {
+    grid-column: 1 / -1;
+    font-size: var(--typography-step--1);
+    color: var(--colors-text-muted);
+  }
+}

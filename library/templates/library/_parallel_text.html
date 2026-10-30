@@ -1,0 +1,6 @@
+{# A sung text beside its translation (parallel-text.css). Shared by the score's page and the pew sheet. #}
+<div class="parallel-text">
+    {% if text %}<p class="parallel-text__original">{{ text|linebreaksbr }}</p>{% endif %}
+    {% if translation %}<p class="parallel-text__translation">{{ translation|linebreaksbr }}</p>{% endif %}
+    {% if credit %}<p class="parallel-text__credit">{{ credit }}</p>{% endif %}
+</div>
