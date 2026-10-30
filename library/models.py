@@ -276,6 +276,39 @@ class Score(models.Model):
         return reverse("library:score_detail", kwargs={"pk": self.pk})
 
 
+class Hymnal(models.Model):
+    """
+    A hymn book the church uses: a library entry like a score, with its
+    copies and where they're kept. Which hymns it holds, and their numbers,
+    build up later through use. An archived hymnal is kept for the history
+    of what was sung from it, but no longer offered.
+    """
+
+    organisation = models.ForeignKey(
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="hymnals"
+    )
+    objects = OrganisationQuerySet.as_manager()
+    name = models.CharField(max_length=100, help_text="e.g. New English Hymnal")
+    short_name = models.CharField(
+        "short code", max_length=20, help_text="As written before a hymn number, e.g. NEH"
+    )
+    copies_owned = models.PositiveIntegerField(default=0)
+    filing_location = models.CharField(max_length=100, blank=True, help_text="Where the copies are kept")
+    archived = models.BooleanField(default=False, help_text="No longer used, but kept for its history.")
+
+    class Meta:
+        ordering = ["archived", "name"]  # noqa
+        constraints = [  # noqa
+            # One NEH per church: the code is how a hymn number is read.
+            models.UniqueConstraint(
+                fields=["organisation", "short_name"], name="hymnal_short_name_unique_per_organisation"
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.name} ({self.short_name})"
+
+
 class ScoreImport(models.Model):
     """
     One spreadsheet imported into a church's library. Its scores are

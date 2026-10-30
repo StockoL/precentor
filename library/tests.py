@@ -881,3 +881,31 @@ class CompletenessPageTests(TestCase):
 
     def test_the_library_links_to_it(self):
         self.assertContains(self.client.get("/library/"), 'href="/library/completeness/"')
+
+
+class HymnalModelTests(TestCase):
+    def test_a_hymnal_is_named_with_its_code(self):
+        from .models import Hymnal
+
+        hymnal = Hymnal.objects.create(organisation=make_organisation(), name="New English Hymnal", short_name="NEH")
+        self.assertEqual(str(hymnal), "New English Hymnal (NEH)")
+        self.assertEqual((hymnal.copies_owned, hymnal.archived), (0, False))
+
+    def test_a_code_is_used_once_in_each_church(self):
+        from django.db import IntegrityError, transaction
+
+        from .models import Hymnal
+
+        ours, theirs = make_organisation(), make_organisation("St Elsewhere")
+        Hymnal.objects.create(organisation=ours, name="New English Hymnal", short_name="NEH")
+        Hymnal.objects.create(organisation=theirs, name="New English Hymnal", short_name="NEH")
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            Hymnal.objects.create(organisation=ours, name="Another", short_name="NEH")
+
+    def test_archived_hymnals_come_last(self):
+        from .models import Hymnal
+
+        church = make_organisation()
+        Hymnal.objects.create(organisation=church, name="Ancient and Modern", short_name="AM", archived=True)
+        Hymnal.objects.create(organisation=church, name="New English Hymnal", short_name="NEH")
+        self.assertEqual([h.short_name for h in Hymnal.objects.for_organisation(church)], ["NEH", "AM"])

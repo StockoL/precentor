@@ -16,7 +16,7 @@ from accounts.models import Invitation, User
 from accounts.organisations import create_organisation
 from comments.models import Comment
 from core.models import SiteConfig
-from library.models import Score, ScoreImport
+from library.models import Hymnal, Score, ScoreImport
 from ordo.models import UseType
 from planning.models import RolePiece, Service, ServiceRole, SlotTemplate, Term, TermMarker
 
@@ -63,11 +63,12 @@ def build_church(marker):
     score_import = ScoreImport.objects.create(
         organisation=church, created_by=owner, original_filename=f"{marker} library.csv"
     )
+    hymnal = Hymnal.objects.create(organisation=church, name=f"{marker} hymnal", short_name=f"{marker}H")
     return {
         "church": church, "settings": settings, "owner": owner, "member": member, "former": former,
         "score": score, "use_type": use_type, "template": template, "term": term, "service": service,
         "slot": slot, "piece": piece, "marker": marker_row, "comment": comment, "invitation": invitation,
-        "score_import": score_import,
+        "score_import": score_import, "hymnal": hymnal,
     }
 
 
@@ -281,4 +282,3 @@ class OwnPagesShowNothingOfAnotherChurchTests(TwoChurchesMixin, TestCase):
         covered = set(ADDRESSES) | set(NOT_CHURCH_DATA) | set(TOKEN_ROUTES)
         plain = {name for name, pattern in all_routes().items() if "<" not in pattern}
         self.assertEqual(sorted(set(all_routes()) - covered - plain), [], "Add these routes to the isolation test")
-
