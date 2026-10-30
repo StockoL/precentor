@@ -42,7 +42,6 @@ class ScoreOrReferenceTests(ReferencePieceTestMixin, TestCase):
         RolePiece(service_role=self.slot, reference="NEH 123").validate_constraints()
 
 
-
 class ReferenceShownTests(ReferencePieceTestMixin, TestCase):
     def setUp(self):
         super().setUp()

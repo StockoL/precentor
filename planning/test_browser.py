@@ -109,6 +109,22 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
         self.page.wait_for_selector(".toast--success")
         assert "Piece proposed" in self.page.inner_text(".toast--success")
 
+    def test_a_hymn_is_typed_as_a_reference_before_the_search_box(self):
+        hymn = ServiceRole.objects.create(service=self.service, role_name="Entrance hymn")
+        form = f"#add-piece-form-{hymn.pk}"
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.evaluate("window.__browser_test_marker = true")
+        # The reference box comes first in the page, so Tab reaches it first.
+        names = self.page.eval_on_selector_all(f"{form} input:not([type=hidden])", "els => els.map(el => el.name)")
+        assert names[0] == "reference"
+        self.page.fill(f"#id_role_{hymn.pk}_reference", "NEH 123")
+        self.page.click(f"{form} button[type=submit]")
+        self.page.wait_for_selector(f"#role-{hymn.pk}-pieces li.list-row")
+        assert self.page.evaluate("window.__browser_test_marker") is True
+        assert "NEH 123" in self.page.inner_text(f"#role-{hymn.pk}-pieces")
+        assert self.page.input_value(f"#id_role_{hymn.pk}_reference") == ""
+        assert RolePiece.objects.get(service_role=hymn).reference == "NEH 123"
+
 
 class AddRoleBrowserTest(PlaywrightTestCase):
     def setUp(self):

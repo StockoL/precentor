@@ -68,6 +68,12 @@
     display: none;
   }
 
+  /* The reference box sits beside the score search box at the same,
+     natural width, instead of stretching across the row as form inputs do. */
+  form .role-block__reference {
+    width: auto;
+  }
+
   .role-block__remove {
     margin-inline-start: auto;
   }

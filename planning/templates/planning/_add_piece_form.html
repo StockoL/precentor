@@ -1,14 +1,18 @@
 {% comment %}
-Without JavaScript, the link opens a page with one list of scores. With
-it, score-picker.js shows the form in the link's place, and its search
-box reads the list of scores the service page sends once for every slot.
+Without JavaScript, the link opens a page with one list of scores and a
+reference box. With it, score-picker.js shows the form in the link's
+place, and its search box reads the list of scores the service page sends
+once for every slot.
 {% endcomment %}
 <p data-fallback-for="add-piece-form-{{ role.pk }}"><a href="{% url 'planning:add_piece' role.pk %}">Propose a piece</a></p>
 <form id="add-piece-form-{{ role.pk }}" method="post" action="{% url 'planning:add_piece' role.pk %}" class="cluster ajax-propose-piece" data-role-pk="{{ role.pk }}" hidden>
     {% csrf_token %}
+    {# Hymn, psalm and antiphon slots ask for a reference first, in the page's order as well as on screen. #}
+    {% if role.takes_reference_first %}{% include "planning/_piece_reference_input.html" %}{% endif %}
     <div class="score-combobox" data-label="Score for the {{ role.role_name }}">
         <input type="hidden" name="score">
     </div>
+    {% if not role.takes_reference_first %}{% include "planning/_piece_reference_input.html" %}{% endif %}
     {{ form.non_field_errors }}
     {{ form.score.errors }}
     <button type="submit">Propose piece</button>
