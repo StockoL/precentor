@@ -808,3 +808,23 @@ class ScoreTextTests(TestCase):
     def test_no_text_means_no_section(self):
         score = make_score(organisation=self.viewer.organisation, title="Locus iste")
         self.assertNotContains(self.client.get(f"/library/{score.pk}/"), "<h2>Text</h2>", html=True)
+
+
+class EditScoreReturnTests(TestCase):
+    def setUp(self):
+        self.librarian = make_user("librarian")
+        self.client.force_login(self.librarian)
+        self.score = make_score(organisation=self.librarian.organisation, title="Ave verum", composer_surname="Byrd")
+        self.url = f"/library/{self.score.pk}/edit/"
+        self.data = {"title": "Ave verum", "composer_surname": "Byrd", "voicing": "SATB",
+                     "copies_owned": 0, "soprano_parts": 1, "alto_parts": 1, "tenor_parts": 1, "bass_parts": 1}
+
+    def test_saving_goes_back_to_where_the_edit_began(self):
+        self.assertContains(self.client.get(self.url, {"next": "/services/4/"}),
+                            '<input type="hidden" name="next" value="/services/4/">', html=True)
+        response = self.client.post(self.url, {**self.data, "next": "/services/4/"})
+        self.assertRedirects(response, "/services/4/", fetch_redirect_response=False)
+
+    def test_another_site_is_ignored(self):
+        response = self.client.post(self.url, {**self.data, "next": "https://example.com/"})
+        self.assertRedirects(response, f"/library/{self.score.pk}/", fetch_redirect_response=False)

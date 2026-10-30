@@ -9,6 +9,7 @@
     <h1>{% if form.instance.pk %}Edit score{% else %}New score{% endif %}</h1>
     <form method="post" class="flow">
         {% csrf_token %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
         {{ form.non_field_errors }}
         {# Each field sits in a <div>; see "Forms" in docs/design_system.md. #}
 

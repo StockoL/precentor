@@ -26,6 +26,7 @@ from accounts.permissions import can_edit_library, can_remove_import
 from accounts.querysets import own
 from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 from precentor_project.mixins import DeletePageMixin
+from precentor_project.utils import safe_next
 
 from .forms import ScoreForm, ScoreImportForm
 from .importing import (
@@ -228,8 +229,20 @@ class ScoreCreateView(LibraryEditRequiredMixin, OrganisationCreateMixin, ScoreFo
 
 
 class ScoreUpdateView(LibraryEditRequiredMixin, OrganisationScopedMixin, ScoreFormMixin, UpdateView):
+    """Editing a score. Opened from elsewhere with ?next=, such as a service
+    asking for a voicing, it goes back there after saving."""
+
     model = Score
     form_class = ScoreForm
+
+    def next_url(self):
+        return safe_next(self.request, self.request.POST.get("next") or self.request.GET.get("next"))
+
+    def get_success_url(self):
+        return self.next_url() or super().get_success_url()
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(next=self.next_url(), **kwargs)
 
 
 class ScoreDeleteView(LibraryEditRequiredMixin, OrganisationScopedMixin, DeletePageMixin, DeleteView):
