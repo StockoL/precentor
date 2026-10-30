@@ -331,6 +331,17 @@ class Service(models.Model):
             })
         return rows
 
+    def music_list_groups(self, draft=False, arrangement="service_order"):
+        """The music list rows in groups, each printed as a list of its
+        own: all of them in service order, or with "propers_beside", the
+        propers and then the rest. An empty group is left out."""
+        rows = self.music_list_rows(draft=draft)
+        if arrangement != "propers_beside":
+            return [rows] if rows else []
+        propers = [row for row in rows if row["kind"] == "proper"]
+        rest = [row for row in rows if row["kind"] != "proper"]
+        return [group for group in (propers, rest) if group]
+
 
 class TermMarker(models.Model):
     term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name="markers")

@@ -3,9 +3,12 @@
     <div class="service-entry-grid">
         <div class="service-entry-main">
             <h2>{{ entry.service.date|date:"l jS F Y" }} — {{ entry.service.service_type }}</h2>
-            {% if entry.rows %}
+            {% if entry.groups %}
+            {# One list in service order, or the propers beside the rest (the Settings page's arrangement). #}
+            <div class="music-list-groups">
+            {% for rows in entry.groups %}
             <dl>
-                {% for row in entry.rows %}
+                {% for row in rows %}
                 <dt data-kind="{{ row.kind }}">{{ row.role_name }}</dt>
                 <dd data-kind="{{ row.kind }}">
                     {% if row.pieces %}
@@ -16,6 +19,8 @@
                 </dd>
                 {% endfor %}
             </dl>
+            {% endfor %}
+            </div>
             {% else %}
             <p><em>Nothing to display{% if not draft %} yet{% endif %}.</em></p>
             {% endif %}

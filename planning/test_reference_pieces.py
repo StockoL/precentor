@@ -137,3 +137,40 @@ class HymnsAndPsalmIntoSlotsTests(ReferencePieceTestMixin, TestCase):
     def test_a_service_with_neither_is_left_alone(self):
         self.run_migration()
         self.assertEqual(list(self.service.roles.values_list("role_name", flat=True)), ["Entrance hymn"])
+
+
+class MusicListArrangementTests(ReferencePieceTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        for name, reference in (("Introit", "Ad te levavi"), ("Kyrie", "Missa de Angelis"), ("Communion", "Dominus dabit")):
+            slot = ServiceRole.objects.create(service=self.service, role_name=name)
+            RolePiece.objects.create(service_role=slot, reference=reference, is_confirmed=True)
+        RolePiece.objects.create(service_role=self.slot, reference="NEH 1", is_confirmed=True)
+
+    def names(self, groups):
+        return [[row["role_name"] for row in group] for group in groups]
+
+    def test_in_service_order_is_one_group(self):
+        self.assertEqual(self.names(self.service.music_list_groups()), [
+            ["Entrance hymn", "Introit", "Kyrie", "Communion"],
+        ])
+
+    def test_propers_beside_the_rest_is_two_groups_each_in_order(self):
+        self.assertEqual(self.names(self.service.music_list_groups(arrangement="propers_beside")), [
+            ["Introit", "Communion"],
+            ["Entrance hymn", "Kyrie"],
+        ])
+
+    def test_a_service_with_no_propers_has_one_group_either_way(self):
+        self.service.roles.filter(kind="proper").delete()
+        self.assertEqual(len(self.service.music_list_groups(arrangement="propers_beside")), 1)
+
+    def test_the_music_list_follows_the_setting(self):
+        from core.models import SiteConfig
+
+        config = SiteConfig.of(self.church)
+        config.music_list_arrangement = "propers_beside"
+        config.save()
+        self.client.force_login(self.conductor)
+        response = self.client.get(f"/terms/{self.service.term.pk}/music-list/")
+        self.assertEqual(response.content.decode().count("<dl>"), 2)

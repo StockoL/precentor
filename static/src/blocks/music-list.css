@@ -97,6 +97,15 @@
     margin-block-end: var(--spacing-2xs);
   }
 
+  /* A service's lists: one in service order, or the propers and the rest
+     side by side when the entry is wide enough, one under the other in a
+     narrow newspaper column. */
+  .music-list-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--spacing-s) var(--spacing-l);
+  }
+
   .music-list dl {
     display: grid;
     grid-template-columns: max-content 1fr;

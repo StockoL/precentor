@@ -550,7 +550,7 @@ def term_music_list(request, term_pk):
             "type": "service",
             "date": service.date,
             "service": service,
-            "rows": service.music_list_rows(draft=draft),
+            "groups": service.music_list_groups(draft=draft, arrangement=site_config.music_list_arrangement),
         }
         for service in services
     ] + [
