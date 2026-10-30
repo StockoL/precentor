@@ -28,6 +28,7 @@ from comments.models import Comment
 from comments.utils import attach_reply_forms
 from core.models import SiteConfig
 from library.models import Score
+from ordo.models import UseType
 from precentor_project.mixins import DeletePageMixin
 from precentor_project.utils import ajax_or_redirect
 
@@ -40,6 +41,7 @@ from .forms import (
     TermMarkerForm,
 )
 from .models import RolePiece, Service, ServiceRole, SlotTemplate, Term, TermMarker
+from .suggestions import page_options
 
 
 class PlanningRequiredMixin(RoleRequiredMixin):
@@ -229,11 +231,14 @@ class ServiceDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["roles"] = self.object.roles.all()
-        # One list for every slot's search box, sent once as JSON, in the
-        # ranked order (score-picker.js).
-        context["score_options"] = [
-            {"value": str(score.pk), "label": str(score)}
-            for score in self.object.suggested_scores()
+        # One list for every slot's search box, sent once as JSON with what
+        # each suggestion rests on, and the church's use types, which
+        # score-picker.js matches to each slot (planning/suggestions.py).
+        window = SiteConfig.of(self.request.organisation).repeat_window_weeks
+        context["score_options"] = page_options(self.object, window)
+        context["use_type_options"] = [
+            {"id": use_type.pk, "name": use_type.name}
+            for use_type in UseType.objects.for_organisation(self.request.organisation)
         ]
         context["role_form"] = ServiceRoleForm()
         # Each template knows whether using it would replace the slots, so

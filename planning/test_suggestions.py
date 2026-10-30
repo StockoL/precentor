@@ -163,3 +163,26 @@ class ProposePageSuggestionTests(SuggestionTestMixin, TestCase):
         theirs = make_score(organisation=make_organisation("St Elsewhere"), title="Theirs")
         self.client.post(f"/roles/{self.slot.pk}/pieces/add/", {"score": theirs.pk, "reference": ""})
         self.assertFalse(RolePiece.objects.filter(score=theirs).exists())
+
+
+class PageOptionsTests(SuggestionTestMixin, TestCase):
+    def test_the_service_page_sends_each_scores_facts_in_group_order(self):
+        import json
+
+        from accounts.testing import make_user
+
+        communion = make_use_type("Communion", organisation=self.church)
+        self.sing(self.score("Aaa sung lately"), days_ago=7)
+        self.score("Bbb untagged")
+        self.score("Zzz for the day", suited_occasions=[self.sunday], suited_use_types=[communion])
+        self.client.force_login(make_user("conductor", organisation=self.church))
+        response = self.client.get(self.service.get_absolute_url())
+        # What the page embeds, read back as the script reads it.
+        options = json.loads(json.dumps(response.context["score_options"]))
+        self.assertEqual([o["label"].split(" (")[0] for o in options],
+                         ["Zzz for the day", "Bbb untagged", "Aaa sung lately"])
+        self.assertEqual(options[0]["occasion"], "Advent Sunday 1")
+        self.assertEqual(options[0]["useTypes"], [communion.pk])
+        self.assertEqual((options[2]["recent"], options[2]["sung"]), (True, "Sung 1\u00a0week ago"))
+        self.assertContains(response, 'id="use-types"')
+        self.assertEqual(response.context["use_type_options"], [{"id": communion.pk, "name": "Communion"}])

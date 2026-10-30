@@ -136,3 +136,29 @@ def grouped(all_facts, use_type=None):
         )])
         for key, label in GROUPS if groups[key]
     ]
+
+
+def page_options(service, window_weeks):
+    """
+    The service page's one list of scores, for every slot's search box:
+    each score's facts, in group order before any slot's use type is
+    known. score-picker.js adds the slot's use type and regroups; its
+    sort is stable, so this order holds within each group.
+    """
+    def order(facts):
+        group, strength, _ = placed(facts)
+        return [key for key, _ in GROUPS].index(group), tuple(not part for part in strength)
+
+    return [
+        {
+            "value": str(facts.score.pk),
+            "label": str(facts.score),
+            "occasion": facts.occasion,
+            "season": facts.season,
+            "useTypes": sorted(facts.use_type_ids),
+            "sung": facts.sung_text,
+            "recent": facts.recent,
+            "inTerm": facts.in_term,
+        }
+        for facts in sorted(facts_for(service, window_weeks), key=order)
+    ]
