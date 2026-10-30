@@ -177,11 +177,7 @@ earlier idea of an explicit "active term" flag was dropped, because it
 would have duplicated information the dates already provide.)
 
 A **Service** belongs to a Term and has a date, a type (Sung Mass,
-Vespers, etc.) and a liturgical occasion (see §3.4). It also carries
-optional free-text **hymns** and **psalm** fields. These are simple
-reference fields, kept outside the propose-and-confirm workflow that
-governs slots such as the Mass setting, because hymn numbers and a
-psalm reference don't need a shortlist or a confirmation step.
+Vespers, etc.) and a liturgical occasion (see §3.4).
 
 Each service is made up of musical **slots**, added per service:
 a Sung Mass might have a _Mass setting_, an _Introit_, an _Offertory
@@ -193,6 +189,25 @@ in place of the Responsorial Psalm when the text is the same. Slots can
 be added, removed, or marked **N/A** service by service (a special day
 might need an extra motet, or have no setting at all, as on Good
 Friday).
+
+Each slot has a **kind**: Proper, Ordinary, Hymn, Psalm, Canticle,
+Antiphon, Motet, Organ or Other, shown as a small badge beside its name.
+The kind is worked out from the name when the slot is added (Introit is
+a Proper, Kyrie the Ordinary, Communion hymn a Hymn, Opening voluntary
+Organ), and it can be chosen when adding a slot or changed on any slot
+later. That matters because practice varies: a church that sings a
+hymn at the Introit keeps the slot called Introit and shows it as a
+Hymn. A Proper slot also knows which proper it is, ready for the day's
+chant to be suggested for it one day.
+
+A piece in a slot is either a score from the library or a short
+**reference** typed in, such as "NEH 123" or "Psalm 150, tone 4",
+because hymns, psalms and chant are rarely in a church's library as
+scores. In Hymn, Psalm and Antiphon slots the reference box comes first
+and the score search second; elsewhere it's the other way round. Hymns
+and the psalm were once typed into two boxes on the service form and
+printed beside the music list; they're ordinary slots now, proposed and
+confirmed like everything else.
 
 Each slot has its own **Remove** button. An empty slot goes straight
 away; one with pieces proposed asks first, saying how many pieces go
@@ -363,8 +378,9 @@ state:
 - **Newspaper columns by default.** Following the same real example,
   the public list flows its entries down one column and on to the top
   of the next (CSS `columns`, not a hand-built grid), with each
-  service's occasion, hymns and psalm alongside it. A site-wide setting
-  can switch this to a plain single column instead. The draft always
+  service's occasion alongside it. A site-wide setting can switch this
+  to a plain single column instead, and another prints each service's
+  propers beside the rest of its music rather than in service order. The draft always
   uses the simple layout, since it's for spotting what's still TBC, not
   for final presentation.
 - **Notices alongside services.** A **notice** puts free text on a
@@ -372,7 +388,7 @@ state:
   same timeline as the services, for something like half term or a
   retreat that isn't a service with slots of its own.
 - **Branding set once.** A single site-settings record (church name,
-  crest, house accent colour, and the layout and hymns-and-psalm
+  crest, house accent colour, and the layout and arrangement
   settings above) is set on a conductor-only page and applied to every
   music list, so the details aren't re-entered each term. The crest can
   be a logo, shown at its own shape beside the church's name, or a
@@ -578,7 +594,7 @@ _Figure 20. The Inbox of open threads._
 - Fully customisable music list layouts (drag-and-drop design, arbitrary
   field order or typography). Precentor ships one default layout and a
   small set of high-value settings (column style, house accent colour,
-  crest, hymns and psalm), not an open-ended design tool. A church whose
+  crest, arrangement), not an open-ended design tool. A church whose
   house style differs further still has full access to its planning
   data; the limit is only on the built-in printed output.
 
@@ -827,11 +843,11 @@ erDiagram
     date date
     string service_type
     string calendar_use
-    string hymns
-    string psalm
   }
   SERVICE_ROLE {
     string role_name
+    string kind
+    string proper_part
     int position
     bool is_not_applicable
   }
@@ -840,6 +856,7 @@ erDiagram
     text slot_names
   }
   ROLE_PIECE {
+    string reference
     bool is_confirmed
   }
   SCORE {
@@ -956,7 +973,7 @@ It also has Django's own `password`, `last_login`, `is_staff`,
 | `occasion`             | ForeignKey | optional, to LiturgicalOccasion | The main day; sets the colour    |
 | `additional_occasions` | ManyToMany | to LiturgicalOccasion           | Other days it also marks         |
 | `calendar_use`         | CharField  | optional                        | Overrides the term's calendar    |
-| `hymns`, `psalm`       | CharField  | optional                        | Numbers for the music list       |
+| `hymns`, `psalm`       | CharField  | optional                        | No longer shown; copied into slots, to be dropped |
 | `slot_template`        | ForeignKey | optional, to SlotTemplate       | The template its slots came from |
 
 **planning.TermMarker** (a "notice" in the app)
@@ -975,6 +992,8 @@ It also has Django's own `password`, `last_login`, `is_staff`,
 | `service`           | ForeignKey           | to Service              | The service it's in              |
 | `organisation`      | ForeignKey           | copied from the service | Whose slot                       |
 | `role_name`         | CharField            | max 50                  | e.g. Introit, Offertory motet    |
+| `kind`              | CharField            | one of nine kinds       | How it's shown and grouped       |
+| `proper_part`       | CharField            | optional                | Which proper it is, e.g. Introit |
 | `is_not_applicable` | BooleanField         | default False           | Marked N/A, so it needs no piece |
 | `position`          | PositiveIntegerField | default 0               | Order within the service         |
 
@@ -984,7 +1003,8 @@ It also has Django's own `password`, `last_login`, `is_staff`,
 | -------------- | ------------ | -------------------- | -------------------------- |
 | `service_role` | ForeignKey   | to ServiceRole       | The slot it's proposed for |
 | `organisation` | ForeignKey   | copied from the slot | Whose piece                |
-| `score`        | ForeignKey   | to Score             | The music                  |
+| `score`        | ForeignKey   | optional, to Score   | The music, from the library |
+| `reference`    | CharField    | optional, max 200    | Or a typed reference, e.g. NEH 123 |
 | `is_confirmed` | BooleanField | default False        | Proposed or confirmed      |
 
 **planning.SlotTemplate**
@@ -1039,7 +1059,8 @@ max 50), such as Mass, Vespers or General. Each church has its own.
 | `house_accent_colour`                  | CharField              | hex colour, checked by a validator | Colour for services without an occasion |
 | `national_calendar`                    | CharField              | general, England or Wales          | Which national days are added           |
 | `layout_style`                         | CharField              | columns or simple                  | Music list layout                       |
-| `show_hymns_psalm`                     | BooleanField           | default True                       | Whether the music list shows them       |
+| `music_list_arrangement`               | CharField              | service order or propers beside    | How each service's music is arranged    |
+| `show_hymns_psalm`                     | BooleanField           | default True                       | No longer used; to be dropped           |
 
 ### Rules the database enforces
 
@@ -1050,6 +1071,7 @@ max 50), such as Mass, Vespers or General. Each church has its own.
 - An organisation has at most one owner.
 - Email addresses are unique whatever their capitals.
 - Slot template names are unique within each church.
+- A piece is a score or a typed reference, never both and never neither.
 - An occasion's key is unique within its calendar.
 - An invitation's stored fingerprint is unique.
 
@@ -1122,8 +1144,8 @@ the role column in §2 says who may use each one.
 | Term                        | New term (`term_create`)                                  | Terms page (`term_list`), term page (`term_detail`) | Edit (`term_update`)                                                                           | Delete, after a confirmation (`term_delete`)                  | Terms page, current and upcoming first, past folded away                   |
 | Service                     | New service (`service_create`), occasion suggested from the date | Service page (`service_detail`), term page  | Edit (`service_update`)                                                                         | Delete, after a confirmation (`service_delete`)               | Term page in date order; previous and next links on each service           |
 | Notice (`TermMarker`)       | New notice (`marker_create`)                              | Term page and music list                           | Edit (`marker_update`)                                                                          | Delete (`marker_delete`)                                      | Term page                                                                  |
-| Slot (`ServiceRole`)        | Add a slot (`add_role`) or from a template (`apply_template`) | Service page                                   | Move (`move_slot`), drag to reorder (`reorder_slots`), mark N/A when adding                     | Remove (`remove_slot`), asking first if it has pieces         | Service page                                                               |
-| Piece (`RolePiece`)         | Propose a piece (`add_piece`)                             | Service page, score page history, music list       | Confirm and unconfirm (`toggle_confirm`)                                                        | not available on its own (removed with its slot)              | Service page; the score page lists where each score was used               |
+| Slot (`ServiceRole`)        | Add a slot (`add_role`) or from a template (`apply_template`) | Service page                                   | Move (`move_slot`), drag to reorder (`reorder_slots`), change kind (`change_kind`), mark N/A when adding | Remove (`remove_slot`), asking first if it has pieces         | Service page                                                               |
+| Piece (`RolePiece`)         | Propose a score or type a reference (`add_piece`)         | Service page, score page history, music list       | Confirm and unconfirm (`toggle_confirm`)                                                        | not available on its own (removed with its slot)              | Service page; the score page lists where each score was used               |
 | Slot template               | New template (`slot_template_create`)                     | Templates page (`slot_template_list`)              | Edit (`slot_template_update`)                                                                   | Delete (`slot_template_delete`)                               | Templates page; buttons on each service                                    |
 | Use type                    | Typed on the score form                                   | Score page; Suitable-for filter                    | not available                                                                                   | not available                                                 | Library filter                                                             |
 | Comment                     | Comment or reply (`add_comment`)                          | Inbox (`inbox`); each term, service and piece      | Close and reopen (`toggle_close`); the text can't be edited                                     | Delete a closed thread (`delete_comment`)                     | Inbox of open threads; the count in the menu                               |
@@ -1279,8 +1301,8 @@ Everything below is read in `precentor_project/settings.py`.
 
 What's designed or wanted but not built yet:
 
-- **Hymn books and hymns.** Hymns are typed as numbers on the service
-  form today. Hymn books as library entries, with hymns and tunes that
+- **Hymn books and hymns.** Hymns are typed as references in a slot
+  today, such as "NEH 123". Hymn books as library entries, with hymns and tunes that
   build up through use, would let them be searched and suggested.
 - **Suggestions that give their reasons.** The piece picker already
   ranks suitable scores first; a panel would group them and say why
