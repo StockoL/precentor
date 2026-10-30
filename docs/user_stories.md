@@ -26,6 +26,15 @@ These user stories drive the design and functionality of Precentor.
 - As a conductor, I want to add or remove slots on a specific service,
   so I can handle exceptions (an extra motet, a hymn sung in place of a
   Proper) without fighting a fixed template.
+- As a conductor, I want to type a hymn or psalm into its slot as a
+  number from the book, so hymns are planned and confirmed alongside
+  everything else without each one being a score in the library.
+- As a conductor, I want to see at a glance which slots are propers,
+  which the Ordinary and which hymns, and to change that for a slot
+  when we sing something else there, so the plan says what we really do.
+- As a conductor, I want the music list to print the propers beside the
+  rest of the music if that's our house style, so the printed list
+  matches what the congregation is used to.
 - As a conductor, I want templates for the services I plan often (Mass,
   Vespers, or my own), so a new service starts with its usual slots in
   one click, and I can still change them afterwards.
