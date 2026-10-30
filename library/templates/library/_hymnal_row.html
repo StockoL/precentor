@@ -1,6 +1,6 @@
 <li class="list-row list-row--wrap">
     <div class="flow" style="--flow-space: var(--spacing-3xs);">
-        <p>{{ hymnal.name }} <span class="badge badge--code">{{ hymnal.short_name }}</span></p>
+        <p><a href="{{ hymnal.get_absolute_url }}">{{ hymnal.name }}</a> <span class="badge badge--code">{{ hymnal.short_name }}</span></p>
         <p class="list-row__meta">{{ hymnal.copies_owned }} cop{{ hymnal.copies_owned|pluralize:"y,ies" }}{% if hymnal.filing_location %} · {{ hymnal.filing_location }}{% endif %}</p>
     </div>
     {% if can.edit_library %}

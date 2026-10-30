@@ -1053,3 +1053,22 @@ class HymnLastSungTests(TestCase):
         hymns = {hymn.pk: hymn.last_sung for hymn in Hymn.objects.for_organisation(church).with_last_sung()}
         self.assertEqual(hymns[in_neh.hymn_id], latest)
         self.assertIsNone(hymns[never.hymn_id])
+
+
+class HymnalPageTests(TestCase):
+    def test_its_hymns_are_listed_in_the_books_number_order(self):
+        from .models import Hymnal, HymnEntry
+
+        viewer = make_user("viewer")
+        neh = Hymnal.objects.create(organisation=viewer.organisation, name="New English Hymnal", short_name="NEH")
+        for number in ("10", "123a", "9", "123"):
+            HymnEntry.find_or_make(neh, number)
+        first = HymnEntry.objects.get(number="9").hymn
+        first.first_line = "Praise to the Holiest"
+        first.save()
+        self.client.force_login(viewer)
+        response = self.client.get(f"/library/hymnals/{neh.pk}/")
+        self.assertEqual([entry.number for entry in response.context["entries"]], ["9", "10", "123", "123a"])
+        self.assertContains(response, "Praise to the Holiest")
+        self.assertContains(response, "No first line yet", count=3)
+        self.assertContains(self.client.get("/library/hymnals/"), f'href="/library/hymnals/{neh.pk}/"')

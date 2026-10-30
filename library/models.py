@@ -1,3 +1,5 @@
+import re
+
 from django.apps import apps
 from django.db import models, transaction
 from django.db.models import BooleanField, Case, OuterRef, Q, Subquery, When
@@ -308,6 +310,20 @@ class Hymnal(models.Model):
     def __str__(self):
         return f"{self.name} ({self.short_name})"
 
+    def get_absolute_url(self):
+        return reverse("library:hymnal_detail", kwargs={"pk": self.pk})
+
+    def numbered_entries(self):
+        """Its hymns in number order, as the book has them: 9 before 10,
+        and 123a after 123. Each entry's hymn carries its last_sung date."""
+        last_sung = dict(
+            Hymn.objects.filter(entries__hymnal=self).with_last_sung().values_list("pk", "last_sung")
+        )
+        entries = list(self.entries.select_related("hymn"))
+        for entry in entries:
+            entry.hymn.last_sung = last_sung.get(entry.hymn_id)
+        return sorted(entries, key=HymnEntry.number_order)
+
 
 class HymnQuerySet(OrganisationQuerySet):
     def with_last_sung(self):
@@ -375,6 +391,12 @@ class HymnEntry(models.Model):
     def __str__(self):
         """"NEH 53", as it's written in a service."""
         return f"{self.hymnal.short_name} {self.number}"
+
+    def number_order(self):
+        """For sorting by number as a book is printed: the number's leading
+        digits as a whole number first, so 9 comes before 10."""
+        digits = re.match(r"\d*", self.number).group()
+        return (int(digits) if digits else float("inf"), self.number)
 
     @classmethod
     def find_or_make(cls, hymnal, number):

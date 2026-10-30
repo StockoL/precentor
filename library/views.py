@@ -410,6 +410,16 @@ class HymnalListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
         return context
 
 
+class HymnalDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):
+    """A hymnal and the hymns the church has recorded from it, by number."""
+
+    model = Hymnal
+    context_object_name = "hymnal"
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(entries=self.object.numbered_entries(), **kwargs)
+
+
 class HymnalCreateView(LibraryEditRequiredMixin, OrganisationCreateMixin, CreateView):
     model = Hymnal
     form_class = HymnalForm
