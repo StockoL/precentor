@@ -186,3 +186,34 @@ class PageOptionsTests(SuggestionTestMixin, TestCase):
         self.assertEqual((options[2]["recent"], options[2]["sung"]), (True, "Sung 1\u00a0week ago"))
         self.assertContains(response, 'id="use-types"')
         self.assertEqual(response.context["use_type_options"], [{"id": communion.pk, "name": "Communion"}])
+
+
+class VoicingPromptTests(SuggestionTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.no_voicing = self.score("Ave verum")
+        self.sung = self.score("Locus iste")
+        self.sung.voicing = "SATB"
+        self.sung.save()
+        for score in (self.no_voicing, self.sung):
+            RolePiece.objects.create(service_role=self.slot, score=score)
+        RolePiece.objects.create(service_role=self.slot, reference="NEH 1")
+
+    def page(self, role):
+        from accounts.testing import make_user
+
+        self.client.force_login(make_user(role, organisation=self.church))
+        return self.client.get(self.service.get_absolute_url())
+
+    def test_a_score_with_no_voicing_asks_for_one_and_comes_back(self):
+        for role in ("conductor", "librarian"):
+            with self.subTest(role=role):
+                response = self.page(role)
+                self.assertContains(response, "No voicing recorded yet.", count=1)
+                piece = RolePiece.objects.get(score=self.no_voicing)
+                self.assertContains(
+                    response, f"/library/{self.no_voicing.pk}/edit/?next=/services/{self.service.pk}/%23piece-row-{piece.pk}"
+                )
+
+    def test_a_viewer_isnt_asked(self):
+        self.assertNotContains(self.page("viewer"), "No voicing recorded yet.")
