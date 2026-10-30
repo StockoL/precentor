@@ -18,7 +18,7 @@
         {% for entry in entries %}
         <li class="list-row list-row--wrap">
             <div class="flow" style="--flow-space: var(--spacing-3xs);">
-                <p><strong>{{ entry.number }}</strong> {% if entry.hymn.first_line %}{{ entry.hymn.first_line }}{% else %}<span class="list-row__meta">No first line yet</span>{% endif %}</p>
+                <p><a href="{{ entry.hymn.get_absolute_url }}"><strong>{{ entry.number }}</strong> {% if entry.hymn.first_line %}{{ entry.hymn.first_line }}{% else %}No first line yet{% endif %}</a></p>
                 <p class="list-row__meta">{% if entry.hymn.last_sung %}Last sung {{ entry.hymn.last_sung|date }} ({{ entry.hymn.last_sung|timesince }} ago){% else %}Not sung yet{% endif %}</p>
             </div>
         </li>

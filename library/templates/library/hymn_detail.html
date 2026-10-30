@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ hymn.heading }} — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <header class="page-header">
+        <h1>{{ hymn.heading }}</h1>
+    </header>
+    <dl class="detail-list">
+        <dt>Printed in</dt>
+        <dd>{% for entry in entries %}<a href="{{ entry.hymnal.get_absolute_url }}">{{ entry }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+        <dt>Last sung</dt>
+        <dd>{% if hymn.last_sung %}{{ hymn.last_sung|date }} ({{ hymn.last_sung|timesince }} ago){% else %}Not sung yet{% endif %}</dd>
+        {% with suited=hymn.suited_names %}{% if suited %}
+        <dt>Suitable for</dt>
+        <dd>{{ suited|join:", " }}</dd>
+        {% endif %}{% endwith %}
+    </dl>
+    {% if hymn.text %}
+    <section class="flow">
+        <h2>Text</h2>
+        <p>{{ hymn.text|linebreaksbr }}</p>
+        {% if hymn.text_credit %}<p class="list-row__meta">{{ hymn.text_credit }}</p>{% endif %}
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

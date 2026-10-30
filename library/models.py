@@ -360,9 +360,39 @@ class Hymn(models.Model):
     )
     objects = HymnQuerySet.as_manager()
     first_line = models.CharField(max_length=200, blank=True)
+    # The words, typed by the church, which its licence covers; held on the
+    # hymn so one copy serves every book that prints it.
+    text = models.TextField(blank=True)
+    text_credit = models.CharField(max_length=200, blank=True, help_text='e.g. "Words: J. H. Newman"')
+    # The same tags as a score's, so hymns can be suggested the same way.
+    suited_use_types = models.ManyToManyField(
+        "ordo.UseType", blank=True, related_name="suited_hymns", verbose_name="suitable uses"
+    )
+    suited_seasons = models.ManyToManyField(
+        "ordo.LiturgicalSeason", blank=True, related_name="suited_hymns", verbose_name="suitable seasons"
+    )
+    suited_occasions = models.ManyToManyField(
+        "ordo.LiturgicalOccasion", blank=True, related_name="suited_hymns", verbose_name="suitable occasions"
+    )
 
     def __str__(self):
         return self.first_line or "A hymn with no first line yet"
+
+    def get_absolute_url(self):
+        return reverse("library:hymn_detail", kwargs={"pk": self.pk})
+
+    def heading(self):
+        """Its first line, or until someone adds one, where it's printed:
+        "NEH 53"."""
+        if self.first_line:
+            return self.first_line
+        return ", ".join(str(entry) for entry in self.entries.select_related("hymnal"))
+
+    def suited_names(self):
+        """Everything it's tagged as suiting: occasions, then seasons, then
+        uses. Uses .all(), so prefetched tags cost nothing."""
+        tags = [*self.suited_occasions.all(), *self.suited_seasons.all(), *self.suited_use_types.all()]
+        return [str(tag) for tag in tags]
 
 
 class HymnEntry(models.Model):

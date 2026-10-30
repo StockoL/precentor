@@ -18,6 +18,7 @@ urlpatterns = [
     path("hymnals/", views.HymnalListView.as_view(), name="hymnal_list"),
     path("hymnals/add/", views.HymnalCreateView.as_view(), name="hymnal_create"),
     path("hymnals/<int:pk>/", views.HymnalDetailView.as_view(), name="hymnal_detail"),
+    path("hymns/<int:pk>/", views.HymnDetailView.as_view(), name="hymn_detail"),
     path("hymnals/<int:pk>/edit/", views.HymnalUpdateView.as_view(), name="hymnal_update"),
     path("hymnals/<int:pk>/delete/", views.HymnalDeleteView.as_view(), name="hymnal_delete"),
     path("import/<int:pk>/", views.ScoreImportDetailView.as_view(), name="score_import_detail"),

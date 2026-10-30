@@ -1072,3 +1072,35 @@ class HymnalPageTests(TestCase):
         self.assertContains(response, "Praise to the Holiest")
         self.assertContains(response, "No first line yet", count=3)
         self.assertContains(self.client.get("/library/hymnals/"), f'href="/library/hymnals/{neh.pk}/"')
+
+
+class HymnPageTests(TestCase):
+    def setUp(self):
+        from .models import Hymnal, HymnEntry
+
+        self.viewer = make_user("viewer")
+        church = self.viewer.organisation
+        neh = Hymnal.objects.create(organisation=church, name="New English Hymnal", short_name="NEH")
+        self.entry = HymnEntry.find_or_make(neh, "53")
+        self.hymn = self.entry.hymn
+        self.client.force_login(self.viewer)
+
+    def test_a_hymn_with_no_first_line_is_headed_by_where_its_printed(self):
+        response = self.client.get(f"/library/hymns/{self.hymn.pk}/")
+        self.assertContains(response, "<h1>NEH 53</h1>", html=True)
+        self.assertContains(response, "Not sung yet")
+
+    def test_its_details_and_tags_show_when_given(self):
+        from ordo.models import LiturgicalSeason
+
+        self.hymn.first_line = "Ye choirs of new Jerusalem"
+        self.hymn.text = "First verse\nSecond line"
+        self.hymn.text_credit = "Words: the choir's own translation"
+        self.hymn.save()
+        self.hymn.suited_seasons.add(LiturgicalSeason.objects.create(name="Easter"))
+        response = self.client.get(f"/library/hymns/{self.hymn.pk}/")
+        self.assertContains(response, "<h1>Ye choirs of new Jerusalem</h1>", html=True)
+        self.assertContains(response, "First verse<br>Second line")
+        self.assertContains(response, "<dd>Easter</dd>", html=True)
+        hymnal_page = self.client.get(f"/library/hymnals/{self.entry.hymnal_id}/")
+        self.assertContains(hymnal_page, f'href="/library/hymns/{self.hymn.pk}/"')

@@ -32,7 +32,7 @@ from .forms import HymnalForm, ScoreForm, ScoreImportForm
 from .importing import (
     COLUMNS, IMPORT_EXAMPLE, MAX_BYTES, MAX_ROWS, ImportProblem, check_file, export_rows, save_import,
 )
-from .models import Hymnal, Score, ScoreImport, ScoreQuerySet
+from .models import Hymn, Hymnal, HymnEntry, Score, ScoreImport, ScoreQuerySet
 
 
 class ScoreListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
@@ -418,6 +418,23 @@ class HymnalDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(entries=self.object.numbered_entries(), **kwargs)
+
+
+class HymnDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):
+    """A hymn: where it's printed, when it was last sung, its words and
+    what it suits."""
+
+    model = Hymn
+    context_object_name = "hymn"
+
+    def get_queryset(self):
+        return super().get_queryset().with_last_sung().prefetch_related(
+            "suited_use_types", "suited_seasons", "suited_occasions"
+        )
+
+    def get_context_data(self, **kwargs):
+        entries = sorted(self.object.entries.select_related("hymnal"), key=HymnEntry.number_order)
+        return super().get_context_data(entries=entries, **kwargs)
 
 
 class HymnalCreateView(LibraryEditRequiredMixin, OrganisationCreateMixin, CreateView):
