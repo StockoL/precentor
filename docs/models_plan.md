@@ -332,6 +332,9 @@ class Score(models.Model):
     last_sung_manual = models.DateField(blank=True, null=True)  # history before Precentor
     background = models.TextField(blank=True)
     notes = models.TextField("interpretation notes", blank=True)
+    text = models.TextField(blank=True)  # the words, for the pew sheet
+    translation = models.TextField(blank=True)
+    translation_credit = models.CharField(max_length=200, blank=True)
     range_soprano = models.CharField(max_length=20, blank=True, validators=[validate_vocal_range])
     # ... range_alto, range_tenor and range_bass the same
     suited_use_types = models.ManyToManyField("ordo.UseType", blank=True, related_name="suited_scores")
@@ -397,6 +400,20 @@ to match somewhere in the title, composer names, arranger or editor (an
 AND of ORs), and `with_voicing(voicing)` takes one voicing or `"mixed"`
 for scores with all four parts. The view stays thin and each piece is
 tested on its own.
+
+**Texts typed by the church:** `text`, `translation` and
+`translation_credit` hold the words a score sets, for the pew sheet. The
+liturgical Latin is public domain but many translations aren't, so the
+credit has a field of its own and the form asks for only texts the
+church is entitled to reproduce; Precentor doesn't claim to know a
+text's licence. Many composers set the same words, and a shared `Text`
+model would save typing them twice, but fields on `Score` come first:
+moving them into a model later is a routine data migration.
+`needing_text()` finds scores with no text that have been planned into a
+motet or antiphon slot, the ones a pew sheet would print, for the
+Library completeness page. It reaches the slot through
+`role_pieces__service_role__kind`, a lookup by name, so `library` still
+doesn't import from `planning`.
 
 **Composer split, surname required:** `composer` started as one
 free-text field. It's now `composer_surname` (required) and
@@ -883,6 +900,39 @@ service uses, so that choosing a different one can ask first and then
 replace the slots (`Service.use_template(replace=True)`), keeping any
 slot with pieces proposed.
 
+### Suggestions (`planning/suggestions.py`)
+
+Not a model: what the piece picker's suggestions rest on, worked out
+for one service at a time.
+
+- `facts_for(service, window_weeks)` gives every score in the church a
+  `ScoreFacts`: the occasion it's tagged for (the service's own or one
+  of its other occasions), the season, its use types, when it was last
+  sung and whether that's inside the repeat window, and whether it's
+  planned for another service later this term. It takes six queries
+  however large the library is: the tag tables are read once as sets,
+  rather than once per score.
+- `placed(facts, use_type)` gives a score's group, its strength (an
+  occasion counts more than a season, a season more than a use type)
+  and its reasons in plain words. `grouped()` orders a slot's list by
+  them for the propose page, and `page_options()` gives the service
+  page its one list of scores, in group order before any slot's use
+  type is known.
+- A slot's use type is the church's use type named like the slot, or
+  else like its kind (`slot_use_type()`). It's the only part that
+  differs between slots, so the service page still carries the library
+  once: `score-picker.js` does that one check per slot, by the same
+  rule, and regroups. Its sort is stable, so the server's title order
+  holds within each group.
+
+**Ranking, never hiding:** every score stays in the list. A score sung
+recently drops below the rest of its group, with its date, instead of
+disappearing, because a repeat is sometimes the point.
+
+**"Already planned this term"** counts services from today on only. A
+score sung earlier this term already shows "Sung 2 weeks ago", so it
+isn't flagged twice.
+
 ### `planning.RolePiece`
 
 ```python
@@ -968,6 +1018,7 @@ class SiteConfig(models.Model):
     national_calendar = models.CharField(max_length=20, choices=NATIONAL_CALENDAR_CHOICES, default="general_roman")
     layout_style = models.CharField(max_length=20, choices=LAYOUT_STYLE_CHOICES, default="columns")
     music_list_arrangement = models.CharField(max_length=20, choices=ARRANGEMENT_CHOICES, default="service_order")
+    repeat_window_weeks = models.PositiveSmallIntegerField(default=8)  # 1 to 104
     show_hymns_psalm = models.BooleanField(default=True)  # no longer used; to be dropped
 
     @classmethod
@@ -994,6 +1045,11 @@ in order; `propers_beside` prints its propers as a list of their own
 beside the rest of its music (`Service.music_list_groups()`). The two
 lists sit side by side where the entry is wide enough and one under the
 other in a narrow newspaper column or on paper, so neither is squeezed.
+
+**Repeat window:** how recent counts as "sung recently" when pieces are
+suggested. It's a setting, not a constant, because a cathedral with a
+daily choir and a parish with a monthly sung Mass need different
+answers. Eight weeks to start.
 
 **The national calendar is a site setting.** It belongs to the church,
 like its name and crest, and one church follows one national calendar,
