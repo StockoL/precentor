@@ -713,8 +713,8 @@ class Service(models.Model):
     slot_template = models.ForeignKey(
         "SlotTemplate", null=True, blank=True, on_delete=models.SET_NULL, related_name="services",
     )  # the template whose slots it uses now
-    hymns = models.CharField(max_length=200, blank=True)
-    psalm = models.CharField(max_length=100, blank=True)
+    hymns = models.CharField(max_length=200, blank=True)  # no longer shown; see below
+    psalm = models.CharField(max_length=100, blank=True)  # no longer shown; see below
     comments = GenericRelation("comments.Comment")
 
     class Meta:
@@ -740,15 +740,29 @@ class Service(models.Model):
     def music_list_rows(self, draft=False):
         """Rows for the music list. N/A slots are always skipped;
         unconfirmed slots are skipped in the public version and shown
-        as TBC in draft mode. See README §4."""
+        as TBC in draft mode. Each row carries its slot's kind and proper
+        part. See README §4."""
+        ...
+
+    def music_list_groups(self, draft=False, arrangement="service_order"):
+        """The rows in one group, or with "propers_beside", the propers
+        and then the rest; an empty group is left out."""
         ...
 ```
 
-**`hymns` and `psalm` as plain fields, not slots:** these were always
-meant as simple text fields, separate from the slots
-(`ServiceRole` and `RolePiece`) used for the Mass setting, motets and
-so on. A hymn number or psalm reference doesn't need a shortlist, a
-confirmation step or a link to `library.Score`.
+**`hymns` and `psalm`, from fields to slots:** these began as plain
+text fields, kept apart from the slots because a hymn number didn't
+seem to need a shortlist, a confirmation step or a link to
+`library.Score`. Once a piece could be a typed reference (see
+`RolePiece`), that reasoning went: hymns and psalms can be ordinary
+slots, shown, ordered and confirmed like the rest, and the music list
+no longer needs an aside for them. Migration `planning/0023` copied
+each service's hymns into one Hymns slot, a confirmed reference piece
+per comma-separated hymn in the order typed, and the psalm into a Psalm
+slot. Confirmed, because that text was what the music list already
+printed. The fields themselves stay, still holding the old text, until
+a later migration drops them along with `SiteConfig.show_hymns_psalm`,
+once the copied slots have been checked on real data.
 
 **Status labels:** `status` returns a raw value, which templates use
 for CSS classes (`badge--not_started`) and comparisons. Because it's
@@ -802,6 +816,8 @@ merged two querysets like this, so I wrote it from scratch.
 class ServiceRole(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="roles")
     role_name = models.CharField("slot", max_length=50)  # e.g. "Introit", "Offertory motet"
+    kind = models.CharField(max_length=10, choices=KIND_CHOICES, blank=True)  # filled from the name when blank
+    proper_part = models.CharField(max_length=20, choices=PROPER_PART_CHOICES, blank=True)
     is_not_applicable = models.BooleanField("not needed (N/A)", default=False)
     position = models.PositiveIntegerField(default=0)  # a new slot gets the next number
 
@@ -819,6 +835,27 @@ the order they were made, which was the order shown before. A drag
 sends the whole new order, not one move, and `set_slot_order` refuses
 a list that isn't exactly the service's slots, so a page that's out of
 date can't lose or duplicate one.
+
+**Kinds, fixed as a set but free per slot:** `kind` is one of nine
+(Proper, Ordinary, Hymn, Psalm, Canticle, Antiphon, Motet, Organ,
+Other) and decides how a slot is shown and grouped. `proper_part` says
+which proper a slot is (Introit, Gradual and so on), so the day's chant
+can one day be found for it. They're separate on purpose: a church that
+sings a hymn at the Introit keeps the slot's proper part and changes its
+kind to Hymn, so it prints as a hymn. The set of kinds is fixed in
+`planning/slot_kinds.py`, but any one slot's kind can be changed; a
+label the set lacks, such as Responsory, is Other.
+
+**Classified from the name:** `slot_kinds.classify()` knows the usual
+names (Introit, Kyrie, Magnificat) and, failing that, goes by the last
+word, so "Communion hymn" is a Hymn and "Opening voluntary" Organ.
+`save()` uses it whenever `kind` is blank, so slots from templates, and
+slots added with the Kind left as "From the slot's name", classify
+themselves. Offertory and Communion on their own are the propers, as in
+the Mass template. Migration `planning/0020` classified the slots that
+existed before; it keeps its own copy of the table, because a migration
+has to give the same result whenever it runs, even after the table in
+the app has grown.
 
 ### `planning.SlotTemplate`
 
@@ -851,10 +888,37 @@ slot with pieces proposed.
 ```python
 class RolePiece(models.Model):
     service_role = models.ForeignKey(ServiceRole, on_delete=models.CASCADE, related_name="pieces")
-    score = models.ForeignKey("library.Score", on_delete=models.PROTECT, related_name="role_pieces")
+    score = models.ForeignKey("library.Score", null=True, blank=True, on_delete=models.PROTECT, related_name="role_pieces")
+    reference = models.CharField(max_length=200, blank=True)  # e.g. "NEH 123"
     is_confirmed = models.BooleanField(default=False)
     comments = GenericRelation("comments.Comment")
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(score__isnull=False, reference="") | (Q(score__isnull=True) & ~Q(reference="")),
+                name="role_piece_score_or_reference",
+                violation_error_message="Choose a score or type a reference, not both.",
+            ),
+        ]
+
+    @property
+    def title(self): ...  # the score, or the reference as typed
 ```
+
+**A score or a reference:** hymns, psalms and chant are rarely in a
+church's library as scores, so a piece can instead be a short typed
+reference. Exactly one of the two is set, and the database enforces
+it. I first checked the same rule in `clean()` as well, but Django runs
+a model's constraints when a form is validated, so an empty form
+reported the problem twice, once as "Constraint … is violated". The
+message now lives on the constraint, one rule in one place. Everything
+that shows a piece (the service page, the music list, `__str__` for
+comments) prints `title`, so neither kind needs a case of its own.
+"Last sung" and the score page's history go from a score to its pieces,
+so a reference never reaches them. The propose form asks for the
+reference first in Hymn, Psalm and Antiphon slots
+(`ServiceRole.takes_reference_first`) and for a score first elsewhere.
 
 **History state:** `RolePiece.history_state` is `sung` once confirmed
 for a service dated on or before today, `scheduled` if confirmed for
@@ -903,7 +967,8 @@ class SiteConfig(models.Model):
     house_accent_colour = models.CharField(max_length=7, default="#8b1a2b", validators=[validate_hex_colour])
     national_calendar = models.CharField(max_length=20, choices=NATIONAL_CALENDAR_CHOICES, default="general_roman")
     layout_style = models.CharField(max_length=20, choices=LAYOUT_STYLE_CHOICES, default="columns")
-    show_hymns_psalm = models.BooleanField(default=True)
+    music_list_arrangement = models.CharField(max_length=20, choices=ARRANGEMENT_CHOICES, default="service_order")
+    show_hymns_psalm = models.BooleanField(default=True)  # no longer used; to be dropped
 
     @classmethod
     def of(cls, organisation):
@@ -923,6 +988,12 @@ it's needed, so a new church needs no setting up. The forms use
 create a row: it only reads, and falls back to the general calendar.
 The one-to-one link means the database itself refuses a second row for
 the same church, so the admin no longer has its own one-row check.
+
+**Music list arrangement:** `service_order` prints each service's slots
+in order; `propers_beside` prints its propers as a list of their own
+beside the rest of its music (`Service.music_list_groups()`). The two
+lists sit side by side where the entry is wide enough and one under the
+other in a narrow newspaper column or on paper, so neither is squeezed.
 
 **The national calendar is a site setting.** It belongs to the church,
 like its name and crest, and one church follows one national calendar,
