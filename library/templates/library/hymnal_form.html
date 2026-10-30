@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{% if form.instance.pk %}Edit hymnal{% else %}New hymnal{% endif %} — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>{% if form.instance.pk %}Edit hymnal{% else %}New hymnal{% endif %}</h1>
+    <form method="post" class="flow">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="cluster">
+            <button class="btn-primary" type="submit">Save</button>
+            <a class="btn-ghost" href="{% url 'library:hymnal_list' %}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -5,7 +5,7 @@ from ordo.fields import OccasionMultipleChoiceField
 from ordo.models import LiturgicalOccasion, UseType
 from precentor_project.widgets import NativeDateInput
 
-from .models import Score
+from .models import Hymnal, Score
 
 
 class ScoreForm(forms.ModelForm):
@@ -113,3 +113,22 @@ class ScoreImportForm(forms.Form):
         label="Your CSV file",
         widget=forms.ClearableFileInput(attrs={"accept": ".csv,text/csv"}),
     )
+
+
+class HymnalForm(forms.ModelForm):
+    class Meta:
+        model = Hymnal
+        fields = ["name", "short_name", "copies_owned", "filing_location", "archived"]  # noqa
+
+    def clean_short_name(self):
+        """
+        One book per code in each church, as "NEH 123" has to mean one
+        book. The database refuses a second too, but only this check can
+        say so plainly, as the church is set by the view, not typed. It
+        ignores case, so "neh" can't sit beside "NEH".
+        """
+        code = self.cleaned_data["short_name"].strip()
+        same = Hymnal.objects.filter(organisation_id=self.instance.organisation_id, short_name__iexact=code)
+        if same.exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError(f"You already have a hymnal with the code {code}.")
+        return code

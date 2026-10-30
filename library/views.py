@@ -28,7 +28,7 @@ from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 from precentor_project.mixins import DeletePageMixin
 from precentor_project.utils import safe_next
 
-from .forms import ScoreForm, ScoreImportForm
+from .forms import HymnalForm, ScoreForm, ScoreImportForm
 from .importing import (
     COLUMNS, IMPORT_EXAMPLE, MAX_BYTES, MAX_ROWS, ImportProblem, check_file, export_rows, save_import,
 )
@@ -408,6 +408,18 @@ class HymnalListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
         context["in_use"] = [hymnal for hymnal in context["hymnals"] if not hymnal.archived]
         context["archived"] = [hymnal for hymnal in context["hymnals"] if hymnal.archived]
         return context
+
+
+class HymnalCreateView(LibraryEditRequiredMixin, OrganisationCreateMixin, CreateView):
+    model = Hymnal
+    form_class = HymnalForm
+    success_url = reverse_lazy("library:hymnal_list")
+
+
+class HymnalUpdateView(LibraryEditRequiredMixin, OrganisationScopedMixin, UpdateView):
+    model = Hymnal
+    form_class = HymnalForm
+    success_url = reverse_lazy("library:hymnal_list")
 
 
 class ScoreImportListView(LibraryEditRequiredMixin, OrganisationScopedMixin, ListView):

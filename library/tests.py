@@ -932,3 +932,41 @@ class HymnalListTests(TestCase):
 
     def test_the_library_links_to_it_for_everyone(self):
         self.assertContains(self.client.get("/library/"), 'href="/library/hymnals/"')
+
+
+class HymnalFormTests(TestCase):
+    def setUp(self):
+        from .models import Hymnal
+
+        self.librarian = make_user("librarian")
+        self.church = self.librarian.organisation
+        self.neh = Hymnal.objects.create(organisation=self.church, name="New English Hymnal", short_name="NEH")
+        self.client.force_login(self.librarian)
+
+    def test_a_librarian_adds_a_hymnal(self):
+        from .models import Hymnal
+
+        response = self.client.post("/library/hymnals/add/", {
+            "name": "Catholic Hymns Old and New", "short_name": "CHON", "copies_owned": 30, "filing_location": "",
+        })
+        self.assertRedirects(response, "/library/hymnals/")
+        self.assertEqual(Hymnal.objects.get(short_name="CHON").organisation, self.church)
+
+    def test_a_code_already_used_is_refused_whatever_its_case(self):
+        data = {"name": "Another", "short_name": "neh", "copies_owned": 0}
+        response = self.client.post("/library/hymnals/add/", data)
+        self.assertContains(response, "You already have a hymnal with the code neh.")
+
+    def test_editing_keeps_its_own_code_and_can_archive(self):
+        response = self.client.post(f"/library/hymnals/{self.neh.pk}/edit/", {
+            "name": "New English Hymnal", "short_name": "NEH", "copies_owned": 12, "archived": "on",
+        })
+        self.assertRedirects(response, "/library/hymnals/")
+        self.neh.refresh_from_db()
+        self.assertEqual((self.neh.copies_owned, self.neh.archived), (12, True))
+
+    def test_a_viewer_can_look_but_not_change(self):
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        self.assertNotContains(self.client.get("/library/hymnals/"), "/library/hymnals/add/")
+        self.assertEqual(self.client.get("/library/hymnals/add/").status_code, 403)
+        self.assertEqual(self.client.get(f"/library/hymnals/{self.neh.pk}/edit/").status_code, 403)
