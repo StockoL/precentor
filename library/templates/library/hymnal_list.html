@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Hymnals — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <header class="page-header">
+        <h1>Hymnals</h1>
+    </header>
+    <p>The hymn books the church sings from. A hymn in a service is a book's code and a number, such as NEH 123.</p>
+    <ul role="list" class="flow" style="--flow-space: var(--spacing-xs);">
+        {% for hymnal in in_use %}
+        {% include "library/_hymnal_row.html" %}
+        {% empty %}
+        <li class="empty-state">No hymnals yet.</li>
+        {% endfor %}
+    </ul>
+    {% if archived %}
+    <h2>Archived</h2>
+    <p>No longer used, but kept for the history of what was sung from them.</p>
+    <ul role="list" class="flow" style="--flow-space: var(--spacing-xs);">
+        {% for hymnal in archived %}{% include "library/_hymnal_row.html" %}{% endfor %}
+    </ul>
+    {% endif %}
+</div>
+{% endblock %}

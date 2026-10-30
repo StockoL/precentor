@@ -909,3 +909,26 @@ class HymnalModelTests(TestCase):
         Hymnal.objects.create(organisation=church, name="Ancient and Modern", short_name="AM", archived=True)
         Hymnal.objects.create(organisation=church, name="New English Hymnal", short_name="NEH")
         self.assertEqual([h.short_name for h in Hymnal.objects.for_organisation(church)], ["NEH", "AM"])
+
+
+class HymnalListTests(TestCase):
+    def setUp(self):
+        from .models import Hymnal
+
+        self.viewer = make_user("viewer")
+        church = self.viewer.organisation
+        Hymnal.objects.create(organisation=church, name="New English Hymnal", short_name="NEH", copies_owned=40,
+                              filing_location="Vestry")
+        Hymnal.objects.create(organisation=church, name="Ancient and Modern", short_name="AM", archived=True)
+        Hymnal.objects.create(organisation=make_organisation("St Elsewhere"), name="Theirs", short_name="TH")
+        self.client.force_login(self.viewer)
+
+    def test_everyone_sees_the_churchs_hymnals_archived_apart(self):
+        response = self.client.get("/library/hymnals/")
+        self.assertEqual([h.short_name for h in response.context["in_use"]], ["NEH"])
+        self.assertEqual([h.short_name for h in response.context["archived"]], ["AM"])
+        self.assertContains(response, "40 copies · Vestry")
+        self.assertNotContains(response, "Theirs")
+
+    def test_the_library_links_to_it_for_everyone(self):
+        self.assertContains(self.client.get("/library/"), 'href="/library/hymnals/"')

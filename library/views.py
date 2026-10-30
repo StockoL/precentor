@@ -32,7 +32,7 @@ from .forms import ScoreForm, ScoreImportForm
 from .importing import (
     COLUMNS, IMPORT_EXAMPLE, MAX_BYTES, MAX_ROWS, ImportProblem, check_file, export_rows, save_import,
 )
-from .models import Score, ScoreImport, ScoreQuerySet
+from .models import Hymnal, Score, ScoreImport, ScoreQuerySet
 
 
 class ScoreListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
@@ -394,6 +394,20 @@ def remove_import(request, pk):
         "removing": score_import.scores.count() - in_use,
         "in_use": in_use,
     })
+
+
+class HymnalListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
+    """The church's hymnals, those in use first; archived ones are listed
+    on their own beneath."""
+
+    model = Hymnal
+    context_object_name = "hymnals"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["in_use"] = [hymnal for hymnal in context["hymnals"] if not hymnal.archived]
+        context["archived"] = [hymnal for hymnal in context["hymnals"] if hymnal.archived]
+        return context
 
 
 class ScoreImportListView(LibraryEditRequiredMixin, OrganisationScopedMixin, ListView):

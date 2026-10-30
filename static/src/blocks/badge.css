@@ -27,10 +27,11 @@
     white-space: nowrap;
   }
 
-  /* A slot's kind (Proper, Hymn and so on). One muted style for every
-     kind, with only the label to tell them apart, so it doesn't compete
-     with the status colours on the same row. */
-  .badge--kind {
+  /* A slot's kind (Proper, Hymn and so on), or a hymnal's code (NEH). One
+     muted style, with only the label to tell them apart, so it doesn't
+     compete with the status colours on the same row. */
+  .badge--kind,
+  .badge--code {
     background-color: transparent;
     color: var(--colors-text-muted);
     border-color: var(--colors-border-strong);

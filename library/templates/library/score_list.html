@@ -4,14 +4,16 @@
 <div class="flow">
     <header class="page-header">
         <h1>Library</h1>
-        {% if can.edit_library %}
         <div class="page-header__actions">
+            {# Everyone can see the hymnals; only those who edit the library get the rest. #}
+            <a class="btn" href="{% url 'library:hymnal_list' %}">Hymnals</a>
+            {% if can.edit_library %}
             <a class="btn" href="{% url 'library:score_import' %}">Import</a>
             <a class="btn" href="{% url 'library:export_library' %}">Export</a>
             <a class="btn" href="{% url 'library:completeness' %}">Completeness</a>
             <a class="btn-primary" href="{% url 'library:score_create' %}">New score</a>
+            {% endif %}
         </div>
-        {% endif %}
     </header>
 
     {# One notice however many imports are waiting, so they can't stack up. #}
