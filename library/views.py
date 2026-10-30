@@ -428,6 +428,21 @@ class HymnalDeleteView(LibraryEditRequiredMixin, OrganisationScopedMixin, Delete
     gone_url = success_url
     gone_message = "That hymnal has already been deleted."
 
+    def post(self, request, *args, **kwargs):
+        """A hymnal hymns have been recorded from is kept, as their history
+        would go with it; the message says to archive it instead."""
+        self.object = self.get_object()
+        try:
+            self.object.delete()
+        except ProtectedError:
+            messages.error(
+                request,
+                f"{self.object} has hymns recorded from it, so it's kept. Archive it instead "
+                "to keep it out of the way.",
+            )
+            return redirect("library:hymnal_update", pk=self.object.pk)
+        return redirect(self.get_success_url())
+
 
 class ScoreImportListView(LibraryEditRequiredMixin, OrganisationScopedMixin, ListView):
     """The church's imports: those waiting to be kept or removed first,

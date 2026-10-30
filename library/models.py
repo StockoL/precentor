@@ -309,6 +309,65 @@ class Hymnal(models.Model):
         return f"{self.name} ({self.short_name})"
 
 
+class Hymn(models.Model):
+    """
+    A hymn as a text, whichever books print it, so singing NEH 53 and then
+    the same hymn from another book counts as singing it twice. Hymns build
+    up through use: one is made the first time a book and number is typed,
+    and its first line can be added whenever someone knows it.
+    """
+
+    organisation = models.ForeignKey(
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="hymns"
+    )
+    objects = OrganisationQuerySet.as_manager()
+    first_line = models.CharField(max_length=200, blank=True)
+
+    def __str__(self):
+        return self.first_line or "A hymn with no first line yet"
+
+
+class HymnEntry(models.Model):
+    """
+    Where a hymn appears: its number in one hymnal. A service's hymn points
+    here, not at the hymn, as the congregation needs the book and number
+    that was chosen. The number is text, as books have 123a and appendices.
+    """
+
+    organisation = models.ForeignKey(
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="hymn_entries"
+    )
+    objects = OrganisationQuerySet.as_manager()
+    hymn = models.ForeignKey(Hymn, on_delete=models.CASCADE, related_name="entries")
+    # A hymnal with entries can't be deleted, only archived: what was sung
+    # from it is history worth keeping.
+    hymnal = models.ForeignKey(Hymnal, on_delete=models.PROTECT, related_name="entries")
+    number = models.CharField(max_length=10)
+
+    class Meta:
+        ordering = ["hymnal", "number"]  # noqa
+        constraints = [  # noqa
+            models.UniqueConstraint(fields=["hymnal", "number"], name="hymn_entry_number_unique_in_hymnal"),
+        ]
+
+    def __str__(self):
+        """"NEH 53", as it's written in a service."""
+        return f"{self.hymnal.short_name} {self.number}"
+
+    @classmethod
+    def find_or_make(cls, hymnal, number):
+        """The entry for this number in this hymnal, made along with a new
+        hymn the first time it's used."""
+        number = number.strip()
+        entry = cls.objects.filter(hymnal=hymnal, number__iexact=number).first()
+        if entry is None:
+            hymn = Hymn.objects.create(organisation_id=hymnal.organisation_id)
+            entry = cls.objects.create(
+                organisation_id=hymnal.organisation_id, hymn=hymn, hymnal=hymnal, number=number
+            )
+        return entry
+
+
 class ScoreImport(models.Model):
     """
     One spreadsheet imported into a church's library. Its scores are

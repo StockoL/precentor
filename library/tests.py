@@ -980,3 +980,39 @@ class HymnalFormTests(TestCase):
         self.assertFalse(Hymnal.objects.filter(pk=self.neh.pk).exists())
         # Back to the page once it's gone: the list, with a message.
         self.assertRedirects(self.client.get(url), "/library/hymnals/")
+
+
+class HymnEntryTests(TestCase):
+    def setUp(self):
+        from .models import Hymnal
+
+        self.church = make_organisation()
+        self.neh = Hymnal.objects.create(organisation=self.church, name="New English Hymnal", short_name="NEH")
+
+    def test_a_new_number_makes_its_entry_and_hymn_once(self):
+        from .models import Hymn, HymnEntry
+
+        entry = HymnEntry.find_or_make(self.neh, " 53 ")
+        self.assertEqual(str(entry), "NEH 53")
+        self.assertEqual((entry.organisation, entry.hymn.organisation), (self.church, self.church))
+        self.assertEqual(HymnEntry.find_or_make(self.neh, "53"), entry)
+        self.assertEqual(Hymn.objects.count(), 1)
+
+    def test_a_number_is_used_once_in_a_hymnal(self):
+        from django.db import IntegrityError, transaction
+
+        from .models import Hymn, HymnEntry
+
+        HymnEntry.find_or_make(self.neh, "53")
+        hymn = Hymn.objects.create(organisation=self.church)
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            HymnEntry.objects.create(organisation=self.church, hymn=hymn, hymnal=self.neh, number="53")
+
+    def test_a_hymnal_with_entries_is_kept_and_archiving_suggested(self):
+        from .models import Hymnal, HymnEntry
+
+        HymnEntry.find_or_make(self.neh, "53")
+        self.client.force_login(make_user("librarian", organisation=self.church))
+        response = self.client.post(f"/library/hymnals/{self.neh.pk}/delete/", follow=True)
+        self.assertContains(response, "has hymns recorded from it, so it&#x27;s kept. Archive it instead")
+        self.assertTrue(Hymnal.objects.filter(pk=self.neh.pk).exists())
