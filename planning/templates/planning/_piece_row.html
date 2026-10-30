@@ -1,6 +1,6 @@
 <li id="piece-row-{{ piece.pk }}" class="list-row">
     <span>
-        {{ piece.score }}
+        {{ piece.title }}
         <span class="badge badge--{% if piece.is_confirmed %}confirmed{% else %}proposed{% endif %}">
             {% if piece.is_confirmed %}Confirmed{% else %}Proposed{% endif %}
         </span>

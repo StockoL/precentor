@@ -318,7 +318,7 @@ class Service(models.Model):
         for role in self.roles.all():
             if role.is_not_applicable:
                 continue
-            confirmed = [p.score for p in role.pieces.all() if p.is_confirmed]
+            confirmed = [p.title for p in role.pieces.all() if p.is_confirmed]
             if not confirmed and not draft:
                 continue
             rows.append({"role_name": role.role_name, "pieces": confirmed})
@@ -515,7 +515,7 @@ class RolePiece(models.Model):
         return str(self.score) if self.score_id else self.reference
 
     def __str__(self):
-        return f"{self.score} ({'confirmed' if self.is_confirmed else 'proposed'})"
+        return f"{self.title} ({'confirmed' if self.is_confirmed else 'proposed'})"
 
     def get_absolute_url(self):
         """A piece is shown on its service's page; the fragment jumps to

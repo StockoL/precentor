@@ -9,7 +9,7 @@
                 <dt>{{ row.role_name }}</dt>
                 <dd>
                     {% if row.pieces %}
-                        {% for score in row.pieces %}{{ score }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% for title in row.pieces %}{{ title }}{% if not forloop.last %}, {% endif %}{% endfor %}
                     {% else %}
                         <span class="tbc">TBC</span>
                     {% endif %}

@@ -44,3 +44,28 @@ class ScoreOrReferenceTests(ReferencePieceTestMixin, TestCase):
         self.client.force_login(self.conductor)
         self.client.post(f"/roles/{self.slot.pk}/pieces/add/", {"score": ""})
         self.assertFalse(RolePiece.objects.exists())
+
+
+class ReferenceShownTests(ReferencePieceTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.hymn = RolePiece.objects.create(service_role=self.slot, reference="NEH 123", is_confirmed=True)
+        motet = ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
+        RolePiece.objects.create(service_role=motet, score=self.score, is_confirmed=True)
+        self.client.force_login(self.conductor)
+
+    def test_the_service_page_shows_the_reference(self):
+        response = self.client.get(self.service.get_absolute_url())
+        self.assertContains(response, "NEH 123")
+
+    def test_the_music_list_gives_references_and_scores_alike(self):
+        rows = self.service.music_list_rows()
+        self.assertEqual([(row["role_name"], row["pieces"]) for row in rows], [
+            ("Entrance hymn", ["NEH 123"]),
+            ("Offertory motet", [str(self.score)]),
+        ])
+        response = self.client.get(f"/terms/{self.service.term.pk}/music-list/")
+        self.assertContains(response, "NEH 123")
+
+    def test_a_reference_piece_is_named_by_its_reference(self):
+        self.assertEqual(str(self.hymn), "NEH 123 (confirmed)")
