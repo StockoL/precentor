@@ -2,11 +2,12 @@ from django import forms
 
 from core.models import SiteConfig
 from ordo.fields import OccasionChoiceField, OccasionMultipleChoiceField
-from ordo.models import LiturgicalOccasion
+from ordo.models import LiturgicalOccasion, UseType
 from precentor_project.widgets import NativeDateInput
 
 from .models import RolePiece, Service, ServiceRole, SlotTemplate, Term, TermMarker
 from .slot_kinds import KIND_CHOICES
+from .suggestions import facts_for, grouped, slot_use_type
 
 
 class TermForm(forms.ModelForm):
@@ -140,6 +141,7 @@ class RolePieceForm(forms.ModelForm):
 
     def __init__(self, *args, role, **kwargs):
         super().__init__(*args, **kwargs)
+        self.role = role
         self.fields["score"].queryset = role.service.suggested_scores()
         if role.takes_reference_first:
             self.order_fields(["reference", "score"])
@@ -148,3 +150,17 @@ class RolePieceForm(forms.ModelForm):
         else:
             self.fields["score"].label = "Score"
             self.fields["reference"].label = "Or type a reference"
+
+    def show_suggestions(self):
+        """For the propose page: the score list in the suggestion groups,
+        each option with its reasons. Only what's shown changes; the
+        scores accepted are still the queryset above."""
+        service = self.role.service
+        use_types = UseType.objects.for_organisation(service.organisation_id)
+        window = SiteConfig.of(service.organisation).repeat_window_weeks
+        groups = grouped(facts_for(service, window), slot_use_type(self.role, use_types))
+        self.fields["score"].choices = [("", "---------")] + [
+            (label, [(score.pk, f"{score}: {'; '.join(reasons)}" if reasons else str(score))
+                     for score, reasons in entries])
+            for label, entries in groups
+        ]

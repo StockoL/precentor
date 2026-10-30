@@ -141,3 +141,25 @@ class GroupingTests(SuggestionTestMixin, TestCase):
         self.assertEqual([(label, [s.title for s, _ in e]) for label, e in grouped(facts_for(self.service, 8))], [
             ("Other scores", ["Ave verum", "Locus iste", "Os justi"]),
         ])
+
+
+class ProposePageSuggestionTests(SuggestionTestMixin, TestCase):
+    def test_the_page_groups_the_scores_and_gives_reasons(self):
+        from accounts.testing import make_user
+
+        conductor = make_user("conductor", organisation=self.church)
+        self.client.force_login(conductor)
+        rorate = self.score("Rorate caeli", suited_occasions=[self.sunday])
+        self.score("Untagged")
+        response = self.client.get(f"/roles/{self.slot.pk}/pieces/add/")
+        self.assertContains(response, '<optgroup label="Suggested">')
+        self.assertContains(response, '<optgroup label="Other scores">')
+        self.assertContains(response, f'<option value="{rorate.pk}">{rorate}: For Advent Sunday 1</option>', html=True)
+
+    def test_a_score_is_still_accepted_only_from_the_church(self):
+        from accounts.testing import make_user
+
+        self.client.force_login(make_user("conductor", organisation=self.church))
+        theirs = make_score(organisation=make_organisation("St Elsewhere"), title="Theirs")
+        self.client.post(f"/roles/{self.slot.pk}/pieces/add/", {"score": theirs.pk, "reference": ""})
+        self.assertFalse(RolePiece.objects.filter(score=theirs).exists())

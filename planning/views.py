@@ -487,11 +487,13 @@ def add_piece(request, role_pk):
 
     if request.method != "POST":
         form = RolePieceForm(role=role)
+        form.show_suggestions()
         return render(request, "planning/add_piece.html", {"role": role, "form": form})
 
     form = RolePieceForm(request.POST, role=role)
 
     if not form.is_valid() and not is_ajax:
+        form.show_suggestions()
         return render(request, "planning/add_piece.html", {"role": role, "form": form})
 
     if form.is_valid():
