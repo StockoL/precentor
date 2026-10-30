@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Pew sheet — {{ service }} — Precentor{% endblock %}
+{% block extra_js %}
+<script type="module" src="{% static 'src/js/print-button.js' %}"></script>
+{% endblock %}
+{% block content %}
+{# Uses the music list's styles, print rules included, so the two print alike. #}
+<div class="music-list pew-sheet center flow" style="--center-max-width: 45rem; --accent: {{ site_config.house_accent_colour }};">
+    {% include "planning/_printed_list_header.html" with heading=service %}
+    {# Coloured by the day's liturgical colour, as on the music list, whose tokens have dark-mode values. #}
+    {% if service.occasion %}<p class="occasion-eyebrow"{% if service.occasion.colour %} style="--accent: var(--colors-liturgical-{{ service.occasion.colour }});"{% endif %}>{{ service.occasion }}</p>{% endif %}
+
+    {% for row in rows %}
+    <section class="pew-sheet__slot flow">
+        <h2>{{ row.role_name }}</h2>
+        {% for piece in row.pieces %}
+            {% if piece.score %}
+            <p class="pew-sheet__piece">{{ piece.score.title }}{% if options.composers %}, <span class="pew-sheet__composer">{{ piece.score.composer }}</span>{% endif %}</p>
+            {% if options.texts %}{% if piece.score.text or piece.score.translation %}
+            {% include "library/_parallel_text.html" with text=piece.score.text translation=piece.score.translation credit=piece.score.translation_credit %}
+            {% endif %}{% endif %}
+            {% else %}
+            <p class="pew-sheet__piece">{{ piece.reference }}</p>
+            {% endif %}
+        {% endfor %}
+    </section>
+    {% empty %}
+    <p><em>Nothing is confirmed for this service yet.</em></p>
+    {% endfor %}
+
+    {# A plain GET form, so the choices are in the address and need no JavaScript. "shown" tells a first visit, where both are on, from both being unticked. #}
+    <form method="get" class="music-list-controls cluster">
+        <input type="hidden" name="shown" value="1">
+        <label><input type="checkbox" name="texts"{% if options.texts %} checked{% endif %}> Texts and translations</label>
+        <label><input type="checkbox" name="composers"{% if options.composers %} checked{% endif %}> Composers</label>
+        <button type="submit">Update</button>
+        <a href="{{ service.get_absolute_url }}">Back to the service</a>
+        <button type="button" class="btn-primary" data-print hidden>Print</button>
+    </form>
+</div>
+{% endblock %}

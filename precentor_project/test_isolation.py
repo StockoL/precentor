@@ -157,6 +157,7 @@ ADDRESSES = {
     "planning:service_create": lambda a, b: [{"term_pk": b["term"].pk}],
     "planning:service_detail": lambda a, b: [{"pk": b["service"].pk}],
     "planning:service_update": lambda a, b: [{"pk": b["service"].pk}],
+    "planning:service_pew_sheet": lambda a, b: [{"pk": b["service"].pk}],
     "planning:service_delete": lambda a, b: [{"pk": b["service"].pk}],
     "planning:term_music_list": lambda a, b: [{"term_pk": b["term"].pk}],
     "planning:marker_create": lambda a, b: [{"term_pk": b["term"].pk}],

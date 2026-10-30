@@ -1,0 +1,21 @@
+/* ==========================================================================
+   BLOCK: PEW SHEET
+   A service's music for the congregation. It sits inside .music-list,
+   which gives it the printed list's type, heading rules and print
+   settings; this only adds what a single service needs.
+   ========================================================================== */
+
+@layer blocks {
+  .pew-sheet__slot {
+    --flow-space: var(--spacing-2xs);
+  }
+
+  .pew-sheet__piece {
+    margin: 0;
+  }
+
+  .pew-sheet__composer {
+    font-style: italic;
+    color: var(--colors-text-muted);
+  }
+}

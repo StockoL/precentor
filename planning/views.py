@@ -540,6 +540,29 @@ def toggle_confirm(request, piece_pk):
 
 
 @login_required
+def service_pew_sheet(request, pk):
+    """
+    A service's sheet for the congregation: its confirmed music in order,
+    with motet texts beside their translations. Texts and composers can be
+    left off with a plain GET form; both are on until the form is used.
+    """
+    service = get_object_or_404(
+        own(Service, request).select_related("occasion").prefetch_related("roles__pieces__score"), pk=pk
+    )
+    chosen = "shown" in request.GET
+    options = {
+        "texts": not chosen or "texts" in request.GET,
+        "composers": not chosen or "composers" in request.GET,
+    }
+    return render(request, "planning/pew_sheet.html", {
+        "service": service,
+        "rows": service.pew_sheet_rows(),
+        "options": options,
+        "site_config": SiteConfig.of(request.organisation),
+    })
+
+
+@login_required
 def term_music_list(request, term_pk):
     term = get_object_or_404(own(Term, request), pk=term_pk)
     draft = request.GET.get("draft") == "1"

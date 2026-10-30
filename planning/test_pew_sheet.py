@@ -43,3 +43,34 @@ class PewSheetRowsTests(PewSheetTestMixin, TestCase):
         slot.is_not_applicable = True
         slot.save()
         self.assertEqual(self.service.pew_sheet_rows(), [])
+
+
+class PewSheetPageTests(PewSheetTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.slot("Entrance hymn", reference="NEH 1", is_confirmed=True)
+        self.slot("Offertory motet", score=self.score, is_confirmed=True)
+        self.client.force_login(self.viewer)
+        self.url = f"/services/{self.service.pk}/sheet/"
+
+    def test_a_first_visit_prints_texts_and_composers(self):
+        response = self.client.get(self.url)
+        self.assertContains(response, '<p class="pew-sheet__piece">NEH 1</p>', html=True)
+        self.assertContains(response, '<span class="pew-sheet__composer">William Byrd</span>', html=True)
+        self.assertContains(response, '<p class="parallel-text__translation">Hail, true body</p>', html=True)
+        self.assertContains(response, "<h2>Offertory motet</h2>", html=True)
+
+    def test_the_options_leave_them_off(self):
+        response = self.client.get(self.url, {"shown": "1"})
+        self.assertNotContains(response, "pew-sheet__composer")
+        self.assertNotContains(response, "Hail, true body")
+        self.assertContains(response, "Ave verum corpus")
+        response = self.client.get(self.url, {"shown": "1", "texts": "on"})
+        self.assertContains(response, "Hail, true body")
+        self.assertNotContains(response, "pew-sheet__composer")
+
+    def test_another_churchs_service_is_not_found(self):
+        from accounts.testing import make_organisation
+
+        self.client.force_login(make_user("viewer", organisation=make_organisation("St Elsewhere")))
+        self.assertEqual(self.client.get(self.url).status_code, 404)
