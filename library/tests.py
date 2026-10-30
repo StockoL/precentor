@@ -17,7 +17,7 @@ class ScoreFormLabelTests(TestCase):
         for label in ("Background", "Interpretation notes",
                       "Composer&#x27;s other names", "Sopranos", "Basses",
                       "Duration (minutes)", "Suitable uses", "Suitable seasons",
-                      "Suitable occasions"):
+                      "Suitable occasions", "Text", "Translation", "Translation credit"):
             with self.subTest(label=label):
                 self.assertContains(response, f"{label}:</label>")
         for old in ("Soprano parts", "Duration minutes", "Suited use types"):
@@ -31,13 +31,17 @@ class ScoreFormLayoutTests(TestCase):
 
         self.client.force_login(make_user("librarian"))
         response = self.client.get("/library/add/")
-        for legend in ("Identity", "Forces", "Library", "Liturgical use", "Notes"):
+        for legend in ("Identity", "Forces", "Library", "Liturgical use", "Notes", "Text"):
             with self.subTest(legend=legend):
                 self.assertContains(response, f"<legend>{legend}</legend>", html=True)
         # Every field in the form class appears in the hand-written layout.
         for field in ScoreForm.Meta.fields:
             with self.subTest(field=field):
                 self.assertContains(response, f'name="{field}"')
+
+    def test_the_text_section_reminds_about_rights(self):
+        self.client.force_login(make_user("librarian"))
+        self.assertContains(self.client.get("/library/add/"), "Only enter texts you're entitled to reproduce.")
 
 
 class VoicingSuggestionTests(TestCase):

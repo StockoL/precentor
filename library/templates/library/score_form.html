@@ -67,6 +67,14 @@
             <div>{{ form.notes.as_field_group }}</div>
         </fieldset>
 
+        <fieldset class="flow">
+            <legend>Text</legend>
+            <p class="list-row__meta">For the pew sheet. Only enter texts you're entitled to reproduce.</p>
+            <div>{{ form.text.as_field_group }}</div>
+            <div>{{ form.translation.as_field_group }}</div>
+            <div>{{ form.translation_credit.as_field_group }}</div>
+        </fieldset>
+
         <button class="btn-primary" type="submit">Save</button>
     </form>
 </div>

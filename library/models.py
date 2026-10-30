@@ -160,6 +160,14 @@ class Score(models.Model):
         blank=True,
         help_text="How you take it: tempo, balance, things to rehearse.",
     )
+    # The words sung and a translation, for the pew sheet. Typed by the
+    # church: the liturgical Latin is public domain, but many translations
+    # aren't, so the credit matters and nothing is filled in for them.
+    text = models.TextField(blank=True, help_text="The words as sung, line by line.")
+    translation = models.TextField(blank=True)
+    translation_credit = models.CharField(
+        max_length=200, blank=True, help_text='Who made the translation, e.g. "Tr. Ronald Knox".'
+    )
     range_soprano = models.CharField(
         "soprano range",
         max_length=20,
