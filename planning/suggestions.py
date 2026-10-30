@@ -27,7 +27,7 @@ class ScoreFacts:
     use_type_ids: set = field(default_factory=set)
     last_sung: object = None  # a date, or None if never sung
     recent: bool = False  # sung within the church's repeat window
-    in_term: bool = False  # already proposed or confirmed elsewhere this term
+    in_term: bool = False  # planned for another service later this term
 
     @property
     def sung_text(self):
@@ -60,8 +60,14 @@ def facts_for(service, window_weeks):
         score__organisation_id=service.organisation_id
     ).values_list("score_id", "usetype_id"):
         use_types.setdefault(score_id, set()).add(use_type_id)
+    # Planned for another service from today on: one already sung shows
+    # its date instead, so it isn't flagged twice.
     in_term = set(
-        RolePiece.objects.filter(service_role__service__term_id=service.term_id, score__isnull=False)
+        RolePiece.objects.filter(
+            service_role__service__term_id=service.term_id,
+            service_role__service__date__gte=timezone.localdate(),
+            score__isnull=False,
+        )
         .exclude(service_role__service=service)
         .values_list("score_id", flat=True)
     )
@@ -78,4 +84,55 @@ def facts_for(service, window_weeks):
             in_term=score.pk in in_term,
         )
         for score in scores
+    ]
+
+
+# The groups a slot's list is shown in, in order. Nothing is left out:
+# scores sung recently still appear, below the rest of their group.
+GROUPS = [
+    ("suggested", "Suggested"),
+    ("suggested_recent", "Suggested, sung recently"),
+    ("other", "Other scores"),
+    ("other_recent", "Other scores, sung recently"),
+]
+
+
+def slot_use_type(slot, use_types):
+    """The church's use type named like the slot ("Communion"), or else
+    like its kind ("Motet"), or None. A convenience, not a rule."""
+    by_name = {use_type.name.casefold(): use_type for use_type in use_types}
+    return by_name.get(slot.role_name.casefold()) or by_name.get(slot.get_kind_display().casefold())
+
+
+def placed(facts, use_type=None):
+    """
+    Where a score goes in a slot's list, and why: its group, how strongly
+    it's suited (an occasion counts more than a season, a season more than
+    a use type), and its reasons in plain words.
+    """
+    for_use = use_type is not None and use_type.pk in facts.use_type_ids
+    strength = (bool(facts.occasion), bool(facts.season), for_use)
+    reasons = [f"For {name}" for name in (facts.occasion, facts.season) if name]
+    if for_use:
+        reasons.append(f"For {use_type.name}")
+    if facts.sung_text:
+        reasons.append(facts.sung_text)
+    if facts.in_term:
+        reasons.append("Already planned this term")
+    group = ("suggested" if any(strength) else "other") + ("_recent" if facts.recent else "")
+    return group, strength, reasons
+
+
+def grouped(all_facts, use_type=None):
+    """A slot's list as [(label, [(score, reasons), ...]), ...], each group
+    strongest first and then by title, empty groups left out."""
+    groups = {key: [] for key, _ in GROUPS}
+    for facts in all_facts:
+        group, strength, reasons = placed(facts, use_type)
+        groups[group].append((strength, facts.score, reasons))
+    return [
+        (label, [(score, reasons) for _, score, reasons in sorted(
+            groups[key], key=lambda entry: (tuple(not part for part in entry[0]), entry[1].title)
+        )])
+        for key, label in GROUPS if groups[key]
     ]

@@ -70,15 +70,17 @@ class FactsTests(SuggestionTestMixin, TestCase):
         self.assertEqual((facts["Never"].recent, facts["Never"].sung_text), (False, ""))
         self.assertFalse(self.facts(window=1)["Lately"].recent)
 
-    def test_a_score_already_in_this_term_is_marked(self):
+    def test_a_score_planned_later_this_term_is_marked_but_not_one_already_sung(self):
         ave = self.score("Ave verum")
         self.score("Locus iste")
         later = Service.objects.create(term=self.term, date=timezone.localdate() + timedelta(days=21),
                                        service_type="Sung Mass")
         RolePiece.objects.create(service_role=ServiceRole.objects.create(service=later, role_name="Motet"), score=ave)
+        self.sing(self.score("Os justi"), days_ago=14)
         facts = self.facts()
         self.assertTrue(facts["Ave verum"].in_term)
         self.assertFalse(facts["Locus iste"].in_term)
+        self.assertFalse(facts["Os justi"].in_term)
 
     def test_only_the_churchs_own_scores_and_a_fixed_number_of_queries(self):
         make_score(organisation=make_organisation("St Elsewhere"), title="Theirs")
@@ -93,3 +95,49 @@ class FactsTests(SuggestionTestMixin, TestCase):
         self.service.save()
         self.score("Vigilate", suited_seasons=[self.advent])
         self.assertEqual(self.facts()["Vigilate"].season, "")
+
+
+class GroupingTests(SuggestionTestMixin, TestCase):
+    def test_the_slots_use_type_comes_from_its_name_then_its_kind(self):
+        from .suggestions import slot_use_type
+
+        communion = make_use_type("Communion", organisation=self.church)
+        motet = make_use_type("Motet", organisation=self.church)
+        offertory_motet = ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
+        procession = ServiceRole.objects.create(service=self.service, role_name="Procession")
+        use_types = [communion, motet]
+        self.assertEqual(slot_use_type(self.slot, use_types), communion)
+        self.assertEqual(slot_use_type(offertory_motet, use_types), motet)
+        self.assertIsNone(slot_use_type(procession, use_types))
+
+    def test_groups_order_and_reasons(self):
+        from .suggestions import grouped
+
+        communion = make_use_type("Communion", organisation=self.church)
+        self.score("By use", suited_use_types=[communion])
+        self.score("By season", suited_seasons=[self.advent])
+        self.score("By day", suited_occasions=[self.sunday])
+        self.sing(self.score("Lately", suited_seasons=[self.advent]), days_ago=14)
+        self.score("Untagged")
+        self.sing(self.score("Untagged lately"), days_ago=7)
+        groups = grouped(facts_for(self.service, 8), communion)
+        self.assertEqual([(label, [score.title for score, _ in entries]) for label, entries in groups], [
+            ("Suggested", ["By day", "By season", "By use"]),
+            ("Suggested, sung recently", ["Lately"]),
+            ("Other scores", ["Untagged"]),
+            ("Other scores, sung recently", ["Untagged lately"]),
+        ])
+        reasons = {score.title: reasons for _, entries in groups for score, reasons in entries}
+        self.assertEqual(reasons["By day"], ["For Advent Sunday 1"])
+        self.assertEqual(reasons["By use"], ["For Communion"])
+        self.assertEqual(reasons["Lately"], ["For Advent", "Sung 2\u00a0weeks ago"])
+        self.assertEqual(reasons["Untagged"], [])
+
+    def test_an_untagged_library_is_one_group_in_title_order(self):
+        from .suggestions import grouped
+
+        for title in ("Locus iste", "Ave verum", "Os justi"):
+            self.score(title)
+        self.assertEqual([(label, [s.title for s, _ in e]) for label, e in grouped(facts_for(self.service, 8))], [
+            ("Other scores", ["Ave verum", "Locus iste", "Os justi"]),
+        ])
