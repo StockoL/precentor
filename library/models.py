@@ -309,6 +309,28 @@ class Hymnal(models.Model):
         return f"{self.name} ({self.short_name})"
 
 
+class HymnQuerySet(OrganisationQuerySet):
+    def with_last_sung(self):
+        """
+        Annotate each hymn with last_sung: the latest date it was sung,
+        from whichever book. Derived, never stored, and by the same rule as
+        a score's: a confirmed piece in a service dated on or before today.
+        Hymns build up through use, so there's no date from before
+        Precentor. RolePiece is looked up by name, as for scores.
+        """
+        RolePiece = apps.get_model("planning", "RolePiece")
+        latest = (
+            RolePiece.objects.filter(
+                hymn_entry__hymn=OuterRef("pk"),
+                is_confirmed=True,
+                service_role__service__date__lte=timezone.localdate(),
+            )
+            .order_by("-service_role__service__date")
+            .values("service_role__service__date")[:1]
+        )
+        return self.annotate(last_sung=Subquery(latest))
+
+
 class Hymn(models.Model):
     """
     A hymn as a text, whichever books print it, so singing NEH 53 and then
@@ -320,7 +342,7 @@ class Hymn(models.Model):
     organisation = models.ForeignKey(
         "accounts.Organisation", on_delete=models.CASCADE, related_name="hymns"
     )
-    objects = OrganisationQuerySet.as_manager()
+    objects = HymnQuerySet.as_manager()
     first_line = models.CharField(max_length=200, blank=True)
 
     def __str__(self):

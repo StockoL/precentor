@@ -1016,3 +1016,40 @@ class HymnEntryTests(TestCase):
         response = self.client.post(f"/library/hymnals/{self.neh.pk}/delete/", follow=True)
         self.assertContains(response, "has hymns recorded from it, so it&#x27;s kept. Archive it instead")
         self.assertTrue(Hymnal.objects.filter(pk=self.neh.pk).exists())
+
+
+class HymnLastSungTests(TestCase):
+    def test_the_same_hymn_from_two_books_counts_once_and_only_when_sung(self):
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        from planning.models import RolePiece, Service, ServiceRole
+
+        from .models import Hymn, Hymnal, HymnEntry
+
+        church = make_organisation()
+        neh = Hymnal.objects.create(organisation=church, name="New English Hymnal", short_name="NEH")
+        chon = Hymnal.objects.create(organisation=church, name="Catholic Hymns Old and New", short_name="CHON")
+        in_neh = HymnEntry.find_or_make(neh, "53")
+        # The same hymn printed in a second book.
+        in_chon = HymnEntry.objects.create(organisation=church, hymn=in_neh.hymn, hymnal=chon, number="211")
+        never = HymnEntry.find_or_make(neh, "1")
+        today = timezone.localdate()
+        term = make_term(
+            organisation=church, start_date=today - timedelta(days=60), end_date=today + timedelta(days=60)
+        )
+
+        def plan(entry, days_ago, confirmed=True):
+            service = Service.objects.create(term=term, date=today - timedelta(days=days_ago), service_type="Mass")
+            slot = ServiceRole.objects.create(service=service, role_name="Hymn")
+            RolePiece.objects.create(service_role=slot, hymn_entry=entry, is_confirmed=confirmed)
+            return service.date
+
+        plan(in_neh, 21)
+        latest = plan(in_chon, 7)
+        plan(in_neh, 3, confirmed=False)  # proposed, not sung
+        plan(in_chon, -7)  # confirmed, but still to come
+        hymns = {hymn.pk: hymn.last_sung for hymn in Hymn.objects.for_organisation(church).with_last_sung()}
+        self.assertEqual(hymns[in_neh.hymn_id], latest)
+        self.assertIsNone(hymns[never.hymn_id])
