@@ -6,8 +6,8 @@
             {% if entry.rows %}
             <dl>
                 {% for row in entry.rows %}
-                <dt>{{ row.role_name }}</dt>
-                <dd>
+                <dt data-kind="{{ row.kind }}">{{ row.role_name }}</dt>
+                <dd data-kind="{{ row.kind }}">
                     {% if row.pieces %}
                         {% for title in row.pieces %}{{ title }}{% if not forloop.last %}, {% endif %}{% endfor %}
                     {% else %}

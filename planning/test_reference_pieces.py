@@ -56,12 +56,13 @@ class ReferenceShownTests(ReferencePieceTestMixin, TestCase):
 
     def test_the_music_list_gives_references_and_scores_alike(self):
         rows = self.service.music_list_rows()
-        self.assertEqual([(row["role_name"], row["pieces"]) for row in rows], [
-            ("Entrance hymn", ["NEH 123"]),
-            ("Offertory motet", [str(self.score)]),
+        self.assertEqual([(row["role_name"], row["kind"], row["proper_part"], row["pieces"]) for row in rows], [
+            ("Entrance hymn", "hymn", "", ["NEH 123"]),
+            ("Offertory motet", "motet", "", [str(self.score)]),
         ])
         response = self.client.get(f"/terms/{self.service.term.pk}/music-list/")
         self.assertContains(response, "NEH 123")
+        self.assertContains(response, '<dt data-kind="hymn">Entrance hymn</dt>', html=True)
 
     def test_a_reference_piece_is_named_by_its_reference(self):
         self.assertEqual(str(self.hymn), "NEH 123 (confirmed)")

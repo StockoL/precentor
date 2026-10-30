@@ -313,6 +313,9 @@ class Service(models.Model):
         return self.STATUS_LABELS[self.status]
 
     def music_list_rows(self, draft=False):
+        """The slots to print, in order, with their kind and proper part so
+        the music list can arrange and style them, and the titles of their
+        confirmed pieces. A draft also lists slots with nothing confirmed."""
         rows = []
         for role in self.roles.all():
             if role.is_not_applicable:
@@ -320,7 +323,12 @@ class Service(models.Model):
             confirmed = [p.title for p in role.pieces.all() if p.is_confirmed]
             if not confirmed and not draft:
                 continue
-            rows.append({"role_name": role.role_name, "pieces": confirmed})
+            rows.append({
+                "role_name": role.role_name,
+                "kind": role.kind,
+                "proper_part": role.proper_part,
+                "pieces": confirmed,
+            })
         return rows
 
 
