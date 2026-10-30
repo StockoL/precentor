@@ -1405,8 +1405,8 @@ each change before it was committed.
 
 [`docs/testing.md`](docs/testing.md) has the full record. In short:
 
-- **700 automated tests** cover the models, views, forms, permissions,
-  each church's own data, the import and export, and the liturgical calendar. 54 of them are
+- **734 automated tests** cover the models, views, forms, permissions,
+  each church's own data, the import and export, and the liturgical calendar. 55 of them are
   browser tests, which start a real server and drive Chromium through
   Playwright, so the JavaScript is tested too.
 - **Validation:** the W3C HTML and CSS validators, ESLint for the
