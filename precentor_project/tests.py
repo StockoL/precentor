@@ -305,3 +305,16 @@ class PrivacyPageTests(TestCase):
         self.assertContains(self.client.get("/accounts/login/"), '<p class="site-footer">')
         self.assertContains(self.client.get("/accounts/login/"), 'href="/privacy/">Privacy</a>')
         self.assertContains(self.client.get("/accounts/signup/"), 'href="/privacy/">How your details are kept</a>')
+
+
+class SafeNextTests(TestCase):
+    def test_only_a_page_on_this_site_is_kept(self):
+        from django.test import RequestFactory
+
+        from .utils import safe_next
+
+        request = RequestFactory().get("/")
+        self.assertEqual(safe_next(request, "/services/4/"), "/services/4/")
+        for unsafe in ("https://example.com/", "//example.com/", "javascript:alert(1)", "", None):
+            with self.subTest(unsafe=unsafe):
+                self.assertEqual(safe_next(request, unsafe), "")

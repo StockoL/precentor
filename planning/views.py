@@ -9,7 +9,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 from django.views.generic import (
     CreateView,
@@ -30,7 +29,7 @@ from core.models import SiteConfig
 from library.models import Score
 from ordo.models import UseType
 from precentor_project.mixins import DeletePageMixin
-from precentor_project.utils import ajax_or_redirect
+from precentor_project.utils import ajax_or_redirect, safe_next
 
 from .forms import (
     RolePieceForm,
@@ -290,23 +289,13 @@ class ReturnToServiceMixin:
     """After saving a template, go back to the service it was started
     from (?next=), if that's a page on this site; otherwise to the list."""
 
-    def safe_next(self, value):
-        """value if it's a page on this site, else "". The Cancel link uses
-        it as an href, so anything else (javascript:, another site) must
-        never reach the template."""
-        if value and url_has_allowed_host_and_scheme(
-            value, allowed_hosts={self.request.get_host()}, require_https=self.request.is_secure()
-        ):
-            return value
-        return ""
-
     def get_success_url(self):
-        next_url = self.safe_next(self.request.POST.get("next") or self.request.GET.get("next"))
+        next_url = safe_next(self.request, self.request.POST.get("next") or self.request.GET.get("next"))
         return next_url or reverse_lazy("planning:slot_template_list")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["next"] = self.safe_next(self.request.GET.get("next") or self.request.POST.get("next"))
+        context["next"] = safe_next(self.request, self.request.GET.get("next") or self.request.POST.get("next"))
         return context
 
 
