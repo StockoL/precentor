@@ -1,6 +1,7 @@
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -476,18 +477,42 @@ class RolePiece(models.Model):
         "accounts.Organisation", on_delete=models.CASCADE, related_name="role_pieces"
     )
     objects = OrganisationQuerySet.as_manager()
+    # A piece is a score from the library or, for hymns, psalms and chant
+    # that aren't in it, a short reference such as "NEH 123". Never both.
     score = models.ForeignKey(
-        "library.Score", on_delete=models.PROTECT, related_name="role_pieces"
+        "library.Score", null=True, blank=True, on_delete=models.PROTECT, related_name="role_pieces"
     )
+    reference = models.CharField(max_length=200, blank=True, help_text='e.g. "NEH 123" or "Psalm 150, tone 4"')
     is_confirmed = models.BooleanField(default=False)
     comments = GenericRelation("comments.Comment")
 
     class Meta:
         ordering = ["id"]  # noqa
+        constraints = [  # noqa
+            models.CheckConstraint(
+                condition=(
+                    models.Q(score__isnull=False, reference="")
+                    | (models.Q(score__isnull=True) & ~models.Q(reference=""))
+                ),
+                name="role_piece_score_or_reference",
+            ),
+        ]
+
+    def clean(self):
+        """The database's rule, checked first so a form can say so."""
+        if (self.score_id is None) == (not self.reference.strip()):
+            raise ValidationError("Choose a score or type a reference, not both.")
 
     def save(self, *args, **kwargs):
         self.organisation_id = self.service_role.organisation_id
+        self.reference = self.reference.strip()
         super().save(*args, **kwargs)
+
+    @property
+    def title(self):
+        """What the piece is called wherever it's shown: the score, or the
+        reference as typed."""
+        return str(self.score) if self.score_id else self.reference
 
     def __str__(self):
         return f"{self.score} ({'confirmed' if self.is_confirmed else 'proposed'})"

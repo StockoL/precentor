@@ -141,3 +141,5 @@ class RolePieceForm(forms.ModelForm):
     def __init__(self, *args, service, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["score"].queryset = service.suggested_scores()
+        # Until the form also takes a reference, a score is needed.
+        self.fields["score"].required = True
