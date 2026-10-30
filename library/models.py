@@ -374,6 +374,9 @@ class Hymn(models.Model):
     suited_occasions = models.ManyToManyField(
         "ordo.LiturgicalOccasion", blank=True, related_name="suited_hymns", verbose_name="suitable occasions"
     )
+    # Hymns someone has said aren't this one, despite a matching first
+    # line, so the question isn't asked again. Either way round.
+    not_same_as = models.ManyToManyField("self", blank=True)
 
     def __str__(self):
         return self.first_line or "A hymn with no first line yet"
@@ -387,6 +390,43 @@ class Hymn(models.Model):
         if self.first_line:
             return self.first_line
         return ", ".join(str(entry) for entry in self.entries.select_related("hymnal"))
+
+    @staticmethod
+    def comparable(first_line):
+        """A first line as it's compared: case, punctuation and spacing
+        don't matter, so "Praise to the Holiest" matches "praise to the
+        holiest,"."""
+        return " ".join(re.sub(r"[^\w\s]", "", first_line).casefold().split())
+
+    def possible_matches(self):
+        """The church's other hymns with the same first line, as when one
+        hymn is printed in two books, leaving out any said not to be it.
+        Never decided for anyone: the hymn's page asks."""
+        if not self.first_line:
+            return []
+        mine = self.comparable(self.first_line)
+        others = (
+            Hymn.objects.for_organisation(self.organisation_id)
+            .exclude(pk=self.pk)
+            .exclude(pk__in=self.not_same_as.all())
+            .exclude(first_line="")
+            .prefetch_related("entries__hymnal")
+        )
+        return [other for other in others if self.comparable(other.first_line) == mine]
+
+    @transaction.atomic
+    def absorb(self, other):
+        """Make other and this one hymn: its entries move here, so every
+        service that used them keeps its history, its words and tags come
+        too where this one has none, and the empty hymn goes."""
+        other.entries.update(hymn=self)
+        if not self.text:
+            self.text, self.text_credit = other.text, other.text_credit
+        self.suited_use_types.add(*other.suited_use_types.all())
+        self.suited_seasons.add(*other.suited_seasons.all())
+        self.suited_occasions.add(*other.suited_occasions.all())
+        self.save()
+        other.delete()
 
     def suited_names(self):
         """Everything it's tagged as suiting: occasions, then seasons, then

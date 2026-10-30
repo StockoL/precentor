@@ -1140,3 +1140,52 @@ class HymnFormTests(TestCase):
     def test_a_viewer_cant_edit(self):
         self.client.force_login(make_user("viewer", organisation=self.church))
         self.assertEqual(self.client.get(self.url).status_code, 403)
+
+
+class SameHymnTests(TestCase):
+    def setUp(self):
+        from .models import Hymnal, HymnEntry
+
+        self.church = make_organisation()
+        neh = Hymnal.objects.create(organisation=self.church, name="New English Hymnal", short_name="NEH")
+        chon = Hymnal.objects.create(organisation=self.church, name="Catholic Hymns Old and New", short_name="CHON")
+        self.in_neh = HymnEntry.find_or_make(neh, "53")
+        self.in_chon = HymnEntry.find_or_make(chon, "211")
+        self.hymn, self.other = self.in_neh.hymn, self.in_chon.hymn
+        self.hymn.first_line = "Praise to the Holiest in the height"
+        self.hymn.save()
+        self.other.first_line = "praise to the holiest, in the height!"
+        self.other.text = "The words"
+        self.other.save()
+
+    def test_a_matching_first_line_is_a_possible_match_whatever_its_punctuation(self):
+        self.assertEqual(self.hymn.possible_matches(), [self.other])
+
+    def test_once_said_not_to_be_the_same_it_isnt_asked_again_either_way(self):
+        self.hymn.not_same_as.add(self.other)
+        self.assertEqual(self.hymn.possible_matches(), [])
+        self.assertEqual(self.other.possible_matches(), [])
+
+    def test_another_churchs_hymn_is_never_a_match(self):
+        from .models import Hymn
+
+        Hymn.objects.create(organisation=make_organisation("St Elsewhere"), first_line=self.hymn.first_line)
+        self.assertEqual(self.hymn.possible_matches(), [self.other])
+
+    def test_absorbing_keeps_every_entry_and_its_history(self):
+        from datetime import date
+
+        from planning.models import RolePiece, Service, ServiceRole
+
+        from .models import Hymn
+
+        service = Service.objects.create(term=make_term(organisation=self.church), date=date(2026, 1, 11),
+                                         service_type="Sung Mass")
+        piece = RolePiece.objects.create(service_role=ServiceRole.objects.create(service=service, role_name="Hymn"),
+                                         hymn_entry=self.in_chon, is_confirmed=True)
+        self.hymn.absorb(self.other)
+        self.assertFalse(Hymn.objects.filter(pk=self.other.pk).exists())
+        self.assertEqual(sorted(str(e) for e in self.hymn.entries.select_related("hymnal")), ["CHON 211", "NEH 53"])
+        self.assertEqual(self.hymn.text, "The words")
+        piece.refresh_from_db()
+        self.assertEqual(piece.hymn_entry.hymn, self.hymn)
