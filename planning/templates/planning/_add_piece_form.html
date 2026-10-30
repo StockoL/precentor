@@ -9,7 +9,7 @@ once for every slot.
     {% csrf_token %}
     {# Hymn, psalm and antiphon slots ask for a reference first, in the page's order as well as on screen. #}
     {% if role.takes_reference_first %}{% include "planning/_piece_reference_input.html" %}{% endif %}
-    <div class="score-combobox" data-label="Score for the {{ role.role_name }}">
+    <div class="score-combobox" data-label="Score for the {{ role.role_name }}" data-slot-name="{{ role.role_name }}" data-role-pk="{{ role.pk }}">
         <input type="hidden" name="score">
     </div>
     {% if not role.takes_reference_first %}{% include "planning/_piece_reference_input.html" %}{% endif %}

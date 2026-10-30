@@ -11,9 +11,12 @@
     width: 100%;
   }
 
+  /* Wider than the search box where there's room, as each score carries
+     its reasons; never wider than a phone's screen allows. */
   .score-combobox__listbox {
     position: absolute;
-    inset-inline: 0;
+    inset-inline-start: 0;
+    inline-size: max(100%, min(28rem, 80vw));
     z-index: 10;
     margin-block-start: var(--spacing-3xs);
     margin-inline: 0;
@@ -33,6 +36,26 @@
     border-radius: 6px;
     font-size: var(--typography-step-0);
     cursor: pointer;
+  }
+
+  /* A group's heading: small and muted, not something to choose. */
+  .score-combobox__listbox .score-combobox__group {
+    padding-block-start: var(--spacing-2xs);
+    font-size: var(--typography-step--2);
+    font-weight: 600;
+    color: var(--colors-text-muted);
+    cursor: default;
+  }
+
+  .score-combobox__listbox .score-combobox__group:hover {
+    background-color: transparent;
+  }
+
+  /* Why a score is suggested, after its name. */
+  .score-combobox__reasons {
+    display: block;
+    font-size: var(--typography-step--2);
+    color: var(--colors-text-muted);
   }
 
   .score-combobox__listbox li[aria-selected="true"],

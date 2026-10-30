@@ -1,23 +1,79 @@
 // The service page sends its scores once, as JSON (Django's json_script),
-// already ranked with the ones suited to the service first. Every slot's
-// search box reads that one list, so the page doesn't carry a full
-// <select> for each slot. Without JavaScript, each slot links to a page
-// with the list instead (planning/_add_piece_form.html).
+// each with what a suggestion rests on: its occasion and season tags, its
+// use types, when it was last sung. Every slot's search box reads that one
+// list, so the page doesn't carry a full <select> for each slot, and
+// groups it for its own slot. Without JavaScript, each slot links to a
+// page with the list instead (planning/_add_piece_form.html).
 let scoreOptions;
+let useTypes;
+
+function readJson(id, fallback) {
+  const source = document.getElementById(id);
+  return source ? JSON.parse(source.textContent) : fallback;
+}
 
 function getScoreOptions() {
-  if (scoreOptions === undefined) {
-    const source = document.getElementById("score-options");
-    scoreOptions = source ? JSON.parse(source.textContent) : null;
-  }
+  if (scoreOptions === undefined) scoreOptions = readJson("score-options", null);
   return scoreOptions;
 }
 
+function getUseTypes() {
+  if (useTypes === undefined) useTypes = readJson("use-types", []);
+  return useTypes;
+}
+
+const GROUPS = [
+  ["suggested", "Suggested"],
+  ["suggested_recent", "Suggested, sung recently"],
+  ["other", "Other scores"],
+  ["other_recent", "Other scores, sung recently"],
+];
+const GROUP_KEYS = GROUPS.map(([key]) => key);
+const GROUP_LABELS = Object.fromEntries(GROUPS);
+
+// The slot's use type: the church's one named like the slot, or else like
+// its kind, read from the slot's badge so a kind just changed counts. The
+// same rule as slot_use_type() in planning/suggestions.py.
+function slotUseType(container) {
+  const badge = document.getElementById(`kind-badge-${container.dataset.rolePk}`);
+  const kind = badge ? badge.textContent.trim() : "";
+  for (const name of [container.dataset.slotName || "", kind]) {
+    const found = getUseTypes().find((useType) => useType.name.toLowerCase() === name.toLowerCase());
+    if (found) return found;
+  }
+  return null;
+}
+
+// Each score's group and reasons for this slot, as placed() in
+// planning/suggestions.py: an occasion counts more than a season, a season
+// more than a use type. The sort is stable, so the server's title order
+// holds within each group.
+function arrange(options, useType) {
+  const placed = options.map((option) => {
+    const forUse = useType !== null && option.useTypes.includes(useType.id);
+    const strength = [Boolean(option.occasion), Boolean(option.season), forUse];
+    const reasons = [option.occasion, option.season].filter(Boolean).map((name) => `For ${name}`);
+    if (forUse) reasons.push(`For ${useType.name}`);
+    if (option.sung) reasons.push(option.sung);
+    if (option.inTerm) reasons.push("Already planned this term");
+    const group = (strength.some(Boolean) ? "suggested" : "other") + (option.recent ? "_recent" : "");
+    const rank = [GROUP_KEYS.indexOf(group), ...strength.map((part) => (part ? 0 : 1))];
+    return { ...option, group, rank, reasons };
+  });
+  return placed.sort((a, b) => {
+    const difference = a.rank.findIndex((part, index) => part !== b.rank[index]);
+    return difference === -1 ? 0 : a.rank[difference] - b.rank[difference];
+  });
+}
+
 function buildCombobox(container) {
-  const options = getScoreOptions();
+  if (!getScoreOptions()) return;
   const form = container.closest("form");
   const valueInput = container.querySelector("input[name='score']");
-  if (!options || !form || !valueInput) return;
+  if (!form || !valueInput) return;
+  // Worked out again each time the list opens, as the slot's kind may
+  // have changed since the page loaded.
+  let options = [];
 
   const listboxId = `${form.id}-listbox`;
 
@@ -44,13 +100,33 @@ function buildCombobox(container) {
   let filtered = [];
   let activeIndex = -1;
 
+  // A heading starts each group. It's for the eye only; each option names
+  // its group through aria-describedby, and its reasons are in its text.
   function renderOptions() {
     listbox.innerHTML = "";
+    let group = null;
     filtered.forEach((option, index) => {
+      if (option.group !== group) {
+        group = option.group;
+        const heading = document.createElement("li");
+        heading.id = `${listboxId}-${group}`;
+        heading.className = "score-combobox__group";
+        heading.setAttribute("role", "presentation");
+        heading.setAttribute("aria-hidden", "true");
+        heading.textContent = GROUP_LABELS[group];
+        listbox.appendChild(heading);
+      }
       const li = document.createElement("li");
       li.id = `${listboxId}-option-${index}`;
       li.setAttribute("role", "option");
+      li.setAttribute("aria-describedby", `${listboxId}-${group}`);
       li.textContent = option.label;
+      if (option.reasons.length) {
+        const reasons = document.createElement("span");
+        reasons.className = "score-combobox__reasons";
+        reasons.textContent = option.reasons.join("; ");
+        li.append(" ", reasons);
+      }
       li.dataset.value = option.value;
       if (index === activeIndex) li.setAttribute("aria-selected", "true");
       listbox.appendChild(li);
@@ -76,6 +152,7 @@ function buildCombobox(container) {
   }
 
   input.addEventListener("input", () => {
+    options = arrange(getScoreOptions(), slotUseType(container));
     const query = input.value.trim().toLowerCase();
     filtered = query ? options.filter((option) => option.label.toLowerCase().includes(query)) : options;
     activeIndex = -1;
@@ -84,6 +161,7 @@ function buildCombobox(container) {
   });
 
   function showAllOptions() {
+    options = arrange(getScoreOptions(), slotUseType(container));
     filtered = options;
     activeIndex = -1;
     renderOptions();
@@ -101,6 +179,7 @@ function buildCombobox(container) {
     if (event.key === "ArrowDown") {
       event.preventDefault();
       if (listbox.hidden) {
+        options = arrange(getScoreOptions(), slotUseType(container));
         filtered = options;
         renderOptions();
         openList();

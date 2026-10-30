@@ -93,7 +93,7 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
 
         # Drive the visible search box, as a person would.
         self.page.fill(f"{form} .score-combobox__input", "Browser Anthem")
-        self.page.click(f"{form} .score-combobox__listbox li")
+        self.page.click(f"{form} .score-combobox__listbox li[role=option]")
         self.page.click(f"{form} button[type=submit]")
 
         self.page.wait_for_selector(f"#role-{self.role.pk}-pieces li.list-row")
@@ -124,6 +124,43 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
         assert "NEH 123" in self.page.inner_text(f"#role-{hymn.pk}-pieces")
         assert self.page.input_value(f"#id_role_{hymn.pk}_reference") == ""
         assert RolePiece.objects.get(service_role=hymn).reference == "NEH 123"
+
+
+class SuggestionGroupsBrowserTest(PlaywrightTestCase):
+    def test_a_slots_list_is_grouped_with_reasons_for_its_use_type(self):
+        from precentor_project.testing import make_use_type
+
+        user = self.login_as_conductor()
+        church = user.organisation
+        term = make_term(organisation=church, name="Browser Term", start_date=date(2026, 1, 1),
+                         end_date=date(2026, 3, 31), calendar_use="current")
+        service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        communion = make_use_type("Communion", organisation=church)
+        tagged = make_score(organisation=church, title="Zzz For communion", composer_surname="Byrd")
+        tagged.suited_use_types.set([communion])
+        make_score(organisation=church, title="Aaa Untagged", composer_surname="Tallis")
+        slot = ServiceRole.objects.create(service=service, role_name="Communion")
+        motet = ServiceRole.objects.create(service=service, role_name="Motet")
+
+        self.page.goto(f"/services/{service.pk}/")
+
+        def listed(role):
+            form = f"#add-piece-form-{role.pk}"
+            self.page.click(f"{form} .score-combobox__input")
+            return self.page.eval_on_selector_all(
+                f"{form} .score-combobox__listbox li", "els => els.map(el => el.textContent.trim())"
+            )
+
+        # The Communion slot puts the score tagged for communion first, and says why.
+        assert listed(slot) == [
+            "Suggested", "Zzz For communion (Byrd) For Communion", "Other scores", "Aaa Untagged (Tallis)",
+        ]
+        # The headings can't be chosen, and the reasons don't end up in the box.
+        self.page.keyboard.press("ArrowDown")
+        self.page.keyboard.press("Enter")
+        assert self.page.input_value(f"#add-piece-form-{slot.pk} .score-combobox__input") == "Zzz For communion (Byrd)"
+        # Another slot has no use type of its name, so nothing is suggested.
+        assert listed(motet) == ["Other scores", "Aaa Untagged (Tallis)", "Zzz For communion (Byrd)"]
 
 
 class AddRoleBrowserTest(PlaywrightTestCase):
@@ -190,7 +227,7 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
         input_sel = f"{form} .score-combobox__input"
         listbox_sel = f"{form} .score-combobox__listbox"
         value_sel = f"{form} input[name=score]"
-        count_js = f"document.querySelectorAll('{listbox_sel} li').length"
+        count_js = f"document.querySelectorAll('{listbox_sel} li[role=option]').length"
         open_js = f"!document.querySelector('{listbox_sel}').hidden"
 
         self.page.goto(f"/services/{self.service.pk}/")
@@ -212,7 +249,7 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
         self.page.fill(input_sel, "Locus")
         self.page.wait_for_function(f"{count_js} === 1")
         items = self.page.eval_on_selector_all(
-            f"{listbox_sel} li", "els => els.map(el => el.textContent)"
+            f"{listbox_sel} li[role=option]", "els => els.map(el => el.textContent)"
         )
         assert "Locus Iste" in items[0]
 
