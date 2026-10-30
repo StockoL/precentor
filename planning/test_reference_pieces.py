@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.test import TestCase
 
-from accounts.testing import make_user
+from accounts.testing import make_organisation, make_user
 from precentor_project.testing import make_score, make_term
 
 from .models import RolePiece, Service, ServiceRole
@@ -203,3 +203,48 @@ class HymnPieceTests(ReferencePieceTestMixin, TestCase):
         self.client.force_login(self.conductor)
         response = self.client.get(f"/services/{self.service.pk}/sheet/")
         self.assertContains(response, '<p class="pew-sheet__piece">NEH 53</p>', html=True)
+
+
+class ProposeHymnTests(ReferencePieceTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        from library.models import Hymnal
+
+        self.neh = Hymnal.objects.create(organisation=self.church, name="New English Hymnal", short_name="NEH")
+        self.chon = Hymnal.objects.create(
+            organisation=self.church, name="Catholic Hymns Old and New", short_name="CHON"
+        )
+        Hymnal.objects.create(organisation=self.church, name="Hymns Ancient and Modern", short_name="AM", archived=True)
+        self.client.force_login(self.conductor)
+        self.url = f"/roles/{self.slot.pk}/pieces/add/"
+
+    def test_a_hymn_slot_asks_for_book_and_number_first_from_books_in_use(self):
+        form = self.client.get(self.url).context["form"]
+        self.assertEqual(list(form.fields), ["hymnal", "number", "reference", "score"])
+        self.assertEqual(sorted(h.short_name for h in form.fields["hymnal"].queryset), ["CHON", "NEH"])
+        self.assertIn("not in a hymnal", form.fields["reference"].help_text)
+
+    def test_a_new_number_becomes_a_hymn_and_the_book_is_remembered(self):
+        response = self.client.post(self.url, {"hymnal": self.chon.pk, "number": "211", "reference": "", "score": ""})
+        self.assertRedirects(response, self.service.get_absolute_url())
+        self.assertEqual(RolePiece.objects.get().title, "CHON 211")
+        self.assertEqual(self.client.get(self.url).context["form"].fields["hymnal"].initial, self.chon)
+
+    def test_a_number_and_a_reference_together_are_refused(self):
+        response = self.client.post(self.url, {"hymnal": self.neh.pk, "number": "53", "reference": "Psalm 23"})
+        self.assertContains(response, "Choose one: a score, a hymn number or a reference.", count=1)
+        self.assertFalse(RolePiece.objects.exists())
+
+    def test_another_churchs_or_an_archived_hymnal_is_refused(self):
+        from library.models import Hymnal
+
+        theirs = Hymnal.objects.create(organisation=make_organisation("St Elsewhere"), name="Theirs", short_name="TH")
+        archived = Hymnal.objects.get(short_name="AM")
+        for hymnal in (theirs, archived):
+            with self.subTest(hymnal=hymnal.short_name):
+                self.client.post(self.url, {"hymnal": hymnal.pk, "number": "1"})
+                self.assertFalse(RolePiece.objects.exists())
+
+    def test_other_slots_and_churches_with_no_hymnals_are_unchanged(self):
+        motet = ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
+        self.assertNotIn("hymnal", self.client.get(f"/roles/{motet.pk}/pieces/add/").context["form"].fields)

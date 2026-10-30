@@ -5,9 +5,10 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.formats import date_format
+from django.utils.functional import cached_property
 
 from accounts.querysets import OrganisationQuerySet
-from library.models import Score
+from library.models import Hymnal, Score
 from ordo.models import CALENDAR_USE_CHOICES
 
 from .slot_kinds import KIND_CHOICES, PROPER_PART_CHOICES, REFERENCE_FIRST, classify
@@ -423,6 +424,30 @@ class ServiceRole(models.Model):
             (comment_count_on(RolePiece, piece_pks), "comment"),
         ]
         return [(count, noun) for count, noun in counts if count]
+
+    @cached_property
+    def hymnals_on_offer(self):
+        """The church's hymnals in use, for a Hymn slot's book and number.
+        Any other kind of slot takes a score or a reference instead."""
+        if self.kind != "hymn":
+            return []
+        return list(Hymnal.objects.for_organisation(self.organisation_id).filter(archived=False))
+
+    @cached_property
+    def default_hymnal(self):
+        """The book the church's latest hymn came from, as most churches
+        sing from one, or else the first in use."""
+        hymnals = self.hymnals_on_offer
+        if not hymnals:
+            return None
+        last = (
+            RolePiece.objects.for_organisation(self.organisation_id)
+            .filter(hymn_entry__hymnal__in=hymnals)
+            .order_by("-pk")
+            .values_list("hymn_entry__hymnal_id", flat=True)
+            .first()
+        )
+        return next((hymnal for hymnal in hymnals if hymnal.pk == last), hymnals[0])
 
     @property
     def takes_reference_first(self):

@@ -1,6 +1,7 @@
 from django import forms
 
 from core.models import SiteConfig
+from library.models import Hymnal, HymnEntry
 from ordo.fields import OccasionChoiceField, OccasionMultipleChoiceField
 from ordo.models import LiturgicalOccasion, UseType
 from precentor_project.widgets import NativeDateInput
@@ -127,13 +128,17 @@ class SlotTemplateForm(forms.ModelForm):
 
 class RolePieceForm(forms.ModelForm):
     """
-    Proposing a piece for a slot: a score from the library or a typed
-    reference, one or the other. The scores on offer, and the only ones
-    accepted, are the service's own church's, ranked for it: the list is
-    set before the form checks anything, so another church's score can't
-    be proposed even by a hand-made request. Hymn, psalm and antiphon
-    slots ask for the reference first.
+    Proposing a piece for a slot: a score from the library, a hymn by its
+    book and number, or a typed reference, one of the three. The scores
+    and hymnals on offer, and the only ones accepted, are the service's
+    own church's: the lists are set before the form checks anything, so
+    another church's can't be chosen even by a hand-made request. Hymn
+    slots ask for a book and number first when the church has hymnals;
+    psalm and antiphon slots ask for the reference first.
     """
+
+    hymnal = forms.ModelChoiceField(queryset=Hymnal.objects.none(), required=False, empty_label=None)
+    number = forms.CharField(max_length=10, required=False)
 
     class Meta:
         model = RolePiece
@@ -150,19 +155,42 @@ class RolePieceForm(forms.ModelForm):
         else:
             self.fields["score"].label = "Score"
             self.fields["reference"].label = "Or type a reference"
+        if role.hymnals_on_offer:
+            self.fields["hymnal"].queryset = Hymnal.objects.filter(pk__in=[h.pk for h in role.hymnals_on_offer])
+            self.fields["hymnal"].initial = role.default_hymnal
+            self.order_fields(["hymnal", "number", "reference", "score"])
+            self.fields["reference"].label = "Or type a reference"
+            # Typed as text, a hymn number couldn't be counted as that hymn.
+            self.fields["reference"].help_text = 'For anything not in a hymnal, e.g. "Psalm 150, tone 4"'
+        else:
+            del self.fields["hymnal"], self.fields["number"]
 
     def clean(self):
         """
-        Exactly one of a score or a reference. The database has the same
-        rule, but Django leaves a rule out of a form's checks when it
-        names a field the form doesn't show, and hymn_entry is set from a
-        book and number rather than shown, so the form says it itself.
+        Exactly one of a score, a hymn number or a reference. The database
+        has the same rule, but Django leaves a rule out of a form's checks
+        when it names a field the form doesn't show, and hymn_entry is set
+        from a book and number rather than shown, so the form says it
+        itself. A hymnal is always chosen on a Hymn slot, so only a number
+        means a hymn was given.
         """
         cleaned = super().clean()
-        given = [bool(cleaned.get("score")), bool(cleaned.get("reference"))]
+        number = cleaned.get("number", "").strip()
+        if number and not cleaned.get("hymnal"):
+            self.add_error("hymnal", "Choose the hymnal it's in.")
+        given = [bool(cleaned.get("score")), bool(number), bool(cleaned.get("reference"))]
         if given.count(True) != 1:
             raise forms.ValidationError(ONE_PIECE_MESSAGE)
         return cleaned
+
+    def save(self, commit=True):
+        """A hymn's entry is found, or made with its hymn the first time
+        that number is used, only once everything else is known to be
+        right."""
+        number = self.cleaned_data.get("number", "").strip()
+        if number:
+            self.instance.hymn_entry = HymnEntry.find_or_make(self.cleaned_data["hymnal"], number)
+        return super().save(commit)
 
     def show_suggestions(self):
         """For the propose page: the score list in the suggestion groups,
