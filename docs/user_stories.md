@@ -14,6 +14,12 @@ These user stories drive the design and functionality of Precentor.
 - As a conductor, I want to see how long it's been since a piece was
   last sung (with full history available on demand), so I can avoid
   repeating it too often, or repeat it on purpose.
+- As a conductor, I want the scores suggested for a slot to say why
+  (tagged for this Sunday, for the season, sung six weeks ago), so I can
+  judge the suggestion rather than take it on trust.
+- As a conductor, I want a pew sheet for each service with the motet's
+  words beside a translation, so the congregation can follow what the
+  choir sings.
 - As a conductor, I want to propose a shortlist of pieces for a slot
   (e.g. two motets for the Offertory), so I can weigh choices before
   deciding.
@@ -71,6 +77,12 @@ These user stories drive the design and functionality of Precentor.
   spreadsheet can't leave a mess in the library.
 - As a librarian, I want to download the whole library as a
   spreadsheet, so I have a copy of my own and can tidy it in bulk.
+- As a librarian, I want one page that shows what the library's details
+  are missing, so I can fill the gaps when I have a spare half hour
+  without being nagged about them.
+- As a librarian, I want to record a motet's text and its translation
+  with who made it, so the pew sheet can print them and the credit is
+  kept.
 
 ## Viewer (a singer, a clergy colleague, an assistant)
 
