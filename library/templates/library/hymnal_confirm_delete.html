@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Delete hymnal — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Delete {{ hymnal }}?</h1>
+    <p>If the church has only stopped using it, archiving it on its edit page keeps it out of the way without losing it.</p>
+    <div class="cluster">
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn-danger" type="submit">Yes, delete</button>
+        </form>
+        <a class="btn-ghost" href="{% url 'library:hymnal_list' %}">Cancel</a>
+    </div>
+</div>
+{% endblock %}

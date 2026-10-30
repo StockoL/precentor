@@ -4,6 +4,9 @@
         <p class="list-row__meta">{{ hymnal.copies_owned }} cop{{ hymnal.copies_owned|pluralize:"y,ies" }}{% if hymnal.filing_location %} · {{ hymnal.filing_location }}{% endif %}</p>
     </div>
     {% if can.edit_library %}
-    <a class="btn-ghost" href="{% url 'library:hymnal_update' hymnal.pk %}">Edit<span class="visually-hidden"> {{ hymnal.name }}</span></a>
+    <div class="cluster">
+        <a class="btn-ghost" href="{% url 'library:hymnal_update' hymnal.pk %}">Edit<span class="visually-hidden"> {{ hymnal.name }}</span></a>
+        <a class="btn-danger" href="{% url 'library:hymnal_delete' hymnal.pk %}">Delete<span class="visually-hidden"> {{ hymnal.name }}</span></a>
+    </div>
     {% endif %}
 </li>

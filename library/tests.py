@@ -970,3 +970,13 @@ class HymnalFormTests(TestCase):
         self.assertNotContains(self.client.get("/library/hymnals/"), "/library/hymnals/add/")
         self.assertEqual(self.client.get("/library/hymnals/add/").status_code, 403)
         self.assertEqual(self.client.get(f"/library/hymnals/{self.neh.pk}/edit/").status_code, 403)
+
+    def test_deleting_asks_first_and_suggests_archiving(self):
+        from .models import Hymnal
+
+        url = f"/library/hymnals/{self.neh.pk}/delete/"
+        self.assertContains(self.client.get(url), "archiving it on its edit page")
+        self.assertRedirects(self.client.post(url), "/library/hymnals/")
+        self.assertFalse(Hymnal.objects.filter(pk=self.neh.pk).exists())
+        # Back to the page once it's gone: the list, with a message.
+        self.assertRedirects(self.client.get(url), "/library/hymnals/")

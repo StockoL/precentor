@@ -422,6 +422,13 @@ class HymnalUpdateView(LibraryEditRequiredMixin, OrganisationScopedMixin, Update
     success_url = reverse_lazy("library:hymnal_list")
 
 
+class HymnalDeleteView(LibraryEditRequiredMixin, OrganisationScopedMixin, DeletePageMixin, DeleteView):
+    model = Hymnal
+    success_url = reverse_lazy("library:hymnal_list")
+    gone_url = success_url
+    gone_message = "That hymnal has already been deleted."
+
+
 class ScoreImportListView(LibraryEditRequiredMixin, OrganisationScopedMixin, ListView):
     """The church's imports: those waiting to be kept or removed first,
     then the newest."""
