@@ -8,21 +8,7 @@
 <div class="music-list center flow"
      style="--center-max-width: {% if draft %}65ch{% else %}60rem{% endif %}; --accent: {{ site_config.house_accent_colour }};">
 
-    {% if site_config.crest_layout == "banner" %}
-    {# The banner carries the church's name, so the name isn't written out again; it's the alt text instead. #}
-    <img class="music-list-banner" src="{{ site_config.crest_url }}" alt="{{ site_config.church_name }}">
-    {% endif %}
-    {# A flex row spaced by gap, so no .flow: its top margins would push the later items down. #}
-    <div class="music-list-header">
-        {% if site_config.crest_layout == "logo" %}
-        {# Empty alt: the church's name is written right beside the logo. #}
-        <img class="music-list-crest" src="{{ site_config.crest_url }}" alt="">
-        {% endif %}
-        {% if site_config.church_name and site_config.crest_layout != "banner" %}
-        <p class="music-list-church-name">{{ site_config.church_name }}</p>
-        {% endif %}
-        <h1>{{ term }}</h1>
-    </div>
+    {% include "planning/_printed_list_header.html" with heading=term %}
 
     {% if draft %}
     <p class="draft-banner">DRAFT — for internal use only</p>
