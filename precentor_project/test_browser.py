@@ -127,14 +127,9 @@ class CheckboxBrowserTest(PlaywrightTestCase):
 
 
 class SettingsFormBrowserTest(PlaywrightTestCase):
-    def test_checkbox_first_and_colour_picker_swatch_sized(self):
-        # The settings template writes the checkbox before its label, the
-        # opposite of Django's as_p, so this checks the order either way.
+    def test_colour_picker_is_swatch_sized(self):
         self.login_as_conductor()
         self.page.goto("/settings/")
-        box = self.page.locator("#id_show_hymns_psalm").bounding_box()
-        label = self.page.locator("label[for='id_show_hymns_psalm']").bounding_box()
-        assert box["x"] < label["x"], (box, label)
         swatch = self.page.locator("#id_house_accent_colour").bounding_box()
         assert swatch["width"] <= 80, swatch
 

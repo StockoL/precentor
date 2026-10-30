@@ -588,7 +588,7 @@ class ServiceNeighbourLinkTests(TestCase):
 
 
 class ServiceDetailListTests(TestCase):
-    def test_facts_are_a_description_list_including_hymns_and_psalm(self):
+    def test_facts_are_a_description_list(self):
         self.client.force_login(make_user("conductor"))
         term = make_term(
             name="Test Term",
@@ -598,14 +598,12 @@ class ServiceDetailListTests(TestCase):
         )
         service = Service.objects.create(
             term=term, date=date(2026, 1, 11), service_type="Sung Mass",
-            hymns="123, 345", psalm="150",
         )
         response = self.client.get(service.get_absolute_url())
         self.assertContains(response, '<dl class="detail-list">')
-        for label, value in (("Hymns", "123, 345"), ("Psalm", "150")):
+        for label in ("Term", "Status", "Occasion"):
             with self.subTest(label=label):
                 self.assertContains(response, f"<dt>{label}</dt>", html=True)
-                self.assertContains(response, f"<dd>{value}</dd>", html=True)
         self.assertNotContains(response, "<p>Term:")
 
 
@@ -746,7 +744,7 @@ class ServiceFormLayoutTests(TestCase):
             calendar_use="current",
         )
         response = self.client.get(reverse("planning:service_create", args=[term.pk]))
-        for legend in ("When", "Liturgy", "Music list"):
+        for legend in ("When", "Liturgy"):
             with self.subTest(legend=legend):
                 self.assertContains(response, f"<legend>{legend}</legend>", html=True)
         for field in ServiceForm.Meta.fields:

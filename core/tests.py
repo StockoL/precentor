@@ -30,8 +30,7 @@ class SiteConfigOfTests(TestCase):
 class SiteConfigFormLabelTests(TestCase):
     def test_settings_form_labels_read_naturally(self):
         form = str(SiteConfigForm())
-        for label in ("Calendar:", "Crest:", "Accent colour:", "Music list layout:",
-                      "Show hymns and psalm on the music list:"):
+        for label in ("Calendar:", "Crest:", "Accent colour:", "Music list layout:"):
             with self.subTest(label=label):
                 self.assertIn(f"{label}</label>", form)
         for old in ("House accent colour", "Crest image", "Show hymns psalm"):
@@ -164,7 +163,6 @@ class SettingsAccessTests(TestCase):
         self.assertEqual(config.church_name, "St Mary's")
         self.assertEqual(config.house_accent_colour, "#123456")
         self.assertEqual(config.national_calendar, "england")
-        self.assertFalse(config.show_hymns_psalm)
 
 
 class NationalCalendarSettingTests(TestCase):

@@ -28,8 +28,6 @@ class ServiceForm(forms.ModelForm):
             "occasion",
             "additional_occasions",
             "calendar_use",
-            "hymns",
-            "psalm",
         ]
         widgets = {  # noqa
             "date": NativeDateInput(),

@@ -31,10 +31,6 @@
                 <p class="occasion-secondary">{{ extra }}</p>
                 {% endfor %}
             {% endif %}
-            {% if site_config.show_hymns_psalm %}
-                {% if entry.service.hymns %}<p><strong>Hymns:</strong> {{ entry.service.hymns }}</p>{% endif %}
-                {% if entry.service.psalm %}<p><strong>Psalm:</strong> {{ entry.service.psalm }}</p>{% endif %}
-            {% endif %}
         </div>
     </div>
 </article>

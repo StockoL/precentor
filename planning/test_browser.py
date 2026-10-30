@@ -332,7 +332,6 @@ class MusicListLayoutBrowserTest(PlaywrightTestCase):
         for day in (4, 11, 18):
             service = Service.objects.create(
                 term=self.term, date=date(2026, 1, day), service_type="Choral Evensong",
-                hymns="123, 345", psalm="150",
             )
             role = ServiceRole.objects.create(service=service, role_name="Setting")
             score = make_score(
@@ -348,7 +347,7 @@ class MusicListLayoutBrowserTest(PlaywrightTestCase):
         self.page.click("[data-print]")
         assert self.page.evaluate("window.__printed") is True
 
-    def test_narrow_columns_put_hymns_under_the_pieces(self):
+    def test_narrow_columns_put_the_aside_under_the_pieces(self):
         entry = self.page.locator(".service-entry").first
         main = entry.locator(".service-entry-main").bounding_box()
         aside = entry.locator(".service-entry-aside").bounding_box()
