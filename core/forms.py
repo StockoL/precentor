@@ -47,6 +47,7 @@ class SiteConfigForm(forms.ModelForm):
             "house_accent_colour",
             "layout_style",
             "music_list_arrangement",
+            "repeat_window_weeks",
         ]
         widgets = {  # noqa
             "crest_style": forms.RadioSelect,

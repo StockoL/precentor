@@ -30,7 +30,8 @@ class SiteConfigOfTests(TestCase):
 class SiteConfigFormLabelTests(TestCase):
     def test_settings_form_labels_read_naturally(self):
         form = str(SiteConfigForm())
-        for label in ("Calendar:", "Crest:", "Accent colour:", "Music list layout:", "Music list arrangement:"):
+        for label in ("Calendar:", "Crest:", "Accent colour:", "Music list layout:", "Music list arrangement:",
+                      "Sung recently means within:"):
             with self.subTest(label=label):
                 self.assertIn(f"{label}</label>", form)
         for old in ("House accent colour", "Crest image", "Show hymns psalm"):
@@ -42,7 +43,7 @@ class AccentColourTests(TestCase):
     def form(self, colour):
         return SiteConfigForm(data={
             "house_accent_colour": colour, "crest_style": "logo",
-            "layout_style": "columns", "music_list_arrangement": "service_order", "national_calendar": "general_roman",
+            "layout_style": "columns", "music_list_arrangement": "service_order", "repeat_window_weeks": 8, "national_calendar": "general_roman",
         })
 
     def test_six_digit_hex_is_accepted(self):
@@ -146,7 +147,7 @@ class SettingsAccessTests(TestCase):
         self.assertEqual(self.client.get(self.url).status_code, 403)
         response = self.client.post(self.url, {
             "church_name": "Changed", "house_accent_colour": "#000000", "crest_style": "logo",
-            "layout_style": "columns", "music_list_arrangement": "service_order", "national_calendar": "general_roman",
+            "layout_style": "columns", "music_list_arrangement": "service_order", "repeat_window_weeks": 8, "national_calendar": "general_roman",
         })
         self.assertEqual(response.status_code, 403)
         self.assertEqual(SiteConfig.of(make_organisation()).church_name, "")
@@ -156,7 +157,8 @@ class SettingsAccessTests(TestCase):
         self.assertEqual(self.client.get(self.url).status_code, 200)
         response = self.client.post(self.url, {
             "church_name": "St Mary's", "house_accent_colour": "#123456", "crest_style": "logo",
-            "layout_style": "simple", "music_list_arrangement": "propers_beside", "national_calendar": "england",
+            "layout_style": "simple", "music_list_arrangement": "propers_beside", "repeat_window_weeks": 12,
+            "national_calendar": "england",
         })
         self.assertRedirects(response, self.url)
         config = SiteConfig.of(make_organisation())
@@ -164,6 +166,7 @@ class SettingsAccessTests(TestCase):
         self.assertEqual(config.house_accent_colour, "#123456")
         self.assertEqual(config.national_calendar, "england")
         self.assertEqual(config.music_list_arrangement, "propers_beside")
+        self.assertEqual(config.repeat_window_weeks, 12)
 
 
 class NationalCalendarSettingTests(TestCase):
@@ -246,7 +249,7 @@ class CrestFormTests(TestCase):
 
     def save(self, style, upload=None, **extra):
         data = {"house_accent_colour": "#8b1a2b", "crest_style": style, "layout_style": "columns",
-                "music_list_arrangement": "service_order",
+                "music_list_arrangement": "service_order", "repeat_window_weeks": 8,
                 "national_calendar": "general_roman", **extra}
         form = SiteConfigForm(data=data, files={"crest_file": upload} if upload else {},
                               instance=SiteConfig.of(make_organisation()))
@@ -313,7 +316,7 @@ class SettingsForOneChurchTests(TestCase):
         self.client.force_login(make_user("conductor", organisation=ours))
         self.client.post("/settings/", {
             "church_name": "St Cecilia's", "house_accent_colour": "#123456", "crest_style": "logo",
-            "layout_style": "simple", "music_list_arrangement": "service_order", "national_calendar": "england",
+            "layout_style": "simple", "music_list_arrangement": "service_order", "repeat_window_weeks": 8, "national_calendar": "england",
         })
         self.assertEqual(SiteConfig.of(ours).church_name, "St Cecilia's")
         their_settings.refresh_from_db()
@@ -343,3 +346,16 @@ class ColourInputTests(TestCase):
         self.assertIn('type="color"', html)
         self.assertNotIn("maxlength", html)
         self.assertNotIn("required", html)
+
+
+class RepeatWindowTests(TestCase):
+    def test_a_church_starts_with_eight_weeks(self):
+        self.assertEqual(SiteConfig.of(make_organisation()).repeat_window_weeks, 8)
+
+    def test_it_must_be_at_least_a_week(self):
+        form = SiteConfigForm(data={
+            "house_accent_colour": "#8b1a2b", "crest_style": "logo", "layout_style": "columns",
+            "music_list_arrangement": "service_order", "repeat_window_weeks": 0,
+            "national_calendar": "general_roman",
+        })
+        self.assertIn("repeat_window_weeks", form.errors)

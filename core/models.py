@@ -1,6 +1,6 @@
 import hashlib
 
-from django.core.validators import RegexValidator
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.db import models
 from django.urls import reverse
 
@@ -70,6 +70,14 @@ class SiteConfig(models.Model):
     # of their own beside the rest of the music.
     music_list_arrangement = models.CharField(
         max_length=20, choices=ARRANGEMENT_CHOICES, default="service_order"
+    )
+    # How long ago counts as "sung recently" when suggesting pieces: a
+    # score sung within it is still offered, but below the others.
+    repeat_window_weeks = models.PositiveSmallIntegerField(
+        "sung recently means within",
+        default=8,
+        validators=[MinValueValidator(1), MaxValueValidator(104)],
+        help_text="In weeks. Suggestions put scores sung within this below the others.",
     )
     show_hymns_psalm = models.BooleanField(
         "show hymns and psalm on the music list", default=True
