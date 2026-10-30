@@ -128,18 +128,25 @@ class SlotTemplateForm(forms.ModelForm):
 
 class RolePieceForm(forms.ModelForm):
     """
-    Proposing a score for a slot. The scores on offer, and the only ones
+    Proposing a piece for a slot: a score from the library or a typed
+    reference, one or the other. The scores on offer, and the only ones
     accepted, are the service's own church's, ranked for it: the list is
     set before the form checks anything, so another church's score can't
-    be proposed even by a hand-made request.
+    be proposed even by a hand-made request. Hymn, psalm and antiphon
+    slots ask for the reference first.
     """
 
     class Meta:
         model = RolePiece
-        fields = ["score"]  # noqa
+        fields = ["score", "reference"]  # noqa
 
-    def __init__(self, *args, service, **kwargs):
+    def __init__(self, *args, role, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["score"].queryset = service.suggested_scores()
-        # Until the form also takes a reference, a score is needed.
-        self.fields["score"].required = True
+        self.fields["score"].queryset = role.service.suggested_scores()
+        if role.takes_reference_first:
+            self.order_fields(["reference", "score"])
+            self.fields["reference"].label = "Reference"
+            self.fields["score"].label = "Or a score from the library"
+        else:
+            self.fields["score"].label = "Score"
+            self.fields["reference"].label = "Or type a reference"

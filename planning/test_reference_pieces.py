@@ -41,10 +41,6 @@ class ScoreOrReferenceTests(ReferencePieceTestMixin, TestCase):
                 RolePiece(service_role=self.slot, **fields).validate_constraints()
         RolePiece(service_role=self.slot, reference="NEH 123").validate_constraints()
 
-    def test_proposing_still_needs_a_score_for_now(self):
-        self.client.force_login(self.conductor)
-        self.client.post(f"/roles/{self.slot.pk}/pieces/add/", {"score": ""})
-        self.assertFalse(RolePiece.objects.exists())
 
 
 class ReferenceShownTests(ReferencePieceTestMixin, TestCase):
@@ -70,3 +66,33 @@ class ReferenceShownTests(ReferencePieceTestMixin, TestCase):
 
     def test_a_reference_piece_is_named_by_its_reference(self):
         self.assertEqual(str(self.hymn), "NEH 123 (confirmed)")
+
+
+class ProposeReferenceTests(ReferencePieceTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        self.client.force_login(self.conductor)
+        self.url = f"/roles/{self.slot.pk}/pieces/add/"
+
+    def test_a_reference_can_be_proposed_without_javascript(self):
+        response = self.client.post(self.url, {"score": "", "reference": "NEH 123"})
+        self.assertRedirects(response, self.service.get_absolute_url())
+        self.assertEqual(RolePiece.objects.get().title, "NEH 123")
+
+    def test_neither_or_both_is_refused_with_one_message(self):
+        for data in ({"score": "", "reference": ""}, {"score": self.score.pk, "reference": "NEH 123"}):
+            with self.subTest(data=data):
+                response = self.client.post(self.url, data)
+                self.assertContains(response, "Choose a score or type a reference, not both.", count=1)
+        self.assertFalse(RolePiece.objects.exists())
+
+    def test_a_hymn_slot_asks_for_the_reference_first(self):
+        form = self.client.get(self.url).context["form"]
+        self.assertEqual(list(form.fields), ["reference", "score"])
+        self.assertEqual(form.fields["score"].label, "Or a score from the library")
+
+    def test_other_slots_ask_for_a_score_first(self):
+        motet = ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
+        form = self.client.get(f"/roles/{motet.pk}/pieces/add/").context["form"]
+        self.assertEqual(list(form.fields), ["score", "reference"])
+        self.assertEqual(form.fields["reference"].label, "Or type a reference")

@@ -10,7 +10,7 @@ from accounts.querysets import OrganisationQuerySet
 from library.models import Score
 from ordo.models import CALENDAR_USE_CHOICES
 
-from .slot_kinds import KIND_CHOICES, PROPER_PART_CHOICES, classify
+from .slot_kinds import KIND_CHOICES, PROPER_PART_CHOICES, REFERENCE_FIRST, classify
 
 
 def comment_count_on(model, pks):
@@ -392,6 +392,12 @@ class ServiceRole(models.Model):
             (comment_count_on(RolePiece, piece_pks), "comment"),
         ]
         return [(count, noun) for count, noun in counts if count]
+
+    @property
+    def takes_reference_first(self):
+        """Hymns, psalms and antiphons are usually typed as a reference, so
+        their add-piece form puts the reference box before the scores."""
+        return self.kind in REFERENCE_FIRST
 
     @property
     def is_resolved(self):

@@ -486,10 +486,10 @@ def add_piece(request, role_pk):
     is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
 
     if request.method != "POST":
-        form = RolePieceForm(service=role.service)
+        form = RolePieceForm(role=role)
         return render(request, "planning/add_piece.html", {"role": role, "form": form})
 
-    form = RolePieceForm(request.POST, service=role.service)
+    form = RolePieceForm(request.POST, role=role)
 
     if not form.is_valid() and not is_ajax:
         return render(request, "planning/add_piece.html", {"role": role, "form": form})

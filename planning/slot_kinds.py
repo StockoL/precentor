@@ -86,3 +86,8 @@ def classify(name):
     if words and words[-1] in LAST_WORDS:
         return LAST_WORDS[words[-1]], ""
     return "other", ""
+
+
+# Kinds whose music is usually a number in a book or a chant, not a score
+# in the library, so the add-piece form offers a reference box first.
+REFERENCE_FIRST = {"hymn", "psalm", "antiphon"}
