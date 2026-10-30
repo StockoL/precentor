@@ -1,0 +1,9 @@
+{# A Hymn slot's book and number, when the church has hymnals. The book starts on the one its last hymn came from; after an error, what was chosen and typed is kept. #}
+{% with chosen=form.hymnal.value|default:role.default_hymnal.pk %}
+<label class="visually-hidden" for="id_role_{{ role.pk }}_hymnal">Hymnal for the {{ role.role_name }}</label>
+<select id="id_role_{{ role.pk }}_hymnal" name="hymnal" class="role-block__hymnal">
+    {% for hymnal in role.hymnals_on_offer %}<option value="{{ hymnal.pk }}"{% if hymnal.pk|stringformat:"s" == chosen|stringformat:"s" %} selected{% endif %}>{{ hymnal.short_name }}</option>{% endfor %}
+</select>
+<label class="visually-hidden" for="id_role_{{ role.pk }}_number">Hymn number for the {{ role.role_name }}</label>
+<input type="text" id="id_role_{{ role.pk }}_number" name="number" maxlength="10" class="role-block__number" placeholder="Number" value="{{ form.number.value|default:'' }}">
+{% endwith %}

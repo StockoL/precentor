@@ -109,6 +109,28 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
         self.page.wait_for_selector(".toast--success")
         assert "Piece proposed" in self.page.inner_text(".toast--success")
 
+    def test_a_hymn_is_chosen_by_book_and_number(self):
+        from library.models import Hymnal
+
+        Hymnal.objects.create(organisation=self.service.organisation, name="Catholic Hymns", short_name="CH")
+        Hymnal.objects.create(organisation=self.service.organisation, name="New English Hymnal", short_name="NEH")
+        hymn = ServiceRole.objects.create(service=self.service, role_name="Entrance hymn")
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.evaluate("window.__browser_test_marker = true")
+        # The book and number come first in the page, before the reference.
+        names = self.page.eval_on_selector_all(
+            f"#add-piece-form-{hymn.pk} :is(input, select):not([type=hidden])", "els => els.map(el => el.name)"
+        )
+        assert names[:3] == ["hymnal", "number", "reference"]
+        self.page.select_option(f"#id_role_{hymn.pk}_hymnal", label="NEH")
+        self.page.fill(f"#id_role_{hymn.pk}_number", "53")
+        self.page.click(f"#add-piece-form-{hymn.pk} button[type=submit]")
+        self.page.wait_for_selector(f"#role-{hymn.pk}-pieces li.list-row")
+        assert self.page.evaluate("window.__browser_test_marker") is True
+        assert "NEH 53" in self.page.inner_text(f"#role-{hymn.pk}-pieces")
+        assert self.page.input_value(f"#id_role_{hymn.pk}_number") == ""
+        assert RolePiece.objects.get(service_role=hymn).title == "NEH 53"
+
     def test_a_hymn_is_typed_as_a_reference_before_the_search_box(self):
         hymn = ServiceRole.objects.create(service=self.service, role_name="Entrance hymn")
         form = f"#add-piece-form-{hymn.pk}"

@@ -74,6 +74,16 @@
     width: auto;
   }
 
+  /* A hymn's book is a short code and its number a few characters, so
+     both are only as wide as they need to be. */
+  form .role-block__hymnal {
+    width: auto;
+  }
+
+  form .role-block__number {
+    width: 10ch;
+  }
+
   .role-block__remove {
     margin-inline-start: auto;
   }

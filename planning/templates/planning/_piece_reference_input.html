@@ -1,3 +1,3 @@
 {# The reference box in a slot's add-piece form. A typed reference is kept if the form comes back with an error. #}
-<label class="visually-hidden" for="id_role_{{ role.pk }}_reference">{% if role.takes_reference_first %}Reference{% else %}Or type a reference{% endif %} for the {{ role.role_name }}</label>
-<input type="text" class="role-block__reference" id="id_role_{{ role.pk }}_reference" name="reference" maxlength="200" value="{{ form.reference.value|default:'' }}" placeholder="{% if role.takes_reference_first %}Reference, e.g. NEH 123{% else %}Or type a reference{% endif %}">
+<label class="visually-hidden" for="id_role_{{ role.pk }}_reference">{% if role.takes_reference_first and not role.hymnals_on_offer %}Reference{% else %}Or type a reference{% endif %} for the {{ role.role_name }}</label>
+<input type="text" class="role-block__reference" id="id_role_{{ role.pk }}_reference" name="reference" maxlength="200" value="{{ form.reference.value|default:'' }}" placeholder="{% if role.hymnals_on_offer %}Or type a reference{% elif role.takes_reference_first %}Reference, e.g. NEH 123{% else %}Or type a reference{% endif %}">
