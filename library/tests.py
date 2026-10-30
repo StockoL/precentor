@@ -851,3 +851,33 @@ class NeedingTextTests(TestCase):
             RolePiece.objects.create(service_role=slot, score=score)
         found = Score.objects.for_organisation(church).needing_text()
         self.assertEqual(sorted(found.values_list("title", flat=True)), ["Ave verum", "Salve Regina"])
+
+
+class CompletenessPageTests(TestCase):
+    def setUp(self):
+        self.librarian = make_user("librarian")
+        self.church = self.librarian.organisation
+        self.client.force_login(self.librarian)
+
+    def test_the_counts_match_the_library_filters(self):
+        make_score(organisation=self.church, title="A", voicing="", language="Latin")
+        make_score(organisation=self.church, title="B", voicing="", language="")
+        make_score(organisation=self.church, title="C", voicing="SATB", language="English")
+        response = self.client.get("/library/completeness/")
+        self.assertContains(response, "2 scores with no voicing")
+        self.assertContains(response, "1 score with no language")
+        for param, count in (("voicing", 2), ("language", 1)):
+            with self.subTest(param=param):
+                listed = self.client.get("/library/", {param: "unspecified"}).context["scores"]
+                self.assertEqual(len(listed), count)
+
+    def test_nothing_missing_reads_as_done(self):
+        make_score(organisation=self.church, title="C", voicing="SATB", language="English")
+        response = self.client.get("/library/completeness/")
+        for done in ("Every score has a voicing.", "Every score has a language.",
+                     "Every score planned as a motet or antiphon has its text."):
+            with self.subTest(done=done):
+                self.assertContains(response, done)
+
+    def test_the_library_links_to_it(self):
+        self.assertContains(self.client.get("/library/"), 'href="/library/completeness/"')

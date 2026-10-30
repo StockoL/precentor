@@ -14,6 +14,7 @@ urlpatterns = [
     path("imports/", views.ScoreImportListView.as_view(), name="score_import_list"),
     path("import/template/", views.import_template, name="import_template"),
     path("export/", views.export_library, name="export_library"),
+    path("completeness/", views.completeness, name="completeness"),
     path("import/<int:pk>/", views.ScoreImportDetailView.as_view(), name="score_import_detail"),
     path("import/<int:pk>/keep/", views.keep_import, name="keep_import"),
     path("import/<int:pk>/remove/", views.remove_import, name="remove_import"),

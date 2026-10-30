@@ -266,6 +266,20 @@ class ScoreDeleteView(LibraryEditRequiredMixin, OrganisationScopedMixin, DeleteP
         return redirect(self.get_success_url())
 
 
+@login_required
+def completeness(request):
+    """What the library's details are missing, as counts that link to the
+    Library's own filters, and the motet and antiphon scores with no text
+    listed by name, as no filter shows those."""
+    scores = own(Score, request)
+    return render(request, "library/completeness.html", {
+        "no_voicing": scores.filter(voicing="").count(),
+        "no_language": scores.filter(language="").count(),
+        "needing_text": list(scores.needing_text().order_by("title")),
+        "unspecified": ScoreQuerySet.UNSPECIFIED,
+    })
+
+
 @role_required(can_edit_library)
 def import_template(request):
     """The headers of Precentor's import format, as a CSV to fill in. It's

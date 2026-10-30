@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Library completeness — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Library completeness</h1>
+    <p>What the library's details are missing. None of it is required: each gap filled makes suggestions, the Library's filters or the pew sheet a little better, so fill them in whenever there's time.</p>
+
+    {# Plain counts, in the ordinary text colour: a gap is information, not a fault. Each count matches the Library filter it links to. #}
+    <ul class="flow" role="list">
+        <li>
+            {% if no_voicing %}
+            <a href="{% url 'library:score_list' %}?voicing={{ unspecified }}">{{ no_voicing }} score{{ no_voicing|pluralize }} with no voicing</a>
+            {% else %}
+            Every score has a voicing.
+            {% endif %}
+        </li>
+        <li>
+            {% if no_language %}
+            <a href="{% url 'library:score_list' %}?language={{ unspecified }}">{{ no_language }} score{{ no_language|pluralize }} with no language</a>
+            {% else %}
+            Every score has a language.
+            {% endif %}
+        </li>
+        <li>
+            {% if needing_text %}
+            <div class="flow" style="--flow-space: var(--spacing-3xs);">
+            <p>{{ needing_text|length }} score{{ needing_text|length|pluralize }} planned as a motet or antiphon with no text yet:</p>
+            <ul>
+                {% for score in needing_text %}
+                <li>{% if can.edit_library %}<a href="{% url 'library:score_update' score.pk %}?next={{ request.path|urlencode }}">{{ score }}</a>{% else %}<a href="{{ score.get_absolute_url }}">{{ score }}</a>{% endif %}</li>
+                {% endfor %}
+            </ul>
+            </div>
+            {% else %}
+            Every score planned as a motet or antiphon has its text.
+            {% endif %}
+        </li>
+    </ul>
+</div>
+{% endblock %}
