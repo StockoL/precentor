@@ -23,6 +23,11 @@ LAYOUT_STYLE_CHOICES = [
     ("simple", "Simple single column"),
 ]
 
+ARRANGEMENT_CHOICES = [
+    ("service_order", "In service order"),
+    ("propers_beside", "Propers beside the rest"),
+]
+
 
 class SiteConfig(models.Model):
     # Each organisation has its own settings, made by SiteConfig.of().
@@ -60,6 +65,11 @@ class SiteConfig(models.Model):
         max_length=20,
         choices=LAYOUT_STYLE_CHOICES,
         default="columns",
+    )
+    # Within each service: every slot in order, or the propers in a column
+    # of their own beside the rest of the music.
+    music_list_arrangement = models.CharField(
+        max_length=20, choices=ARRANGEMENT_CHOICES, default="service_order"
     )
     show_hymns_psalm = models.BooleanField(
         "show hymns and psalm on the music list", default=True
