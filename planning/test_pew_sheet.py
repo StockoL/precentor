@@ -74,3 +74,7 @@ class PewSheetPageTests(PewSheetTestMixin, TestCase):
 
         self.client.force_login(make_user("viewer", organisation=make_organisation("St Elsewhere")))
         self.assertEqual(self.client.get(self.url).status_code, 404)
+
+    def test_the_service_page_links_to_it_for_everyone(self):
+        response = self.client.get(self.service.get_absolute_url())
+        self.assertContains(response, f'href="{self.url}"')
