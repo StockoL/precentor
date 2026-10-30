@@ -342,6 +342,18 @@ class Service(models.Model):
         rest = [row for row in rows if row["kind"] != "proper"]
         return [group for group in (propers, rest) if group]
 
+    def pew_sheet_rows(self):
+        """The slots to print for the congregation: each that has a
+        confirmed piece, in order, with the pieces themselves, as a score's
+        text and composer may be printed too. Uses .all(), so prefetched
+        slots and pieces cost nothing."""
+        rows = []
+        for role in self.roles.all():
+            confirmed = [piece for piece in role.pieces.all() if piece.is_confirmed]
+            if confirmed and not role.is_not_applicable:
+                rows.append({"role_name": role.role_name, "kind": role.kind, "pieces": confirmed})
+        return rows
+
 
 class TermMarker(models.Model):
     term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name="markers")
