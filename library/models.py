@@ -45,6 +45,17 @@ class ScoreQuerySet(OrganisationQuerySet):
             )
         return self.filter(voicing=voicing)
 
+    # Slot kinds whose music is sung words a pew sheet prints.
+    TEXT_KINDS = ["motet", "antiphon"]
+
+    def needing_text(self):
+        """Scores with no text that have been planned into a motet or
+        antiphon slot, so a pew sheet would want their words. Scores never
+        used there, such as Mass settings, aren't counted. The slot is
+        reached by name in the lookup, so library still doesn't import
+        from planning."""
+        return self.filter(text="", role_pieces__service_role__kind__in=self.TEXT_KINDS).distinct()
+
     def with_last_sung(self):
         """
         Annotate each score with last_sung: the latest date it was sung.

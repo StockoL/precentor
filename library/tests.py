@@ -828,3 +828,26 @@ class EditScoreReturnTests(TestCase):
     def test_another_site_is_ignored(self):
         response = self.client.post(self.url, {**self.data, "next": "https://example.com/"})
         self.assertRedirects(response, f"/library/{self.score.pk}/", fetch_redirect_response=False)
+
+
+class NeedingTextTests(TestCase):
+    def test_only_untexted_scores_from_motet_or_antiphon_slots_count_once(self):
+        from datetime import date
+
+        from planning.models import RolePiece, Service, ServiceRole
+
+        church = make_organisation()
+        service = Service.objects.create(term=make_term(organisation=church), date=date(2026, 1, 11),
+                                         service_type="Sung Mass")
+        motet = ServiceRole.objects.create(service=service, role_name="Offertory motet")
+        antiphon = ServiceRole.objects.create(service=service, role_name="Marian antiphon")
+        kyrie = ServiceRole.objects.create(service=service, role_name="Kyrie")
+        needs = make_score(organisation=church, title="Ave verum")
+        texted = make_score(organisation=church, title="Locus iste", text="Locus iste a Deo factus est")
+        setting = make_score(organisation=church, title="Missa brevis")
+        salve = make_score(organisation=church, title="Salve Regina")
+        make_score(organisation=church, title="Never planned")
+        for slot, score in ((motet, needs), (antiphon, needs), (motet, texted), (kyrie, setting), (antiphon, salve)):
+            RolePiece.objects.create(service_role=slot, score=score)
+        found = Score.objects.for_organisation(church).needing_text()
+        self.assertEqual(sorted(found.values_list("title", flat=True)), ["Ave verum", "Salve Regina"])
