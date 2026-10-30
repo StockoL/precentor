@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Edit hymn — Precentor{% endblock %}
+{% block extra_js %}
+<script type="module" src="{% static 'src/js/tag-input.js' %}"></script>
+{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Edit {{ hymn.heading }}</h1>
+    <p>Everything here is optional; each detail helps a little, and nothing needs it.</p>
+    <form method="post" class="flow">
+        {% csrf_token %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        {{ form.non_field_errors }}
+        <fieldset class="flow">
+            <legend>Hymn</legend>
+            <div>{{ form.first_line.as_field_group }}</div>
+        </fieldset>
+        <fieldset class="flow">
+            <legend>Text</legend>
+            <p class="list-row__meta">Only enter texts you're entitled to reproduce.</p>
+            <div>{{ form.text.as_field_group }}</div>
+            <div>{{ form.text_credit.as_field_group }}</div>
+        </fieldset>
+        <fieldset class="flow">
+            <legend>Liturgical use</legend>
+            {# tag-input.js turns each select into chips; without JavaScript they stay lists. #}
+            <div data-tag-input>{{ form.suited_use_types.as_field_group }}</div>
+            <div data-tag-input>{{ form.suited_seasons.as_field_group }}</div>
+            <div data-tag-input>{{ form.suited_occasions.as_field_group }}</div>
+        </fieldset>
+        <div class="cluster">
+            <button class="btn-primary" type="submit">Save</button>
+            <a class="btn-ghost" href="{% if next %}{{ next }}{% else %}{{ hymn.get_absolute_url }}{% endif %}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

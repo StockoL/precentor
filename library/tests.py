@@ -1104,3 +1104,39 @@ class HymnPageTests(TestCase):
         self.assertContains(response, "<dd>Easter</dd>", html=True)
         hymnal_page = self.client.get(f"/library/hymnals/{self.entry.hymnal_id}/")
         self.assertContains(hymnal_page, f'href="/library/hymns/{self.hymn.pk}/"')
+
+
+class HymnFormTests(TestCase):
+    def setUp(self):
+        from .models import Hymnal, HymnEntry
+
+        self.librarian = make_user("librarian")
+        self.church = self.librarian.organisation
+        neh = Hymnal.objects.create(organisation=self.church, name="New English Hymnal", short_name="NEH")
+        self.hymn = HymnEntry.find_or_make(neh, "53").hymn
+        self.url = f"/library/hymns/{self.hymn.pk}/edit/"
+        self.client.force_login(self.librarian)
+
+    def test_a_librarian_adds_details_and_tags(self):
+        use = make_use_type("Communion", organisation=self.church)
+        response = self.client.post(self.url, {
+            "first_line": "Ye choirs of new Jerusalem", "text": "", "text_credit": "", "suited_use_types": [use.pk],
+        })
+        self.assertRedirects(response, f"/library/hymns/{self.hymn.pk}/")
+        self.hymn.refresh_from_db()
+        self.assertEqual(self.hymn.first_line, "Ye choirs of new Jerusalem")
+        self.assertEqual(list(self.hymn.suited_use_types.all()), [use])
+
+    def test_another_churchs_use_type_isnt_accepted(self):
+        theirs = make_use_type("Theirs", organisation=make_organisation("St Elsewhere"))
+        response = self.client.post(self.url, {"first_line": "", "suited_use_types": [theirs.pk]})
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(self.hymn.suited_use_types.exists())
+
+    def test_saving_goes_back_to_where_the_edit_began(self):
+        response = self.client.post(self.url, {"first_line": "", "next": "/services/4/"})
+        self.assertRedirects(response, "/services/4/", fetch_redirect_response=False)
+
+    def test_a_viewer_cant_edit(self):
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        self.assertEqual(self.client.get(self.url).status_code, 403)

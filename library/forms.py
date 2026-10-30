@@ -5,7 +5,7 @@ from ordo.fields import OccasionMultipleChoiceField
 from ordo.models import LiturgicalOccasion, UseType
 from precentor_project.widgets import NativeDateInput
 
-from .models import Hymnal, Score
+from .models import Hymn, Hymnal, Score
 
 
 class ScoreForm(forms.ModelForm):
@@ -132,3 +132,22 @@ class HymnalForm(forms.ModelForm):
         if same.exclude(pk=self.instance.pk).exists():
             raise forms.ValidationError(f"You already have a hymnal with the code {code}.")
         return code
+
+
+class HymnForm(forms.ModelForm):
+    """A hymn's optional details. Its tags work as a score's do, from the
+    church's own use types and calendar, but use types are only picked
+    here: new ones are made on the score form."""
+
+    class Meta:
+        model = Hymn
+        fields = ["first_line", "text", "text_credit", "suited_use_types", "suited_seasons", "suited_occasions"]  # noqa
+        field_classes = {"suited_occasions": OccasionMultipleChoiceField}  # noqa
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["suited_use_types"].queryset = UseType.objects.for_organisation(self.instance.organisation_id)
+        keep = list(self.instance.suited_occasions.values_list("pk", flat=True)) if self.instance.pk else []
+        self.fields["suited_occasions"].queryset = LiturgicalOccasion.objects.listable(
+            SiteConfig.national_calendar_of(self.instance.organisation_id), keep
+        )

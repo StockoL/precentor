@@ -158,6 +158,7 @@ ADDRESSES = {
     "library:hymnal_update": lambda a, b: [{"pk": b["hymnal"].pk}],
     "library:hymnal_detail": lambda a, b: [{"pk": b["hymnal"].pk}],
     "library:hymn_detail": lambda a, b: [{"pk": b["hymn"].pk}],
+    "library:hymn_update": lambda a, b: [{"pk": b["hymn"].pk}],
     "library:hymnal_delete": lambda a, b: [{"pk": b["hymnal"].pk}],
     "library:remove_import": lambda a, b: [{"pk": b["score_import"].pk}],
     "planning:term_update": lambda a, b: [{"pk": b["term"].pk}],

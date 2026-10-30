@@ -28,7 +28,7 @@ from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 from precentor_project.mixins import DeletePageMixin
 from precentor_project.utils import safe_next
 
-from .forms import HymnalForm, ScoreForm, ScoreImportForm
+from .forms import HymnalForm, HymnForm, ScoreForm, ScoreImportForm
 from .importing import (
     COLUMNS, IMPORT_EXAMPLE, MAX_BYTES, MAX_ROWS, ImportProblem, check_file, export_rows, save_import,
 )
@@ -435,6 +435,23 @@ class HymnDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):
     def get_context_data(self, **kwargs):
         entries = sorted(self.object.entries.select_related("hymnal"), key=HymnEntry.number_order)
         return super().get_context_data(entries=entries, **kwargs)
+
+
+class HymnUpdateView(LibraryEditRequiredMixin, OrganisationScopedMixin, UpdateView):
+    """A hymn's details. Opened from a service with ?next=, it goes back
+    there after saving; otherwise to the hymn's page."""
+
+    model = Hymn
+    form_class = HymnForm
+
+    def next_url(self):
+        return safe_next(self.request, self.request.POST.get("next") or self.request.GET.get("next"))
+
+    def get_success_url(self):
+        return self.next_url() or self.object.get_absolute_url()
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(next=self.next_url(), **kwargs)
 
 
 class HymnalCreateView(LibraryEditRequiredMixin, OrganisationCreateMixin, CreateView):
