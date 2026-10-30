@@ -1,7 +1,6 @@
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -495,13 +494,10 @@ class RolePiece(models.Model):
                     | (models.Q(score__isnull=True) & ~models.Q(reference=""))
                 ),
                 name="role_piece_score_or_reference",
+                # Django checks this in a form too, so this is its message.
+                violation_error_message="Choose a score or type a reference, not both.",
             ),
         ]
-
-    def clean(self):
-        """The database's rule, checked first so a form can say so."""
-        if (self.score_id is None) == (not self.reference.strip()):
-            raise ValidationError("Choose a score or type a reference, not both.")
 
     def save(self, *args, **kwargs):
         self.organisation_id = self.service_role.organisation_id

@@ -34,11 +34,12 @@ class ScoreOrReferenceTests(ReferencePieceTestMixin, TestCase):
             with self.subTest(fields=fields), self.assertRaises(IntegrityError), transaction.atomic():
                 RolePiece.objects.create(service_role=self.slot, **fields)
 
-    def test_clean_says_so_before_the_database_does(self):
-        for fields in ({"reference": "   "}, {"score": self.score, "reference": "NEH 123"}):
-            with self.subTest(fields=fields), self.assertRaises(ValidationError):
-                RolePiece(service_role=self.slot, **fields).clean()
-        RolePiece(service_role=self.slot, reference="NEH 123").clean()
+    def test_the_rule_gives_its_message_before_the_database_is_asked(self):
+        message = "Choose a score or type a reference, not both."
+        for fields in ({}, {"score": self.score, "reference": "NEH 123"}):
+            with self.subTest(fields=fields), self.assertRaisesMessage(ValidationError, message):
+                RolePiece(service_role=self.slot, **fields).validate_constraints()
+        RolePiece(service_role=self.slot, reference="NEH 123").validate_constraints()
 
     def test_proposing_still_needs_a_score_for_now(self):
         self.client.force_login(self.conductor)
