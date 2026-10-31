@@ -434,7 +434,29 @@ class HymnDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         entries = sorted(self.object.entries.select_related("hymnal"), key=HymnEntry.number_order)
-        return super().get_context_data(entries=entries, **kwargs)
+        # Hymns that may be this one printed elsewhere, each with where.
+        matches = [
+            (other, ", ".join(str(entry) for entry in other.entries.all()))
+            for other in self.object.possible_matches()
+        ] if can_edit_library(self.request.user) else []
+        return super().get_context_data(entries=entries, matches=matches, **kwargs)
+
+
+@role_required(can_edit_library)
+@require_POST
+def same_hymn(request, pk, other_pk):
+    """Answer "is this the same hymn?": yes joins the two, keeping every
+    entry and the services that used them; no is remembered, so it isn't
+    asked again. Both hymns must be the church's own."""
+    hymn = get_object_or_404(own(Hymn, request), pk=pk)
+    other = get_object_or_404(own(Hymn, request).exclude(pk=pk), pk=other_pk)
+    if request.POST.get("answer") == "same":
+        hymn.absorb(other)
+        messages.success(request, "Joined: they're one hymn now, under every number it's printed at.")
+    else:
+        hymn.not_same_as.add(other)
+        messages.success(request, "Noted: they're different hymns, and you won't be asked again.")
+    return redirect(hymn)
 
 
 class HymnUpdateView(LibraryEditRequiredMixin, OrganisationScopedMixin, UpdateView):

@@ -1189,3 +1189,26 @@ class SameHymnTests(TestCase):
         self.assertEqual(self.hymn.text, "The words")
         piece.refresh_from_db()
         self.assertEqual(piece.hymn_entry.hymn, self.hymn)
+
+    def ask(self, answer, role="librarian"):
+        self.client.force_login(make_user(role, organisation=self.church))
+        return self.client.post(f"/library/hymns/{self.hymn.pk}/same-as/{self.other.pk}/", {"answer": answer})
+
+    def test_the_hymns_page_asks_those_who_edit_the_library(self):
+        self.client.force_login(make_user("librarian", organisation=self.church))
+        self.assertContains(self.client.get(f"/library/hymns/{self.hymn.pk}/"), "Is this the same hymn as CHON 211?")
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        self.assertNotContains(self.client.get(f"/library/hymns/{self.hymn.pk}/"), "Is this the same hymn")
+
+    def test_yes_joins_them(self):
+        from .models import Hymn
+
+        self.assertRedirects(self.ask("same"), f"/library/hymns/{self.hymn.pk}/")
+        self.assertFalse(Hymn.objects.filter(pk=self.other.pk).exists())
+
+    def test_no_is_remembered(self):
+        self.ask("different")
+        self.assertEqual(self.hymn.possible_matches(), [])
+
+    def test_a_viewer_cant_answer(self):
+        self.assertEqual(self.ask("same", role="viewer").status_code, 403)

@@ -10,6 +10,22 @@
         </div>
         {% endif %}
     </header>
+    {# Asked, never decided: a matching first line may be one hymn in two books, or two hymns that begin alike. #}
+    {% for other, where in matches %}
+    <div class="callout flow" style="--flow-space: var(--spacing-2xs);">
+        <p>Is this the same hymn as {{ where }}? Its first line matches.</p>
+        <div class="cluster">
+            <form method="post" action="{% url 'library:same_hymn' hymn.pk other.pk %}">
+                {% csrf_token %}
+                <button class="btn" type="submit" name="answer" value="same">Yes, the same hymn</button>
+            </form>
+            <form method="post" action="{% url 'library:same_hymn' hymn.pk other.pk %}">
+                {% csrf_token %}
+                <button class="btn-ghost" type="submit" name="answer" value="different">No, a different hymn</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
     <dl class="detail-list">
         <dt>Printed in</dt>
         <dd>{% for entry in entries %}<a href="{{ entry.hymnal.get_absolute_url }}">{{ entry }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>

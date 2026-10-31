@@ -159,6 +159,12 @@ ADDRESSES = {
     "library:hymnal_detail": lambda a, b: [{"pk": b["hymnal"].pk}],
     "library:hymn_detail": lambda a, b: [{"pk": b["hymn"].pk}],
     "library:hymn_update": lambda a, b: [{"pk": b["hymn"].pk}],
+    # Both of the other church's, and one of each either way round.
+    "library:same_hymn": lambda a, b: [
+        {"pk": b["hymn"].pk, "other_pk": b["hymn"].pk},
+        {"pk": a["hymn"].pk, "other_pk": b["hymn"].pk},
+        {"pk": b["hymn"].pk, "other_pk": a["hymn"].pk},
+    ],
     "library:hymnal_delete": lambda a, b: [{"pk": b["hymnal"].pk}],
     "library:remove_import": lambda a, b: [{"pk": b["score_import"].pk}],
     "planning:term_update": lambda a, b: [{"pk": b["term"].pk}],
