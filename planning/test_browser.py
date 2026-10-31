@@ -148,6 +148,24 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
         assert self.page.input_value(f"#id_role_{hymn.pk}_number") == "1"
         assert "For Advent" in self.page.inner_text(f"#add-piece-form-{hymn.pk}")
 
+    def test_the_days_chant_is_proposed_in_one_click(self):
+        from ordo.models import ProperChant
+
+        ProperChant.objects.create(occasion_key="tempora:Epi1-0", calendar_use="historic", part="introit",
+                                   incipit="In excelso throno", source="test")
+        self.service.occasion = LiturgicalOccasion.objects.create(
+            name="Holy Family", key="tempora:Epi1-0", calendar_use="historic"
+        )
+        self.service.save()
+        introit = ServiceRole.objects.create(service=self.service, role_name="Introit")
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.evaluate("window.__browser_test_marker = true")
+        self.page.click(f"#add-piece-form-{introit.pk} [data-propose-reference]")
+        self.page.wait_for_selector(f"#role-{introit.pk}-pieces li.list-row")
+        assert self.page.evaluate("window.__browser_test_marker") is True
+        assert RolePiece.objects.get(service_role=introit).reference == "In excelso throno"
+        assert self.page.locator(f"#add-piece-form-{introit.pk} [data-propose-reference]").count() == 0
+
     def test_a_hymn_is_typed_as_a_reference_before_the_search_box(self):
         hymn = ServiceRole.objects.create(service=self.service, role_name="Entrance hymn")
         form = f"#add-piece-form-{hymn.pk}"

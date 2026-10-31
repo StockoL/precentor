@@ -18,4 +18,11 @@ once for every slot.
     {{ form.score.errors }}
     <button type="submit">Propose piece</button>
     {% if role.hymn_suggestions %}{% include "planning/_hymn_suggestions.html" %}{% endif %}
+    {% with chant=role.proper_suggestion %}{% if chant %}
+    {# The day's chant from the 1962 Missal: one click proposes it as a reference (service-detail.js). #}
+    <p class="role-block__proper-suggestion">
+        <span class="role-block__hymn-reasons">For this day:</span>
+        <button type="button" class="btn-ghost" data-propose-reference="{{ chant }}"><span class="visually-hidden">Propose </span>{{ chant }}</button>
+    </p>
+    {% endif %}{% endwith %}
 </form>

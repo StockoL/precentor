@@ -138,6 +138,15 @@ function initServiceDetail() {
   // A suggested hymn fills in its slot's book and number, ready to
   // propose; one listener for the page, so forms swapped in later work too.
   main.addEventListener("click", (event) => {
+    // The day's chant on a Proper slot is proposed in one click, through
+    // the form's own submit below.
+    const chant = event.target.closest("[data-propose-reference]");
+    if (chant) {
+      const form = chant.closest("form");
+      form.querySelector("input[name='reference']").value = chant.dataset.proposeReference;
+      form.requestSubmit();
+      return;
+    }
     const button = event.target.closest("[data-fill-number]");
     if (!button) return;
     const form = button.closest("form");
@@ -166,8 +175,9 @@ function initServiceDetail() {
     if (form.matches(".ajax-propose-piece")) {
       event.preventDefault();
       const rolePk = form.dataset.rolePk;
+      const fields = new FormData(form);
       try {
-        const data = await postForm(form.action, new FormData(form));
+        const data = await postForm(form.action, fields);
         const unmatched = applyFragments(data.fragments);
         const ul = document.getElementById(`role-${rolePk}-pieces`);
         Object.values(unmatched).forEach((html) => {
@@ -175,6 +185,11 @@ function initServiceDetail() {
           ul.appendChild(fragmentToElement(html));
         });
         form.reset();
+        // Once the day's chant is proposed, it's no longer offered.
+        const chant = form.querySelector("[data-propose-reference]");
+        if (chant && chant.dataset.proposeReference === fields.get("reference")) {
+          chant.closest(".role-block__proper-suggestion").remove();
+        }
         showToast("Piece proposed.", "success");
       } catch (err) {
         if (err instanceof AjaxError) {

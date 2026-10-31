@@ -98,11 +98,13 @@
   }
 
   /* A Hymn slot's suggestions take a line of their own under the form. */
-  .role-block__hymn-suggestions {
+  .role-block__hymn-suggestions,
+  .role-block__proper-suggestion {
     flex-basis: 100%;
   }
 
-  .role-block__hymn-suggestions button {
+  .role-block__hymn-suggestions button,
+  .role-block__proper-suggestion button {
     font-size: var(--typography-step--1);
     min-block-size: auto;
     padding-block: var(--spacing-3xs);
