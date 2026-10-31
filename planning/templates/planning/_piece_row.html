@@ -1,6 +1,6 @@
-<li id="piece-row-{{ piece.pk }}" class="list-row">
+<li id="piece-row-{{ piece.pk }}" class="list-row list-row--wrap">
     <span>
-        {{ piece.title }}
+        {{ piece.title }}{% if piece.sung_tune %}, to {{ piece.sung_tune }}{% endif %}
         <span class="badge badge--{% if piece.is_confirmed %}confirmed{% else %}proposed{% endif %}">
             {% if piece.is_confirmed %}Confirmed{% else %}Proposed{% endif %}
         </span>
@@ -11,6 +11,17 @@
         {% if can.edit_library and piece.hymn_entry and not piece.hymn_entry.hymn.first_line %}
         <span class="list-row__meta">No first line recorded yet. <a href="{% url 'library:hymn_update' piece.hymn_entry.hymn_id %}?next={{ piece.get_absolute_url|urlencode }}">Add it<span class="visually-hidden"> for {{ piece.hymn_entry }}</span></a></span>
         {% endif %}
+        {# A hymn's tune, chosen here once it's in the slot: the book's own, others it prints in the same metre, then the rest. #}
+        {% if can.plan and piece.hymn_entry %}{% with choices=piece.tune_choices %}{% if choices %}
+        <form method="post" action="{% url 'planning:set_tune' piece.pk %}" class="cluster form-inline role-block__tune">
+            {% csrf_token %}
+            <label class="visually-hidden" for="tune-{{ piece.pk }}">Tune for {{ piece.hymn_entry }}</label>
+            <select id="tune-{{ piece.pk }}" name="tune">
+                {% for label, tunes in choices %}<optgroup label="{{ label }}">{% for tune in tunes %}<option value="{{ tune.pk }}"{% if tune == piece.sung_tune %} selected{% endif %}>{{ tune }}</option>{% endfor %}</optgroup>{% endfor %}
+            </select>
+            <button type="submit" id="set-tune-{{ piece.pk }}" class="btn-ghost">Set tune<span class="visually-hidden"> for {{ piece.hymn_entry }}</span></button>
+        </form>
+        {% endif %}{% endwith %}{% endif %}
     </span>
     {% if can.plan %}
     <form method="post" action="{% url 'planning:toggle_confirm' piece.pk %}" class="ajax-toggle-confirm">

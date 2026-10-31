@@ -597,6 +597,14 @@ class RolePiece(models.Model):
     def __str__(self):
         return f"{self.title} ({'confirmed' if self.is_confirmed else 'proposed'})"
 
+    @property
+    def sung_tune(self):
+        """The tune a hymn is sung to: the one chosen here, or else the
+        one its book prints it with. None for anything else."""
+        if not self.hymn_entry_id:
+            return None
+        return self.tune or self.hymn_entry.tune
+
     def tune_choices(self):
         """
         The tunes a hymn piece could be sung to, in groups: the book's own

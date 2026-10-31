@@ -309,3 +309,26 @@ class TuneChoiceTests(ReferencePieceTestMixin, TestCase):
         self.assertEqual(reference.tune_choices(), [])
         with self.assertRaises(IntegrityError), transaction.atomic():
             RolePiece.objects.create(service_role=self.slot, reference="Psalm 23", tune=self.usual)
+
+    def choose(self, tune, role="conductor"):
+        user = self.conductor if role == "conductor" else make_user(role, organisation=self.church)
+        self.client.force_login(user)
+        return self.client.post(f"/pieces/{self.piece.pk}/tune/", {"tune": tune.pk})
+
+    def test_a_conductor_chooses_another_tune_and_back_to_the_usual(self):
+        self.assertRedirects(self.choose(self.printed), self.service.get_absolute_url())
+        self.piece.refresh_from_db()
+        self.assertEqual((self.piece.tune, self.piece.sung_tune), (self.printed, self.printed))
+        self.assertContains(self.client.get(self.service.get_absolute_url()), "NEH 53, to Printed")
+        self.choose(self.usual)
+        self.piece.refresh_from_db()
+        self.assertEqual((self.piece.tune, self.piece.sung_tune), (None, self.usual))
+
+    def test_another_churchs_tune_or_a_librarian_is_refused(self):
+        from library.models import Tune
+
+        theirs = Tune.objects.create(organisation=make_organisation("St Elsewhere"), name="Theirs", metre="LM")
+        self.choose(theirs)
+        self.assertEqual(self.choose(self.printed, role="librarian").status_code, 403)
+        self.piece.refresh_from_db()
+        self.assertIsNone(self.piece.tune)

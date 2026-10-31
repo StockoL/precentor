@@ -84,6 +84,19 @@
     width: 10ch;
   }
 
+  /* A hymn's tune, chosen on its row: compact like the slot's own
+     controls, and never wider than the row, however long a tune's name. */
+  .role-block__tune :is(select, button) {
+    font-size: var(--typography-step--2);
+    min-block-size: auto;
+    padding-block: var(--spacing-3xs);
+  }
+
+  form.role-block__tune select {
+    width: auto;
+    max-inline-size: 100%;
+  }
+
   .role-block__remove {
     margin-inline-start: auto;
   }

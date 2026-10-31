@@ -224,7 +224,8 @@ class ServiceDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView)
     # every slot read the same rows: a fixed number of queries however
     # many slots there are.
     queryset = Service.objects.select_related("term", "occasion__season").prefetch_related(
-        "roles__pieces__score", "roles__pieces__hymn_entry__hymnal", "roles__pieces__hymn_entry__hymn"
+        "roles__pieces__score", "roles__pieces__tune", "roles__pieces__hymn_entry__hymnal",
+        "roles__pieces__hymn_entry__hymn", "roles__pieces__hymn_entry__tune",
     )
 
     def get_context_data(self, **kwargs):
@@ -398,7 +399,10 @@ def add_role(request, service_pk):
 
 def _slots_fragment(request, service):
     """The service's slot list, redrawn after a slot moves or goes."""
-    roles = service.roles.prefetch_related("pieces__score", "pieces__hymn_entry__hymnal", "pieces__hymn_entry__hymn")
+    roles = service.roles.prefetch_related(
+        "pieces__score", "pieces__tune", "pieces__hymn_entry__hymnal", "pieces__hymn_entry__hymn",
+        "pieces__hymn_entry__tune",
+    )
     return {
         "roles-list": render_to_string(
             "planning/_roles_list.html", {"roles": roles, "service": service}, request=request
@@ -526,6 +530,29 @@ def toggle_confirm(request, piece_pk):
         ),
     }
     return ajax_or_redirect(request, fragments, service.get_absolute_url())
+
+
+@role_required(can_plan)
+@require_POST
+def set_tune(request, piece_pk):
+    """
+    Choose the tune a hymn is sung to here. Only one of the piece's own
+    choices is accepted, so never another church's tune; choosing the
+    book's usual tune stores nothing, as that's what a hymn is sung to
+    unless someone says otherwise.
+    """
+    piece = get_object_or_404(own(RolePiece, request), pk=piece_pk)
+    url = piece.service_role.service.get_absolute_url()
+    usual = piece.hymn_entry.tune if piece.hymn_entry_id else None
+    allowed = {str(tune.pk): tune for _, tunes in piece.tune_choices() for tune in tunes}
+    choice = request.POST.get("tune", "")
+    if choice not in allowed:
+        return ajax_or_redirect(request, {}, url, error_message="Choose one of the tunes listed.", status=400)
+    piece.tune = None if allowed[choice] == usual else allowed[choice]
+    piece.save(update_fields=["tune"])
+    row = render_to_string("planning/_piece_row.html", {"piece": piece}, request=request)
+    fragments = {f"piece-row-{piece.pk}": row}
+    return ajax_or_redirect(request, fragments, url)
 
 
 @login_required

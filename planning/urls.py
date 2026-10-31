@@ -69,6 +69,7 @@ urlpatterns = [
     path("roles/<int:role_pk>/pieces/add/", views.add_piece, name="add_piece"),
     path("roles/<int:role_pk>/move/", views.move_slot, name="move_slot"),
     path("roles/<int:role_pk>/kind/", views.change_kind, name="change_kind"),
+    path("pieces/<int:piece_pk>/tune/", views.set_tune, name="set_tune"),
     path("services/<int:pk>/sheet/", views.service_pew_sheet, name="service_pew_sheet"),
     path("roles/<int:role_pk>/remove/", views.remove_slot, name="remove_slot"),
     path("services/<int:service_pk>/slots/order/", views.reorder_slots, name="reorder_slots"),
