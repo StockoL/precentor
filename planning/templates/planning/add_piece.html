@@ -4,6 +4,17 @@
 <div class="flow">
     <h1>Propose a piece</h1>
     <p>For the {{ role.role_name }} at <a href="{{ role.service.get_absolute_url }}">{{ role.service }}</a>. Choose a score from the library, or type a reference such as a hymn number. Suggested scores come first, each with the reason it's suggested.</p>
+    {% with chant=role.proper_suggestion %}{% if chant %}
+    {# The day's chant from the 1962 Missal, in a form of its own, as the main form takes only one piece. #}
+    <section class="flow" style="--flow-space: var(--spacing-2xs);">
+        <h2>For this day</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="reference" value="{{ chant }}">
+            <button type="submit">Propose {{ chant }}</button>
+        </form>
+    </section>
+    {% endif %}{% endwith %}
     {% if role.hymn_suggestions %}
     {# The same hymns the service page offers, to read and type in, as this page works without JavaScript. #}
     <section class="flow" style="--flow-space: var(--spacing-2xs);">
