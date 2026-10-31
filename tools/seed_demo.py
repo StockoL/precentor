@@ -116,7 +116,10 @@ def main():
     call_command("migrate", verbosity=0)
     call_command("createcachetable", verbosity=0)
     call_command("load_calendar", verbosity=0)
-    Organisation.objects.filter(name=CHURCH).delete()
+    # One at a time, as a queryset's delete() skips Organisation.delete(),
+    # which clears what would otherwise protect the church's scores.
+    for church in Organisation.objects.filter(name=CHURCH):
+        church.delete()
     User.objects.filter(email__endswith="@stealred.example").delete()
 
     church = create_organisation(CHURCH)
