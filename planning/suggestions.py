@@ -12,7 +12,8 @@ from datetime import timedelta
 from django.utils import timezone
 from django.utils.timesince import timesince
 
-from library.models import Score
+from library.models import Hymn, Score
+from ordo.models import UseType
 
 from .models import RolePiece
 
@@ -162,3 +163,57 @@ def page_options(service, window_weeks):
         }
         for facts in sorted(facts_for(service, window_weeks), key=order)
     ]
+
+
+def hymn_suggestions(role, window_weeks, limit=8):
+    """
+    The hymns to suggest for a Hymn slot, by the same rules as scores but
+    with hymns' own repeat window: each as its number in the slot's usual
+    book where it has one, with its reasons. Only hymns tagged for the
+    day, the season or the slot's use are suggested, at most a handful,
+    as a whole hymnal would be no help; hymns sung recently come last.
+    """
+    service = role.service
+    hymnals = role.hymnals_on_offer
+    if not hymnals:
+        return []
+    occasion_names = {o.pk: str(o) for o in [service.occasion, *service.additional_occasions.all()] if o}
+    season = service.occasion.season if service.occasion else None
+    use_type = slot_use_type(role, UseType.objects.for_organisation(service.organisation_id))
+    hymns = (
+        Hymn.objects.for_organisation(service.organisation_id)
+        .with_last_sung()
+        .prefetch_related("entries__hymnal", "suited_occasions", "suited_seasons", "suited_use_types")
+    )
+    in_term = set(
+        RolePiece.objects.filter(
+            service_role__service__term_id=service.term_id,
+            service_role__service__date__gte=timezone.localdate(),
+            hymn_entry__isnull=False,
+        )
+        .exclude(service_role__service=service)
+        .values_list("hymn_entry__hymn_id", flat=True)
+    )
+    since = timezone.localdate() - timedelta(weeks=window_weeks)
+    order = [key for key, _ in GROUPS]
+    found = []
+    for hymn in hymns:
+        entries = [entry for entry in hymn.entries.all() if entry.hymnal in hymnals]
+        if not entries:
+            continue
+        entry = next((e for e in entries if e.hymnal == role.default_hymnal), entries[0])
+        # The same facts as a score's, about a hymn; the entry is what's offered.
+        facts = ScoreFacts(
+            score=entry,
+            occasion=next((occasion_names[o.pk] for o in hymn.suited_occasions.all() if o.pk in occasion_names), ""),
+            season=season.name if season and season in hymn.suited_seasons.all() else "",
+            use_type_ids={use.pk for use in hymn.suited_use_types.all()},
+            last_sung=hymn.last_sung,
+            recent=hymn.last_sung is not None and hymn.last_sung > since,
+            in_term=hymn.pk in in_term,
+        )
+        group, strength, reasons = placed(facts, use_type)
+        if group.startswith("suggested"):
+            found.append((order.index(group), tuple(not part for part in strength), str(entry), entry, reasons))
+    found.sort(key=lambda item: item[:3])
+    return [(entry, reasons) for *_, entry, reasons in found[:limit]]

@@ -211,9 +211,65 @@ class VoicingPromptTests(SuggestionTestMixin, TestCase):
                 response = self.page(role)
                 self.assertContains(response, "No voicing recorded yet.", count=1)
                 piece = RolePiece.objects.get(score=self.no_voicing)
-                self.assertContains(
-                    response, f"/library/{self.no_voicing.pk}/edit/?next=/services/{self.service.pk}/%23piece-row-{piece.pk}"
-                )
+                back = f"/services/{self.service.pk}/%23piece-row-{piece.pk}"
+                self.assertContains(response, f"/library/{self.no_voicing.pk}/edit/?next={back}")
 
     def test_a_viewer_isnt_asked(self):
         self.assertNotContains(self.page("viewer"), "No voicing recorded yet.")
+
+
+class HymnSuggestionTests(SuggestionTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        from library.models import Hymnal, HymnEntry
+
+        self.slot = ServiceRole.objects.create(service=self.service, role_name="Hymn")
+        self.neh = Hymnal.objects.create(organisation=self.church, name="New English Hymnal", short_name="NEH")
+        self.chon = Hymnal.objects.create(organisation=self.church, name="Catholic Hymns", short_name="CH")
+        self.entry = HymnEntry.find_or_make
+
+    def hymn(self, book, number, **tags):
+        entry = self.entry(book, number)
+        for name, values in tags.items():
+            getattr(entry.hymn, name).set(values)
+        return entry
+
+    def suggestions(self):
+        from .suggestions import hymn_suggestions
+
+        return [(str(entry), reasons) for entry, reasons in hymn_suggestions(self.slot, 6)]
+
+    def test_only_suited_hymns_strongest_first_sung_recently_last(self):
+        self.hymn(self.neh, "1", suited_seasons=[self.advent])
+        self.hymn(self.neh, "2", suited_occasions=[self.sunday])
+        self.hymn(self.neh, "3")  # untagged: not suggested
+        lately = self.hymn(self.neh, "4", suited_occasions=[self.sunday])
+        past = Service.objects.create(term=self.term, date=timezone.localdate() - timedelta(days=14),
+                                      service_type="Sung Mass")
+        RolePiece.objects.create(service_role=ServiceRole.objects.create(service=past, role_name="Hymn"),
+                                 hymn_entry=lately, is_confirmed=True)
+        self.assertEqual(self.suggestions(), [
+            ("NEH 2", ["For Advent Sunday 1"]),
+            ("NEH 1", ["For Advent"]),
+            ("NEH 4", ["For Advent Sunday 1", "Sung 2\u00a0weeks ago"]),
+        ])
+
+    def test_a_hymn_is_offered_from_the_slots_usual_book(self):
+        from library.models import HymnEntry
+
+        in_neh = self.hymn(self.neh, "53", suited_seasons=[self.advent])
+        HymnEntry.objects.create(organisation=self.church, hymn=in_neh.hymn, hymnal=self.chon, number="211")
+        last = Service.objects.create(term=self.term, date=timezone.localdate() - timedelta(days=100),
+                                      service_type="Sung Mass")
+        RolePiece.objects.create(service_role=ServiceRole.objects.create(service=last, role_name="Hymn"),
+                                 hymn_entry=HymnEntry.objects.get(number="211"))
+        self.assertEqual([where for where, _ in self.suggestions()], ["CH 211"])
+
+    def test_not_a_hymn_slot_or_no_hymnals_means_no_suggestions(self):
+        from .suggestions import hymn_suggestions
+
+        self.hymn(self.neh, "1", suited_seasons=[self.advent])
+        self.assertEqual(hymn_suggestions(self.motet_slot(), 6), [])
+
+    def motet_slot(self):
+        return ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
