@@ -270,13 +270,24 @@ class ScoreDeleteView(LibraryEditRequiredMixin, OrganisationScopedMixin, DeleteP
 def completeness(request):
     """What the library's details are missing, as counts that link to the
     Library's own filters, and the motet and antiphon scores with no text
-    listed by name, as no filter shows those."""
+    listed by name, as no filter shows those. Hymns are listed by where
+    they're printed, as one with no first line has no other name."""
     scores = own(Score, request)
+    hymns = list(own(Hymn, request).prefetch_related("entries__hymnal", "suited_seasons"))
+    for hymn in hymns:
+        hymn.printed_at = ", ".join(str(entry) for entry in hymn.entries.all())
     return render(request, "library/completeness.html", {
         "no_voicing": scores.filter(voicing="").count(),
         "no_language": scores.filter(language="").count(),
         "needing_text": list(scores.needing_text().order_by("title")),
         "unspecified": ScoreQuerySet.UNSPECIFIED,
+        "has_hymns": bool(hymns),
+        "hymn_lines": [
+            ("with no first line", "Every hymn has its first line.", [h for h in hymns if not h.first_line]),
+            ("with no words", "Every hymn has its words.", [h for h in hymns if not h.text]),
+            ("not tagged for any season", "Every hymn is tagged for a season.",
+             [h for h in hymns if not h.suited_seasons.all()]),
+        ],
     })
 
 

@@ -1212,3 +1212,27 @@ class SameHymnTests(TestCase):
 
     def test_a_viewer_cant_answer(self):
         self.assertEqual(self.ask("same", role="viewer").status_code, 403)
+
+
+class HymnCompletenessTests(TestCase):
+    def test_hymns_missing_details_are_listed_by_where_theyre_printed(self):
+        from ordo.models import LiturgicalSeason
+
+        from .models import Hymnal, HymnEntry
+
+        librarian = make_user("librarian")
+        neh = Hymnal.objects.create(organisation=librarian.organisation, name="New English Hymnal", short_name="NEH")
+        bare = HymnEntry.find_or_make(neh, "53").hymn
+        full = HymnEntry.find_or_make(neh, "1").hymn
+        full.first_line, full.text = "A first line", "The words"
+        full.save()
+        full.suited_seasons.add(LiturgicalSeason.objects.create(name="Advent"))
+        self.client.force_login(librarian)
+        response = self.client.get("/library/completeness/")
+        self.assertContains(response, "1 hymn with no first line:")
+        self.assertContains(response, "1 hymn with no words:")
+        self.assertContains(response, f'href="/library/hymns/{bare.pk}/edit/?next=/library/completeness/">NEH 53</a>')
+
+    def test_a_church_with_no_hymns_has_no_hymn_section(self):
+        self.client.force_login(make_user("librarian"))
+        self.assertNotContains(self.client.get("/library/completeness/"), "<h2>Hymns</h2>", html=True)

@@ -36,5 +36,27 @@
             {% endif %}
         </li>
     </ul>
+
+    {% if has_hymns %}
+    <h2>Hymns</h2>
+    <ul class="flow" role="list">
+        {% for missing, done, hymns in hymn_lines %}
+        <li>
+            {% if hymns %}
+            <div class="flow" style="--flow-space: var(--spacing-3xs);">
+            <p>{{ hymns|length }} hymn{{ hymns|length|pluralize }} {{ missing }}:</p>
+            <ul>
+                {% for hymn in hymns %}
+                <li><a href="{% if can.edit_library %}{% url 'library:hymn_update' hymn.pk %}?next={{ request.path|urlencode }}{% else %}{{ hymn.get_absolute_url }}{% endif %}">{{ hymn.printed_at }}{% if hymn.first_line %}, {{ hymn.first_line }}{% endif %}</a></li>
+                {% endfor %}
+            </ul>
+            </div>
+            {% else %}
+            {{ done }}
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
 </div>
 {% endblock %}
