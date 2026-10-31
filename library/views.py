@@ -28,7 +28,7 @@ from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 from precentor_project.mixins import DeletePageMixin
 from precentor_project.utils import safe_next
 
-from .forms import HymnalForm, HymnForm, ScoreForm, ScoreImportForm, TuneForm
+from .forms import HymnalForm, HymnEntryForm, HymnForm, ScoreForm, ScoreImportForm, TuneForm
 from .importing import (
     COLUMNS, IMPORT_EXAMPLE, MAX_BYTES, MAX_ROWS, ImportProblem, check_file, export_rows, save_import,
 )
@@ -444,7 +444,7 @@ class HymnDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):
         )
 
     def get_context_data(self, **kwargs):
-        entries = sorted(self.object.entries.select_related("hymnal"), key=HymnEntry.number_order)
+        entries = sorted(self.object.entries.select_related("hymnal", "tune"), key=HymnEntry.number_order)
         # Hymns that may be this one printed elsewhere, each with where.
         matches = [
             (other, ", ".join(str(entry) for entry in other.entries.all()))
@@ -485,6 +485,17 @@ class HymnUpdateView(LibraryEditRequiredMixin, OrganisationScopedMixin, UpdateVi
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(next=self.next_url(), **kwargs)
+
+
+class HymnEntryUpdateView(LibraryEditRequiredMixin, OrganisationScopedMixin, UpdateView):
+    """The tune a book prints a hymn with; back to the hymn's page."""
+
+    model = HymnEntry
+    form_class = HymnEntryForm
+    context_object_name = "entry"
+
+    def get_success_url(self):
+        return self.object.hymn.get_absolute_url()
 
 
 class TuneListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):

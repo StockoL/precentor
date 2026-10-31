@@ -161,6 +161,7 @@ ADDRESSES = {
     "library:hymn_detail": lambda a, b: [{"pk": b["hymn"].pk}],
     "library:hymn_update": lambda a, b: [{"pk": b["hymn"].pk}],
     "library:tune_update": lambda a, b: [{"pk": b["tune"].pk}],
+    "library:hymn_entry_update": lambda a, b: [{"pk": b["hymn_entry"].pk}],
     # Both of the other church's, and one of each either way round.
     "library:same_hymn": lambda a, b: [
         {"pk": b["hymn"].pk, "other_pk": b["hymn"].pk},

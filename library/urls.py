@@ -19,6 +19,7 @@ urlpatterns = [
     path("hymnals/add/", views.HymnalCreateView.as_view(), name="hymnal_create"),
     path("hymnals/<int:pk>/", views.HymnalDetailView.as_view(), name="hymnal_detail"),
     path("hymns/<int:pk>/", views.HymnDetailView.as_view(), name="hymn_detail"),
+    path("hymn-entries/<int:pk>/tune/", views.HymnEntryUpdateView.as_view(), name="hymn_entry_update"),
     path("tunes/", views.TuneListView.as_view(), name="tune_list"),
     path("tunes/add/", views.TuneCreateView.as_view(), name="tune_create"),
     path("tunes/<int:pk>/edit/", views.TuneUpdateView.as_view(), name="tune_update"),

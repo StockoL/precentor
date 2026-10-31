@@ -28,7 +28,13 @@
     {% endfor %}
     <dl class="detail-list">
         <dt>Printed in</dt>
-        <dd>{% for entry in entries %}<a href="{{ entry.hymnal.get_absolute_url }}">{{ entry }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+        <dd>
+            <ul role="list">
+                {% for entry in entries %}
+                <li><a href="{{ entry.hymnal.get_absolute_url }}">{{ entry }}</a>{% if entry.tune %}, to {{ entry.tune }}{% endif %}{% if can.edit_library %} <a class="list-row__meta" href="{% url 'library:hymn_entry_update' entry.pk %}">{% if entry.tune %}Change tune{% else %}Add its tune{% endif %}<span class="visually-hidden"> for {{ entry }}</span></a>{% endif %}</li>
+                {% endfor %}
+            </ul>
+        </dd>
         {% if hymn.metre %}
         <dt>Metre</dt>
         <dd>{{ hymn.metre }}</dd>

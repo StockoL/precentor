@@ -350,6 +350,13 @@ class Tune(models.Model):
         self.metre = normalise_metre(self.metre)
         super().save(*args, **kwargs)
 
+    def number_in(self, hymnal):
+        """Where this tune is printed in a hymnal: the lowest number of a
+        hymn the book sets to it, as books don't number their tunes. None
+        if the book doesn't print it."""
+        entries = sorted(HymnEntry.objects.filter(hymnal=hymnal, tune=self), key=HymnEntry.number_order)
+        return entries[0].number if entries else None
+
 
 class HymnQuerySet(OrganisationQuerySet):
     def with_last_sung(self):
@@ -483,6 +490,11 @@ class HymnEntry(models.Model):
     # from it is history worth keeping.
     hymnal = models.ForeignKey(Hymnal, on_delete=models.PROTECT, related_name="entries")
     number = models.CharField(max_length=10)
+    # The tune this book prints the hymn with, if anyone has said.
+    tune = models.ForeignKey(
+        "Tune", null=True, blank=True, on_delete=models.SET_NULL, related_name="entries",
+        help_text="The tune this book prints it with",
+    )
 
     class Meta:
         ordering = ["hymnal", "number"]  # noqa

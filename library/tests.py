@@ -1279,3 +1279,39 @@ class TuneTests(TestCase):
     def test_a_name_already_used_is_refused_whatever_its_case(self):
         response = self.client.post("/library/tunes/add/", {"name": "repton", "metre": ""})
         self.assertContains(response, "You already have a tune called repton.")
+
+
+class EntryTuneTests(TestCase):
+    def setUp(self):
+        from .models import Hymnal, HymnEntry, Tune
+
+        self.librarian = make_user("librarian")
+        self.church = self.librarian.organisation
+        self.neh = Hymnal.objects.create(organisation=self.church, name="New English Hymnal", short_name="NEH")
+        self.repton = Tune.objects.create(organisation=self.church, name="Repton", metre="86 88 6")
+        self.entry = HymnEntry.find_or_make(self.neh, "353")
+        self.client.force_login(self.librarian)
+
+    def test_a_tune_is_numbered_by_the_lowest_hymn_printed_with_it(self):
+        from .models import HymnEntry
+
+        self.assertIsNone(self.repton.number_in(self.neh))
+        for number in ("353", "115"):
+            entry = HymnEntry.find_or_make(self.neh, number)
+            entry.tune = self.repton
+            entry.save()
+        self.assertEqual(self.repton.number_in(self.neh), "115")
+
+    def test_a_librarian_sets_an_entrys_tune_from_the_churchs_own(self):
+        from .models import Tune
+
+        url = f"/library/hymn-entries/{self.entry.pk}/tune/"
+        response = self.client.post(url, {"tune": self.repton.pk})
+        self.assertRedirects(response, f"/library/hymns/{self.entry.hymn_id}/")
+        self.entry.refresh_from_db()
+        self.assertEqual(self.entry.tune, self.repton)
+        self.assertContains(self.client.get(f"/library/hymns/{self.entry.hymn_id}/"), "NEH 353</a>, to Repton")
+        theirs = Tune.objects.create(organisation=make_organisation("St Elsewhere"), name="Theirs")
+        self.client.post(url, {"tune": theirs.pk})
+        self.entry.refresh_from_db()
+        self.assertEqual(self.entry.tune, self.repton)

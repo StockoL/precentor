@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Tune for {{ entry }} — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>The tune for {{ entry }}</h1>
+    {% if not form.fields.tune.queryset %}<p>There are no tunes yet. <a href="{% url 'library:tune_create' %}">Add a tune</a> first.</p>{% endif %}
+    <form method="post" class="flow">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="cluster">
+            <button class="btn-primary" type="submit">Save</button>
+            <a class="btn-ghost" href="{{ entry.hymn.get_absolute_url }}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

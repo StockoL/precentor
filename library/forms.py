@@ -5,7 +5,7 @@ from ordo.fields import OccasionMultipleChoiceField
 from ordo.models import LiturgicalOccasion, UseType
 from precentor_project.widgets import NativeDateInput
 
-from .models import Hymn, Hymnal, Score, Tune
+from .models import Hymn, Hymnal, HymnEntry, Score, Tune
 
 
 class ScoreForm(forms.ModelForm):
@@ -168,3 +168,15 @@ class TuneForm(forms.ModelForm):
         if same.exclude(pk=self.instance.pk).exists():
             raise forms.ValidationError(f"You already have a tune called {name}.")
         return name
+
+
+class HymnEntryForm(forms.ModelForm):
+    """A hymn's tune in one book: chosen from the church's own tunes."""
+
+    class Meta:
+        model = HymnEntry
+        fields = ["tune"]  # noqa
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["tune"].queryset = Tune.objects.for_organisation(self.instance.organisation_id)
