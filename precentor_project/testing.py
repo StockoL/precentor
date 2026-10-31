@@ -34,8 +34,11 @@ def make_score(*, organisation=None, **fields):
 
 
 def make_slot_template(*, organisation=None, **fields):
+    """A template whose slots are written as lines of text, one each."""
     fields = {"name": "Benediction", "slot_names": "O salutaris\nTantum ergo", **fields}
-    return SlotTemplate.objects.create(organisation=organisation or make_organisation(), **fields)
+    template = SlotTemplate.objects.create(organisation=organisation or make_organisation(), **fields)
+    template.set_slots(template.names_from_text(template.slot_names))
+    return template
 
 
 def make_use_type(name, *, organisation=None):

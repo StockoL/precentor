@@ -46,9 +46,7 @@ def set_up_organisation(organisation):
 
     organisation.save()
     SiteConfig.of(organisation)
-    SlotTemplate.objects.bulk_create(
-        SlotTemplate(organisation=organisation, name=template, slot_names="\n".join(slots))
-        for template, slots in STARTER_TEMPLATES.items()
-    )
+    for name, slots in STARTER_TEMPLATES.items():
+        SlotTemplate.objects.create(organisation=organisation, name=name, slot_names="\n".join(slots)).set_slots(slots)
     UseType.objects.bulk_create(UseType(organisation=organisation, name=use_type) for use_type in STARTER_USE_TYPES)
     return organisation

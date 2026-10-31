@@ -28,8 +28,8 @@ class TemplateTestMixin:
 
 class SlotParsingTests(TestCase):
     def test_lines_are_trimmed_blanks_dropped_and_each_name_kept_once(self):
-        template = SlotTemplate(slot_names="  Introit \n\nKyrie\nkyrie\n  Offertory   motet  ")
-        self.assertEqual(template.slots, ["Introit", "Kyrie", "Offertory motet"])
+        names = SlotTemplate.names_from_text("  Introit \n\nKyrie\nkyrie\n  Offertory   motet  ")
+        self.assertEqual(names, ["Introit", "Kyrie", "Offertory motet"])
 
 
 class ApplyTemplateTests(TemplateTestMixin, TestCase):
@@ -197,3 +197,34 @@ class OneTemplatePerServiceTests(TemplateTestMixin, TestCase):
         self.assertContains(response, 'data-confirm-label="Use Vespers"')
         self.assertNotContains(response, 'data-confirm-label="Use Mass"')
         self.assertContains(response, 'aria-current="true">Mass</button>')
+
+
+class TemplateSlotTests(TemplateTestMixin, TestCase):
+    def test_a_templates_slots_are_classified_and_applied_with_their_kinds(self):
+        self.assertEqual(
+            list(self.mass.template_slots.values_list("name", "kind", "proper_part"))[:2],
+            [("Introit", "proper", "introit"), ("Kyrie", "ordinary", "")],
+        )
+        slot = self.mass.template_slots.get(name="Introit")
+        slot.kind = "hymn"
+        slot.save()
+        self.mass.apply_to(self.service)
+        self.assertEqual(self.service.roles.get(role_name="Introit").kind, "hymn")
+
+    def test_existing_templates_are_split_into_rows(self):
+        import importlib
+
+        from django.apps import apps
+
+        from .models import TemplateSlot
+
+        migration = importlib.import_module("planning.migrations.0027_split_template_slots")
+        TemplateSlot.objects.all().delete()
+        self.vespers.slot_names = "Psalms\n\nhymn\nHymn\nMagnificat"
+        self.vespers.save()
+        migration.split_into_rows(apps, None)
+        self.assertEqual(
+            list(self.vespers.template_slots.values_list("name", "kind", "position")),
+            [("Psalms", "psalm", 1), ("hymn", "hymn", 2), ("Magnificat", "canticle", 3)],
+        )
+        self.assertEqual(self.vespers.template_slots.first().organisation, self.vespers.organisation)

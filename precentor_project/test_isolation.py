@@ -50,6 +50,7 @@ def build_church(marker):
     use_type = UseType.objects.create(organisation=church, name=f"{marker} use")
     score.suited_use_types.add(use_type)
     template = SlotTemplate.objects.create(organisation=church, name=f"{marker} template", slot_names="Introit")
+    template.set_slots(["Introit"])
     term = Term.objects.create(
         organisation=church, name=f"{marker} term", start_date=date(2026, 11, 29),
         end_date=date(2026, 12, 24), calendar_use="current",
@@ -70,7 +71,8 @@ def build_church(marker):
     hymn_entry.hymn.save()
     return {
         "church": church, "settings": settings, "owner": owner, "member": member, "former": former,
-        "score": score, "use_type": use_type, "template": template, "term": term, "service": service,
+        "score": score, "use_type": use_type, "template": template,
+        "template_slot": template.template_slots.get(), "term": term, "service": service,
         "slot": slot, "piece": piece, "marker": marker_row, "comment": comment, "invitation": invitation,
         "score_import": score_import, "hymnal": hymnal, "hymn_entry": hymn_entry,
         "hymn": hymn_entry.hymn, "tune": tune,

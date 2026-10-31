@@ -481,9 +481,10 @@ class SlotTemplate(models.Model):
     """
     A named set of slots to add to a service in one go: Mass and Vespers
     come ready-made (each new church gets its own copies from
-    accounts.organisations), and a conductor can
-    edit those or make more. The slots are plain lines of text, so the
-    form is a textarea and needs no JavaScript.
+    accounts.organisations), and a conductor can edit those or make more.
+    Its slots are TemplateSlot rows, each with a kind and proper part, so
+    a service's slots arrive already classified. slot_names, the text the
+    slots were first written as, is no longer read; it's dropped later.
     """
 
     # Whose template this is.
@@ -506,16 +507,34 @@ class SlotTemplate(models.Model):
     def __str__(self):
         return self.name
 
-    @property
-    def slots(self):
-        """The slot names in order: trimmed, blank lines dropped, and each
-        name once whatever its case."""
+    @staticmethod
+    def names_from_text(text):
+        """Slot names from lines of text: trimmed, blank lines dropped, and
+        each name once whatever its case."""
         names = []
-        for line in self.slot_names.splitlines():
+        for line in text.splitlines():
             name = " ".join(line.split())
             if name and name.lower() not in (n.lower() for n in names):
                 names.append(name)
         return names
+
+    @property
+    def slots(self):
+        """The slot names in order. Uses .all(), so prefetched rows cost
+        nothing."""
+        return [slot.name for slot in self.template_slots.all()]
+
+    def set_slots(self, names):
+        """Make the template's slots these names, in order, each classified
+        from its name as a new slot would be."""
+        self.template_slots.all().delete()
+        TemplateSlot.objects.bulk_create(
+            TemplateSlot(
+                template=self, organisation_id=self.organisation_id, name=name,
+                kind=classify(name)[0], proper_part=classify(name)[1], position=position,
+            )
+            for position, name in enumerate(names, start=1)
+        )
 
     def apply_to(self, service):
         """
@@ -525,13 +544,45 @@ class SlotTemplate(models.Model):
         """
         existing = {name.lower() for name in service.roles.values_list("role_name", flat=True)}
         added, already_there = [], []
-        for name in self.slots:
-            if name.lower() in existing:
-                already_there.append(name)
+        for slot in self.template_slots.all():
+            if slot.name.lower() in existing:
+                already_there.append(slot.name)
             else:
-                ServiceRole.objects.create(service=service, role_name=name)
-                added.append(name)
+                ServiceRole.objects.create(
+                    service=service, role_name=slot.name, kind=slot.kind, proper_part=slot.proper_part
+                )
+                added.append(slot.name)
         return added, already_there
+
+
+class TemplateSlot(models.Model):
+    """One slot of a template, as it'll be added to a service: its name,
+    kind and proper part, in order."""
+
+    template = models.ForeignKey(SlotTemplate, on_delete=models.CASCADE, related_name="template_slots")
+    # Always its template's organisation, copied in save().
+    organisation = models.ForeignKey(
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="template_slots"
+    )
+    objects = OrganisationQuerySet.as_manager()
+    name = models.CharField("slot", max_length=50)
+    kind = models.CharField(
+        max_length=10, choices=KIND_CHOICES, blank=True, help_text="Leave it to be worked out from the slot's name."
+    )
+    proper_part = models.CharField(max_length=20, choices=PROPER_PART_CHOICES, blank=True)
+    position = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["position", "id"]  # noqa
+
+    def save(self, *args, **kwargs):
+        self.organisation_id = self.template.organisation_id
+        if not self.kind:
+            self.kind, self.proper_part = classify(self.name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
 
 
 # Said by the database's rule and by the propose form, which has to check

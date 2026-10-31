@@ -113,7 +113,7 @@ class SlotTemplateForm(forms.ModelForm):
 
     def clean_slot_names(self):
         text = self.cleaned_data["slot_names"]
-        names = SlotTemplate(slot_names=text).slots
+        names = SlotTemplate.names_from_text(text)
         if not names:
             raise forms.ValidationError("Add at least one slot.")
         limit = ServiceRole._meta.get_field("role_name").max_length
@@ -124,6 +124,12 @@ class SlotTemplateForm(forms.ModelForm):
             )
         # Stored tidily: one name a line, as the template will use them.
         return "\n".join(names)
+
+    def save(self, commit=True):
+        """Until the form shows the slots as rows, its text becomes them."""
+        template = super().save(commit=commit)
+        template.set_slots(template.names_from_text(template.slot_names))
+        return template
 
 
 class RolePieceForm(forms.ModelForm):
