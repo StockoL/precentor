@@ -947,22 +947,44 @@ the app has grown.
 
 ```python
 class SlotTemplate(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    slot_names = models.TextField("slots")  # one slot per line, in order
+    name = models.CharField(max_length=50)  # unique within the church
+    slot_names = models.TextField("slots")  # no longer read; dropped later
 
     @property
-    def slots(self): ...  # trimmed, blank lines dropped, each name once
-
+    def slots(self): ...  # the names of its TemplateSlot rows, in order
+    def set_slots(self, names): ...  # replace the rows, classifying each
     def apply_to(self, service): ...  # adds the slots the service lacks
+
+class TemplateSlot(models.Model):
+    template = models.ForeignKey(SlotTemplate, on_delete=models.CASCADE, related_name="template_slots")
+    name = models.CharField("slot", max_length=50)
+    kind = models.CharField(max_length=10, choices=KIND_CHOICES, blank=True)  # from the name when blank
+    proper_part = models.CharField(max_length=20, choices=PROPER_PART_CHOICES, blank=True)
+    position = models.PositiveIntegerField(default=0)
 ```
 
 A template is a named list of slots that a conductor adds to a service
-in one go. Each church gets its own Mass and Vespers when it's made
-(see "Making a church"); they began as a data migration
-(`planning/0009`) from before there were churches. The slots are lines of text, not a related table: the
-form is a textarea that needs no JavaScript, and order is simply line
-order. Applying one copies the names into new `ServiceRole` rows,
-skipping names the service already has (ignoring case). The slots keep
+in one go. Each church gets its own Mass, Mass with hymns and Vespers
+when it's made (see "Making a church"); Mass and Vespers began as a
+data migration (`planning/0009`) from before there were churches.
+
+**From lines of text to rows:** the slots began as lines of text, so the
+form was a textarea that needed no JavaScript. That left nowhere to say
+a slot's kind, so a slot added from a template had its kind guessed
+again from its name every time, and a church that sings a hymn at the
+Introit had to correct it on every service. Each slot is now a
+`TemplateSlot` row with its kind and proper part, edited as a Django
+inline formset: a row per slot with Django's own order and delete
+fields and a few blank rows for new ones, so it still needs no
+JavaScript. The formset refuses a template with no slots or the same
+slot twice, whatever its case, and the template and its rows are saved
+in one transaction. Migration `planning/0027` split existing templates
+into rows, with its own copy of the name table; the old text column is
+kept, unread, until it's dropped after a check on real data.
+
+Applying a template copies each row's name, kind and proper part into
+a new `ServiceRole`, skipping names the service already has (ignoring
+case). The slots keep
 no link to it, so editing a template never changes services already
 planned. `Service.slot_template` only records which template the
 service uses, so that choosing a different one can ask first and then
