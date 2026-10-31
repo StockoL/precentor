@@ -282,3 +282,12 @@ class HymnSuggestionTests(SuggestionTestMixin, TestCase):
         response = self.client.get(self.service.get_absolute_url())
         self.assertContains(response, "Suggested hymns")
         self.assertContains(response, 'data-fill-number="1"')
+
+    def test_the_propose_page_lists_them_to_type_in(self):
+        from accounts.testing import make_user
+
+        self.hymn(self.neh, "1", suited_seasons=[self.advent])
+        self.client.force_login(make_user("conductor", organisation=self.church))
+        response = self.client.get(f"/roles/{self.slot.pk}/pieces/add/")
+        self.assertContains(response, "<h2>Suggested hymns</h2>", html=True)
+        self.assertContains(response, "<strong>NEH 1</strong>", html=True)
