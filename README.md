@@ -290,7 +290,7 @@ _Figure 11. A term: its services in date order with their status, its notices an
 
 ![The Sung Mass for the First Sunday of Advent, with slots from the Mass template holding confirmed pieces, the Gloria and Credo marked N/A, the template buttons and a comment](docs/screenshots/06-service.png)
 
-_Figure 12. A service: the occasion worked out from its date, slots added from the Mass template, confirmed pieces and two slots marked N/A._
+_Figure 12. A service: the occasion worked out from its date, slots added from the Mass template with each one's kind, confirmed pieces and two slots marked N/A._
 
 ### 3.3 Proposing and Confirming
 
@@ -333,7 +333,7 @@ term and see at once which services still need attention.
 
 ![A service page with a slot's score search box open and a list of matching scores beneath it](docs/screenshots/07-propose-a-piece.png)
 
-_Figure 13. Proposing a piece from the slot's search box._
+_Figure 13. Proposing a piece from the slot's search box: on an Advent Sunday the season's scores are suggested first, each with its reasons._
 
 ### 3.4 Ordo (the Liturgical Calendar)
 
@@ -471,7 +471,7 @@ _Figure 14. The public music list for Advent, with Public, Draft and Print at th
 
 ![The Settings page with the church's name, national calendar, crest style, the current crest, accent colour and music list layout](docs/screenshots/14-settings.png)
 
-_Figure 15. Settings: the church's name, crest and calendar, which the music list uses._
+_Figure 15. Settings: the church's name, calendar and crest, how the music list is laid out, and how recent counts as sung recently for suggestions._
 
 **The pew sheet.** Each service also has a sheet for the congregation,
 linked from its page for every role. It prints the service's confirmed
