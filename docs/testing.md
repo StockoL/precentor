@@ -231,6 +231,7 @@ testing, fixed, and covered by a test where it could be.
 | `6b65a6c` | The change-password pages still had the admin's look, and nothing linked to them (fixed with `5ca663b`) |
 | `e9ee61f` | On a phone, with a longer name, the user menu's panel opened off the left of the screen    |
 | `6bf1062` | At 320 pixels the score form was a few pixels wider than the screen, as a fieldset won't shrink below its widest row |
+| `5c8e834` | Deleting a church that had sung any hymns failed with a server error, as each hymn's entry protected its hymnal |
 
 **Left unfixed:** the 16 long lines, the variable `l` and the lambda
 found by flake8 (see section 1). None affects how the app works.
