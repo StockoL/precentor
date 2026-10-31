@@ -83,7 +83,6 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     advent = Term.objects.get(name="Advent 2026")
     first_mass = Service.objects.filter(term=advent, service_type="Sung Mass").order_by("date").first()
-    third_mass = Service.objects.filter(term=advent, service_type="Sung Mass").order_by("date")[2]
     score = Score.objects.get(title="Ave Maria", composer_surname="Parsons")
     advent_season = LiturgicalSeason.objects.get(name="Advent")
 
@@ -124,12 +123,13 @@ def main():
         shot(page, "/", "04-terms.png")
         shot(page, f"/terms/{advent.pk}/", "05-term.png")
         shot(page, f"/services/{first_mass.pk}/", "06-service.png")
-        page.goto(BASE + f"/services/{third_mass.pk}/")
+        # An ordinary Advent Sunday, so the season's scores are suggested
+        # and the list opens on its groups, with their reasons.
+        page.goto(BASE + f"/services/{first_mass.pk}/")
         page.wait_for_load_state("networkidle")
         picker = page.locator(".score-combobox__input").first
         picker.scroll_into_view_if_needed()
         picker.click()
-        picker.fill("a")
         page.wait_for_timeout(300)
         save(page.screenshot(), "07-propose-a-piece.png")
         shot(page, f"/library/?suited_season={advent_season.pk}", "08-library-filtered.png")
