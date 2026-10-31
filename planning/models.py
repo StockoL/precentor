@@ -9,7 +9,7 @@ from django.utils.functional import cached_property
 
 from accounts.querysets import OrganisationQuerySet
 from library.models import Hymnal, HymnEntry, Score, Tune
-from ordo.models import CALENDAR_USE_CHOICES
+from ordo.models import CALENDAR_USE_CHOICES, proper_chants
 
 from .slot_kinds import KIND_CHOICES, PROPER_PART_CHOICES, REFERENCE_FIRST, classify
 
@@ -200,6 +200,12 @@ class Service(models.Model):
 
     def effective_calendar_use(self):
         return self.calendar_use or self.term.calendar_use
+
+    @cached_property
+    def proper_chants(self):
+        """The names of the chants of this day's 1962 Mass, {part: incipit},
+        worked out once for all its slots. Empty without a 1962 occasion."""
+        return proper_chants(self.occasion, self.date)
 
     def asks_before_using(self, template):
         """Using another template replaces the slots, so the conductor is
@@ -461,6 +467,22 @@ class ServiceRole(models.Model):
 
         window = SiteConfig.of(self.service.organisation).hymn_repeat_window_weeks
         return hymn_suggestions(self, window)
+
+    @property
+    def proper_suggestion(self):
+        """The day's chant for a Proper slot that knows its part, such as
+        "Ad te levavi animam meam" for the Introit, unless it's already
+        proposed. An Alleluia or Tract slot takes whichever the date has."""
+        chants = self.service.proper_chants
+        if self.kind != "proper" or not chants:
+            return None
+        if self.proper_part == "alleluia_or_tract":
+            incipit = chants.get("tract") or chants.get("alleluia")
+        else:
+            incipit = chants.get(self.proper_part)
+        if not incipit or any(piece.reference == incipit for piece in self.pieces.all()):
+            return None
+        return incipit
 
     @property
     def takes_reference_first(self):
