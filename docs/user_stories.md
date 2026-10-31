@@ -20,6 +20,12 @@ These user stories drive the design and functionality of Precentor.
 - As a conductor, I want a pew sheet for each service with the motet's
   words beside a translation, so the congregation can follow what the
   choir sings.
+- As a conductor, I want to choose a hymn by its book and number, with
+  a few suggested for the day, so planning hymns is as quick as writing
+  the numbers down.
+- As a conductor, I want to choose the tune a hymn is sung to and have
+  the pew sheet give that tune's number, so the congregation can find
+  the music.
 - As a conductor, I want to propose a shortlist of pieces for a slot
   (e.g. two motets for the Offertory), so I can weigh choices before
   deciding.
@@ -77,6 +83,9 @@ These user stories drive the design and functionality of Precentor.
   spreadsheet can't leave a mess in the library.
 - As a librarian, I want to download the whole library as a
   spreadsheet, so I have a copy of my own and can tidy it in bulk.
+- As a librarian, I want the church's hymn books in the library with
+  their copies, and each hymn's first line and words added as we learn
+  them, so the hymns we sing build into a record of our own.
 - As a librarian, I want one page that shows what the library's details
   are missing, so I can fill the gaps when I have a spare half hour
   without being nagged about them.
