@@ -10,7 +10,8 @@ from django.db import transaction
 
 from .models import Organisation
 
-# Two slot templates for the services most churches sing.
+# Slot templates for the services most churches sing. Each slot's kind
+# comes from its name, so "Entrance hymn" is a Hymn and "Alleluia" a Proper.
 STARTER_TEMPLATES = {
     "Mass": [
         "Introit",
@@ -23,6 +24,21 @@ STARTER_TEMPLATES = {
         "Sanctus",
         "Agnus Dei",
         "Communion",
+    ],
+    # The common parish pattern: hymns in place of the Introit, Offertory
+    # and Communion propers, and one to end.
+    "Mass with hymns": [
+        "Entrance hymn",
+        "Kyrie",
+        "Gloria",
+        "Responsorial psalm",
+        "Alleluia",
+        "Credo",
+        "Offertory hymn",
+        "Sanctus",
+        "Agnus Dei",
+        "Communion hymn",
+        "Recessional hymn",
     ],
     "Vespers": ["Psalms", "Hymn", "Magnificat", "Marian antiphon"],
 }

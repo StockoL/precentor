@@ -260,7 +260,9 @@ class OrganisationAdminTests(TestCase):
         self.client.post("/admin/accounts/organisation/add/", {"name": "St Cecilia's"})
         church = Organisation.objects.get(name="St Cecilia's")
         # Added here, it starts like a church that signed up.
-        self.assertEqual(sorted(church.slot_templates.values_list("name", flat=True)), ["Mass", "Vespers"])
+        from .organisations import STARTER_TEMPLATES
+
+        self.assertEqual(sorted(church.slot_templates.values_list("name", flat=True)), sorted(STARTER_TEMPLATES))
         self.assertTrue(hasattr(church, "settings"))
 
     def test_renaming_a_church_adds_nothing(self):
@@ -444,6 +446,12 @@ class CreateOrganisationTests(TestCase):
         self.assertTrue(SiteConfig.objects.filter(organisation=church).exists())
         mass = SlotTemplate.objects.for_organisation(church).get(name="Mass")
         self.assertEqual(mass.slots, STARTER_TEMPLATES["Mass"])
+        with_hymns = SlotTemplate.objects.for_organisation(church).get(name="Mass with hymns")
+        self.assertEqual(
+            [(slot.name, slot.kind) for slot in with_hymns.template_slots.all()][:5],
+            [("Entrance hymn", "hymn"), ("Kyrie", "ordinary"), ("Gloria", "ordinary"),
+             ("Responsorial psalm", "psalm"), ("Alleluia", "proper")],
+        )
         self.assertEqual(
             list(UseType.objects.for_organisation(church).values_list("name", flat=True)),
             ["General", "Mass", "Vespers"],
