@@ -600,28 +600,36 @@ _Figure 20. The Inbox of open threads._
 
 ## 7. Scope Discipline (MoSCoW)
 
+Each item says whether it's built. Only the last two nice-to-haves
+aren't.
+
 **Must have (the spine)**
 
-- Score CRUD (title, composer, arranger, voicing, language, duration)
-- Term → Service structure, with slots per service
-- Filter scores by voicing
-- "Last sung" derived from service history
-- Basic liturgical season tagging and filtering
+- Score CRUD (title, composer, arranger, voicing, language, duration): built
+- Term → Service structure, with slots per service: built
+- Filter scores by voicing: built
+- "Last sung" derived from service history: built
+- Basic liturgical season tagging and filtering: built
+- Churches that register themselves and see only their own data: built
 
 **Should have**
 
-- Full Ordo (Roman liturgical calendar, Ordinary and Extraordinary Form) with moveable feast calculation
-- Filter by language
-- Physical copy tracking (copies owned, filing location)
-- Conductor vs. Librarian roles with distinct permissions
-- Comment threads
+- Full Ordo (Roman liturgical calendar, Ordinary and Extraordinary Form) with moveable feast calculation: built
+- Filter by language: built
+- Physical copy tracking (copies owned, filing location): built
+- Conductor, Librarian and Viewer roles with distinct permissions, and an owner who invites people: built
+- Comment threads: built
+- Bulk CSV import of a legacy library, with an export in the same format: built
+- Slots that know their kind (Proper, Hymn, Motet and so on): built
 
 **Nice to have**
 
-- CCLI/copyright licence reporting export
-- Choir roster awareness (auto-filtering by available voice parts)
-- Smart repertoire suggestions (voicing + season + not-sung-recently)
-- Bulk CSV import of a legacy library (built, with an export in the same format)
+- Repertoire suggestions (occasion, season, use type and not sung recently), with the reasons shown: built
+- Hymnals, with hymns built up by number as they're used, and tunes: built
+- Score texts and translations, and a pew sheet: built
+- Templates whose slots keep their kinds: built
+- CCLI/copyright licence reporting export: not built
+- Choir roster awareness (auto-filtering by available voice parts): not built
 
 ## 8. Out of Scope
 
