@@ -667,6 +667,16 @@ aren't.
   That's a separate, mature domain with authoritative tools already
   serving it well, and duplicating it would mean building a different
   application inside Precentor.
+- Filling in the propers. A Proper slot knows which proper it is
+  (Introit, Gradual and so on), but Precentor doesn't supply the chant
+  for the day. The texts are public domain, but lining up a source's
+  entries with every occasion in Ordo, and checking them, is a project
+  of its own. Recording which proper a slot is means the data is ready
+  if that's added later (§19).
+- Hymnal contents. Precentor ships no hymn numbers, first lines, tunes
+  or metres. A church's hymns build up as it types a book and number
+  into a slot, so nothing is copied from a published hymnal's index,
+  whose copyright I'm not in a position to judge.
 - Fully customisable music list layouts (drag-and-drop design, arbitrary
   field order or typography). Precentor ships one default layout and a
   small set of high-value settings (column style, house accent colour,
@@ -1451,6 +1461,10 @@ What's designed or wanted but not built yet:
 - **Email.** Invitations and reset links are passed on by hand because
   Precentor sends no email. With a mail provider they could be sent
   directly, and people could reset their own passwords.
+- **Propers.** Suggesting the day's proper chants on Proper slots, from
+  a public-domain source such as Divinum Officium for the 1962 Missal.
+- **Importing a hymnal's list** from a spreadsheet, reusing the score
+  import's batches, for a church that already keeps one.
 
 ## 20. Technologies used
 
