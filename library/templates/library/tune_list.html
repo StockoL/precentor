@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Tunes — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <header class="page-header">
+        <h1>Tunes</h1>
+        {% if can.edit_library %}
+        <div class="page-header__actions">
+            <a class="btn-primary" href="{% url 'library:tune_create' %}">New tune</a>
+        </div>
+        {% endif %}
+    </header>
+    <p>The tunes the church sings hymns to. A tune can go with any text in the same metre.</p>
+    <ul role="list" class="flow" style="--flow-space: var(--spacing-xs);">
+        {% for tune in tunes %}
+        <li class="list-row list-row--wrap">
+            <div class="flow" style="--flow-space: var(--spacing-3xs);">
+                <p>{{ tune.name }}</p>
+                <p class="list-row__meta">{% if tune.metre %}{{ tune.metre }}{% else %}No metre yet{% endif %}</p>
+            </div>
+            {% if can.edit_library %}
+            <a class="btn-ghost" href="{% url 'library:tune_update' tune.pk %}">Edit<span class="visually-hidden"> {{ tune.name }}</span></a>
+            {% endif %}
+        </li>
+        {% empty %}
+        <li class="empty-state">No tunes yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

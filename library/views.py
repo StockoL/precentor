@@ -28,11 +28,11 @@ from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 from precentor_project.mixins import DeletePageMixin
 from precentor_project.utils import safe_next
 
-from .forms import HymnalForm, HymnForm, ScoreForm, ScoreImportForm
+from .forms import HymnalForm, HymnForm, ScoreForm, ScoreImportForm, TuneForm
 from .importing import (
     COLUMNS, IMPORT_EXAMPLE, MAX_BYTES, MAX_ROWS, ImportProblem, check_file, export_rows, save_import,
 )
-from .models import Hymn, Hymnal, HymnEntry, Score, ScoreImport, ScoreQuerySet
+from .models import Hymn, Hymnal, HymnEntry, Score, ScoreImport, ScoreQuerySet, Tune
 
 
 class ScoreListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
@@ -485,6 +485,23 @@ class HymnUpdateView(LibraryEditRequiredMixin, OrganisationScopedMixin, UpdateVi
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(next=self.next_url(), **kwargs)
+
+
+class TuneListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
+    model = Tune
+    context_object_name = "tunes"
+
+
+class TuneCreateView(LibraryEditRequiredMixin, OrganisationCreateMixin, CreateView):
+    model = Tune
+    form_class = TuneForm
+    success_url = reverse_lazy("library:tune_list")
+
+
+class TuneUpdateView(LibraryEditRequiredMixin, OrganisationScopedMixin, UpdateView):
+    model = Tune
+    form_class = TuneForm
+    success_url = reverse_lazy("library:tune_list")
 
 
 class HymnalCreateView(LibraryEditRequiredMixin, OrganisationCreateMixin, CreateView):

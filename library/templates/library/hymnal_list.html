@@ -4,11 +4,12 @@
 <div class="flow">
     <header class="page-header">
         <h1>Hymnals</h1>
-        {% if can.edit_library %}
         <div class="page-header__actions">
+            <a class="btn" href="{% url 'library:tune_list' %}">Tunes</a>
+            {% if can.edit_library %}
             <a class="btn-primary" href="{% url 'library:hymnal_create' %}">New hymnal</a>
+            {% endif %}
         </div>
-        {% endif %}
     </header>
     <p>The hymn books the church sings from. A hymn in a service is a book's code and a number, such as NEH 123.</p>
     <ul role="list" class="flow" style="--flow-space: var(--spacing-xs);">

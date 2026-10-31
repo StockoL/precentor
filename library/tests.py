@@ -1250,3 +1250,32 @@ class HymnMetreTests(TestCase):
         hymn.refresh_from_db()
         self.assertEqual(hymn.metre, "8.8.8.8")
         self.assertContains(self.client.get(f"/library/hymns/{hymn.pk}/"), "<dd>8.8.8.8</dd>", html=True)
+
+
+class TuneTests(TestCase):
+    def setUp(self):
+        from .models import Tune
+
+        self.librarian = make_user("librarian")
+        self.church = self.librarian.organisation
+        self.repton = Tune.objects.create(organisation=self.church, name="Repton", metre="86 88 6")
+        self.client.force_login(self.librarian)
+
+    def test_a_tunes_metre_is_written_one_way(self):
+        self.assertEqual(self.repton.metre, "8.6.8.8.6")
+
+    def test_a_librarian_adds_a_tune_and_everyone_sees_the_list(self):
+        from .models import Tune
+
+        response = self.client.post("/library/tunes/add/", {"name": "Westminster Abbey", "metre": "87 87 87"})
+        self.assertRedirects(response, "/library/tunes/")
+        self.assertEqual(Tune.objects.get(name="Westminster Abbey").metre, "8.7.8.7.8.7")
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        response = self.client.get("/library/tunes/")
+        self.assertContains(response, "Westminster Abbey")
+        self.assertNotContains(response, "/library/tunes/add/")
+        self.assertContains(self.client.get("/library/hymnals/"), 'href="/library/tunes/"')
+
+    def test_a_name_already_used_is_refused_whatever_its_case(self):
+        response = self.client.post("/library/tunes/add/", {"name": "repton", "metre": ""})
+        self.assertContains(response, "You already have a tune called repton.")

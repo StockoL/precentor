@@ -326,6 +326,31 @@ class Hymnal(models.Model):
         return sorted(entries, key=HymnEntry.number_order)
 
 
+class Tune(models.Model):
+    """
+    A hymn tune, by name, as the church knows it: Repton, Westminster
+    Abbey. A name is a fact, so nothing about it needs bundling; the church
+    adds the tunes it uses. Its metre is how it's matched with texts.
+    """
+
+    organisation = models.ForeignKey(
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="tunes"
+    )
+    objects = OrganisationQuerySet.as_manager()
+    name = models.CharField(max_length=100)
+    metre = models.CharField(max_length=40, blank=True, help_text="e.g. 88 88, 8.7.8.7 or LM")
+
+    class Meta:
+        ordering = ["name"]  # noqa
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.metre = normalise_metre(self.metre)
+        super().save(*args, **kwargs)
+
+
 class HymnQuerySet(OrganisationQuerySet):
     def with_last_sung(self):
         """

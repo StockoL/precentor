@@ -16,7 +16,7 @@ from accounts.models import Invitation, User
 from accounts.organisations import create_organisation
 from comments.models import Comment
 from core.models import SiteConfig
-from library.models import Hymnal, HymnEntry, Score, ScoreImport
+from library.models import Hymnal, HymnEntry, Score, ScoreImport, Tune
 from ordo.models import UseType
 from planning.models import RolePiece, Service, ServiceRole, SlotTemplate, Term, TermMarker
 
@@ -65,6 +65,7 @@ def build_church(marker):
     )
     hymnal = Hymnal.objects.create(organisation=church, name=f"{marker} hymnal", short_name=f"{marker}H")
     hymn_entry = HymnEntry.find_or_make(hymnal, "1")
+    tune = Tune.objects.create(organisation=church, name=f"{marker} tune", metre="LM")
     hymn_entry.hymn.first_line = f"{marker} first line"
     hymn_entry.hymn.save()
     return {
@@ -72,7 +73,7 @@ def build_church(marker):
         "score": score, "use_type": use_type, "template": template, "term": term, "service": service,
         "slot": slot, "piece": piece, "marker": marker_row, "comment": comment, "invitation": invitation,
         "score_import": score_import, "hymnal": hymnal, "hymn_entry": hymn_entry,
-        "hymn": hymn_entry.hymn,
+        "hymn": hymn_entry.hymn, "tune": tune,
     }
 
 
@@ -159,6 +160,7 @@ ADDRESSES = {
     "library:hymnal_detail": lambda a, b: [{"pk": b["hymnal"].pk}],
     "library:hymn_detail": lambda a, b: [{"pk": b["hymn"].pk}],
     "library:hymn_update": lambda a, b: [{"pk": b["hymn"].pk}],
+    "library:tune_update": lambda a, b: [{"pk": b["tune"].pk}],
     # Both of the other church's, and one of each either way round.
     "library:same_hymn": lambda a, b: [
         {"pk": b["hymn"].pk, "other_pk": b["hymn"].pk},
