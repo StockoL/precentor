@@ -17,4 +17,5 @@ once for every slot.
     {{ form.non_field_errors }}
     {{ form.score.errors }}
     <button type="submit">Propose piece</button>
+    {% if role.hymn_suggestions %}{% include "planning/_hymn_suggestions.html" %}{% endif %}
 </form>

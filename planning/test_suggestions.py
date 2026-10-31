@@ -273,3 +273,12 @@ class HymnSuggestionTests(SuggestionTestMixin, TestCase):
 
     def motet_slot(self):
         return ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
+
+    def test_the_service_page_lists_them_under_the_slot(self):
+        from accounts.testing import make_user
+
+        self.hymn(self.neh, "1", suited_seasons=[self.advent])
+        self.client.force_login(make_user("conductor", organisation=self.church))
+        response = self.client.get(self.service.get_absolute_url())
+        self.assertContains(response, "Suggested hymns")
+        self.assertContains(response, 'data-fill-number="1"')

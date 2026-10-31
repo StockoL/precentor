@@ -1,0 +1,12 @@
+{# A Hymn slot's suggested hymns. This form only shows with JavaScript, so each is a button that fills in the book and number (service-detail.js); the propose page lists the same as text. #}
+<div class="role-block__hymn-suggestions flow" style="--flow-space: var(--spacing-3xs);">
+    <p class="list-row__meta">Suggested hymns</p>
+    <ul role="list" class="flow" style="--flow-space: var(--spacing-3xs);">
+        {% for entry, reasons in role.hymn_suggestions %}
+        <li>
+            <button type="button" class="btn-ghost" data-fill-hymnal="{{ entry.hymnal_id }}" data-fill-number="{{ entry.number }}">{{ entry }}{% if entry.hymn.first_line %}, {{ entry.hymn.first_line }}{% endif %}</button>
+            <span class="role-block__hymn-reasons">{{ reasons|join:"; " }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>

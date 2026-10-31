@@ -131,6 +131,23 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
         assert self.page.input_value(f"#id_role_{hymn.pk}_number") == ""
         assert RolePiece.objects.get(service_role=hymn).title == "NEH 53"
 
+    def test_a_suggested_hymn_fills_in_the_book_and_number(self):
+        from library.models import Hymnal, HymnEntry
+        from ordo.models import LiturgicalSeason
+
+        advent = LiturgicalSeason.objects.create(name="Advent")
+        self.service.occasion = LiturgicalOccasion.objects.create(name="Advent Sunday 1", season=advent)
+        self.service.save()
+        Hymnal.objects.create(organisation=self.service.organisation, name="Catholic Hymns", short_name="CH")
+        neh = Hymnal.objects.create(organisation=self.service.organisation, name="New English Hymnal", short_name="NEH")
+        HymnEntry.find_or_make(neh, "1").hymn.suited_seasons.add(advent)
+        hymn = ServiceRole.objects.create(service=self.service, role_name="Entrance hymn")
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.click(f"#add-piece-form-{hymn.pk} [data-fill-number='1']")
+        assert self.page.eval_on_selector(f"#id_role_{hymn.pk}_hymnal", "s => s.selectedOptions[0].text") == "NEH"
+        assert self.page.input_value(f"#id_role_{hymn.pk}_number") == "1"
+        assert "For Advent" in self.page.inner_text(f"#add-piece-form-{hymn.pk}")
+
     def test_a_hymn_is_typed_as_a_reference_before_the_search_box(self):
         hymn = ServiceRole.objects.create(service=self.service, role_name="Entrance hymn")
         form = f"#add-piece-form-{hymn.pk}"

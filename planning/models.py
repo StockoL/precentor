@@ -449,6 +449,19 @@ class ServiceRole(models.Model):
         )
         return next((hymnal for hymnal in hymnals if hymnal.pk == last), hymnals[0])
 
+    @cached_property
+    def hymn_suggestions(self):
+        """A Hymn slot's suggested hymns, with the church's own window for
+        hymns (planning/suggestions.py)."""
+        if not self.hymnals_on_offer:
+            return []
+        from core.models import SiteConfig
+
+        from .suggestions import hymn_suggestions
+
+        window = SiteConfig.of(self.service.organisation).hymn_repeat_window_weeks
+        return hymn_suggestions(self, window)
+
     @property
     def takes_reference_first(self):
         """Hymns, psalms and antiphons are usually typed as a reference, so

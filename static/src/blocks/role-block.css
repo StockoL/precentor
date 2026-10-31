@@ -97,6 +97,24 @@
     max-inline-size: 100%;
   }
 
+  /* A Hymn slot's suggestions take a line of their own under the form. */
+  .role-block__hymn-suggestions {
+    flex-basis: 100%;
+  }
+
+  .role-block__hymn-suggestions button {
+    font-size: var(--typography-step--1);
+    min-block-size: auto;
+    padding-block: var(--spacing-3xs);
+    text-align: start;
+  }
+
+  /* Why a hymn is suggested, beside it rather than under it. */
+  .role-block__hymn-reasons {
+    font-size: var(--typography-step--1);
+    color: var(--colors-text-muted);
+  }
+
   .role-block__remove {
     margin-inline-start: auto;
   }

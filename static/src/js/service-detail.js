@@ -135,6 +135,18 @@ function initServiceDetail() {
   if (!document.getElementById("roles-list")) return;
   initSlotDragging(main);
 
+  // A suggested hymn fills in its slot's book and number, ready to
+  // propose; one listener for the page, so forms swapped in later work too.
+  main.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-fill-number]");
+    if (!button) return;
+    const form = button.closest("form");
+    form.querySelector("select[name='hymnal']").value = button.dataset.fillHymnal;
+    const number = form.querySelector("input[name='number']");
+    number.value = button.dataset.fillNumber;
+    number.focus();
+  });
+
   main.addEventListener("submit", async (event) => {
     const form = event.target;
 
