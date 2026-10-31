@@ -29,6 +29,10 @@
     <dl class="detail-list">
         <dt>Printed in</dt>
         <dd>{% for entry in entries %}<a href="{{ entry.hymnal.get_absolute_url }}">{{ entry }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</dd>
+        {% if hymn.metre %}
+        <dt>Metre</dt>
+        <dd>{{ hymn.metre }}</dd>
+        {% endif %}
         <dt>Last sung</dt>
         <dd>{% if hymn.last_sung %}{{ hymn.last_sung|date }} ({{ hymn.last_sung|timesince }} ago){% else %}Not sung yet{% endif %}</dd>
         {% with suited=hymn.suited_names %}{% if suited %}

@@ -1236,3 +1236,17 @@ class HymnCompletenessTests(TestCase):
     def test_a_church_with_no_hymns_has_no_hymn_section(self):
         self.client.force_login(make_user("librarian"))
         self.assertNotContains(self.client.get("/library/completeness/"), "<h2>Hymns</h2>", html=True)
+
+
+class HymnMetreTests(TestCase):
+    def test_a_metre_is_stored_written_one_way_and_shown(self):
+        from .models import Hymnal, HymnEntry
+
+        librarian = make_user("librarian")
+        neh = Hymnal.objects.create(organisation=librarian.organisation, name="New English Hymnal", short_name="NEH")
+        hymn = HymnEntry.find_or_make(neh, "53").hymn
+        self.client.force_login(librarian)
+        self.client.post(f"/library/hymns/{hymn.pk}/edit/", {"first_line": "", "metre": "lm"})
+        hymn.refresh_from_db()
+        self.assertEqual(hymn.metre, "8.8.8.8")
+        self.assertContains(self.client.get(f"/library/hymns/{hymn.pk}/"), "<dd>8.8.8.8</dd>", html=True)

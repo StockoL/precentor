@@ -9,6 +9,7 @@ from django.utils import timezone
 
 from accounts.querysets import OrganisationQuerySet
 
+from .metre import normalise as normalise_metre
 from .validators import tidy_vocal_range, validate_vocal_range
 
 RANGE_FIELDS = ("range_soprano", "range_alto", "range_tenor", "range_bass")
@@ -360,6 +361,8 @@ class Hymn(models.Model):
     )
     objects = HymnQuerySet.as_manager()
     first_line = models.CharField(max_length=200, blank=True)
+    # The metre belongs to the text; a tune has its own (see Tune).
+    metre = models.CharField(max_length=40, blank=True, help_text="e.g. 88 88, 8.7.8.7 or LM")
     # The words, typed by the church, which its licence covers; held on the
     # hymn so one copy serves every book that prints it.
     text = models.TextField(blank=True)
@@ -380,6 +383,10 @@ class Hymn(models.Model):
 
     def __str__(self):
         return self.first_line or "A hymn with no first line yet"
+
+    def save(self, *args, **kwargs):
+        self.metre = normalise_metre(self.metre)
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse("library:hymn_detail", kwargs={"pk": self.pk})

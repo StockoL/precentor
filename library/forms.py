@@ -141,7 +141,9 @@ class HymnForm(forms.ModelForm):
 
     class Meta:
         model = Hymn
-        fields = ["first_line", "text", "text_credit", "suited_use_types", "suited_seasons", "suited_occasions"]  # noqa
+        fields = [  # noqa
+            "first_line", "metre", "text", "text_credit", "suited_use_types", "suited_seasons", "suited_occasions",
+        ]
         field_classes = {"suited_occasions": OccasionMultipleChoiceField}  # noqa
 
     def __init__(self, *args, **kwargs):
