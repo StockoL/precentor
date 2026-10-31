@@ -10,8 +10,12 @@
    * same rendering. One definition here applies everywhere, rather
    * than styling each page's form individually.
    */
-  /* A group of related fields, titled by its legend. */
+  /* A group of related fields, titled by its legend. Browsers give a
+     fieldset a minimum width of its widest content, so a row of fields
+     side by side would push it past a narrow screen; a minimum of 0
+     lets it shrink like any other box. */
   form fieldset {
+    min-inline-size: 0;
     margin: 0;
     padding: 0;
     border: none;
