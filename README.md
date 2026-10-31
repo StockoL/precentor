@@ -11,17 +11,24 @@ spell can take about a minute while it wakes up. Anyone can try it by
 registering a church of their own on the sign-up page, so no login
 details are needed.
 
-> **Status:** Precentor is built and deployed. Churches register
-> themselves and each works only in its own data. Inside a church there
-> are accounts with email sign-in, three roles and an owner, who invites
-> people by link, changes their roles, removes them and makes reset
-> links (§5). The library of scores, term and service planning with
-> slots and pieces, the Ordo liturgical calendar for both forms of the
-> Roman Rite, comment threads, per-church settings with a crest, and the
-> printable music list are all in place. Before the accounts work I
-> overhauled the whole app, phase by phase, as recorded in
-> [`docs/overhaul_plan.md`](docs/overhaul_plan.md). A library can also
-> be imported from a spreadsheet and exported again (§3.1).
+> **Status:** Precentor is built. Churches register themselves and
+> each works only in its own data. Inside a church there are accounts
+> with email sign-in, three roles and an owner, who invites people by
+> link, changes their roles, removes them and makes reset links (§5).
+> The library of scores, term and service planning with slots and
+> pieces, the Ordo liturgical calendar for both forms of the Roman Rite,
+> comment threads, per-church settings with a crest, and the printable
+> music list are all in place. Before the accounts work I overhauled
+> the whole app, phase by phase, as recorded in
+> [`docs/overhaul_plan.md`](docs/overhaul_plan.md).
+>
+> Since then I've added importing and exporting the library as a
+> spreadsheet (§3.1), slots that know their kind (§3.2), grouped
+> suggestions with reasons (§3.3), hymnals and hymns built up by number,
+> score texts with a pew sheet (§4), and templates whose slots keep
+> their kinds. The live site is still the version I submitted on 23
+> October 2026, so these newer parts can be run locally (§17) but aren't
+> on it yet.
 >
 > The rest of this document keeps its original concept-and-reasoning
 > framing, because that reasoning is what the build followed. Where the
