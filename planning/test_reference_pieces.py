@@ -332,3 +332,17 @@ class TuneChoiceTests(ReferencePieceTestMixin, TestCase):
         self.assertEqual(self.choose(self.printed, role="librarian").status_code, 403)
         self.piece.refresh_from_db()
         self.assertIsNone(self.piece.tune)
+
+    def test_the_pew_sheet_numbers_another_tune_from_the_same_book(self):
+        self.piece.is_confirmed = True
+        self.piece.save()
+        self.assertEqual(self.piece.sheet_title, "NEH 53")
+        self.piece.tune = self.printed
+        self.piece.save()
+        self.assertEqual(self.piece.sheet_title, "NEH 53, tune NEH 115")
+        self.piece.tune = self.elsewhere
+        self.piece.save()
+        self.assertEqual(self.piece.sheet_title, "NEH 53, tune Elsewhere")
+        self.client.force_login(self.conductor)
+        response = self.client.get(f"/services/{self.service.pk}/sheet/")
+        self.assertContains(response, '<p class="pew-sheet__piece">NEH 53, tune Elsewhere</p>', html=True)

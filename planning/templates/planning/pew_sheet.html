@@ -21,7 +21,7 @@
             {% include "library/_parallel_text.html" with text=piece.score.text translation=piece.score.translation credit=piece.score.translation_credit %}
             {% endif %}{% endif %}
             {% else %}
-            <p class="pew-sheet__piece">{{ piece.title }}</p>
+            <p class="pew-sheet__piece">{{ piece.sheet_title }}</p>
             {% endif %}
         {% endfor %}
     </section>

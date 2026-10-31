@@ -598,6 +598,21 @@ class RolePiece(models.Model):
         return f"{self.title} ({'confirmed' if self.is_confirmed else 'proposed'})"
 
     @property
+    def sheet_title(self):
+        """
+        How a piece prints for the congregation. A hymn sung to its book's
+        own tune is just its number: "NEH 53". Sung to another tune, the
+        tune is named by where it's printed in the same book, so a finger
+        can be kept in the music, "NEH 53, tune NEH 115", or by its name
+        if that book doesn't print it: "NEH 53, tune Repton".
+        """
+        if not self.hymn_entry_id or not self.tune_id or self.tune_id == self.hymn_entry.tune_id:
+            return self.title
+        hymnal = self.hymn_entry.hymnal
+        number = self.tune.number_in(hymnal)
+        return f"{self.title}, tune {hymnal.short_name} {number}" if number else f"{self.title}, tune {self.tune}"
+
+    @property
     def sung_tune(self):
         """The tune a hymn is sung to: the one chosen here, or else the
         one its book prints it with. None for anything else."""

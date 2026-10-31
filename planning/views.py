@@ -564,7 +564,8 @@ def service_pew_sheet(request, pk):
     """
     service = get_object_or_404(
         own(Service, request).select_related("occasion").prefetch_related(
-            "roles__pieces__score", "roles__pieces__hymn_entry__hymnal"
+            "roles__pieces__score", "roles__pieces__tune", "roles__pieces__hymn_entry__hymnal",
+            "roles__pieces__hymn_entry__tune",
         ),
         pk=pk,
     )
