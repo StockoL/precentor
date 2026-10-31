@@ -79,6 +79,13 @@ class SiteConfig(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(104)],
         help_text="In weeks. Suggestions put scores sung within this below the others.",
     )
+    # Hymns come round more often than motets, so they have their own.
+    hymn_repeat_window_weeks = models.PositiveSmallIntegerField(
+        "hymns sung recently means within",
+        default=6,
+        validators=[MinValueValidator(1), MaxValueValidator(104)],
+        help_text="In weeks, for hymns.",
+    )
     show_hymns_psalm = models.BooleanField(
         "show hymns and psalm on the music list", default=True
     )

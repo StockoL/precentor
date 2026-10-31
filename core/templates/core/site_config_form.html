@@ -29,6 +29,7 @@
         <p>{{ form.layout_style.label_tag }} {{ form.layout_style }} {{ form.layout_style.errors }}</p>
         <p>{{ form.music_list_arrangement.label_tag }} {{ form.music_list_arrangement }} {{ form.music_list_arrangement.errors }}</p>
         <div>{{ form.repeat_window_weeks.as_field_group }}</div>
+        <div>{{ form.hymn_repeat_window_weeks.as_field_group }}</div>
         <button class="btn-primary" type="submit">Save</button>
     </form>
     {% if can.manage_organisation %}
