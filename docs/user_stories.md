@@ -47,6 +47,9 @@ These user stories drive the design and functionality of Precentor.
 - As a conductor, I want the music list to print the propers beside the
   rest of the music if that's our house style, so the printed list
   matches what the congregation is used to.
+- As a conductor, I want my templates to remember what each slot is, a
+  hymn sung at the Introit for instance, so I set it once rather than on
+  every service.
 - As a conductor, I want templates for the services I plan often (Mass,
   Vespers, or my own), so a new service starts with its usual slots in
   one click, and I can still change them afterwards.
