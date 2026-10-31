@@ -257,10 +257,14 @@ motet can be carried from the end of a long Mass to anywhere in it.
 **Slot templates** save adding the usual slots one by one. On a
 service's page, a button per template adds its slots in order: **Mass**
 (Introit, Kyrie, Gloria, Gradual, Alleluia or Tract, Credo, Offertory,
-Sanctus, Agnus Dei, Communion) and **Vespers** (Psalms, Hymn,
-Magnificat, Marian antiphon) come ready-made, and a conductor can edit
-those or make their own, such as Benediction or a choir's usual Sunday
-Mass with its motets. A service uses one template at a time: choosing
+Sanctus, Agnus Dei, Communion), **Mass with hymns** (an entrance,
+offertory, communion and recessional hymn in place of the propers, with
+the psalm and Alleluia) and **Vespers** (Psalms, Hymn, Magnificat,
+Marian antiphon) come ready-made, and a conductor can edit those or
+make their own, such as Benediction or a choir's usual Sunday Mass with
+its motets. A template lists its slots as rows, each with its kind and
+proper part, so a slot added from it arrives already classified, and a
+church that sings a hymn at the Introit says so once, in the template. A service uses one template at a time: choosing
 a different one asks "Replace the Mass slots with Vespers?" first, then
 removes the old slots and adds the new. Any slot with pieces proposed
 is kept, so no planning is lost. Applying the same template twice
@@ -850,6 +854,7 @@ erDiagram
   LITURGICAL_SEASON |o--o{ LITURGICAL_OCCASION : contains
   SERVICE ||--o{ SERVICE_ROLE : has
   SLOT_TEMPLATE |o--o{ SERVICE : used_by
+  SLOT_TEMPLATE ||--o{ TEMPLATE_SLOT : lists
   SERVICE_ROLE ||--o{ ROLE_PIECE : holds
   SCORE ||--o{ ROLE_PIECE : referenced_by
   HYMNAL ||--o{ HYMN_ENTRY : prints
@@ -915,7 +920,12 @@ erDiagram
   }
   SLOT_TEMPLATE {
     string name
-    text slot_names
+  }
+  TEMPLATE_SLOT {
+    string name
+    string kind
+    string proper_part
+    int position
   }
   ROLE_PIECE {
     string reference
@@ -1111,7 +1121,17 @@ It also has Django's own `password`, `last_login`, `is_staff`,
 | -------------- | ---------- | -------------------------------- | --------------------------- |
 | `organisation` | ForeignKey | to Organisation                  | Whose template              |
 | `name`         | CharField  | max 50, unique within the church | e.g. Mass, Vespers          |
-| `slot_names`   | TextField  | required                         | One slot per line, in order |
+| `slot_names`   | TextField  | no longer read                   | The slots' first form; to be dropped |
+
+**planning.TemplateSlot** (one slot of a template)
+
+| Field          | Type                 | Constraints                  | Purpose                        |
+| -------------- | -------------------- | ---------------------------- | ------------------------------ |
+| `template`     | ForeignKey           | to SlotTemplate              | The template it's in           |
+| `organisation` | ForeignKey           | copied from the template     | Whose slot                     |
+| `name`         | CharField            | max 50, once per template (the form checks) | e.g. Introit, Entrance hymn    |
+| `kind`, `proper_part` | CharField     | from the name when left blank | How it's shown, which proper  |
+| `position`     | PositiveIntegerField | from the form's order        | Its place in the template      |
 
 **ordo.LiturgicalOccasion** (shared by every church)
 
