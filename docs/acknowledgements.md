@@ -156,6 +156,34 @@ How I used it:
   section 4, and the national days have tests of their own in
   [`ordo/test_calendar_1962.py`](../ordo/test_calendar_1962.py).
 
+### Divinum Officium
+
+[Divinum Officium](https://github.com/DivinumOfficium/divinum-officium)
+publishes the Roman Breviary and Missal in many editions and languages.
+Its code and data are under the MIT licence, and its credits page says
+the liturgical texts are in the public domain. I used its repository at
+commit `db57fc0` (30 October 2026). I'm grateful to the project's many
+contributors, whose patient transcription and cross-referencing of the
+Missal made this part of Precentor a matter of reading files rather
+than typing them.
+
+How I used it:
+
+- **The 1962 Mass chants.** A one-off script,
+  [`tools/calendar_export/export_divinum_officium.py`](../tools/calendar_export/export_divinum_officium.py),
+  reads its Latin Mass files and writes the opening words of each day's
+  Introit, Gradual, Alleluia, Tract, Sequence, Offertory and Communion
+  into `ordo/data/divinum_officium/propers_1962.json`, which
+  `manage.py load_calendar` loads. It follows the files' own
+  references to Commons and other days. Only the opening words are
+  kept, with the accents removed; no full texts are copied.
+- **Matching days.** Its file names are the keys Missalemeum, and so
+  Ordo, gives 1962 days, which is what lets each day's chants be found
+  without matching names.
+
+Divinum Officium's licence notice is in
+[`ordo/DIVINUM_OFFICIUM_LICENSE.txt`](../ordo/DIVINUM_OFFICIUM_LICENSE.txt).
+
 ### The date of Easter
 
 [`ordo/utils.py`](../ordo/utils.py) calculates Easter Sunday with the

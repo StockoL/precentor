@@ -25,8 +25,9 @@ details are needed.
 > Since then I've added importing and exporting the library as a
 > spreadsheet (§3.1), slots that know their kind (§3.2), grouped
 > suggestions with reasons (§3.3), hymnals and hymns built up by number,
-> score texts with a pew sheet (§4), and templates whose slots keep
-> their kinds. The live site is still the version I submitted on 23
+> score texts with a pew sheet (§4), templates whose slots keep
+> their kinds, and the day's chants from the 1962 Missal offered on
+> Proper slots (§3.2). The live site is still the version I submitted on 23
 > October 2026, so these newer parts can be run locally (§17) but aren't
 > on it yet.
 >
@@ -216,8 +217,23 @@ a Proper, Kyrie the Ordinary, Communion hymn a Hymn, Opening voluntary
 Organ), and it can be chosen when adding a slot or changed on any slot
 later. That matters because practice varies: a church that sings a
 hymn at the Introit keeps the slot called Introit and shows it as a
-Hymn. A Proper slot also knows which proper it is, ready for the day's
-chant to be suggested for it one day.
+Hymn. A Proper slot also knows which proper it is (Introit, Gradual,
+Alleluia or Tract, Offertory, Communion).
+
+**The day's chant (1962).** On a service kept by the 1962 calendar, a
+Proper slot offers that day's chant beneath its search box, by its
+opening words: "Populus Sion" for the Introit on the Second Sunday of
+Advent. One click proposes it as a reference, never confirmed, and it
+isn't offered again once it's there. An Alleluia or Tract slot takes
+whichever the date calls for, so a saint's day after Septuagesima
+offers its Tract, and in Eastertide its Alleluias. The names come from
+[Divinum Officium](https://github.com/DivinumOfficium/divinum-officium)'s
+Mass files, whose names are the very keys Ordo gives 1962 days, so each
+day's chants line up with no matching by name (see
+[`tools/calendar_export/README.md`](tools/calendar_export/README.md)).
+They cover 688 days; commemorations have no Mass of their own, and the
+nine England and Wales feasts aren't in Divinum Officium, so those offer
+nothing. Ordinary Form services offer nothing yet either.
 
 A piece in a slot is one of three things: a score from the library, a
 **hymn** by its book and number, or a short **reference** typed in, such
@@ -628,6 +644,7 @@ aren't.
 - Hymnals, with hymns built up by number as they're used, and tunes: built
 - Score texts and translations, and a pew sheet: built
 - Templates whose slots keep their kinds: built
+- The day's chants offered on Proper slots: built for the 1962 Missal, not yet for the Ordinary Form
 - CCLI/copyright licence reporting export: not built
 - Choir roster awareness (auto-filtering by available voice parts): not built
 
@@ -667,12 +684,13 @@ aren't.
   That's a separate, mature domain with authoritative tools already
   serving it well, and duplicating it would mean building a different
   application inside Precentor.
-- Filling in the propers. A Proper slot knows which proper it is
-  (Introit, Gradual and so on), but Precentor doesn't supply the chant
-  for the day. The texts are public domain, but lining up a source's
-  entries with every occasion in Ordo, and checking them, is a project
-  of its own. Recording which proper a slot is means the data is ready
-  if that's added later (§19).
+- The Ordinary Form's propers, and anything beyond the chants' names.
+  Precentor offers the 1962 Missal's chants (§3.2) but not the
+  Graduale Romanum's for the Ordinary Form: the index I found is
+  American, has no licence notice and would need checking by hand row
+  by row, and the Ordinary Form treats the Graduale as one choice among
+  several in any case. Only opening words are kept, never full texts,
+  translations or music.
 - Hymnal contents. Precentor ships no hymn numbers, first lines, tunes
   or metres. A church's hymns build up as it types a book and number
   into a slot, so nothing is copied from a published hymnal's index,
@@ -749,7 +767,9 @@ Church's General Norms for the Liturgical Year and the Calendar. The
 1962 calendar is a port of
 [Missalemeum](https://github.com/mmolenda/Missalemeum)'s rules (MIT
 licence), and its days for England and Wales come from the Latin Mass
-Society's Ordo. The
+Society's Ordo. The 1962 Mass chants' names come from
+[Divinum Officium](https://github.com/DivinumOfficium/divinum-officium)
+(MIT licence; the liturgical texts are in the public domain). The
 stylesheets follow Andy Bell's CUBE CSS, with layouts based on Every
 Layout by Heydon Pickering and Andy Bell, and fluid scales from
 Utopia. The typefaces are EB Garamond and Inter, both under the SIL
@@ -1176,6 +1196,22 @@ together.
 
 **ordo.LiturgicalSeason** (shared): `name` (CharField, max 50).
 
+**ordo.ProperChant** (shared by every church; loaded by `load_calendar`)
+
+| Field          | Type      | Constraints                                | Purpose                                     |
+| -------------- | --------- | ------------------------------------------ | ------------------------------------------- |
+| `occasion_key` | CharField | max 100                                    | The occasion's key, e.g. `tempora:Adv2-0`   |
+| `calendar_use` | CharField | choices; 1962 only so far                  | Which form of the Mass                      |
+| `part`         | CharField | choices: Introit to Communion              | Which chant                                 |
+| `season`       | CharField | blank, Septuagesima or Eastertide          | A saint's day's form for that season        |
+| `incipit`      | CharField | max 100                                    | The opening words, e.g. Populus Sion        |
+| `source`       | CharField | max 100                                    | The file it came from                       |
+
+One chant per part, season and day in each form. It's matched to an
+occasion by key, not a foreign key: occasions are rebuilt from their
+files, and a national calendar repeats a key to move a day whose Mass
+is the same.
+
 **ordo.UseType**: `organisation` (ForeignKey) and `name` (CharField,
 max 50), such as Mass, Vespers or General. Each church has its own.
 
@@ -1461,8 +1497,10 @@ What's designed or wanted but not built yet:
 - **Email.** Invitations and reset links are passed on by hand because
   Precentor sends no email. With a mail provider they could be sent
   directly, and people could reset their own passwords.
-- **Propers.** Suggesting the day's proper chants on Proper slots, from
-  a public-domain source such as Divinum Officium for the 1962 Missal.
+- **Ordinary Form propers.** The Graduale Romanum's chants for the
+  Ordinary Form, offered the same way as the 1962 ones, once there's a
+  source whose terms are clear. Also the nine England and Wales 1962
+  feasts, from the Commons the Latin Mass Society's Ordo gives them.
 - **Importing a hymnal's list** from a spreadsheet, reusing the score
   import's batches, for a church that already keeps one.
 
