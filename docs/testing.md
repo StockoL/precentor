@@ -180,12 +180,32 @@ To run them, see "Running it locally" in the README.
 
 | ID   | Check                         | Steps                                                                       | Expected                                                             | Result   |
 | ---- | ----------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------- | -------- |
-| R01  | 320 pixels wide               | Terms, a service, the library and the music list at 320 pixels              | Nothing wider than the screen except the library table, which scrolls in its own box | Not carried out before submission |
-| R02  | 768 pixels wide               | The same pages at 768 pixels                                                | The layout fills the width without gaps or overlaps                  | Not carried out before submission |
+| R01  | 320 pixels wide               | Every main page at 320 pixels                                               | Nothing wider than the screen except the library table, which scrolls in its own box | Fail, then fixed: the score form was 3 pixels too wide (`6bf1062`). After the fix, all 19 pages passed in Chromium, Firefox and WebKit on 31 October |
+| R02  | 768 pixels wide               | The same pages at 768 pixels                                                | The layout fills the width without gaps or overlaps                  | Pass: all 19 pages in all three engines on 31 October, with no console errors |
 | R03  | 1280 pixels wide              | The same pages at 1280 pixels                                               | The layout as in the README's screenshots                            | Pass: every page in the README's figures at 1280 pixels |
-| R04  | Keyboard alone                | Sign in, open a service, propose and confirm a piece, using only the keyboard | Every step reachable with Tab, Enter and the arrow keys, with a visible outline on each control | Pass for focus outlines (Figure 25); the whole keyboard journey not carried out before submission |
+| R04  | Keyboard alone                | Sign in, open a service, propose and confirm a piece, using only the keyboard | Every step reachable with Tab, Enter and the arrow keys, with a visible outline on each control | Pass on 31 October, in Chromium: every step done with Tab, typing, the arrow keys and Enter. Each control had a focus outline; a term's link rings its whole card instead (Figure 25 shows the outline) |
 | R05  | Dark mode                     | Switch the device to dark, then choose Dark in the user menu                | Every page readable, with the same contrast as in light              | Pass: the service page (Figure 24) and by browser tests; every other page checked by hand on 23 October |
 | R06  | Without JavaScript            | Turn JavaScript off; propose a piece, confirm it, remove a slot             | Each works through ordinary pages                                    | Pass: each is an ordinary form post, covered by automated tests without JavaScript |
+
+### Browsers and devices
+
+On 31 October I loaded the 19 main pages (signing in, registering,
+terms, a term, a service, the library, the score form, the music list,
+the pew sheet, the inbox, Settings, Members, completeness, hymnals, a
+hymnal, tunes, templates, import and privacy) in each browser engine
+Playwright provides, at 320, 768 and 1280 pixels wide. A script looked
+for anything wider than the window and for errors in the console.
+
+| Engine   | Version tested | Stands in for                        | 320 px | 768 px | 1280 px |
+| -------- | -------------- | ------------------------------------ | ------ | ------ | ------- |
+| Chromium | 149            | Chrome, Edge, Samsung Internet       | Pass after `6bf1062` | Pass | Pass |
+| Firefox  | 151            | Firefox                              | Pass after `6bf1062` | Pass | Pass |
+| WebKit   | 26.5           | Safari on a Mac, iPhone and iPad     | Pass after `6bf1062` | Pass | Pass |
+
+Playwright's WebKit is the engine Safari is built on, run on Windows,
+not Safari itself, and none of this was on a real phone. I haven't
+tested on an iPhone or an Android phone, so those rows say what the
+engine does, not what a particular device does.
 
 ## 7. Bugs found and fixed
 
@@ -210,6 +230,7 @@ testing, fixed, and covered by a test where it could be.
 | `f4ec027` | A comment could be added to another church's term, service or piece                       |
 | `6b65a6c` | The change-password pages still had the admin's look, and nothing linked to them (fixed with `5ca663b`) |
 | `e9ee61f` | On a phone, with a longer name, the user menu's panel opened off the left of the screen    |
+| `6bf1062` | At 320 pixels the score form was a few pixels wider than the screen, as a fieldset won't shrink below its widest row |
 
 **Left unfixed:** the 16 long lines, the variable `l` and the lambda
 found by flake8 (see section 1). None affects how the app works.
