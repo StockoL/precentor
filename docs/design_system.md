@@ -307,8 +307,8 @@ styling wholesale:
 - Service headings use `step-1` on screen; at the app's usual `h2`
   size they wrapped onto four lines in an 18rem column.
 - Each entry is a size container (`container-type: inline-size`).
-  Below 26rem the occasion, hymns and psalm go under the pieces
-  instead of beside them, which on screen means inside a newspaper
+  Below 26rem the occasion goes under the pieces instead of beside
+  it, which on screen means inside a newspaper
   column. It's a container query, not a media query, because what
   matters is the column's width, not the window's; wide entries,
   print included, keep them side by side.
@@ -322,6 +322,32 @@ styling wholesale:
   `login.html` does. A document should stay left-aligned inside and
   be centred only as a whole block, whereas in a small centred form
   every child should line up on the middle.
+- Each row carries its slot's kind as `data-kind`, so the list can be
+  styled or grouped by kind without guessing from slot names. The
+  Settings page's arrangement, "Propers beside the rest", splits each
+  service into two lists inside `.music-list-groups`, a grid of
+  `repeat(auto-fit, minmax(min(100%, 14rem), 1fr))`: side by side where
+  the entry is wide enough, one under the other in a newspaper column
+  or on paper, so neither list is squeezed. No headings, as the slot
+  names already say what each is.
+- The crest, church name and heading are one template,
+  `_printed_list_header.html`, shared with the pew sheet.
+
+### The pew sheet
+
+A service's sheet for the congregation uses the music list's classes
+inside `.music-list`, so its print rules apply unchanged: the same
+fixed point sizes, the same print-safe colours, the controls hidden.
+What's its own is small and lives in `pew-sheet.css`: tighter spacing
+within a slot and the composer in muted italics after the title. A
+motet's text and translation sit side by side in the `parallel-text`
+block, shared with the score's page: a grid of two columns where
+there's room, the translation in italics and the credit spanning both
+beneath, one above the other on a phone. The occasion line takes the
+day's liturgical colour, as on the music list, rather than the house
+accent, whose dark red was hard to read in dark mode. The options,
+texts and composers, are a plain GET form, so the choices are in the
+address and need no JavaScript.
 
 ## Accessibility basics
 
