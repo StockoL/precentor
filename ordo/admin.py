@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import LiturgicalOccasion, LiturgicalSeason, UseType
+from .models import LiturgicalOccasion, LiturgicalSeason, ProperChant, UseType
 
 
 @admin.register(LiturgicalOccasion)
@@ -18,3 +18,10 @@ class LiturgicalSeasonAdmin(admin.ModelAdmin):
 @admin.register(UseType)
 class UseTypeAdmin(admin.ModelAdmin):
     list_display = ["name"]  # noqa
+
+
+@admin.register(ProperChant)
+class ProperChantAdmin(admin.ModelAdmin):
+    list_display = ["occasion_key", "calendar_use", "part", "season", "incipit"]  # noqa
+    list_filter = ["calendar_use", "part", "season"]  # noqa
+    search_fields = ["occasion_key", "incipit"]  # noqa

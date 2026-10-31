@@ -232,3 +232,52 @@ def occasion_for_date(target_date, calendar_use, national_calendar="general_roma
     from .calendar import resolve_year
 
     return resolve_year(target_date.year, calendar_use, national_calendar).get(target_date, [])
+
+
+PROPER_CHANT_PARTS = [
+    ("introit", "Introit"),
+    ("gradual", "Gradual"),
+    ("alleluia", "Alleluia"),
+    ("tract", "Tract"),
+    ("sequence", "Sequence"),
+    ("offertory", "Offertory"),
+    ("communion", "Communion"),
+]
+
+# A saint's day can fall in Lent or Eastertide, when its Mass sings a
+# Tract, or Alleluias in place of the Gradual. Those forms are kept beside
+# the usual one and chosen by the service's date.
+PROPER_CHANT_SEASONS = [
+    ("", "Any time"),
+    ("septuagesima", "Septuagesima to Easter"),
+    ("paschaltide", "Eastertide"),
+]
+
+
+class ProperChant(models.Model):
+    """
+    The name of one of a day's proper chants, such as the Introit "Ad te
+    levavi" for the First Sunday of Advent. Shared reference data like the
+    calendar, loaded by load_calendar, with no church of its own. It's
+    matched to occasions by key, not a foreign key, as occasions are
+    rebuilt from their files and a national calendar repeats a key to
+    move a day, which still has the same Mass.
+    """
+
+    occasion_key = models.CharField(max_length=100)
+    calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES)
+    part = models.CharField(max_length=20, choices=PROPER_CHANT_PARTS)
+    season = models.CharField(max_length=20, choices=PROPER_CHANT_SEASONS, blank=True)
+    incipit = models.CharField(max_length=100)
+    source = models.CharField(max_length=100, help_text="Where it came from, e.g. Divinum Officium Tempora/Adv1-0")
+
+    class Meta:
+        ordering = ["occasion_key", "part"]  # noqa
+        constraints = [
+            models.UniqueConstraint(
+                fields=["calendar_use", "occasion_key", "part", "season"], name="one_proper_chant_per_part"
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.get_part_display()}: {self.incipit}"
