@@ -11,15 +11,15 @@ automated test named. Anything I didn't get to before submission says so.
 
 | Check                       | What I used                                                                                     | What it found                                                                                                               | Resolved?                                                                                                                                         |
 | --------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 801 tests, all passing (31 October 2026, at `684a8d0`)                                                                | Nothing to resolve                                                                                                                                |
+| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 801 tests, all passing (31 October 2026, at `6bf1062`)                                                                | Nothing to resolve                                                                                                                                |
 | Deployment settings         | `python manage.py check --deploy` with `DEBUG` off                                              | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve                                                                                                                                |
-| Python style                | `flake8` with a line length of 120, excluding `venv` and migrations                             | 22 findings: two unused imports, one extra blank line, one invalid escape (`\W` in a test string), 16 long lines, a variable named `l`, a lambda assigned to a name | Resolved the unused imports, the blank line and the escape in `1f2e618`. Left the 16 long lines (121 to 139 characters, mostly test data), the `l` in `ordo/utils.py` and the lambda in a test, as they don't affect behaviour |
+| Python style                | `flake8` with a line length of 120, excluding `venv` and migrations                             | 22 findings: two unused imports, one extra blank line, one invalid escape (`\W` in a test string), 16 long lines, a variable named `l`, a lambda assigned to a name | Resolved the unused imports, the blank line and the escape in `1f2e618`. Left the 16 long lines (121 to 139 characters, mostly test data), the `l` in `ordo/utils.py` and the lambda in a test, as they don't affect behaviour. Rerun on 31 October with flake8 7.5: two files in `accounts` ended in a blank line and one import there had grown too long, all fixed in `722ffc4`; the rest as before |
 | Leftover debugging          | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app. The two scripts in `tools/` print what they've done, on purpose                                     | Nothing to resolve                                                                                                                                |
 | Files that shouldn't be tracked | `git ls-files`, searched for `.env`, database files, keys, `venv` and uploaded media; `git grep` for literal secret keys and passwords | None tracked. The only passwords in the code are test values and the demo church's password in `tools/`, used only for the screenshots | `*.sqlite3` added to `.gitignore` in `442ef09`, so the screenshots database can't be committed                                                    |
-| HTML validation             | [W3C Nu HTML Checker](https://validator.w3.org/nu/), sent the rendered HTML of 13 pages (section 2) | 4 errors on 3 pages and 18 warnings. Two errors on Settings were real: `maxlength` and `required` on the colour picker. Two were `@view-transition`, a CSS rule the checker doesn't know yet. The warnings are all "the list role is unnecessary" | Fixed the colour picker in `7abd14c`. `@view-transition` is valid CSS, newer than the checker. The `role="list"` is deliberate: Safari stops announcing a list as a list when its bullets are removed, so the role puts that back |
-| CSS validation              | [W3C CSS Validator](https://jigsaw.w3.org/css-validator/), every one of the 41 files in `static/src/`, CSS level 3 profile | 38 files with no errors. 6 errors in 3 files, all newer CSS the validator doesn't recognise yet: `@container` and `container-type` (music list), `view-transition-name` (navigation) and `@view-transition` (global styles) | Nothing to fix: each is supported by current browsers; the validator lags behind them |
-| JavaScript                  | [ESLint](https://eslint.org/) 8.57 with its recommended rules, for browser ES modules, over all 14 files in `static/src/js/` | No errors and no warnings                                                                                                    | Nothing to resolve. The JavaScript is also exercised by the 57 browser tests                                                                      |
-| Lighthouse                  | [Lighthouse](https://developer.chrome.com/docs/lighthouse/) 12.2 in Chromium, five pages, desktop and mobile (section 3) | Accessibility 100 on every page. Best practices 96: a console error for the missing `/favicon.ico`. SEO 90: no meta description | Added a favicon in `0b642e4` and a meta description in `7b6fab4`. Performance on mobile (69 to 92) is measured on a slowed-down simulated phone; the lower scores are the longer pages, the service page and the library |
+| HTML validation             | [W3C Nu HTML Checker](https://validator.w3.org/nu/), sent the rendered HTML of 13 pages (section 2) | 4 errors on 3 pages and 18 warnings. Two errors on Settings were real: `maxlength` and `required` on the colour picker. Two were `@view-transition`, a CSS rule the checker doesn't know yet. The warnings are all "the list role is unnecessary" | Fixed the colour picker in `7abd14c`. `@view-transition` is valid CSS, newer than the checker. The `role="list"` is deliberate: Safari stops announcing a list as a list when its bullets are removed, so the role puts that back. Rerun on 31 October over 26 pages, the 13 above and 13 added since: no new errors, and only more of the same `role="list"` warning |
+| CSS validation              | [W3C CSS Validator](https://jigsaw.w3.org/css-validator/), every one of the 41 files in `static/src/`, CSS level 3 profile | 38 files with no errors. 6 errors in 3 files, all newer CSS the validator doesn't recognise yet: `@container` and `container-type` (music list), `view-transition-name` (navigation) and `@view-transition` (global styles) | Nothing to fix: each is supported by current browsers; the validator lags behind them. Rerun on 31 October for the 11 files changed or added since: no errors apart from the same two in the music list |
+| JavaScript                  | [ESLint](https://eslint.org/) 8.57 with its recommended rules, for browser ES modules, over all 14 files in `static/src/js/` | No errors and no warnings                                                                                                    | Nothing to resolve. Rerun on 31 October over the same 14 files, four of them changed since: still none. The JavaScript is also exercised by the browser tests                                                                      |
+| Lighthouse                  | [Lighthouse](https://developer.chrome.com/docs/lighthouse/) 12.2 in Chromium, five pages, desktop and mobile (section 3) | Accessibility 100 on every page. Best practices 96: a console error for the missing `/favicon.ico`. SEO 90: no meta description | Added a favicon in `0b642e4` and a meta description in `7b6fab4`. Performance on mobile (69 to 92) is measured on a slowed-down simulated phone; the lower scores are the longer pages, the service page and the library. Rerun on 31 October on five new or changed pages: 100 for accessibility, best practices and SEO on all of them |
 
 ## 2. HTML validation by page
 
@@ -38,6 +38,19 @@ automated test named. Anything I didn't get to before submission says so.
 | Settings                | 2      | 0        | The colour picker's `maxlength` and `required`; fixed in `7abd14c` |
 | Members                 | 0      | 2        | `role="list"`                                                |
 | Page not found          | 0      | 0        |                                                              |
+| Privacy                 | 0      | 0        | Checked 31 October, like every row below                     |
+| Import                  | 0      | 0        |                                                              |
+| Imports                 | 0      | 1        | `role="list"`                                                |
+| Library completeness    | 0      | 2        | `role="list"`                                                |
+| Hymnals                 | 0      | 2        | `role="list"`                                                |
+| A hymnal                | 0      | 1        | `role="list"`                                                |
+| A hymn                  | 0      | 1        | `role="list"`                                                |
+| Edit a hymn             | 0      | 0        |                                                              |
+| Tunes                   | 0      | 1        | `role="list"`                                                |
+| Pew sheet               | 0      | 0        |                                                              |
+| Templates               | 0      | 1        | `role="list"`                                                |
+| Edit a template         | 0      | 1        | `role="list"` on its `<ol>`                                  |
+| Propose a piece         | 0      | 0        |                                                              |
 
 ## 3. Lighthouse scores
 
@@ -52,9 +65,21 @@ were the only things keeping Best practices and SEO below 100.
 | Library    | 88 / 75                        | 100           | 96             | 90  |
 | Music list | 99 / 78                        | 100           | 96             | 91  |
 
+Measured again on 31 October, with the favicon and meta description in
+place, on the pages added since and the service page, which changed
+most.
+
+| Page                 | Performance (desktop / mobile) | Accessibility | Best practices | SEO |
+| -------------------- | ------------------------------ | ------------- | -------------- | --- |
+| A service            | 99 / 69                        | 100           | 100            | 100 |
+| Pew sheet            | 99 / 81                        | 100           | 100            | 100 |
+| Library completeness | 99 / 83                        | 100           | 100            | 100 |
+| A hymnal             | 99 / 91                        | 100           | 100            | 100 |
+| Import               | 99 / 90                        | 100           | 100            | 100 |
+
 ## 4. Automated tests
 
-The suite has 801 tests, run on 31 October 2026 at commit `684a8d0`;
+The suite has 801 tests, run on 31 October 2026 at commit `6bf1062`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
