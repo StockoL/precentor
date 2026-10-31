@@ -515,6 +515,75 @@ starts with `=`, `+`, `-` or `@` with an apostrophe so a spreadsheet
 won't run it as a formula; the import takes the apostrophe off again, so
 an exported file round-trips unchanged.
 
+### Hymns: `library.Hymnal`, `Hymn`, `HymnEntry` and `Tune`
+
+```python
+class Hymnal(models.Model):  # a hymn book the church uses, a library entry
+    name, short_name ("short code", unique in the church), copies_owned, filing_location, archived
+
+class Hymn(models.Model):  # the text, whichever books print it
+    first_line, metre, text, text_credit  # all optional
+    suited_use_types, suited_seasons, suited_occasions  # as a score's
+    not_same_as = models.ManyToManyField("self", blank=True)
+
+class HymnEntry(models.Model):  # a hymn's number in one hymnal
+    hymn = models.ForeignKey(Hymn, on_delete=models.CASCADE, related_name="entries")
+    hymnal = models.ForeignKey(Hymnal, on_delete=models.PROTECT, related_name="entries")
+    number = models.CharField(max_length=10)  # unique in the hymnal; text, as books have 123a
+    tune = models.ForeignKey("Tune", null=True, blank=True, on_delete=models.SET_NULL)  # the book's own
+
+class Tune(models.Model):
+    name, metre  # name unique in the church
+```
+
+All four belong to a church. Nothing about hymns is bundled with the
+app: no lists of hymns, numbers, tunes or texts, so there's no question
+of whose index may be reused, and a wrong number can't look
+authoritative. The church's hymns build up through use: the first time
+someone types NEH 53 into a Hymn slot, `HymnEntry.find_or_make()` makes
+the entry and a bare hymn for it, and the first line, words, metre and
+tags can be added later from the hymn's page, nudged by a quiet line on
+the service until they are.
+
+**A hymn and its entries are different things.** The same text is NEH
+53 in one book and another number in the next. A service's piece points
+at the entry, because the congregation needs the number that was
+chosen, but "last sung" (`HymnQuerySet.with_last_sung()`, the same rule
+as scores, with no manual date) and suggestions go by the hymn, so the
+same hymn sung from two books counts once. That only works once the two
+entries share a hymn, so a hymn whose first line matches another's,
+ignoring case and punctuation, asks on its page whether they're the
+same. Yes calls `absorb()`, which moves the other's entries across in
+one transaction so every service keeps its history; no is remembered in
+`not_same_as`, symmetrical, so it isn't asked again. It's never
+automatic, as two hymns can begin alike.
+
+**A hymnal is archived, not deleted,** once hymns have been recorded
+from it: `HymnEntry.hymnal` is `PROTECT`, and the delete page says to
+archive instead. Archived books aren't offered in the forms.
+
+**Numbers sort as a book prints them.** `HymnEntry.number_order()` puts
+the leading digits first as a whole number, so 9 comes before 10 and
+123a after 123, which plain text sorting gets wrong.
+
+**Metre** belongs to the text, and a tune has its own.
+`library/metre.py` writes every metre one way, so "88 88", "8.8.8.8" and
+"LM" all become "8.8.8.8", keeping a doubled verse's "D" and lines of
+ten or more whole; anything it doesn't recognise, such as "Irregular",
+is kept as typed. Both models normalise in `save()`. A match is
+necessary for a tune to fit a text but not enough, so the interface
+says "same metre", never "fits".
+
+**Tunes have no numbers of their own.** Books print a tune under a
+hymn, so a tune's number in a book is derived: `Tune.number_in(hymnal)`
+is the lowest number of an entry the book prints with that tune, the
+rule chosen for a tune printed twice. That's what lets the pew sheet
+print "NEH 53, tune NEH 115", so someone can keep a finger in the
+music, falling back to the tune's name when the book doesn't print it.
+A service's tune is chosen on the hymn's row once it's in a slot,
+from `tune_choices()`: the book's own, then tunes in the same metre the
+same book prints, then any other the church knows.
+
 ### `ordo.LiturgicalOccasion`
 
 ```python
@@ -929,6 +998,13 @@ for one service at a time.
 recently drops below the rest of its group, with its date, instead of
 disappearing, because a repeat is sometimes the point.
 
+**Hymns too:** `hymn_suggestions(role, window)` applies the same
+`placed()` to hymns, with hymns' own repeat window, for a Hymn slot.
+Only suited hymns are offered, a handful at most, as a whole hymnal
+would be no help, each under its number in the slot's usual book. On
+the service page they're buttons that fill in the book and number; the
+propose page lists them as text.
+
 **"Already planned this term"** counts services from today on only. A
 score sung earlier this term already shows "Sung 2 weeks ago", so it
 isn't flagged twice.
@@ -939,21 +1015,29 @@ isn't flagged twice.
 class RolePiece(models.Model):
     service_role = models.ForeignKey(ServiceRole, on_delete=models.CASCADE, related_name="pieces")
     score = models.ForeignKey("library.Score", null=True, blank=True, on_delete=models.PROTECT, related_name="role_pieces")
-    reference = models.CharField(max_length=200, blank=True)  # e.g. "NEH 123"
+    hymn_entry = models.ForeignKey("library.HymnEntry", null=True, blank=True, on_delete=models.PROTECT, related_name="role_pieces")
+    reference = models.CharField(max_length=200, blank=True)  # e.g. "Psalm 150, tone 4"
+    tune = models.ForeignKey("library.Tune", null=True, blank=True, on_delete=models.SET_NULL, related_name="role_pieces")
     is_confirmed = models.BooleanField(default=False)
     comments = GenericRelation("comments.Comment")
 
     class Meta:
         constraints = [
-            models.CheckConstraint(
-                condition=Q(score__isnull=False, reference="") | (Q(score__isnull=True) & ~Q(reference="")),
-                name="role_piece_score_or_reference",
-                violation_error_message="Choose a score or type a reference, not both.",
+            models.CheckConstraint(  # exactly one of score, hymn_entry, reference
+                condition=..., name="role_piece_one_of_three", violation_error_message=ONE_PIECE_MESSAGE,
+            ),
+            models.CheckConstraint(  # a tune only for a hymn
+                condition=Q(tune__isnull=True) | Q(hymn_entry__isnull=False), name="role_piece_tune_only_for_a_hymn",
             ),
         ]
 
     @property
-    def title(self): ...  # the score, or the reference as typed
+    def title(self): ...  # the score, "NEH 53", or the reference as typed
+    @property
+    def sheet_title(self): ...  # for the pew sheet: "NEH 53, tune NEH 115"
+    @property
+    def sung_tune(self): ...  # the tune chosen here, or the book's own
+    def tune_choices(self): ...  # usual tune, same metre in the book, the rest
 ```
 
 **A score or a reference:** hymns, psalms and chant are rarely in a
@@ -962,7 +1046,16 @@ reference. Exactly one of the two is set, and the database enforces
 it. I first checked the same rule in `clean()` as well, but Django runs
 a model's constraints when a form is validated, so an empty form
 reported the problem twice, once as "Constraint … is violated". The
-message now lives on the constraint, one rule in one place. Everything
+message now lives on the constraint, one rule in one place.
+
+**Then a hymn, the third choice:** a piece can also be a hymn, by its
+entry in one of the church's hymnals (see `library.Hymn`), so the rule
+became exactly one of three. That brought back a check in the form,
+for a different reason: Django leaves a constraint out of a form's
+validation when it names a field the form doesn't show, and
+`hymn_entry` is set from a book and a number rather than shown. So
+`RolePieceForm.clean()` says the rule itself, with the same wording as
+the constraint, held in one constant, `ONE_PIECE_MESSAGE`. Everything
 that shows a piece (the service page, the music list, `__str__` for
 comments) prints `title`, so neither kind needs a case of its own.
 "Last sung" and the score page's history go from a score to its pieces,
@@ -1019,6 +1112,7 @@ class SiteConfig(models.Model):
     layout_style = models.CharField(max_length=20, choices=LAYOUT_STYLE_CHOICES, default="columns")
     music_list_arrangement = models.CharField(max_length=20, choices=ARRANGEMENT_CHOICES, default="service_order")
     repeat_window_weeks = models.PositiveSmallIntegerField(default=8)  # 1 to 104
+    hymn_repeat_window_weeks = models.PositiveSmallIntegerField(default=6)  # hymns come round more often
     show_hymns_psalm = models.BooleanField(default=True)  # no longer used; to be dropped
 
     @classmethod
