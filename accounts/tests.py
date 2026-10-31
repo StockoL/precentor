@@ -1362,6 +1362,17 @@ class DeleteChurchTests(TestCase):
         # Another church is untouched.
         self.assertTrue(User.objects.filter(pk=self.elsewhere.pk).exists())
 
+    def test_a_church_that_has_sung_hymns_can_be_deleted(self):
+        from library.models import Hymnal, HymnEntry
+        from planning.models import RolePiece, ServiceRole
+
+        hymnal = Hymnal.objects.create(organisation=self.church, name="New English Hymnal", short_name="NEH")
+        role = ServiceRole.objects.get(role_name="Introit")
+        RolePiece.objects.create(service_role=role, hymn_entry=HymnEntry.find_or_make(hymnal, "1"))
+        self.client.post("/settings/delete/", {"name": "St Cecilia's"})
+        self.assertFalse(Organisation.objects.filter(pk=self.church.pk).exists())
+        self.assertFalse(Hymnal.objects.exists())
+
     def test_the_wrong_name_deletes_nothing(self):
         response = self.client.post("/settings/delete/", {"name": "St Elsewhere"})
         self.assertContains(response, "That isn&#x27;t the church&#x27;s name.")

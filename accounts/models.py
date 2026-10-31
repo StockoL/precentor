@@ -23,12 +23,14 @@ class Organisation(models.Model):
     @transaction.atomic
     def delete(self, *args, **kwargs):
         """Delete the church and everything in it, all or nothing. A planned
-        piece protects its score from being deleted on its own, so with the
-        whole church going the pieces go first and the scores can follow.
-        (The admin's "delete selected" action skips this method.)"""
+        piece protects its score from being deleted on its own, and a hymn's
+        entry protects its hymnal, so with the whole church going the pieces
+        and entries go first and the rest can follow. (The admin's "delete
+        selected" action skips this method.)"""
         from django.apps import apps
 
         apps.get_model("planning", "RolePiece").objects.filter(organisation=self).delete()
+        apps.get_model("library", "HymnEntry").objects.filter(organisation=self).delete()
         return super().delete(*args, **kwargs)
 
     def contents(self):
