@@ -212,14 +212,36 @@ hymn at the Introit keeps the slot called Introit and shows it as a
 Hymn. A Proper slot also knows which proper it is, ready for the day's
 chant to be suggested for it one day.
 
-A piece in a slot is either a score from the library or a short
-**reference** typed in, such as "NEH 123" or "Psalm 150, tone 4",
-because hymns, psalms and chant are rarely in a church's library as
-scores. In Hymn, Psalm and Antiphon slots the reference box comes first
-and the score search second; elsewhere it's the other way round. Hymns
-and the psalm were once typed into two boxes on the service form and
-printed beside the music list; they're ordinary slots now, proposed and
-confirmed like everything else.
+A piece in a slot is one of three things: a score from the library, a
+**hymn** by its book and number, or a short **reference** typed in, such
+as "Psalm 150, tone 4", because psalms and chant are rarely in a
+church's library as scores. In Hymn slots the book and number come
+first, in Psalm and Antiphon slots the reference box, and elsewhere the
+score search. Hymns and the psalm were once typed into two boxes on the
+service form and printed beside the music list; they're ordinary slots
+now, proposed and confirmed like everything else.
+
+**Hymns, hymnals and tunes.** A church's hymn books are library entries
+too, with copies and a filing location, listed from the Library and
+archived rather than deleted once hymns have been sung from them.
+Nothing about hymns comes with the app: no lists of numbers, tunes or
+words. They build up through use. The first time someone plans NEH 53,
+Precentor makes an entry for it, and its first line, words, metre and
+"suitable for" tags can be added whenever someone knows them, nudged by
+a quiet line on the service until they are. A hymn is the text and an
+entry is its number in one book, so the same hymn sung from two books
+counts as one for "last sung" and suggestions, once someone confirms
+that they're the same: a hymn whose first line matches another's asks.
+
+A Hymn slot suggests a handful of hymns suited to the day, each with its
+reasons, and one click fills in the book and number. Hymns have their
+own "sung recently" window on Settings, six weeks to start. Once a hymn
+is in a slot, its row offers the tune to sing it to: the book's own,
+then tunes in the same metre the same book prints, then any other the
+church knows. Metres are written one way whatever is typed, so "LM" and
+"88 88" match. On the pew sheet a hymn prints as its number, and a tune
+from elsewhere in the same book by that tune's number, "NEH 53, tune
+NEH 115", so someone can keep a finger in the music.
 
 Each slot has its own **Remove** button. An empty slot goes straight
 away; one with pieces proposed asks first, saying how many pieces go
@@ -830,6 +852,11 @@ erDiagram
   SLOT_TEMPLATE |o--o{ SERVICE : used_by
   SERVICE_ROLE ||--o{ ROLE_PIECE : holds
   SCORE ||--o{ ROLE_PIECE : referenced_by
+  HYMNAL ||--o{ HYMN_ENTRY : prints
+  HYMN ||--o{ HYMN_ENTRY : printed_as
+  HYMN_ENTRY ||--o{ ROLE_PIECE : chosen_as
+  TUNE |o--o{ HYMN_ENTRY : usual_tune
+  TUNE |o--o{ ROLE_PIECE : sung_to
   SCORE }o--o{ LITURGICAL_OCCASION : suits
   SCORE }o--o{ LITURGICAL_SEASON : suits
   SCORE }o--o{ USE_TYPE : suits
@@ -893,6 +920,24 @@ erDiagram
   ROLE_PIECE {
     string reference
     bool is_confirmed
+  }
+  HYMNAL {
+    string name
+    string short_name
+    int copies_owned
+    bool archived
+  }
+  HYMN {
+    string first_line
+    string metre
+    text text
+  }
+  HYMN_ENTRY {
+    string number
+  }
+  TUNE {
+    string name
+    string metre
   }
   SCORE {
     string title
@@ -1042,8 +1087,23 @@ It also has Django's own `password`, `last_login`, `is_staff`,
 | `service_role` | ForeignKey   | to ServiceRole       | The slot it's proposed for |
 | `organisation` | ForeignKey   | copied from the slot | Whose piece                |
 | `score`        | ForeignKey   | optional, to Score   | The music, from the library |
-| `reference`    | CharField    | optional, max 200    | Or a typed reference, e.g. NEH 123 |
+| `hymn_entry`   | ForeignKey   | optional, to HymnEntry | Or a hymn by book and number |
+| `reference`    | CharField    | optional, max 200    | Or a typed reference, e.g. Psalm 150 |
+| `tune`         | ForeignKey   | optional, to Tune, hymns only | A tune other than the book's own |
 | `is_confirmed` | BooleanField | default False        | Proposed or confirmed      |
+
+**library.Hymnal**, **Hymn**, **HymnEntry** and **Tune** (hymns, built up through use)
+
+| Model and field                         | Type                 | Constraints                       | Purpose                                   |
+| --------------------------------------- | -------------------- | --------------------------------- | ----------------------------------------- |
+| Hymnal `name`, `short_name`             | CharField            | the code unique in the church     | e.g. New English Hymnal, NEH              |
+| Hymnal `copies_owned`, `filing_location`, `archived` | as for scores | archived rather than deleted once used | A library entry like a score     |
+| Hymn `first_line`, `metre`, `text`, `text_credit` | CharField, TextField | all optional, metre normalised | The text, whichever books print it    |
+| Hymn `suited_*`                          | ManyToMany           | as for scores                     | What it suits, for suggestions            |
+| Hymn `not_same_as`                       | ManyToMany to itself | symmetrical                       | "A different hymn", remembered            |
+| HymnEntry `hymn`, `hymnal`, `number`     | ForeignKey, CharField | number unique in the hymnal      | Where a hymn is printed: NEH 53           |
+| HymnEntry `tune`                         | ForeignKey           | optional, to Tune                 | The tune the book prints it with          |
+| Tune `name`, `metre`                     | CharField            | metre normalised                  | A tune by name, with its metre            |
 
 **planning.SlotTemplate**
 
@@ -1098,6 +1158,7 @@ max 50), such as Mass, Vespers or General. Each church has its own.
 | `national_calendar`                    | CharField              | general, England or Wales          | Which national days are added           |
 | `layout_style`                         | CharField              | columns or simple                  | Music list layout                       |
 | `music_list_arrangement`               | CharField              | service order or propers beside    | How each service's music is arranged    |
+| `hymn_repeat_window_weeks`             | PositiveSmallIntegerField | 1 to 104, default 6             | The same, for hymns                     |
 | `repeat_window_weeks`                  | PositiveSmallIntegerField | 1 to 104, default 8             | How recent counts as "sung recently"    |
 | `show_hymns_psalm`                     | BooleanField           | default True                       | No longer used; to be dropped           |
 
@@ -1110,7 +1171,11 @@ max 50), such as Mass, Vespers or General. Each church has its own.
 - An organisation has at most one owner.
 - Email addresses are unique whatever their capitals.
 - Slot template names are unique within each church.
-- A piece is a score or a typed reference, never both and never neither.
+- A piece is exactly one of a score, a hymn entry or a typed reference,
+  and only a hymn can have a tune.
+- A hymnal's code is unique within each church, and a number appears
+  once in a hymnal. A hymnal with hymns recorded from it can't be
+  deleted.
 - An occasion's key is unique within its calendar.
 - An invitation's stored fingerprint is unique.
 
@@ -1180,11 +1245,14 @@ the role column in §2 says who may use each one.
 | Invitation                  | Invite someone (`invite`)                                 | Link shown once (`invitation_link`); Members page  | not available (cancel and make another)                                                         | Cancel (`invitation_cancel`)                                  | Members page, "Waiting to join"                                            |
 | Score                       | Add score (`score_create`), or many at once by importing   | Library (`score_list`), score page (`score_detail`), or all as a CSV (`export_library`) | Edit (`score_update`)                                                                          | Delete, after a confirmation (`score_delete`)                 | Search box, Language, Voicing, Suitable-for filters and sortable columns; the completeness page (`completeness`) |
 | Import (`ScoreImport`)      | Import a spreadsheet (`score_import`), from the template (`import_template`) | Result page (`score_import_detail`), Imports list (`score_import_list`) | Keep it (`keep_import`)                                                                          | Remove it and its scores, after a confirmation (`remove_import`) | Imports list, waiting ones first; a notice on the Library while one waits |
+| Hymnal                      | New hymnal (`hymnal_create`)                              | Hymnals (`hymnal_list`), its page (`hymnal_detail`) | Edit, archive (`hymnal_update`) | Delete, after a confirmation, unless hymns were sung from it (`hymnal_delete`) | Hymnals page, linked from the Library |
+| Hymn and its entries        | Made by typing a book and number into a Hymn slot           | Its page (`hymn_detail`), its hymnal's page          | Edit details (`hymn_update`), its tune in a book (`hymn_entry_update`), join with the same hymn (`same_hymn`) | not available: a hymn is part of the history | Each hymnal's page, in number order; the completeness page |
+| Tune                        | New tune (`tune_create`)                                  | Tunes (`tune_list`)                                  | Edit (`tune_update`) | not available | Tunes page, linked from Hymnals |
 | Term                        | New term (`term_create`)                                  | Terms page (`term_list`), term page (`term_detail`) | Edit (`term_update`)                                                                           | Delete, after a confirmation (`term_delete`)                  | Terms page, current and upcoming first, past folded away                   |
 | Service                     | New service (`service_create`), occasion suggested from the date | Service page (`service_detail`), term page, pew sheet (`service_pew_sheet`) | Edit (`service_update`)                                                                         | Delete, after a confirmation (`service_delete`)               | Term page in date order; previous and next links on each service           |
 | Notice (`TermMarker`)       | New notice (`marker_create`)                              | Term page and music list                           | Edit (`marker_update`)                                                                          | Delete (`marker_delete`)                                      | Term page                                                                  |
 | Slot (`ServiceRole`)        | Add a slot (`add_role`) or from a template (`apply_template`) | Service page                                   | Move (`move_slot`), drag to reorder (`reorder_slots`), change kind (`change_kind`), mark N/A when adding | Remove (`remove_slot`), asking first if it has pieces         | Service page                                                               |
-| Piece (`RolePiece`)         | Propose a score or type a reference (`add_piece`)         | Service page, score page history, music list       | Confirm and unconfirm (`toggle_confirm`)                                                        | not available on its own (removed with its slot)              | Service page; the score page lists where each score was used               |
+| Piece (`RolePiece`)         | Propose a score, a hymn by book and number, or a reference (`add_piece`) | Service page, score page history, music list       | Confirm and unconfirm (`toggle_confirm`); a hymn's tune (`set_tune`)                                                        | not available on its own (removed with its slot)              | Service page; the score page lists where each score was used               |
 | Slot template               | New template (`slot_template_create`)                     | Templates page (`slot_template_list`)              | Edit (`slot_template_update`)                                                                   | Delete (`slot_template_delete`)                               | Templates page; buttons on each service                                    |
 | Use type                    | Typed on the score form                                   | Score page; Suitable-for filter                    | not available                                                                                   | not available                                                 | Library filter                                                             |
 | Comment                     | Comment or reply (`add_comment`)                          | Inbox (`inbox`); each term, service and piece      | Close and reopen (`toggle_close`); the text can't be edited                                     | Delete a closed thread (`delete_comment`)                     | Inbox of open threads; the count in the menu                               |
@@ -1344,9 +1412,6 @@ Everything below is read in `precentor_project/settings.py`.
 
 What's designed or wanted but not built yet:
 
-- **Hymn books and hymns.** Hymns are typed as references in a slot
-  today, such as "NEH 123". Hymn books as library entries, with hymns and tunes that
-  build up through use, would let them be searched and suggested.
 - **A rebuilt music list,** with a choice of paper sizes and columns.
 - **Email.** Invitations and reset links are passed on by hand because
   Precentor sends no email. With a mail provider they could be sent
