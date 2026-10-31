@@ -29,6 +29,8 @@ MISSALEMEUM_DIR = DATA_DIR / "missalemeum"
 # England and Wales in 1962, taken by hand from the Latin Mass Society's
 # Ordo (facts only; see the "source" in each file).
 LMS_DIR = DATA_DIR / "lms"
+# The 1962 Missal's chant names, exported from Divinum Officium.
+PROPERS_FILE = DATA_DIR / "divinum_officium" / "propers_1962.json"
 # Each folder of data files, and the form its occasions belong to.
 SOURCES = ((ROMCAL_DIR, "current"), (MISSALEMEUM_DIR, "historic"), (LMS_DIR, "historic"))
 
@@ -131,3 +133,22 @@ def _load(data, calendar_use, seasons):
             occasion.delete()
             result.removed += 1
     return result
+
+
+@transaction.atomic
+def load_propers(path=PROPERS_FILE):
+    """Replace the 1962 proper chants with the file's. Nothing refers to
+    a chant, so they're simply cleared and loaded again. Returns how many
+    there are."""
+    from .models import ProperChant
+
+    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    ProperChant.objects.filter(calendar_use="historic").delete()
+    ProperChant.objects.bulk_create(
+        ProperChant(
+            occasion_key=row["key"], calendar_use="historic", part=row["part"], season=row["season"],
+            incipit=row["incipit"], source=f"Divinum Officium {row['source']}",
+        )
+        for row in data["chants"]
+    )
+    return len(data["chants"])
