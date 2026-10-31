@@ -8,7 +8,7 @@ from django.utils.formats import date_format
 from django.utils.functional import cached_property
 
 from accounts.querysets import OrganisationQuerySet
-from library.models import Hymnal, Score
+from library.models import Hymnal, HymnEntry, Score, Tune
 from ordo.models import CALENDAR_USE_CHOICES
 
 from .slot_kinds import KIND_CHOICES, PROPER_PART_CHOICES, REFERENCE_FIRST, classify
@@ -552,6 +552,10 @@ class RolePiece(models.Model):
     hymn_entry = models.ForeignKey(
         "library.HymnEntry", null=True, blank=True, on_delete=models.PROTECT, related_name="role_pieces"
     )
+    # The tune a hymn is sung to here, when it isn't the book's own.
+    tune = models.ForeignKey(
+        "library.Tune", null=True, blank=True, on_delete=models.SET_NULL, related_name="role_pieces"
+    )
     reference = models.CharField(max_length=200, blank=True, help_text='e.g. "NEH 123" or "Psalm 150, tone 4"')
     is_confirmed = models.BooleanField(default=False)
     comments = GenericRelation("comments.Comment")
@@ -567,6 +571,11 @@ class RolePiece(models.Model):
                 ),
                 name="role_piece_one_of_three",
                 violation_error_message=ONE_PIECE_MESSAGE,
+            ),
+            # A tune only means something for a hymn.
+            models.CheckConstraint(
+                condition=models.Q(tune__isnull=True) | models.Q(hymn_entry__isnull=False),
+                name="role_piece_tune_only_for_a_hymn",
             ),
         ]
 
@@ -587,6 +596,32 @@ class RolePiece(models.Model):
 
     def __str__(self):
         return f"{self.title} ({'confirmed' if self.is_confirmed else 'proposed'})"
+
+    def tune_choices(self):
+        """
+        The tunes a hymn piece could be sung to, in groups: the book's own
+        tune for it; others in the same metre the same book prints, so a
+        number can be given; then every other tune the church knows, as an
+        organist may choose one from elsewhere. The metre is the hymn's,
+        or failing that its usual tune's. Empty for anything not a hymn.
+        """
+        if not self.hymn_entry_id:
+            return []
+        entry = self.hymn_entry
+        usual = entry.tune
+        metre = entry.hymn.metre or (usual.metre if usual else "")
+        tunes = list(Tune.objects.for_organisation(self.organisation_id).exclude(pk=getattr(usual, "pk", None)))
+        in_book = set(
+            HymnEntry.objects.filter(hymnal_id=entry.hymnal_id, tune__isnull=False).values_list("tune_id", flat=True)
+        )
+        same_metre = [tune for tune in tunes if metre and tune.metre == metre and tune.pk in in_book]
+        others = [tune for tune in tunes if tune not in same_metre]
+        groups = [
+            ("Its usual tune", [usual] if usual else []),
+            (f"Same metre, in {entry.hymnal.short_name}", same_metre),
+            ("Other tunes", others),
+        ]
+        return [(label, group) for label, group in groups if group]
 
     def get_absolute_url(self):
         """A piece is shown on its service's page; the fragment jumps to

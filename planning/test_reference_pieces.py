@@ -273,3 +273,39 @@ class FirstLinePromptTests(ReferencePieceTestMixin, TestCase):
         self.entry.hymn.save()
         self.client.force_login(self.conductor)
         self.assertNotContains(self.client.get(self.service.get_absolute_url()), "No first line recorded yet.")
+
+
+class TuneChoiceTests(ReferencePieceTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        from library.models import Hymnal, HymnEntry, Tune
+
+        self.neh = Hymnal.objects.create(organisation=self.church, name="New English Hymnal", short_name="NEH")
+
+        def tune(name, metre):
+            return Tune.objects.create(organisation=self.church, name=name, metre=metre)
+
+        self.usual, self.printed, self.elsewhere, self.other_metre = (
+            tune("Usual", "LM"), tune("Printed", "88 88"), tune("Elsewhere", "LM"), tune("Other metre", "CM"),
+        )
+        self.entry = HymnEntry.find_or_make(self.neh, "53")
+        self.entry.tune = self.usual
+        self.entry.save()
+        printed_with = HymnEntry.find_or_make(self.neh, "115")
+        printed_with.tune = self.printed
+        printed_with.save()
+        self.piece = RolePiece.objects.create(service_role=self.slot, hymn_entry=self.entry)
+
+    def test_the_usual_tune_then_same_metre_in_the_book_then_the_rest(self):
+        groups = [(label, [tune.name for tune in tunes]) for label, tunes in self.piece.tune_choices()]
+        self.assertEqual(groups, [
+            ("Its usual tune", ["Usual"]),
+            ("Same metre, in NEH", ["Printed"]),
+            ("Other tunes", ["Elsewhere", "Other metre"]),
+        ])
+
+    def test_only_a_hymn_has_tune_choices_or_a_tune(self):
+        reference = RolePiece.objects.create(service_role=self.slot, reference="Psalm 23")
+        self.assertEqual(reference.tune_choices(), [])
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            RolePiece.objects.create(service_role=self.slot, reference="Psalm 23", tune=self.usual)
