@@ -248,3 +248,28 @@ class ProposeHymnTests(ReferencePieceTestMixin, TestCase):
     def test_other_slots_and_churches_with_no_hymnals_are_unchanged(self):
         motet = ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
         self.assertNotIn("hymnal", self.client.get(f"/roles/{motet.pk}/pieces/add/").context["form"].fields)
+
+
+class FirstLinePromptTests(ReferencePieceTestMixin, TestCase):
+    def setUp(self):
+        super().setUp()
+        from library.models import Hymnal, HymnEntry
+
+        neh = Hymnal.objects.create(organisation=self.church, name="New English Hymnal", short_name="NEH")
+        self.entry = HymnEntry.find_or_make(neh, "53")
+        self.piece = RolePiece.objects.create(service_role=self.slot, hymn_entry=self.entry)
+
+    def test_a_hymn_with_no_first_line_asks_for_one_and_comes_back(self):
+        self.client.force_login(self.conductor)
+        response = self.client.get(self.service.get_absolute_url())
+        self.assertContains(response, "No first line recorded yet.")
+        back = f"/services/{self.service.pk}/%23piece-row-{self.piece.pk}"
+        self.assertContains(response, f"/library/hymns/{self.entry.hymn_id}/edit/?next={back}")
+
+    def test_once_it_has_one_or_for_a_viewer_nothing_is_asked(self):
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        self.assertNotContains(self.client.get(self.service.get_absolute_url()), "No first line recorded yet.")
+        self.entry.hymn.first_line = "Praise to the Holiest"
+        self.entry.hymn.save()
+        self.client.force_login(self.conductor)
+        self.assertNotContains(self.client.get(self.service.get_absolute_url()), "No first line recorded yet.")
