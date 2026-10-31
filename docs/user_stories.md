@@ -65,6 +65,9 @@ These user stories drive the design and functionality of Precentor.
 - As a conductor, I want to open a comment thread on a service or
   term, so I can discuss a query with my librarian without leaving the
   app.
+- As a conductor, I want to set our church's name, crest, colours and
+  which form of the Mass we follow, so the music list looks like ours
+  and the calendar matches our liturgy.
 
 ## Librarian / Music Administrator
 
@@ -106,6 +109,31 @@ These user stories drive the design and functionality of Precentor.
   reopen a thread, so I can raise a question and say when it's settled.
 - As a viewer, I want the pages to show me only what I can use, so I'm
   not offered buttons that would refuse me.
+
+## Owner (whoever registered the church, or was handed it)
+
+- As someone running a church's music, I want to register my church
+  and start planning straight away, so I don't have to ask anyone to
+  set it up for me.
+- As an owner, I want to start with working Mass and Vespers templates,
+  so a new church isn't faced with a blank page.
+- As an owner, I want to invite people with a link that gives them a
+  role and expires, so I can bring in my librarian and singers without
+  the site sending email.
+- As an owner, I want to change someone's role or remove them, so the
+  list of people who can see our plans stays right as people come and
+  go.
+- As an owner, I want to make a reset link for someone who has
+  forgotten their password, so they can get back in without email.
+- As an owner, I want to hand ownership to someone else, so the church
+  isn't stuck when I step down.
+- As an owner, I want to delete the church and everything in it, after
+  being told what will go, so our data doesn't stay behind when we
+  stop using it.
+- As a member, I want to delete my own account, so I can leave without
+  asking the owner.
+- As a member of any church, I want to be sure no other church can see
+  or change our data, so I can trust the site with our plans.
 
 ## Site owner's goals (the church)
 
