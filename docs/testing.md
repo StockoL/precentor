@@ -11,7 +11,7 @@ automated test named. Anything I didn't get to before submission says so.
 
 | Check                       | What I used                                                                                     | What it found                                                                                                               | Resolved?                                                                                                                                         |
 | --------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 798 tests, all passing (31 October 2026, at `0e62331`)                                                                | Nothing to resolve                                                                                                                                |
+| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 801 tests, all passing (31 October 2026, at `684a8d0`)                                                                | Nothing to resolve                                                                                                                                |
 | Deployment settings         | `python manage.py check --deploy` with `DEBUG` off                                              | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve                                                                                                                                |
 | Python style                | `flake8` with a line length of 120, excluding `venv` and migrations                             | 22 findings: two unused imports, one extra blank line, one invalid escape (`\W` in a test string), 16 long lines, a variable named `l`, a lambda assigned to a name | Resolved the unused imports, the blank line and the escape in `1f2e618`. Left the 16 long lines (121 to 139 characters, mostly test data), the `l` in `ordo/utils.py` and the lambda in a test, as they don't affect behaviour |
 | Leftover debugging          | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app. The two scripts in `tools/` print what they've done, on purpose                                     | Nothing to resolve                                                                                                                                |
@@ -54,7 +54,7 @@ were the only things keeping Best practices and SEO below 100.
 
 ## 4. Automated tests
 
-The suite has 798 tests, run on 31 October 2026 at commit `0e62331`;
+The suite has 801 tests, run on 31 October 2026 at commit `684a8d0`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
@@ -76,7 +76,7 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | `ordo/test_dates.py`                      | 28    | Easter and the other date rules                                                                                    |
 | `ordo/test_reference.py`                  | 3     | Every day from 2020 to 2040 against the reference data                                                             |
 | `planning/tests.py`                       | 81    | Terms, services, notices, slots, pieces, status, the music list, each church's own planning                        |
-| `planning/test_templates.py`              | 23    | Slot templates and applying them                                                                                   |
+| `planning/test_templates.py`              | 26    | Slot templates as rows with kinds, editing them as a formset (order, remove, each name once), splitting old templates into rows, and applying them |
 | `planning/test_slot_order.py`             | 8     | Moving slots and reordering them                                                                                   |
 | `planning/test_remove_slot.py`            | 6     | Removing slots, asking first when they have pieces                                                                 |
 | `planning/test_service_form.py`           | 3     | The service form's calendar choice                                                                                 |
@@ -149,6 +149,7 @@ To run them, see "Running it locally" in the README.
 | M49  | The same hymn in two books | Give two hymns the same first line; on one's page answer the question both ways | Yes joins them and keeps both numbers; no isn't asked again | Pass: the question in the browser on 31 October; joining and remembering by automated tests |
 | M50  | Tunes                      | Add tunes; set a hymn's tune in its book; on a hymn in a service choose another tune; open the pew sheet | The row offers the book's tune, then same-metre tunes from the book, then the rest; the sheet prints "NEH 53, tune NEH 115" | Pass: the tune row in the browser at both widths on 31 October; the sheet's wording by automated tests |
 | M51  | Suggested hymns            | Tag a hymn for the season; open a Hymn slot on a service in that season; click the suggestion | The hymn listed with its reason; clicking fills in the book and number | Pass: in the browser on 31 October, and by a browser test |
+| M52  | Template slots             | Edit Vespers: set Hymn's kind to Motet, swap two numbers, tick Remove on one, add a slot in a blank row, save; apply it to a service | The template lists the new order; the service's slots arrive in it, Hymn as a Motet | Pass: the form in the browser at both widths on 31 October; saving and applying by automated tests |
 
 ## 6. Responsiveness, usability and the keyboard
 
