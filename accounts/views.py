@@ -19,7 +19,9 @@ from django.views.generic import CreateView, DeleteView, DetailView, FormView, L
 from precentor_project.mixins import DeletePageMixin
 
 from .decorators import role_required
-from .forms import DeleteAccountForm, DeleteChurchForm, EmailAuthenticationForm, InvitationForm, JoinForm, RoleForm, SignUpForm
+from .forms import (
+    DeleteAccountForm, DeleteChurchForm, EmailAuthenticationForm, InvitationForm, JoinForm, RoleForm, SignUpForm,
+)
 from .mixins import OrganisationScopedMixin, RoleRequiredMixin
 from .models import Invitation, Role, User
 from .permissions import can_manage_organisation
@@ -328,4 +330,3 @@ def delete_church(request):
         church.delete()
         return render(request, "accounts/church_deleted.html", {"name": name})
     return render(request, "accounts/church_confirm_delete.html", {"form": form, "contents": church.contents()})
-

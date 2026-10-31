@@ -234,4 +234,3 @@ class DeleteChurchForm(forms.Form):
         if name.strip().casefold() != self.organisation.name.strip().casefold():
             raise forms.ValidationError("That isn't the church's name.")
         return name
-
