@@ -5,6 +5,7 @@ from django.db import models
 from accounts.querysets import OrganisationQuerySet
 
 from .dates import NATIONAL_SETTINGS, YearDates, apply_transfers
+from .utils import calculate_easter_sunday
 
 COLOUR_CHOICES = [
     ("violet", "Violet"),
@@ -281,3 +282,34 @@ class ProperChant(models.Model):
 
     def __str__(self):
         return f"{self.get_part_display()}: {self.incipit}"
+
+
+def chant_season(day):
+    """The season a 1962 Mass's chants follow on a date: from Septuagesima,
+    nine Sundays before Easter, to Holy Saturday; then Eastertide, to the
+    Saturday after Pentecost; otherwise none."""
+    easter = calculate_easter_sunday(day.year)
+    if easter - timedelta(days=63) <= day < easter:
+        return "septuagesima"
+    if easter <= day <= easter + timedelta(days=55):
+        return "paschaltide"
+    return ""
+
+
+def proper_chants(occasion, day):
+    """
+    The names of the chants sung at an occasion's 1962 Mass on a date, as
+    {part: incipit}. A form marked for the date's season wins over the
+    usual one, so a saint's day in Lent has its Tract in place of the
+    Alleluia. Empty for the Ordinary Form, which has no chant data yet.
+    """
+    if occasion is None or occasion.calendar_use != "historic":
+        return {}
+    season = chant_season(day)
+    chants = {}
+    for chant in ProperChant.objects.filter(calendar_use="historic", occasion_key=occasion.key):
+        if chant.season == season or (chant.season == "" and chant.part not in chants):
+            chants[chant.part] = chant.incipit
+    if season == "septuagesima" and "tract" in chants:
+        chants.pop("alleluia", None)
+    return chants
