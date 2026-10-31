@@ -7,6 +7,24 @@
         {% csrf_token %}
         {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
         {{ form.as_p }}
+        <fieldset class="flow">
+            <legend>Slots</legend>
+            <p class="list-row__meta">In the order of the service; change the numbers to reorder them. Leave Kind as it is and it's worked out from the slot's name. The blank rows are for new slots.</p>
+            {{ slots_formset.management_form }}
+            {{ slots_formset.non_form_errors }}
+            <ol role="list" class="flow" style="--flow-space: var(--spacing-xs);">
+                {% for row in slots_formset %}
+                <li class="cluster form-inline template-slot">
+                    {{ row.id }}
+                    <div>{{ row.name.label_tag }} {{ row.name }} {{ row.name.errors }}</div>
+                    <div>{{ row.kind.label_tag }} {{ row.kind }}</div>
+                    <div>{{ row.proper_part.label_tag }} {{ row.proper_part }}</div>
+                    <div>{{ row.ORDER.label_tag }} {{ row.ORDER }}</div>
+                    {% if row.instance.pk %}<div class="template-slot__remove">{{ row.DELETE }} {{ row.DELETE.label_tag }}</div>{% endif %}
+                </li>
+                {% endfor %}
+            </ol>
+        </fieldset>
         <div class="cluster">
             <button class="btn-primary" type="submit">Save</button>
             <a class="btn-ghost" href="{% if next %}{{ next }}{% else %}{% url 'planning:slot_template_list' %}{% endif %}">Cancel</a>

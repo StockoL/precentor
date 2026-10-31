@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from collections import Counter
 
 from django.contrib.contenttypes.models import ContentType
+from django.db import transaction
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -36,6 +37,7 @@ from .forms import (
     ServiceForm,
     ServiceRoleForm,
     SlotTemplateForm,
+    TemplateSlotFormSet,
     TermForm,
     TermMarkerForm,
 )
@@ -300,12 +302,45 @@ class ReturnToServiceMixin:
         return context
 
 
-class SlotTemplateCreateView(PlanningRequiredMixin, OrganisationCreateMixin, ReturnToServiceMixin, CreateView):
+class TemplateSlotsMixin:
+    """A template's slots as a formset beside its name: both are checked,
+    and both are saved together or not at all."""
+
+    def slots_formset(self, instance):
+        data = self.request.POST if self.request.method == "POST" else None
+        return TemplateSlotFormSet(data, instance=instance, prefix="slots")
+
+    def get_context_data(self, **kwargs):
+        if "slots_formset" not in kwargs:
+            kwargs["slots_formset"] = self.slots_formset(self.object or SlotTemplate())
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        formset = self.slots_formset(form.instance)
+        if not formset.is_valid():
+            return self.render_to_response(self.get_context_data(form=form, slots_formset=formset))
+        with transaction.atomic():
+            response = super().form_valid(form)
+            formset.instance = self.object
+            formset.save_slots()
+        return response
+
+    def form_invalid(self, form):
+        formset = self.slots_formset(form.instance)
+        formset.is_valid()  # so its own errors show too
+        return self.render_to_response(self.get_context_data(form=form, slots_formset=formset))
+
+
+class SlotTemplateCreateView(
+    PlanningRequiredMixin, OrganisationCreateMixin, ReturnToServiceMixin, TemplateSlotsMixin, CreateView
+):
     model = SlotTemplate
     form_class = SlotTemplateForm
 
 
-class SlotTemplateUpdateView(PlanningRequiredMixin, OrganisationScopedMixin, ReturnToServiceMixin, UpdateView):
+class SlotTemplateUpdateView(
+    PlanningRequiredMixin, OrganisationScopedMixin, ReturnToServiceMixin, TemplateSlotsMixin, UpdateView
+):
     model = SlotTemplate
     form_class = SlotTemplateForm
 

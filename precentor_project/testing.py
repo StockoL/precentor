@@ -33,6 +33,31 @@ def make_score(*, organisation=None, **fields):
     return Score.objects.create(organisation=organisation or make_organisation(), **fields)
 
 
+def template_form_data(name, new=(), template=None, remove=(), order=None):
+    """What the template form posts: its name and its slots as formset
+    rows. A template's existing slots come first, kept unless named in
+    remove, then a row for each new name. order, if given, lists the
+    names in the order wanted."""
+    existing = list(template.template_slots.all()) if template else []
+    names = [slot.name for slot in existing] + list(new)
+    data = {
+        "name": name,
+        "slots-TOTAL_FORMS": str(len(names)), "slots-INITIAL_FORMS": str(len(existing)),
+        "slots-MIN_NUM_FORMS": "0", "slots-MAX_NUM_FORMS": "1000",
+    }
+    for index, slot_name in enumerate(names):
+        prefix = f"slots-{index}-"
+        data[prefix + "name"] = slot_name
+        data[prefix + "kind"] = existing[index].kind if index < len(existing) else ""
+        data[prefix + "proper_part"] = existing[index].proper_part if index < len(existing) else ""
+        data[prefix + "ORDER"] = str((order.index(slot_name) if order else index) + 1)
+        if index < len(existing):
+            data[prefix + "id"] = str(existing[index].pk)
+            if slot_name in remove:
+                data[prefix + "DELETE"] = "on"
+    return data
+
+
 def make_slot_template(*, organisation=None, **fields):
     """A template whose slots are written as lines of text, one each."""
     fields = {"name": "Benediction", "slot_names": "O salutaris\nTantum ergo", **fields}

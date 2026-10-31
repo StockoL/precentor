@@ -6,8 +6,10 @@ from ordo.fields import OccasionChoiceField, OccasionMultipleChoiceField
 from ordo.models import LiturgicalOccasion, UseType
 from precentor_project.widgets import NativeDateInput
 
-from .models import ONE_PIECE_MESSAGE, RolePiece, Service, ServiceRole, SlotTemplate, Term, TermMarker
-from .slot_kinds import KIND_CHOICES
+from .models import (
+    ONE_PIECE_MESSAGE, RolePiece, Service, ServiceRole, SlotTemplate, TemplateSlot, Term, TermMarker,
+)
+from .slot_kinds import KIND_CHOICES, PROPER_PART_CHOICES
 from .suggestions import facts_for, grouped, slot_use_type
 
 
@@ -90,12 +92,11 @@ class ServiceRoleForm(forms.ModelForm):
 
 
 class SlotTemplateForm(forms.ModelForm):
+    """A template's name. Its slots are the formset beside it."""
+
     class Meta:
         model = SlotTemplate
-        fields = ["name", "slot_names"]  # noqa
-        widgets = {  # noqa
-            "slot_names": forms.Textarea(attrs={"rows": 12}),
-        }
+        fields = ["name"]  # noqa
 
     def clean_name(self):
         """
@@ -111,25 +112,68 @@ class SlotTemplateForm(forms.ModelForm):
             raise forms.ValidationError(f"You already have a template called {name}.")
         return name
 
-    def clean_slot_names(self):
-        text = self.cleaned_data["slot_names"]
-        names = SlotTemplate.names_from_text(text)
+
+class TemplateSlotForm(forms.ModelForm):
+    """One slot of a template: its name, and its kind and proper part,
+    which are worked out from the name when left blank."""
+
+    class Meta:
+        model = TemplateSlot
+        fields = ["name", "kind", "proper_part"]  # noqa
+        help_texts = {"kind": ""}  # noqa
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["kind"].choices = [("", "From the slot's name")] + KIND_CHOICES
+        self.fields["proper_part"].choices = [("", "Not a proper")] + PROPER_PART_CHOICES
+
+    def clean_name(self):
+        return " ".join(self.cleaned_data["name"].split())
+
+
+class BaseTemplateSlotFormSet(forms.BaseInlineFormSet):
+    """A template's slots, as rows, with Django's own order and delete
+    fields and a few blank rows for new ones. Works without JavaScript."""
+
+    def add_fields(self, form, index):
+        super().add_fields(form, index)
+        form.fields["DELETE"].label = "Remove"
+
+    def kept_forms(self):
+        """The rows to keep, in the order asked for: filled in and not
+        ticked for removal."""
+        return [form for form in self.ordered_forms if form.cleaned_data.get("name")]
+
+    def clean(self):
+        """At least one slot, and each name once whatever its case, as a
+        service can't hold two slots of one name."""
+        super().clean()
+        if any(form.errors for form in self.forms):
+            return
+        names = [form.cleaned_data["name"].lower() for form in self.kept_forms()]
         if not names:
             raise forms.ValidationError("Add at least one slot.")
-        limit = ServiceRole._meta.get_field("role_name").max_length
-        too_long = [name for name in names if len(name) > limit]
-        if too_long:
-            raise forms.ValidationError(
-                f"A slot's name can be up to {limit} characters: {too_long[0][:30]}… is longer."
-            )
-        # Stored tidily: one name a line, as the template will use them.
-        return "\n".join(names)
+        repeated = next((name for name in names if names.count(name) > 1), None)
+        if repeated:
+            raise forms.ValidationError(f"{repeated.capitalize()} is in the template twice.")
 
-    def save(self, commit=True):
-        """Until the form shows the slots as rows, its text becomes them."""
-        template = super().save(commit=commit)
-        template.set_slots(template.names_from_text(template.slot_names))
-        return template
+    def save_slots(self):
+        """Save the kept rows in their new order, numbered from 1, and
+        remove those ticked for removal."""
+        for form in self.deleted_forms:
+            if form.instance.pk:
+                form.instance.delete()
+        for position, form in enumerate(self.kept_forms(), start=1):
+            slot = form.save(commit=False)
+            slot.template = self.instance
+            slot.position = position
+            slot.save()
+
+
+TemplateSlotFormSet = forms.inlineformset_factory(
+    SlotTemplate, TemplateSlot, form=TemplateSlotForm, formset=BaseTemplateSlotFormSet,
+    extra=3, can_delete=True, can_order=True,
+)
 
 
 class RolePieceForm(forms.ModelForm):

@@ -1,0 +1,34 @@
+/* ==========================================================================
+   BLOCK: TEMPLATE SLOT
+   One slot of a slot template on its edit page: name, kind, proper part,
+   order and, for a saved slot, a Remove tick, side by side where there's
+   room. A rule between slots keeps each one's fields together.
+   ========================================================================== */
+
+@layer blocks {
+  .template-slot {
+    align-items: end;
+    padding-block-start: var(--spacing-xs);
+    border-block-start: 1px solid var(--colors-border-subtle);
+  }
+
+  .template-slot label {
+    font-size: var(--typography-step--1);
+  }
+
+  /* A position is a small number. */
+  form .template-slot input[name$="ORDER"] {
+    width: 6ch;
+  }
+
+  /* The tick sits before its word, as checkboxes do elsewhere. */
+  .template-slot__remove {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3xs);
+  }
+
+  .template-slot__remove label {
+    margin-block-end: 0;
+  }
+}

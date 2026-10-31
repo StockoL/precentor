@@ -3,7 +3,7 @@ from datetime import date
 from django.test import TestCase
 
 from accounts.testing import make_organisation, make_user
-from precentor_project.testing import make_score, make_slot_template, make_term
+from precentor_project.testing import make_score, make_slot_template, make_term, template_form_data
 
 from .forms import SlotTemplateForm
 from .models import Service, ServiceRole, SlotTemplate
@@ -75,9 +75,8 @@ class TemplatePageTests(TemplateTestMixin, TestCase):
         next_url = self.service.get_absolute_url()
         response = self.client.get(f"/templates/add/?next={next_url}")
         self.assertContains(response, f'<input type="hidden" name="next" value="{next_url}">', html=True)
-        response = self.client.post(
-            "/templates/add/", {"name": "Benediction", "slot_names": "O salutaris\nTantum ergo", "next": next_url}
-        )
+        data = template_form_data("Benediction", ["O salutaris", "Tantum ergo"])
+        response = self.client.post("/templates/add/", {**data, "next": next_url})
         self.assertRedirects(response, next_url)
         self.assertEqual(SlotTemplate.objects.get(name="Benediction").slots, ["O salutaris", "Tantum ergo"])
 
@@ -86,16 +85,25 @@ class TemplatePageTests(TemplateTestMixin, TestCase):
             with self.subTest(next=bad):
                 response = self.client.get("/templates/add/", {"next": bad})
                 self.assertNotContains(response, bad)
-                response = self.client.post("/templates/add/", {"name": f"T{len(bad)}", "slot_names": "A", "next": bad})
+                data = template_form_data(f"T{len(bad)}", ["A"])
+                response = self.client.post("/templates/add/", {**data, "next": bad})
                 self.assertRedirects(response, "/templates/")
 
     def test_the_ready_made_ones_can_be_edited(self):
-        response = self.client.post(
-            f"/templates/{self.mass.pk}/edit/", {"name": "Mass", "slot_names": "Introit\nOffertory motet"}
+        keep = ["Introit"]
+        data = template_form_data(
+            "Mass", ["Offertory motet"], template=self.mass, remove=[n for n in MASS if n not in keep],
         )
+        response = self.client.post(f"/templates/{self.mass.pk}/edit/", data)
         self.assertRedirects(response, "/templates/")
-        self.mass.refresh_from_db()
         self.assertEqual(self.mass.slots, ["Introit", "Offertory motet"])
+
+    def test_slots_can_be_reordered_and_keep_a_chosen_kind(self):
+        data = template_form_data("Vespers", template=self.vespers, order=list(reversed(VESPERS)))
+        data["slots-1-kind"] = "motet"  # Hymn, sung as a motet here
+        self.assertRedirects(self.client.post(f"/templates/{self.vespers.pk}/edit/", data), "/templates/")
+        self.assertEqual(self.vespers.slots, list(reversed(VESPERS)))
+        self.assertEqual(self.vespers.template_slots.get(name="Hymn").kind, "motet")
 
     def test_list_and_delete(self):
         response = self.client.get("/templates/")
@@ -111,39 +119,46 @@ class TemplatePageTests(TemplateTestMixin, TestCase):
 
 
 class SlotTemplateFormTests(TestCase):
+    def formset(self, *names):
+        from .forms import TemplateSlotFormSet
+
+        data = template_form_data("T", names)
+        return TemplateSlotFormSet(data, instance=SlotTemplate(), prefix="slots")
+
     def test_needs_a_slot(self):
-        form = SlotTemplateForm(data={"name": "Empty", "slot_names": " \n  "})
-        self.assertFalse(form.is_valid())
-        self.assertIn("slot_names", form.errors)
+        formset = self.formset()
+        self.assertFalse(formset.is_valid())
+        self.assertEqual(formset.non_form_errors(), ["Add at least one slot."])
 
     def test_a_slot_name_must_fit(self):
-        form = SlotTemplateForm(data={"name": "Long", "slot_names": "x" * 51})
-        self.assertFalse(form.is_valid())
-        self.assertIn("up to 50 characters", form.errors["slot_names"][0])
+        formset = self.formset("x" * 51)
+        self.assertFalse(formset.is_valid())
+        self.assertIn("at most 50 characters", str(formset.errors))
 
-    def test_slots_are_stored_tidily(self):
-        form = SlotTemplateForm(data={"name": "Tidy", "slot_names": " Introit\n\nintroit\nKyrie "})
-        self.assertTrue(form.is_valid())
-        self.assertEqual(form.cleaned_data["slot_names"], "Introit\nKyrie")
+    def test_each_name_once_and_tidied(self):
+        formset = self.formset(" Introit ", "introit")
+        self.assertFalse(formset.is_valid())
+        self.assertEqual(formset.non_form_errors(), ["Introit is in the template twice."])
+        formset = self.formset("  Offertory   motet ")
+        self.assertTrue(formset.is_valid())
+        self.assertEqual(formset.forms[0].cleaned_data["name"], "Offertory motet")
 
     def test_a_church_has_one_template_per_name_whatever_the_case(self):
         church = make_organisation("St Cecilia's")
         make_slot_template(name="Mass", slot_names="Introit", organisation=church)
-        form = SlotTemplateForm(data={"name": "mass", "slot_names": "Introit"}, instance=SlotTemplate(organisation=church))
+        form = SlotTemplateForm(data={"name": "mass"}, instance=SlotTemplate(organisation=church))
         self.assertEqual(form.errors["name"], ["You already have a template called mass."])
 
     def test_another_church_can_use_the_same_name(self):
         make_slot_template(name="Mass", slot_names="Introit", organisation=make_organisation("St Elsewhere"))
-        form = SlotTemplateForm(
-            data={"name": "Mass", "slot_names": "Introit"},
-            instance=SlotTemplate(organisation=make_organisation("St Cecilia's")),
-        )
+        church = make_organisation("St Cecilia's")
+        form = SlotTemplateForm(data={"name": "Mass"}, instance=SlotTemplate(organisation=church))
         self.assertTrue(form.is_valid(), form.errors)
 
     def test_editing_a_template_keeps_its_own_name(self):
         church = make_organisation("St Cecilia's")
         mass = make_slot_template(name="Mass", slot_names="Introit", organisation=church)
-        form = SlotTemplateForm(data={"name": "Mass", "slot_names": "Introit\nKyrie"}, instance=mass)
+        form = SlotTemplateForm(data={"name": "Mass"}, instance=mass)
         self.assertTrue(form.is_valid(), form.errors)
 
 

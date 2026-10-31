@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from accounts.testing import make_organisation, make_user
 from ordo.models import LiturgicalOccasion
-from precentor_project.testing import make_score, make_slot_template, make_term
+from precentor_project.testing import make_score, make_slot_template, make_term, template_form_data
 
 from .forms import ServiceForm, TermForm, TermMarkerForm
 from .models import RolePiece, Service, ServiceRole, Term, TermMarker
@@ -1015,7 +1015,7 @@ class PlanningOrganisationTests(TestCase):
         self.client.post("/terms/add/", {
             "name": "Advent", "start_date": "2026-11-29", "end_date": "2026-12-24", "calendar_use": "current",
         })
-        self.client.post("/templates/add/", {"name": "Compline", "slot_names": "Nunc dimittis"})
+        self.client.post("/templates/add/", template_form_data("Compline", ["Nunc dimittis"]))
         self.assertEqual(Term.objects.get(name="Advent").organisation, church)
         self.assertEqual(SlotTemplate.objects.get(name="Compline").organisation, church)
 
