@@ -11,7 +11,7 @@ automated test named. Anything I didn't get to before submission says so.
 
 | Check                       | What I used                                                                                     | What it found                                                                                                               | Resolved?                                                                                                                                         |
 | --------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 848 tests, all passing (1 November 2026, at `2b8122d`)                                                                | Nothing to resolve                                                                                                                                |
+| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 849 tests, all passing (1 November 2026, at `49ec234`)                                                                | Nothing to resolve                                                                                                                                |
 | Deployment settings         | `python manage.py check --deploy` with `DEBUG` off                                              | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve                                                                                                                                |
 | Python style                | `flake8` with a line length of 120, excluding `venv` and migrations                             | 22 findings: two unused imports, one extra blank line, one invalid escape (`\W` in a test string), 16 long lines, a variable named `l`, a lambda assigned to a name | Resolved the unused imports, the blank line and the escape in `1f2e618`. Left the 16 long lines (121 to 139 characters, mostly test data), the `l` in `ordo/utils.py` and the lambda in a test, as they don't affect behaviour. Rerun on 31 October with flake8 7.5: two files in `accounts` ended in a blank line and one import there had grown too long, all fixed in `722ffc4`; the rest as before |
 | Leftover debugging          | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app. The two scripts in `tools/` print what they've done, on purpose                                     | Nothing to resolve                                                                                                                                |
@@ -77,15 +77,35 @@ most.
 | A hymnal             | 99 / 91                        | 100           | 100            | 100 |
 | Import               | 99 / 90                        | 100           | 100            | 100 |
 
+On 1 November I found why the service page scored lowest on a phone:
+its layout shifted by 0.34 as it loaded, against 0 on the hymnal page.
+The fallback fonts shown until the web fonts arrive were about a third
+too wide, so the service's title wrapped onto two lines and then jumped
+back to one, moving everything below it. With the fallbacks corrected
+(`49ec234`), the mobile scores, measured twice each from a cold start,
+are:
+
+| Page      | Mobile performance, before / after | Layout shift after |
+| --------- | ---------------------------------- | ------------------ |
+| A service | 69 / 85 and 86                     | 0.008 (was 0.338)  |
+| Library   | 75 / 89                            | 0.001              |
+| Terms     | 92 / 91                            | 0                  |
+
+What's left is about three seconds before anything appears on the
+simulated slow phone, as each of the 46 stylesheets is a request of its
+own. That follows from linking each CSS block separately rather than
+bundling them, which I chose so the CSS stays plain and readable, so I
+haven't changed it.
+
 ## 4. Automated tests
 
-The suite has 848 tests, run on 1 November 2026 at commit `2b8122d`;
+The suite has 849 tests, run on 1 November 2026 at commit `49ec234`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
 | File                                      | Tests | What it covers                                                                                                     |
 | ----------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------ |
-| `accounts/tests.py`                       | 140   | Users, the database rules on accounts, the roles table, sign-in, sign-up, invitations, the members page, roles, removing and restoring people, ownership, reset links, changing your own password, the limits on wrong passwords and on registering, deleting your own account and deleting the church |
+| `accounts/tests.py`                       | 141   | Users, the database rules on accounts, the roles table, sign-in, sign-up, invitations, the members page, roles, removing and restoring people, ownership, reset links, changing your own password, the limits on wrong passwords and on registering, deleting your own account and deleting the church |
 | `accounts/test_browser.py`                | 2     | The Copy link button, and what happens when the browser refuses the clipboard                                    |
 | `comments/tests.py`                       | 33    | Adding, replying to, closing and deleting comments; the Inbox; each church's own comments, and comments kept as "A former member"                          |
 | `comments/test_browser.py`                | 3     | Comment threads, deleting a comment, and closed threads as a Viewer sees them, in the browser                     |
@@ -238,6 +258,8 @@ testing, fixed, and covered by a test where it could be.
 | `6b65a6c` | The change-password pages still had the admin's look, and nothing linked to them (fixed with `5ca663b`) |
 | `e9ee61f` | On a phone, with a longer name, the user menu's panel opened off the left of the screen    |
 | `6bf1062` | At 320 pixels the score form was a few pixels wider than the screen, as a fieldset won't shrink below its widest row |
+| `a8194bf` | A site superuser opening an invitation link was told their account "belongs to no church" |
+| `49ec234` | The fallback fonts were about a third too wide, so the page jumped as the web fonts loaded |
 | `5c8e834` | Deleting a church that had sung any hymns failed with a server error, as each hymn's entry protected its hymnal |
 
 **Left unfixed:** the 16 long lines, the variable `l` and the lambda
@@ -247,9 +269,8 @@ found by flake8 (see section 1). None affects how the app works.
 
 | Bug                                                                                                                                            | Effect                                                                                                         | Why it's not fixed yet                                                                  |
 | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| A signed-in site superuser who opens an invitation link is told their account "belongs to no church"                                           | Only affects the site's administrator, who has no church by design                                             | Cosmetic; the link is still refused, which is correct                                   |
-| Mobile performance on the longest pages is lower: 69 for a service with ten slots and 75 for the library (section 3)                           | Those pages take longer to become usable on a slow phone                                                       | Would need the pages split or loaded in parts; not attempted before submission          |
-| The browser test for confirming a piece failed once in a full run of the planning tests on 30 October, then passed in every rerun | None for people using the site; a test can fail without a real fault | Not reproduced, and which check failed wasn't captured, so there's nothing yet to fix with confidence |
+| The browser test for confirming a piece failed once in a full run of the planning tests on 30 October | None for people using the site; a test can fail without a real fault | Not reproduced: on 1 November it passed 20 runs on its own and 6 runs of all the planning browser tests, as it has in every full run since. If it fails again, the traceback names the line |
+| Pages take about three seconds to appear on a slow phone (section 3) | Slower first view on a poor connection | Each stylesheet is its own request, by design; bundling them would trade away plain, separate CSS files |
 
 ## 8. Deployment check
 
