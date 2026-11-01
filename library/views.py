@@ -319,6 +319,19 @@ def export_library(request):
     return response
 
 
+def read_import(form):
+    """
+    What an import form brought: (the field it came by, its bytes, a name
+    for it), from the chosen file or the pasted Google Sheets link. Raises
+    ImportProblem if the sheet can't be fetched, to show beside that field.
+    """
+    upload = form.cleaned_data["file"]
+    if upload:
+        # One byte past the limit is enough to know it's too big.
+        return "file", upload.read(MAX_BYTES + 1), upload.name
+    return "sheet_link", fetch_sheet(form.cleaned_data["sheet_link"]), "a Google Sheet"
+
+
 class ScoreImportView(LibraryEditRequiredMixin, FormView):
     """Upload a spreadsheet. A file that can't work, or has no usable rows,
     comes back with the reasons; otherwise the scores are saved as one
@@ -333,15 +346,10 @@ class ScoreImportView(LibraryEditRequiredMixin, FormView):
         )
 
     def form_valid(self, form):
-        upload = form.cleaned_data["file"]
         # The reasons go beside whichever was used, the file or the link.
-        source = "file" if upload else "sheet_link"
+        source = "file" if form.cleaned_data["file"] else "sheet_link"
         try:
-            if upload:
-                # One byte past the limit is enough to know it's too big.
-                data, name = upload.read(MAX_BYTES + 1), upload.name
-            else:
-                data, name = fetch_sheet(form.cleaned_data["sheet_link"]), "a Google Sheet"
+            _, data, name = read_import(form)
             checked = check_file(data, self.request.organisation)
         except ImportProblem as problem:
             form.add_error(source, str(problem))
