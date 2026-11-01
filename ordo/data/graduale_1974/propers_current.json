@@ -1,0 +1,3085 @@
+{
+ "source": "Graduale Romanum (1974), Sundays and major feasts",
+ "chants": [
+  {
+   "key": "advent_1_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Ad te levavi",
+   "row": "First Sunday of Advent"
+  },
+  {
+   "key": "advent_1_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Universi, qui te exspectant",
+   "row": "First Sunday of Advent"
+  },
+  {
+   "key": "advent_1_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Ostende nobis",
+   "row": "First Sunday of Advent"
+  },
+  {
+   "key": "advent_1_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Ad te Domine levavi",
+   "row": "First Sunday of Advent"
+  },
+  {
+   "key": "advent_1_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Dominus dabit benignitatem",
+   "row": "First Sunday of Advent"
+  },
+  {
+   "key": "immaculate_conception_of_the_blessed_virgin_mary",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Gaudens gaudebo",
+   "row": "Immaculate Conception"
+  },
+  {
+   "key": "immaculate_conception_of_the_blessed_virgin_mary",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Benedicta es tu",
+   "row": "Immaculate Conception"
+  },
+  {
+   "key": "immaculate_conception_of_the_blessed_virgin_mary",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Tota pulchra es",
+   "row": "Immaculate Conception"
+  },
+  {
+   "key": "immaculate_conception_of_the_blessed_virgin_mary",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Ave, Maria",
+   "row": "Immaculate Conception"
+  },
+  {
+   "key": "immaculate_conception_of_the_blessed_virgin_mary",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Gloriosa",
+   "row": "Immaculate Conception"
+  },
+  {
+   "key": "advent_2_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Populus Sion",
+   "row": "Second Sunday of Advent"
+  },
+  {
+   "key": "advent_2_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Ex Sion",
+   "row": "Second Sunday of Advent"
+  },
+  {
+   "key": "advent_2_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Laetatus sum",
+   "row": "Second Sunday of Advent"
+  },
+  {
+   "key": "advent_2_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Deus, tu convertens",
+   "row": "Second Sunday of Advent"
+  },
+  {
+   "key": "advent_2_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Ierusalem, surge",
+   "row": "Second Sunday of Advent"
+  },
+  {
+   "key": "advent_3_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Gaudete in Domino",
+   "row": "Third Sunday of Advent"
+  },
+  {
+   "key": "advent_3_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Qui sedes, Domine",
+   "row": "Third Sunday of Advent"
+  },
+  {
+   "key": "advent_3_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Excita, Domine",
+   "row": "Third Sunday of Advent"
+  },
+  {
+   "key": "advent_3_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Benedixisti, Domine",
+   "row": "Third Sunday of Advent"
+  },
+  {
+   "key": "advent_3_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Dicite: Pusillanimes",
+   "row": "Third Sunday of Advent"
+  },
+  {
+   "key": "advent_4_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Rorate caeli",
+   "row": "Fourth Sunday of Advent"
+  },
+  {
+   "key": "advent_4_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Prope est Dominus",
+   "row": "Fourth Sunday of Advent"
+  },
+  {
+   "key": "advent_4_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Veni, Domine",
+   "row": "Fourth Sunday of Advent"
+  },
+  {
+   "key": "advent_4_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Ave Maria",
+   "row": "Fourth Sunday of Advent"
+  },
+  {
+   "key": "advent_4_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Ecce virgo",
+   "row": "Fourth Sunday of Advent"
+  },
+  {
+   "key": "nativity_of_the_lord",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Puer natus est nobis",
+   "row": "Nativity Mass at Day"
+  },
+  {
+   "key": "nativity_of_the_lord",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Viderunt omnes",
+   "row": "Nativity Mass at Day"
+  },
+  {
+   "key": "nativity_of_the_lord",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Dies sanctificatus",
+   "row": "Nativity Mass at Day"
+  },
+  {
+   "key": "nativity_of_the_lord",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Tui sunt caeli",
+   "row": "Nativity Mass at Day"
+  },
+  {
+   "key": "nativity_of_the_lord",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Viderunt omnes",
+   "row": "Nativity Mass at Day"
+  },
+  {
+   "key": "holy_family_of_jesus_mary_and_joseph",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Deus in loco sancto tuo",
+   "row": "Holy Family"
+  },
+  {
+   "key": "holy_family_of_jesus_mary_and_joseph",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Unam petii",
+   "row": "Holy Family"
+  },
+  {
+   "key": "holy_family_of_jesus_mary_and_joseph",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Gaudete, iusti",
+   "row": "Holy Family"
+  },
+  {
+   "key": "holy_family_of_jesus_mary_and_joseph",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "In te speravi",
+   "row": "Holy Family"
+  },
+  {
+   "key": "holy_family_of_jesus_mary_and_joseph",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Fili, quid fecisti",
+   "row": "Holy Family"
+  },
+  {
+   "key": "holy_family_of_jesus_mary_and_joseph",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Tolle puerum",
+   "row": "Holy Family"
+  },
+  {
+   "key": "mary_mother_of_god",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Salve, sancta Parens",
+   "row": "Blessed Virgin Mary"
+  },
+  {
+   "key": "mary_mother_of_god",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Diffusa est gratia",
+   "row": "Blessed Virgin Mary"
+  },
+  {
+   "key": "mary_mother_of_god",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Post partum, Virgo",
+   "row": "Blessed Virgin Mary"
+  },
+  {
+   "key": "mary_mother_of_god",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Felix namque es",
+   "row": "Blessed Virgin Mary"
+  },
+  {
+   "key": "mary_mother_of_god",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Exsulta, filia Sion",
+   "row": "Blessed Virgin Mary"
+  },
+  {
+   "key": "epiphany_of_the_lord",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Ecce advenit",
+   "row": "Epiphany"
+  },
+  {
+   "key": "epiphany_of_the_lord",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Omnes de Saba venient",
+   "row": "Epiphany"
+  },
+  {
+   "key": "epiphany_of_the_lord",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Vidimus stellam",
+   "row": "Epiphany"
+  },
+  {
+   "key": "epiphany_of_the_lord",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Reges Tharsis",
+   "row": "Epiphany"
+  },
+  {
+   "key": "epiphany_of_the_lord",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Vidimus stellam",
+   "row": "Epiphany"
+  },
+  {
+   "key": "baptism_of_the_lord",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Dilexisti",
+   "row": "Baptism of the Lord"
+  },
+  {
+   "key": "baptism_of_the_lord",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Benedictus Dominus Deus",
+   "row": "Baptism of the Lord"
+  },
+  {
+   "key": "baptism_of_the_lord",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Benedictus qui venit",
+   "row": "Baptism of the Lord"
+  },
+  {
+   "key": "baptism_of_the_lord",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Benedictus qui venit",
+   "row": "Baptism of the Lord"
+  },
+  {
+   "key": "baptism_of_the_lord",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Omnes qui in Christo baptizati estis",
+   "row": "Baptism of the Lord"
+  },
+  {
+   "key": "ordinary_time_2_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Omnis terra",
+   "row": "Second Sunday"
+  },
+  {
+   "key": "ordinary_time_2_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Misit Dominus",
+   "row": "Second Sunday"
+  },
+  {
+   "key": "ordinary_time_2_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Laudate Deum",
+   "row": "Second Sunday"
+  },
+  {
+   "key": "ordinary_time_2_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Iubilate Deo, universa terra",
+   "row": "Second Sunday"
+  },
+  {
+   "key": "ordinary_time_2_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Laetabimur",
+   "row": "Second Sunday"
+  },
+  {
+   "key": "ordinary_time_2_sunday",
+   "part": "communion",
+   "cycle": "B",
+   "incipit": "Dicit Andreas",
+   "row": "Second Sunday"
+  },
+  {
+   "key": "ordinary_time_2_sunday",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Dicit Dominus: Implete hydrias",
+   "row": "Second Sunday"
+  },
+  {
+   "key": "ordinary_time_3_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Dominus secus mare",
+   "row": "Third Sunday"
+  },
+  {
+   "key": "ordinary_time_3_sunday",
+   "part": "introit",
+   "cycle": "C",
+   "incipit": "Adorate Deum",
+   "row": "Third Sunday"
+  },
+  {
+   "key": "ordinary_time_3_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Timebunt gentes",
+   "row": "Third Sunday"
+  },
+  {
+   "key": "ordinary_time_3_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Dominus regnavit, exsultet",
+   "row": "Third Sunday"
+  },
+  {
+   "key": "ordinary_time_3_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Dextera Domini",
+   "row": "Third Sunday"
+  },
+  {
+   "key": "ordinary_time_3_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Venite post me",
+   "row": "Third Sunday"
+  },
+  {
+   "key": "ordinary_time_3_sunday",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Comedite pinguia",
+   "row": "Third Sunday"
+  },
+  {
+   "key": "presentation_of_the_lord",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Suscepimus",
+   "row": "Presentation of the Lord"
+  },
+  {
+   "key": "presentation_of_the_lord",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Suscepimus",
+   "row": "Presentation of the Lord"
+  },
+  {
+   "key": "presentation_of_the_lord",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Senex puerum portabat",
+   "row": "Presentation of the Lord"
+  },
+  {
+   "key": "presentation_of_the_lord",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Diffusa est gratia",
+   "row": "Presentation of the Lord"
+  },
+  {
+   "key": "presentation_of_the_lord",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Responsum",
+   "row": "Presentation of the Lord"
+  },
+  {
+   "key": "ordinary_time_4_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Laetetur cor",
+   "row": "Fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_4_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Quis sicut Dominus",
+   "row": "Fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_4_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Adorabo",
+   "row": "Fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_4_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Bonum est confiteri",
+   "row": "Fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_4_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Illumina faciem tuam",
+   "row": "Fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_4_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Beati mundo corde",
+   "row": "Fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_5_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Venite, adoremus",
+   "row": "Fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_5_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Tollite hostias",
+   "row": "Fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_5_sunday",
+   "part": "gradual",
+   "cycle": "A",
+   "incipit": "Dispersit",
+   "row": "Fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_5_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Laudate Dominum",
+   "row": "Fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_5_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Perfice gressus meos",
+   "row": "Fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_5_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Introibo",
+   "row": "Fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_5_sunday",
+   "part": "communion",
+   "cycle": "B",
+   "incipit": "Multitudo languentium",
+   "row": "Fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_6_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Esto mihi",
+   "row": "Sixth Sunday"
+  },
+  {
+   "key": "ordinary_time_6_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Tu es Deus",
+   "row": "Sixth Sunday"
+  },
+  {
+   "key": "ordinary_time_6_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Cantate Domino",
+   "row": "Sixth Sunday"
+  },
+  {
+   "key": "ordinary_time_6_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Benedictus es Domine",
+   "row": "Sixth Sunday"
+  },
+  {
+   "key": "ordinary_time_6_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Manducaverunt",
+   "row": "Sixth Sunday"
+  },
+  {
+   "key": "ordinary_time_7_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Domine, in tua misericordia",
+   "row": "Seventh Sunday"
+  },
+  {
+   "key": "ordinary_time_7_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Ego dixi: Domine",
+   "row": "Seventh Sunday"
+  },
+  {
+   "key": "ordinary_time_7_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Verba mea",
+   "row": "Seventh Sunday"
+  },
+  {
+   "key": "ordinary_time_7_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Intende voci",
+   "row": "Seventh Sunday"
+  },
+  {
+   "key": "ordinary_time_7_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Narrabo",
+   "row": "Seventh Sunday"
+  },
+  {
+   "key": "ordinary_time_8_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Factus est Dominus",
+   "row": "Eighth Sunday"
+  },
+  {
+   "key": "ordinary_time_8_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Ad Dominum",
+   "row": "Eighth Sunday"
+  },
+  {
+   "key": "ordinary_time_8_sunday",
+   "part": "gradual",
+   "cycle": "C",
+   "incipit": "Bonum est confiteri",
+   "row": "Eighth Sunday"
+  },
+  {
+   "key": "ordinary_time_8_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Domine Deus meus",
+   "row": "Eighth Sunday"
+  },
+  {
+   "key": "ordinary_time_8_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Domine, convertere",
+   "row": "Eighth Sunday"
+  },
+  {
+   "key": "ordinary_time_8_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Cantabo Domino",
+   "row": "Eighth Sunday"
+  },
+  {
+   "key": "ash_wednesday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Misereris omnium",
+   "row": "Ash Wednesday"
+  },
+  {
+   "key": "ash_wednesday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Miserere mei Deus",
+   "row": "Ash Wednesday"
+  },
+  {
+   "key": "ash_wednesday",
+   "part": "tract",
+   "cycle": "",
+   "incipit": "Domine, non secundum peccata nostra",
+   "row": "Ash Wednesday"
+  },
+  {
+   "key": "ash_wednesday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Exaltabo te",
+   "row": "Ash Wednesday"
+  },
+  {
+   "key": "ash_wednesday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Qui meditabitur",
+   "row": "Ash Wednesday"
+  },
+  {
+   "key": "lent_1_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Invocabit me",
+   "row": "First Sunday in Lent"
+  },
+  {
+   "key": "lent_1_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Angelis suis",
+   "row": "First Sunday in Lent"
+  },
+  {
+   "key": "lent_1_sunday",
+   "part": "tract",
+   "cycle": "",
+   "incipit": "Qui habitat",
+   "row": "First Sunday in Lent"
+  },
+  {
+   "key": "lent_1_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Scapulis suis",
+   "row": "First Sunday in Lent"
+  },
+  {
+   "key": "lent_1_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Scapulis suis",
+   "row": "First Sunday in Lent"
+  },
+  {
+   "key": "lent_2_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Tibi dixit cor meum",
+   "row": "Second Sunday in Lent"
+  },
+  {
+   "key": "lent_2_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Sciant gentes",
+   "row": "Second Sunday in Lent"
+  },
+  {
+   "key": "lent_2_sunday",
+   "part": "tract",
+   "cycle": "",
+   "incipit": "Commovisti",
+   "row": "Second Sunday in Lent"
+  },
+  {
+   "key": "lent_2_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Meditabor",
+   "row": "Second Sunday in Lent"
+  },
+  {
+   "key": "lent_2_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Visionem",
+   "row": "Second Sunday in Lent"
+  },
+  {
+   "key": "lent_3_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Oculi mei",
+   "row": "Third Sunday in Lent"
+  },
+  {
+   "key": "lent_3_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Exsurge Domine",
+   "row": "Third Sunday in Lent"
+  },
+  {
+   "key": "lent_3_sunday",
+   "part": "tract",
+   "cycle": "",
+   "incipit": "Ad te levavi",
+   "row": "Third Sunday in Lent"
+  },
+  {
+   "key": "lent_3_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Iustitiae Domini",
+   "row": "Third Sunday in Lent"
+  },
+  {
+   "key": "lent_3_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Qui biberit aquam",
+   "row": "Third Sunday in Lent"
+  },
+  {
+   "key": "annunciation_of_the_lord",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Rorate caeli",
+   "row": "Annunciation of the Lord"
+  },
+  {
+   "key": "annunciation_of_the_lord",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Tollite portas",
+   "row": "Annunciation of the Lord"
+  },
+  {
+   "key": "annunciation_of_the_lord",
+   "part": "tract",
+   "cycle": "",
+   "incipit": "Audi, filia",
+   "row": "Annunciation of the Lord"
+  },
+  {
+   "key": "annunciation_of_the_lord",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Ave Maria",
+   "row": "Annunciation of the Lord"
+  },
+  {
+   "key": "annunciation_of_the_lord",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Ecce virgo",
+   "row": "Annunciation of the Lord"
+  },
+  {
+   "key": "lent_4_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Laetare Ierusalem",
+   "row": "Fourth Sunday in Lent"
+  },
+  {
+   "key": "lent_4_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Laetatus sum",
+   "row": "Fourth Sunday in Lent"
+  },
+  {
+   "key": "lent_4_sunday",
+   "part": "tract",
+   "cycle": "",
+   "incipit": "Qui confidunt",
+   "row": "Fourth Sunday in Lent"
+  },
+  {
+   "key": "lent_4_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Laudate Dominum",
+   "row": "Fourth Sunday in Lent"
+  },
+  {
+   "key": "lent_4_sunday",
+   "part": "offertory",
+   "cycle": "C",
+   "incipit": "Illumina oculos meos",
+   "row": "Fourth Sunday in Lent"
+  },
+  {
+   "key": "lent_4_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Ierusalem quae aedificatur",
+   "row": "Fourth Sunday in Lent"
+  },
+  {
+   "key": "lent_4_sunday",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Oportet te",
+   "row": "Fourth Sunday in Lent"
+  },
+  {
+   "key": "lent_5_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Iudica me, Deus",
+   "row": "Fifth Sunday in Lent"
+  },
+  {
+   "key": "lent_5_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Eripe me, Domine",
+   "row": "Fifth Sunday in Lent"
+  },
+  {
+   "key": "lent_5_sunday",
+   "part": "tract",
+   "cycle": "",
+   "incipit": "Saepe expugnaverunt",
+   "row": "Fifth Sunday in Lent"
+  },
+  {
+   "key": "lent_5_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Confitebor tibi, Domine",
+   "row": "Fifth Sunday in Lent"
+  },
+  {
+   "key": "lent_5_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Videns Dominus",
+   "row": "Fifth Sunday in Lent"
+  },
+  {
+   "key": "lent_5_sunday",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Nemo te condemnavit",
+   "row": "Fifth Sunday in Lent"
+  },
+  {
+   "key": "palm_sunday_of_the_passion_of_the_lord",
+   "part": "tract",
+   "cycle": "",
+   "incipit": "Deus, Deus meus",
+   "row": "Palm Sunday"
+  },
+  {
+   "key": "palm_sunday_of_the_passion_of_the_lord",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Christus factus est",
+   "row": "Palm Sunday"
+  },
+  {
+   "key": "palm_sunday_of_the_passion_of_the_lord",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Improperium exspectavit",
+   "row": "Palm Sunday"
+  },
+  {
+   "key": "palm_sunday_of_the_passion_of_the_lord",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Pater, si non potest",
+   "row": "Palm Sunday"
+  },
+  {
+   "key": "thursday_of_the_lords_supper",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Nos autem gloriari",
+   "row": "Maundy Thursday"
+  },
+  {
+   "key": "thursday_of_the_lords_supper",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Oculi omnium",
+   "row": "Maundy Thursday"
+  },
+  {
+   "key": "thursday_of_the_lords_supper",
+   "part": "tract",
+   "cycle": "",
+   "incipit": "Ab ortu solis",
+   "row": "Maundy Thursday"
+  },
+  {
+   "key": "thursday_of_the_lords_supper",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Ubi caritas est vera",
+   "row": "Maundy Thursday"
+  },
+  {
+   "key": "thursday_of_the_lords_supper",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Hoc corpus",
+   "row": "Maundy Thursday"
+  },
+  {
+   "key": "easter_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Resurrexi",
+   "row": "Easter Sunday"
+  },
+  {
+   "key": "easter_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Haec dies",
+   "row": "Easter Sunday"
+  },
+  {
+   "key": "easter_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Pascha nostrum",
+   "row": "Easter Sunday"
+  },
+  {
+   "key": "easter_sunday",
+   "part": "sequence",
+   "cycle": "",
+   "incipit": "Victimae paschali laudes",
+   "row": "Easter Sunday"
+  },
+  {
+   "key": "easter_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Terra tremuit",
+   "row": "Easter Sunday"
+  },
+  {
+   "key": "easter_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Pascha nostrum",
+   "row": "Easter Sunday"
+  },
+  {
+   "key": "divine_mercy_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Quasi modo",
+   "row": "Second Sunday of Easter"
+  },
+  {
+   "key": "divine_mercy_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "In die resurrectionis",
+   "row": "Second Sunday of Easter"
+  },
+  {
+   "key": "divine_mercy_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Post dies octo",
+   "row": "Second Sunday of Easter"
+  },
+  {
+   "key": "divine_mercy_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Angelus Domini",
+   "row": "Second Sunday of Easter"
+  },
+  {
+   "key": "divine_mercy_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Mitte manum tuam, et cognosce",
+   "row": "Second Sunday of Easter"
+  },
+  {
+   "key": "easter_time_3_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Iubilate Deo",
+   "row": "Third Sunday of Easter"
+  },
+  {
+   "key": "easter_time_3_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Cognoverunt discipuli",
+   "row": "Third Sunday of Easter"
+  },
+  {
+   "key": "easter_time_3_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Oportebat",
+   "row": "Third Sunday of Easter"
+  },
+  {
+   "key": "easter_time_3_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Lauda, anima mea",
+   "row": "Third Sunday of Easter"
+  },
+  {
+   "key": "easter_time_3_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Surrexit Dominus",
+   "row": "Third Sunday of Easter"
+  },
+  {
+   "key": "easter_time_3_sunday",
+   "part": "communion",
+   "cycle": "B",
+   "incipit": "Cantate Domino",
+   "row": "Third Sunday of Easter"
+  },
+  {
+   "key": "easter_time_3_sunday",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Simon Ioannis",
+   "row": "Third Sunday of Easter"
+  },
+  {
+   "key": "easter_time_4_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Misericordia Domini",
+   "row": "Fourth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_4_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Redemptionem",
+   "row": "Fourth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_4_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Ego sum pastor bonus",
+   "row": "Fourth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_4_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Deus, Deus meus",
+   "row": "Fourth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_4_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Ego sum pastor bonus",
+   "row": "Fourth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_5_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Cantate Domino",
+   "row": "Fifth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_5_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Dextera Dei",
+   "row": "Fifth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_5_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Christus resurgens",
+   "row": "Fifth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_5_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Iubilate Deo universa terra",
+   "row": "Fifth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_5_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Ego sum pastor",
+   "row": "Fifth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_5_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Tanto tempore",
+   "row": "Fifth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_6_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Vocem iucunditatis",
+   "row": "Sixth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_6_sunday",
+   "part": "gradual",
+   "cycle": "A",
+   "incipit": "Surrexit Christus, et illuxit",
+   "row": "Sixth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_6_sunday",
+   "part": "alleluia",
+   "cycle": "A",
+   "incipit": "Non vos relinquam",
+   "row": "Sixth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_6_sunday",
+   "part": "gradual",
+   "cycle": "B",
+   "incipit": "Exivi a Patre",
+   "row": "Sixth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_6_sunday",
+   "part": "alleluia",
+   "cycle": "B",
+   "incipit": "Ego vos elegi",
+   "row": "Sixth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_6_sunday",
+   "part": "gradual",
+   "cycle": "C",
+   "incipit": "Surrexit",
+   "row": "Sixth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_6_sunday",
+   "part": "alleluia",
+   "cycle": "C",
+   "incipit": "Spiritus sanctus docebit",
+   "row": "Sixth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_6_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Benedicite, gentes",
+   "row": "Sixth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_6_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Non vos relinquam orphanos",
+   "row": "Sixth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_6_sunday",
+   "part": "communion",
+   "cycle": "B",
+   "incipit": "Ego vos elegi",
+   "row": "Sixth Sunday of Easter"
+  },
+  {
+   "key": "easter_time_6_sunday",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Spiritus Sanctus docebit vos",
+   "row": "Sixth Sunday of Easter"
+  },
+  {
+   "key": "ascension_of_the_lord",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Viri Galilaei",
+   "row": "Ascension of the Lord"
+  },
+  {
+   "key": "ascension_of_the_lord",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Ascendit Deus",
+   "row": "Ascension of the Lord"
+  },
+  {
+   "key": "ascension_of_the_lord",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Dominus in Sina",
+   "row": "Ascension of the Lord"
+  },
+  {
+   "key": "ascension_of_the_lord",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Ascendit Deus",
+   "row": "Ascension of the Lord"
+  },
+  {
+   "key": "ascension_of_the_lord",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Data est mihi",
+   "row": "Ascension of the Lord"
+  },
+  {
+   "key": "ascension_of_the_lord",
+   "part": "communion",
+   "cycle": "B",
+   "incipit": "Signa",
+   "row": "Ascension of the Lord"
+  },
+  {
+   "key": "ascension_of_the_lord",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Psallite Domino",
+   "row": "Ascension of the Lord"
+  },
+  {
+   "key": "easter_time_7_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Exaudi, Domine",
+   "row": "Seventh Sunday of Easter"
+  },
+  {
+   "key": "easter_time_7_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Regnavit Dominus",
+   "row": "Seventh Sunday of Easter"
+  },
+  {
+   "key": "easter_time_7_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Non vos relinquam",
+   "row": "Seventh Sunday of Easter"
+  },
+  {
+   "key": "easter_time_7_sunday",
+   "part": "alleluia",
+   "cycle": "A",
+   "incipit": "Exivi a Patre",
+   "row": "Seventh Sunday of Easter"
+  },
+  {
+   "key": "easter_time_7_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Ascendit Deus",
+   "row": "Seventh Sunday of Easter"
+  },
+  {
+   "key": "easter_time_7_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Pater, cum essem",
+   "row": "Seventh Sunday of Easter"
+  },
+  {
+   "key": "pentecost_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Spiritus Domini",
+   "row": "Pentecost"
+  },
+  {
+   "key": "pentecost_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Emitte Spiritum tuum",
+   "row": "Pentecost"
+  },
+  {
+   "key": "pentecost_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Veni, Sancte Spiritus",
+   "row": "Pentecost"
+  },
+  {
+   "key": "pentecost_sunday",
+   "part": "sequence",
+   "cycle": "",
+   "incipit": "Veni, Sancte Spiritus",
+   "row": "Pentecost"
+  },
+  {
+   "key": "pentecost_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Confirma hoc, Deus",
+   "row": "Pentecost"
+  },
+  {
+   "key": "pentecost_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Factus est repente",
+   "row": "Pentecost"
+  },
+  {
+   "key": "most_holy_trinity",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Benedicta sit",
+   "row": "Most Holy Trinity"
+  },
+  {
+   "key": "most_holy_trinity",
+   "part": "introit",
+   "cycle": "C",
+   "incipit": "Caritas Dei",
+   "row": "Most Holy Trinity"
+  },
+  {
+   "key": "most_holy_trinity",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Benedictus es, Domine",
+   "row": "Most Holy Trinity"
+  },
+  {
+   "key": "most_holy_trinity",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Benedictus es, Domine",
+   "row": "Most Holy Trinity"
+  },
+  {
+   "key": "most_holy_trinity",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Benedictus sit",
+   "row": "Most Holy Trinity"
+  },
+  {
+   "key": "most_holy_trinity",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Benedicimus Deum",
+   "row": "Most Holy Trinity"
+  },
+  {
+   "key": "most_holy_trinity",
+   "part": "communion",
+   "cycle": "B",
+   "incipit": "Data est mihi",
+   "row": "Most Holy Trinity"
+  },
+  {
+   "key": "most_holy_body_and_blood_of_christ",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Cibavit eos",
+   "row": "Body and Blood of Christ"
+  },
+  {
+   "key": "most_holy_body_and_blood_of_christ",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Oculi omnium",
+   "row": "Body and Blood of Christ"
+  },
+  {
+   "key": "most_holy_body_and_blood_of_christ",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Caro mea",
+   "row": "Body and Blood of Christ"
+  },
+  {
+   "key": "most_holy_body_and_blood_of_christ",
+   "part": "sequence",
+   "cycle": "",
+   "incipit": "Lauda, Sion",
+   "row": "Body and Blood of Christ"
+  },
+  {
+   "key": "most_holy_body_and_blood_of_christ",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Portas caeli",
+   "row": "Body and Blood of Christ"
+  },
+  {
+   "key": "most_holy_body_and_blood_of_christ",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Qui manducat",
+   "row": "Body and Blood of Christ"
+  },
+  {
+   "key": "most_holy_body_and_blood_of_christ",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Hoc corpus",
+   "row": "Body and Blood of Christ"
+  },
+  {
+   "key": "ordinary_time_9_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Respice in me",
+   "row": "Ninth Sunday"
+  },
+  {
+   "key": "ordinary_time_9_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Iacta cogitatum tuum",
+   "row": "Ninth Sunday"
+  },
+  {
+   "key": "ordinary_time_9_sunday",
+   "part": "gradual",
+   "cycle": "A",
+   "incipit": "Esto mihi",
+   "row": "Ninth Sunday"
+  },
+  {
+   "key": "ordinary_time_9_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Deus, iudex iustus",
+   "row": "Ninth Sunday"
+  },
+  {
+   "key": "ordinary_time_9_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Sperent in te",
+   "row": "Ninth Sunday"
+  },
+  {
+   "key": "ordinary_time_9_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Ego clamavi",
+   "row": "Ninth Sunday"
+  },
+  {
+   "key": "ordinary_time_10_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Dominus illuminatio mea",
+   "row": "Tenth Sunday"
+  },
+  {
+   "key": "ordinary_time_10_sunday",
+   "part": "introit",
+   "cycle": "B",
+   "incipit": "Si iniquitates",
+   "row": "Tenth Sunday"
+  },
+  {
+   "key": "ordinary_time_10_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Propitius esto",
+   "row": "Tenth Sunday"
+  },
+  {
+   "key": "ordinary_time_10_sunday",
+   "part": "gradual",
+   "cycle": "C",
+   "incipit": "Exaltabo te",
+   "row": "Tenth Sunday"
+  },
+  {
+   "key": "ordinary_time_10_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Deus, qui sedes",
+   "row": "Tenth Sunday"
+  },
+  {
+   "key": "ordinary_time_10_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Illumina oculos meos",
+   "row": "Tenth Sunday"
+  },
+  {
+   "key": "ordinary_time_10_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Dominus firmamentum meum",
+   "row": "Tenth Sunday"
+  },
+  {
+   "key": "ordinary_time_10_sunday",
+   "part": "communion",
+   "cycle": "B",
+   "incipit": "Quicumque fecerit",
+   "row": "Tenth Sunday"
+  },
+  {
+   "key": "ordinary_time_11_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Exaudi Domine",
+   "row": "Eleventh Sunday"
+  },
+  {
+   "key": "ordinary_time_11_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Protector noster",
+   "row": "Eleventh Sunday"
+  },
+  {
+   "key": "ordinary_time_11_sunday",
+   "part": "gradual",
+   "cycle": "B",
+   "incipit": "Bonum est confiteri",
+   "row": "Eleventh Sunday"
+  },
+  {
+   "key": "ordinary_time_11_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Domine, in virtute tua",
+   "row": "Eleventh Sunday"
+  },
+  {
+   "key": "ordinary_time_11_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Benedicam Dominum",
+   "row": "Eleventh Sunday"
+  },
+  {
+   "key": "ordinary_time_11_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Unam petii",
+   "row": "Eleventh Sunday"
+  },
+  {
+   "key": "ordinary_time_12_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Dominus fortitudo plebis suae",
+   "row": "Twelfth Sunday"
+  },
+  {
+   "key": "ordinary_time_12_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Convertere, Domine",
+   "row": "Twelfth Sunday"
+  },
+  {
+   "key": "ordinary_time_12_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "In te Domine, speravi",
+   "row": "Twelfth Sunday"
+  },
+  {
+   "key": "ordinary_time_12_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Perfice gressus meos",
+   "row": "Twelfth Sunday"
+  },
+  {
+   "key": "ordinary_time_12_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Quod dico vobis",
+   "row": "Twelfth Sunday"
+  },
+  {
+   "key": "ordinary_time_12_sunday",
+   "part": "communion",
+   "cycle": "B",
+   "incipit": "Circuibo",
+   "row": "Twelfth Sunday"
+  },
+  {
+   "key": "ordinary_time_12_sunday",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Qui vult venire",
+   "row": "Twelfth Sunday"
+  },
+  {
+   "key": "nativity_of_john_the_baptist",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "De ventre matris meae",
+   "row": "Nativity of John the Baptist"
+  },
+  {
+   "key": "nativity_of_john_the_baptist",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Priusquam te formarem",
+   "row": "Nativity of John the Baptist"
+  },
+  {
+   "key": "nativity_of_john_the_baptist",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Tu, puer",
+   "row": "Nativity of John the Baptist"
+  },
+  {
+   "key": "nativity_of_john_the_baptist",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Iustus ut palma",
+   "row": "Nativity of John the Baptist"
+  },
+  {
+   "key": "nativity_of_john_the_baptist",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Tu, puer",
+   "row": "Nativity of John the Baptist"
+  },
+  {
+   "key": "peter_and_paul_apostles",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Nunc scio vere",
+   "row": "Saints Peter and Paul"
+  },
+  {
+   "key": "peter_and_paul_apostles",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Constitues eos",
+   "row": "Saints Peter and Paul"
+  },
+  {
+   "key": "peter_and_paul_apostles",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Tu es Petrus",
+   "row": "Saints Peter and Paul"
+  },
+  {
+   "key": "peter_and_paul_apostles",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Constitues eos",
+   "row": "Saints Peter and Paul"
+  },
+  {
+   "key": "peter_and_paul_apostles",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Tu es Petrus",
+   "row": "Saints Peter and Paul"
+  },
+  {
+   "key": "ordinary_time_13_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Omnes gentes",
+   "row": "Thirteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_13_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Venite, filii",
+   "row": "Thirteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_13_sunday",
+   "part": "gradual",
+   "cycle": "B",
+   "incipit": "Exaltabo te",
+   "row": "Thirteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_13_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Omnes gentes",
+   "row": "Thirteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_13_sunday",
+   "part": "alleluia",
+   "cycle": "A",
+   "incipit": "Christus resurgens",
+   "row": "Thirteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_13_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Sicut in holocausto",
+   "row": "Thirteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_13_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Inclina aurem tuam",
+   "row": "Thirteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_13_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Christus resurgens",
+   "row": "Thirteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_14_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Suscepimus",
+   "row": "Fourteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_14_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Esto mihi",
+   "row": "Fourteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_14_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Magnus Dominus",
+   "row": "Fourteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_14_sunday",
+   "part": "alleluia",
+   "cycle": "A",
+   "incipit": "Venite ad me",
+   "row": "Fourteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_14_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Populum humilem",
+   "row": "Fourteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_14_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Gustate et videte",
+   "row": "Fourteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_15_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Dum clamarem",
+   "row": "Fifteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_15_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Custodi me",
+   "row": "Fifteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_15_sunday",
+   "part": "gradual",
+   "cycle": "B",
+   "incipit": "Ostende nobis",
+   "row": "Fifteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_15_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Te decet hymnus",
+   "row": "Fifteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_15_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Ad te, Domine, levavi",
+   "row": "Fifteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_15_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Passer invenit",
+   "row": "Fifteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_16_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Ecce Deus adiuvat me",
+   "row": "Sixteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_16_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Domine, Dominus noster",
+   "row": "Sixteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_16_sunday",
+   "part": "gradual",
+   "cycle": "B",
+   "incipit": "Si ambulem",
+   "row": "Sixteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_16_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Eripe me",
+   "row": "Sixteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_16_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Iustitiae Domini",
+   "row": "Sixteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_16_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Acceptabis",
+   "row": "Sixteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_16_sunday",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Optimam partem",
+   "row": "Sixteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_17_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Deus in loco sancto suo",
+   "row": "Seventeenth Sunday"
+  },
+  {
+   "key": "ordinary_time_17_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "In Deo speravit",
+   "row": "Seventeenth Sunday"
+  },
+  {
+   "key": "ordinary_time_17_sunday",
+   "part": "gradual",
+   "cycle": "B",
+   "incipit": "Oculi omnium",
+   "row": "Seventeenth Sunday"
+  },
+  {
+   "key": "ordinary_time_17_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Exsultate Deo",
+   "row": "Seventeenth Sunday"
+  },
+  {
+   "key": "ordinary_time_17_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Exaltabo te",
+   "row": "Seventeenth Sunday"
+  },
+  {
+   "key": "ordinary_time_17_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Simile est regnum caelorum",
+   "row": "Seventeenth Sunday"
+  },
+  {
+   "key": "ordinary_time_17_sunday",
+   "part": "communion",
+   "cycle": "B",
+   "incipit": "Honora Dominum",
+   "row": "Seventeenth Sunday"
+  },
+  {
+   "key": "ordinary_time_17_sunday",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Petite",
+   "row": "Seventeenth Sunday"
+  },
+  {
+   "key": "ordinary_time_18_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Deus, in adiutorium",
+   "row": "Eighteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_18_sunday",
+   "part": "introit",
+   "cycle": "A",
+   "incipit": "Sitientes",
+   "row": "Eighteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_18_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Benedicam Dominum",
+   "row": "Eighteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_18_sunday",
+   "part": "gradual",
+   "cycle": "A",
+   "incipit": "Oculi omnium",
+   "row": "Eighteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_18_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Domine Deus salutis meae",
+   "row": "Eighteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_18_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Precatus est Moyses",
+   "row": "Eighteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_18_sunday",
+   "part": "offertory",
+   "cycle": "C",
+   "incipit": "Sanctificavit",
+   "row": "Eighteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_18_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Panem de caelo",
+   "row": "Eighteenth Sunday"
+  },
+  {
+   "key": "transfiguration_of_the_lord",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Tibi dixit cor meum",
+   "row": "Transfiguration of the Lord"
+  },
+  {
+   "key": "transfiguration_of_the_lord",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Speciosus forma",
+   "row": "Transfiguration of the Lord"
+  },
+  {
+   "key": "transfiguration_of_the_lord",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Candor est lucis",
+   "row": "Transfiguration of the Lord"
+  },
+  {
+   "key": "transfiguration_of_the_lord",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Gloria et honore",
+   "row": "Transfiguration of the Lord"
+  },
+  {
+   "key": "transfiguration_of_the_lord",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Visionem",
+   "row": "Transfiguration of the Lord"
+  },
+  {
+   "key": "ordinary_time_19_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Respice, Domine",
+   "row": "Nineteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_19_sunday",
+   "part": "gradual",
+   "cycle": "A",
+   "incipit": "Ostende",
+   "row": "Nineteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_19_sunday",
+   "part": "gradual",
+   "cycle": "B",
+   "incipit": "Respice, Domine",
+   "row": "Nineteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_19_sunday",
+   "part": "gradual",
+   "cycle": "C",
+   "incipit": "Beata gens",
+   "row": "Nineteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_19_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Domine, refugium",
+   "row": "Nineteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_19_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "In te speravi, Domine",
+   "row": "Nineteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_19_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Panis",
+   "row": "Nineteenth Sunday"
+  },
+  {
+   "key": "ordinary_time_19_sunday",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Beatus servus",
+   "row": "Nineteenth Sunday"
+  },
+  {
+   "key": "assumption_of_the_blessed_virgin_mary",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Signum magnum",
+   "row": "Assumption of the Blessed Virgin Mary"
+  },
+  {
+   "key": "assumption_of_the_blessed_virgin_mary",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Audi, filia",
+   "row": "Assumption of the Blessed Virgin Mary"
+  },
+  {
+   "key": "assumption_of_the_blessed_virgin_mary",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Assumpta est Maria",
+   "row": "Assumption of the Blessed Virgin Mary"
+  },
+  {
+   "key": "assumption_of_the_blessed_virgin_mary",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Assumpta est Maria",
+   "row": "Assumption of the Blessed Virgin Mary"
+  },
+  {
+   "key": "assumption_of_the_blessed_virgin_mary",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Beatam me dicent",
+   "row": "Assumption of the Blessed Virgin Mary"
+  },
+  {
+   "key": "ordinary_time_20_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Protector noster",
+   "row": "Twentieth Sunday"
+  },
+  {
+   "key": "ordinary_time_20_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Bonum est confidere",
+   "row": "Twentieth Sunday"
+  },
+  {
+   "key": "ordinary_time_20_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Venite, exsultemus",
+   "row": "Twentieth Sunday"
+  },
+  {
+   "key": "ordinary_time_20_sunday",
+   "part": "alleluia",
+   "cycle": "B",
+   "incipit": "Caro mea",
+   "row": "Twentieth Sunday"
+  },
+  {
+   "key": "ordinary_time_20_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Immitet angelus",
+   "row": "Twentieth Sunday"
+  },
+  {
+   "key": "ordinary_time_20_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Domus mea",
+   "row": "Twentieth Sunday"
+  },
+  {
+   "key": "ordinary_time_20_sunday",
+   "part": "communion",
+   "cycle": "B",
+   "incipit": "Qui manducat",
+   "row": "Twentieth Sunday"
+  },
+  {
+   "key": "ordinary_time_20_sunday",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Primum quaerite",
+   "row": "Twentieth Sunday"
+  },
+  {
+   "key": "ordinary_time_21_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Inclina Domine",
+   "row": "Twenty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_21_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Bonum est confiteri",
+   "row": "Twenty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_21_sunday",
+   "part": "alleluia",
+   "cycle": "A",
+   "incipit": "Tu es Petrus",
+   "row": "Twenty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_21_sunday",
+   "part": "alleluia",
+   "cycle": "B",
+   "incipit": "Spiritus est qui vivificat",
+   "row": "Twenty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_21_sunday",
+   "part": "alleluia",
+   "cycle": "C",
+   "incipit": "Quoniam Deus",
+   "row": "Twenty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_21_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Exspectans exspectavi",
+   "row": "Twenty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_21_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "De fructu",
+   "row": "Twenty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_22_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Miserere",
+   "row": "Twenty-second Sunday"
+  },
+  {
+   "key": "ordinary_time_22_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Timebunt gentes",
+   "row": "Twenty-second Sunday"
+  },
+  {
+   "key": "ordinary_time_22_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Cantate Domino",
+   "row": "Twenty-second Sunday"
+  },
+  {
+   "key": "ordinary_time_22_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Domine, in auxilium",
+   "row": "Twenty-second Sunday"
+  },
+  {
+   "key": "ordinary_time_22_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Domine, memorabor",
+   "row": "Twenty-second Sunday"
+  },
+  {
+   "key": "ordinary_time_22_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Qui vult venire",
+   "row": "Twenty-second Sunday"
+  },
+  {
+   "key": "ordinary_time_23_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Iustus es Domine",
+   "row": "Twenty-third Sunday"
+  },
+  {
+   "key": "ordinary_time_23_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Beata gens",
+   "row": "Twenty-third Sunday"
+  },
+  {
+   "key": "ordinary_time_23_sunday",
+   "part": "gradual",
+   "cycle": "B",
+   "incipit": "Domine, refugium",
+   "row": "Twenty-third Sunday"
+  },
+  {
+   "key": "ordinary_time_23_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Domine, exaudi",
+   "row": "Twenty-third Sunday"
+  },
+  {
+   "key": "ordinary_time_23_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Oravi Deum meum",
+   "row": "Twenty-third Sunday"
+  },
+  {
+   "key": "ordinary_time_23_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Vovete",
+   "row": "Twenty-third Sunday"
+  },
+  {
+   "key": "nativity_of_the_blessed_virgin_mary",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Gaudeamus",
+   "row": "Birth of the Blessed Virgin Mary"
+  },
+  {
+   "key": "nativity_of_the_blessed_virgin_mary",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Benedicta et venerabilis",
+   "row": "Birth of the Blessed Virgin Mary"
+  },
+  {
+   "key": "nativity_of_the_blessed_virgin_mary",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Solemnitas",
+   "row": "Birth of the Blessed Virgin Mary"
+  },
+  {
+   "key": "nativity_of_the_blessed_virgin_mary",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Beata es, Virgo Maria",
+   "row": "Birth of the Blessed Virgin Mary"
+  },
+  {
+   "key": "nativity_of_the_blessed_virgin_mary",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Beatam me dicent",
+   "row": "Birth of the Blessed Virgin Mary"
+  },
+  {
+   "key": "exaltation_of_the_holy_cross",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Nos autem gloriari",
+   "row": "Exaltation of the Holy Cross"
+  },
+  {
+   "key": "exaltation_of_the_holy_cross",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Christus factus est",
+   "row": "Exaltation of the Holy Cross"
+  },
+  {
+   "key": "exaltation_of_the_holy_cross",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Dulce lignum",
+   "row": "Exaltation of the Holy Cross"
+  },
+  {
+   "key": "exaltation_of_the_holy_cross",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Protege, Domine",
+   "row": "Exaltation of the Holy Cross"
+  },
+  {
+   "key": "exaltation_of_the_holy_cross",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Per signum Crucis",
+   "row": "Exaltation of the Holy Cross"
+  },
+  {
+   "key": "ordinary_time_24_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Da pacem",
+   "row": "Twenty-fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_24_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Laetatus sum",
+   "row": "Twenty-fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_24_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Timebunt gentes",
+   "row": "Twenty-fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_24_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Sanctificavit",
+   "row": "Twenty-fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_24_sunday",
+   "part": "offertory",
+   "cycle": "C",
+   "incipit": "Precatus est Moyses",
+   "row": "Twenty-fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_24_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Tollite hostias",
+   "row": "Twenty-fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_24_sunday",
+   "part": "communion",
+   "cycle": "B",
+   "incipit": "Qui vult venire",
+   "row": "Twenty-fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_24_sunday",
+   "part": "communion",
+   "cycle": "C",
+   "incipit": "Dico vobis: Gaudium",
+   "row": "Twenty-fourth Sunday"
+  },
+  {
+   "key": "ordinary_time_25_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Salus populi",
+   "row": "Twenty-fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_25_sunday",
+   "part": "gradual",
+   "cycle": "A",
+   "incipit": "Prope est Dominus",
+   "row": "Twenty-fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_25_sunday",
+   "part": "gradual",
+   "cycle": "B",
+   "incipit": "Dirigatur",
+   "row": "Twenty-fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_25_sunday",
+   "part": "gradual",
+   "cycle": "C",
+   "incipit": "Quis sicut Dominus",
+   "row": "Twenty-fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_25_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Confitemini",
+   "row": "Twenty-fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_25_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Si ambulavero",
+   "row": "Twenty-fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_25_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Tu mandasti",
+   "row": "Twenty-fifth Sunday"
+  },
+  {
+   "key": "ordinary_time_26_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Omnia quae fecisti",
+   "row": "Twenty-sixth Sunday"
+  },
+  {
+   "key": "ordinary_time_26_sunday",
+   "part": "introit",
+   "cycle": "A",
+   "incipit": "In nomine Domini",
+   "row": "Twenty-sixth Sunday"
+  },
+  {
+   "key": "ordinary_time_26_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Oculi omnium",
+   "row": "Twenty-sixth Sunday"
+  },
+  {
+   "key": "ordinary_time_26_sunday",
+   "part": "gradual",
+   "cycle": "A",
+   "incipit": "Christus factus est",
+   "row": "Twenty-sixth Sunday"
+  },
+  {
+   "key": "ordinary_time_26_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Paratum cor meum",
+   "row": "Twenty-sixth Sunday"
+  },
+  {
+   "key": "ordinary_time_26_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Super flumina",
+   "row": "Twenty-sixth Sunday"
+  },
+  {
+   "key": "ordinary_time_26_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Memento verbi tui",
+   "row": "Twenty-sixth Sunday"
+  },
+  {
+   "key": "ordinary_time_27_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "In voluntate tua",
+   "row": "Twenty-seventh Sunday"
+  },
+  {
+   "key": "ordinary_time_27_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Domine, refugium",
+   "row": "Twenty-seventh Sunday"
+  },
+  {
+   "key": "ordinary_time_27_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "In exitu Israel",
+   "row": "Twenty-seventh Sunday"
+  },
+  {
+   "key": "ordinary_time_27_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Vir erat",
+   "row": "Twenty-seventh Sunday"
+  },
+  {
+   "key": "ordinary_time_27_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "In salutari tuo",
+   "row": "Twenty-seventh Sunday"
+  },
+  {
+   "key": "ordinary_time_28_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Si iniquitates",
+   "row": "Twenty-eighth Sunday"
+  },
+  {
+   "key": "ordinary_time_28_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Ecce quam bonum",
+   "row": "Twenty-eighth Sunday"
+  },
+  {
+   "key": "ordinary_time_28_sunday",
+   "part": "gradual",
+   "cycle": "A",
+   "incipit": "Si ambulem",
+   "row": "Twenty-eighth Sunday"
+  },
+  {
+   "key": "ordinary_time_28_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Qui timent Dominum",
+   "row": "Twenty-eighth Sunday"
+  },
+  {
+   "key": "ordinary_time_28_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Recordare mei",
+   "row": "Twenty-eighth Sunday"
+  },
+  {
+   "key": "ordinary_time_28_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Aufer a me",
+   "row": "Twenty-eighth Sunday"
+  },
+  {
+   "key": "ordinary_time_29_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Ego clamavi",
+   "row": "Twenty-ninth Sunday"
+  },
+  {
+   "key": "ordinary_time_29_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Salvum fac populum",
+   "row": "Twenty-ninth Sunday"
+  },
+  {
+   "key": "ordinary_time_29_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Lauda, anima mea",
+   "row": "Twenty-ninth Sunday"
+  },
+  {
+   "key": "ordinary_time_29_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Meditabor",
+   "row": "Twenty-ninth Sunday"
+  },
+  {
+   "key": "ordinary_time_29_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Domine, Dominus noster",
+   "row": "Twenty-ninth Sunday"
+  },
+  {
+   "key": "ordinary_time_30_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Laetetur cor",
+   "row": "Thirtieth Sunday"
+  },
+  {
+   "key": "ordinary_time_30_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Unam petii",
+   "row": "Thirtieth Sunday"
+  },
+  {
+   "key": "ordinary_time_30_sunday",
+   "part": "gradual",
+   "cycle": "C",
+   "incipit": "Clamaverunt iusti",
+   "row": "Thirtieth Sunday"
+  },
+  {
+   "key": "ordinary_time_30_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Lauda, Ierusalem",
+   "row": "Thirtieth Sunday"
+  },
+  {
+   "key": "ordinary_time_30_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Domine, vivifica me",
+   "row": "Thirtieth Sunday"
+  },
+  {
+   "key": "ordinary_time_30_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Laetabimur",
+   "row": "Thirtieth Sunday"
+  },
+  {
+   "key": "all_saints",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Gaudeamus",
+   "row": "Solemnity of All Saints"
+  },
+  {
+   "key": "all_saints",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Timete Dominum",
+   "row": "Solemnity of All Saints"
+  },
+  {
+   "key": "all_saints",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Venite ad me",
+   "row": "Solemnity of All Saints"
+  },
+  {
+   "key": "all_saints",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Iustorum animae",
+   "row": "Solemnity of All Saints"
+  },
+  {
+   "key": "all_saints",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Beati mundo corde",
+   "row": "Solemnity of All Saints"
+  },
+  {
+   "key": "commemoration_of_all_the_faithful_departed",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Requiem aeternam",
+   "row": "Commemoration of the Faithful Departed"
+  },
+  {
+   "key": "commemoration_of_all_the_faithful_departed",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Requiem aeternam",
+   "row": "Commemoration of the Faithful Departed"
+  },
+  {
+   "key": "commemoration_of_all_the_faithful_departed",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "De profundis",
+   "row": "Commemoration of the Faithful Departed"
+  },
+  {
+   "key": "commemoration_of_all_the_faithful_departed",
+   "part": "tract",
+   "cycle": "",
+   "incipit": "Absolve, Domine",
+   "row": "Commemoration of the Faithful Departed"
+  },
+  {
+   "key": "commemoration_of_all_the_faithful_departed",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Domine Iesu Christe",
+   "row": "Commemoration of the Faithful Departed"
+  },
+  {
+   "key": "commemoration_of_all_the_faithful_departed",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Lux aeterna",
+   "row": "Commemoration of the Faithful Departed"
+  },
+  {
+   "key": "ordinary_time_31_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Ne derelinquas me",
+   "row": "Thirty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_31_sunday",
+   "part": "introit",
+   "cycle": "C",
+   "incipit": "Misereris omnium",
+   "row": "Thirty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_31_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Suscepimus",
+   "row": "Thirty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_31_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Verbo Domini",
+   "row": "Thirty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_31_sunday",
+   "part": "alleluia",
+   "cycle": "C",
+   "incipit": "O quam bonus",
+   "row": "Thirty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_31_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Benedic, anima mea",
+   "row": "Thirty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_31_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Notas mihi fecisti",
+   "row": "Thirty-first Sunday"
+  },
+  {
+   "key": "ordinary_time_32_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Intret oratio mea",
+   "row": "Thirty-second Sunday"
+  },
+  {
+   "key": "ordinary_time_32_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Dirigatur",
+   "row": "Thirty-second Sunday"
+  },
+  {
+   "key": "ordinary_time_32_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Qui posuit fines",
+   "row": "Thirty-second Sunday"
+  },
+  {
+   "key": "ordinary_time_32_sunday",
+   "part": "alleluia",
+   "cycle": "A",
+   "incipit": "Quinque prudentes virgines",
+   "row": "Thirty-second Sunday"
+  },
+  {
+   "key": "ordinary_time_32_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Gressus meos",
+   "row": "Thirty-second Sunday"
+  },
+  {
+   "key": "ordinary_time_32_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Dominus regit me",
+   "row": "Thirty-second Sunday"
+  },
+  {
+   "key": "ordinary_time_32_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Quinque prudentes virgines",
+   "row": "Thirty-second Sunday"
+  },
+  {
+   "key": "ordinary_time_33_sunday",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Dicit Dominus: Ego",
+   "row": "Thirty-third Sunday"
+  },
+  {
+   "key": "ordinary_time_33_sunday",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Liberasti nos",
+   "row": "Thirty-third Sunday"
+  },
+  {
+   "key": "ordinary_time_33_sunday",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "De profundis",
+   "row": "Thirty-third Sunday"
+  },
+  {
+   "key": "ordinary_time_33_sunday",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "De profundis",
+   "row": "Thirty-third Sunday"
+  },
+  {
+   "key": "ordinary_time_33_sunday",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Amen dico vobis: quidquid",
+   "row": "Thirty-third Sunday"
+  },
+  {
+   "key": "ordinary_time_33_sunday",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Domine, quinque talenta",
+   "row": "Thirty-third Sunday"
+  },
+  {
+   "key": "presentation_of_the_blessed_virgin_mary",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Vultum tuum",
+   "row": "Presentation of the Blessed Virgin Mary"
+  },
+  {
+   "key": "presentation_of_the_blessed_virgin_mary",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Concupivit rex",
+   "row": "Presentation of the Blessed Virgin Mary"
+  },
+  {
+   "key": "presentation_of_the_blessed_virgin_mary",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Adorabo",
+   "row": "Presentation of the Blessed Virgin Mary"
+  },
+  {
+   "key": "presentation_of_the_blessed_virgin_mary",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Afferentur",
+   "row": "Presentation of the Blessed Virgin Mary"
+  },
+  {
+   "key": "presentation_of_the_blessed_virgin_mary",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Diffusa est gratia",
+   "row": "Presentation of the Blessed Virgin Mary"
+  },
+  {
+   "key": "our_lord_jesus_christ_king_of_the_universe",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Dignus est Agnus",
+   "row": "Christ the King"
+  },
+  {
+   "key": "our_lord_jesus_christ_king_of_the_universe",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Dominabitur",
+   "row": "Christ the King"
+  },
+  {
+   "key": "our_lord_jesus_christ_king_of_the_universe",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Potestas eius",
+   "row": "Christ the King"
+  },
+  {
+   "key": "our_lord_jesus_christ_king_of_the_universe",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Postula a me",
+   "row": "Christ the King"
+  },
+  {
+   "key": "our_lord_jesus_christ_king_of_the_universe",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Sedebit Dominus",
+   "row": "Christ the King"
+  },
+  {
+   "key": "our_lord_jesus_christ_king_of_the_universe",
+   "part": "communion",
+   "cycle": "A",
+   "incipit": "Amen dico vobis",
+   "row": "Christ the King"
+  }
+ ]
+}
