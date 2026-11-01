@@ -19,6 +19,9 @@
     <link rel="icon" href="{% static 'src/images/favicon.svg' %}" type="image/svg+xml">
     {# All the CSS in one file, joined from static/src/ by build-css.js in cascade order. #}
     <link rel="stylesheet" href="{% static 'src/precentor.css' %}">
+    {# The two faces almost every page uses, asked for now rather than once the stylesheet has been read. crossorigin is required for fonts, even from the same site. #}
+    <link rel="preload" href="{% static 'src/global/fonts/inter/inter-variable.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{% static 'src/global/fonts/eb-garamond/eb-garamond-variable.woff2' %}" as="font" type="font/woff2" crossorigin>
     <script type="module" src="{% static 'src/js/theme-choice.js' %}"></script>
     <script type="module" src="{% static 'src/js/user-menu.js' %}"></script>
     <script type="module" src="{% static 'src/js/toast.js' %}"></script>
