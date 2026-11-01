@@ -584,6 +584,45 @@ A service's tune is chosen on the hymn's row once it's in a slot,
 from `tune_choices()`: the book's own, then tunes in the same metre the
 same book prints, then any other the church knows.
 
+### `library.HymnImport`
+
+```python
+class HymnImport(models.Model):
+    organisation, hymnal, created_by, created_at, original_filename, status  # as ScoreImport
+    report = models.JSONField(default=dict, blank=True)   # added, filled, unchanged, skipped
+    changes = models.JSONField(default=dict, blank=True)  # what removing must undo
+
+    def keep(self): ...
+    def remove(self): ...
+
+# and on HymnEntry:
+import_batch = models.ForeignKey("HymnImport", null=True, blank=True, on_delete=models.SET_NULL, related_name="entries")
+```
+
+A hymnal's list brought in from a spreadsheet or a Google Sheets link
+(migration `0028`), for a church that already keeps one. It's started
+from the hymnal's page, so every row belongs to that book. The columns
+are Number (needed), First line, Metre and Tune, in
+`library/hymn_importing.py`; the file is read by the same `read_rows()`
+as the score import, which takes a column list for this.
+
+**Blanks are filled, nothing is overwritten.** A number new to the book
+becomes an entry with a hymn of its own, linked through `import_batch`.
+For a number the book already has, a first line or metre is only added
+where the hymn has none, and a tune only where the entry has none: what
+the church has typed by hand wins. A tune is matched by name, ignoring
+case, to the church's tunes, or added.
+
+**Removing undoes more than ScoreImport's does,** because an import can
+change rows it didn't make. `changes` records each blank it filled, as
+`[model, id, attribute, value]` (`tune_id` for a tune), and each tune it
+added. `remove()`, in one transaction, deletes the entries it added and
+their hymns, except entries already sung (kept and unlinked, as for
+scores) and hymns also printed in another book; empties each filled
+blank if it still holds the imported value, so a later correction by
+hand survives; and deletes added tunes that nothing uses. A list that
+would change nothing makes no import at all.
+
 ### `ordo.LiturgicalOccasion`
 
 ```python
@@ -758,6 +797,49 @@ lets a season-level tag ("Advent") and a day-level tag ("Advent Sunday
 4") match each other. `occasion_for_date()` is the reverse of
 `date_for_year()`: given a date, which occasions fall on it. The
 service form uses it to suggest an occasion from the date.
+
+### `ordo.ProperChant`
+
+```python
+class ProperChant(models.Model):
+    occasion_key = models.CharField(max_length=100)  # e.g. "tempora:Adv2-0"
+    calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES)
+    part = models.CharField(max_length=20, choices=PROPER_CHANT_PARTS)  # introit … communion
+    season = models.CharField(max_length=20, blank=True)  # "", "septuagesima" or "paschaltide"
+    incipit = models.CharField(max_length=100)  # "Populus Sion"
+    source = models.CharField(max_length=100)
+    # one per calendar use, occasion key, part and season
+
+def chant_season(day): ...          # Septuagesima to Holy Saturday; Easter to the Saturday after Pentecost
+def proper_chants(occasion, day): ...  # {part: incipit} for that day's Mass
+```
+
+The opening words of each 1962 Mass's chants (migration `0019`): the
+Introit, Gradual, Alleluia, Tract, Sequence, Offertory and Communion.
+Shared reference data like the calendar, with no church of its own, and
+loaded by `load_calendar` from `ordo/data/divinum_officium/`, which a
+one-off script exports from Divinum Officium (see
+[`tools/calendar_export/README.md`](../tools/calendar_export/README.md)).
+Only opening words are kept, never the texts.
+
+**Matched by key, not a foreign key.** Occasions are rebuilt from their
+files, and a national calendar repeats a general day's key to move it
+while its Mass stays the same, so one row per key serves every calendar
+that keeps the day. Divinum Officium's file names are the keys Ordo
+already gives 1962 days, which is what made the matching free.
+
+**The date decides a saint's form.** A day of the Proper of Time always
+falls in one season, so its chants are simply its own. A saint's day
+can fall after Septuagesima, when its Mass sings a Tract instead of the
+Alleluia, or in Eastertide, when Alleluias take the Gradual's place.
+Those forms are stored beside the usual one, marked with their season,
+and `proper_chants()` prefers the form for the date's season.
+
+**How planning uses it:** `Service.proper_chants` works the day out once
+per service, and `ServiceRole.proper_suggestion` gives a Proper slot its
+part (an Alleluia or Tract slot whichever the date has), unless that
+chant is already proposed. The Ordinary Form has no chant data yet, so
+its services offer nothing.
 
 ### `planning.Term`
 
