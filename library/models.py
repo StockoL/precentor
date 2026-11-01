@@ -490,6 +490,10 @@ class HymnEntry(models.Model):
     # from it is history worth keeping.
     hymnal = models.ForeignKey(Hymnal, on_delete=models.PROTECT, related_name="entries")
     number = models.CharField(max_length=10)
+    # The import that added it, while that import can still be removed.
+    import_batch = models.ForeignKey(
+        "HymnImport", null=True, blank=True, on_delete=models.SET_NULL, related_name="entries"
+    )
     # The tune this book prints the hymn with, if anyone has said.
     tune = models.ForeignKey(
         "Tune", null=True, blank=True, on_delete=models.SET_NULL, related_name="entries",
@@ -580,6 +584,81 @@ class ScoreImport(models.Model):
         self.scores.all().delete()
         self.delete()
         return deleted, kept_in_use
+
+    def __str__(self):
+        return f"{self.original_filename} ({self.created_at:%d %b %Y})"
+
+
+class HymnImport(models.Model):
+    """
+    A hymnal's list imported from a spreadsheet. Numbers new to the book
+    are added as entries with their hymns; for numbers it already has,
+    only blank details are filled. While pending it can be removed as a
+    whole, which undoes both; keeping it ends that, as for ScoreImport.
+    """
+
+    PENDING, KEPT = "pending", "kept"
+
+    organisation = models.ForeignKey(
+        "accounts.Organisation", on_delete=models.CASCADE, related_name="hymn_imports"
+    )
+    objects = OrganisationQuerySet.as_manager()
+    hymnal = models.ForeignKey(Hymnal, on_delete=models.CASCADE, related_name="imports")
+    created_by = models.ForeignKey(
+        "accounts.User", null=True, on_delete=models.SET_NULL, related_name="hymn_imports"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    original_filename = models.CharField(max_length=255)
+    status = models.CharField(max_length=10, choices=[(PENDING, "Pending"), (KEPT, "Kept")], default=PENDING)
+    # What the result page reports: added, filled, rows skipped and why.
+    report = models.JSONField(default=dict, blank=True)
+    # What removing must undo besides the entries added: "filled" lists
+    # [model, id, attribute, value] for each blank filled (tune_id for a
+    # tune), and "tunes" the ids of tunes the import added.
+    changes = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        ordering = ["-created_at"]  # noqa
+
+    @property
+    def is_pending(self):
+        return self.status == self.PENDING
+
+    def keep(self):
+        self.status = self.KEPT
+        self.save(update_fields=["status"])
+
+    @transaction.atomic
+    def remove(self):
+        """
+        Undo the import, all or nothing, and delete it. Entries it added go
+        with their hymns, unless sung, when they're kept and unlinked; a
+        hymn also in another book stays. A blank it filled is emptied again
+        if it still holds what was imported, and a tune it added goes if
+        nothing uses it. Returns (removed, kept_in_use).
+        """
+        if not self.is_pending:
+            raise ValueError("A kept import can't be removed as a batch.")
+        in_use = self.entries.filter(role_pieces__isnull=False).distinct()
+        kept_in_use = in_use.count()
+        in_use.update(import_batch=None)
+        removed = 0
+        for entry in self.entries.select_related("hymn"):
+            hymn = entry.hymn
+            entry.delete()
+            removed += 1
+            if not hymn.entries.exists():
+                hymn.delete()
+        models_by_name = {"Hymn": Hymn, "HymnEntry": HymnEntry}
+        for model_name, pk, attribute, value in self.changes.get("filled", []):
+            row = models_by_name[model_name].objects.filter(pk=pk).first()
+            if row is not None and getattr(row, attribute) == value:
+                setattr(row, attribute, None if attribute.endswith("_id") else "")
+                row.save(update_fields=[attribute.removesuffix("_id")])
+        Tune.objects.filter(pk__in=self.changes.get("tunes", []), entries__isnull=True,
+                            role_pieces__isnull=True).delete()
+        self.delete()
+        return removed, kept_in_use
 
     def __str__(self):
         return f"{self.original_filename} ({self.created_at:%d %b %Y})"
