@@ -94,12 +94,14 @@ def unguard(text):
     return text[1:] if text.startswith("'") and text[1:].startswith(FORMULA_STARTS) else text
 
 
-def read_rows(data):
+def read_rows(data, columns=COLUMNS, noun="scores"):
     """
-    The file's rows as dictionaries keyed by score field, each with the
-    row number a person sees in their spreadsheet (the header is row 1),
-    plus whether it was read as Windows-1252 and the headers that weren't
-    recognised. Blank rows are left out.
+    The file's rows as dictionaries keyed by field, each with the row
+    number a person sees in their spreadsheet (the header is row 1), plus
+    whether it was read as Windows-1252 and the headers that weren't
+    recognised. Blank rows are left out. The columns are the score
+    import's unless another import gives its own, as the hymnal import
+    does; noun is what a row is, for the messages.
     """
     if len(data) > MAX_BYTES:
         raise ImportProblem("The file is larger than 2 MB. Split it into smaller files and import each.")
@@ -110,7 +112,7 @@ def read_rows(data):
 
     reader = csv.reader(io.StringIO(text), delimiter=separator(lines[0]))
     headers = next(reader)
-    known = {tidy(header): field for header, field, _ in COLUMNS}
+    known = {tidy(header): field for header, field, _ in columns}
     positions = {}
     ignored = []
     for position, header in enumerate(headers):
@@ -119,7 +121,7 @@ def read_rows(data):
             positions[field] = position
         elif header.strip():
             ignored.append(header.strip())
-    missing = [header for header, field, required in COLUMNS if required and field not in positions]
+    missing = [header for header, field, required in columns if required and field not in positions]
     if missing:
         raise ImportProblem(
             f"The file has no {' or '.join(missing)} column. "
@@ -131,7 +133,7 @@ def read_rows(data):
         if not any(cell.strip() for cell in cells):
             continue
         if len(rows) == MAX_ROWS:
-            raise ImportProblem(f"The file has more than {MAX_ROWS:,} scores. Split it and import each part.")
+            raise ImportProblem(f"The file has more than {MAX_ROWS:,} {noun}. Split it and import each part.")
         values = {field: (unguard(cells[position].strip()) if position < len(cells) else "")
                   for field, position in positions.items()}
         rows.append((number, values))
