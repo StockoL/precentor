@@ -65,6 +65,16 @@ edit is made, one block or composition each. After changing any of
 them, or running the token or font compilers, run
 `node build-css.js`; a test fails if the built file is out of date.
 
+**Preloading what's found late:** a browser only finds a web font once
+it has read the stylesheet, and a JavaScript module's imports once the
+module has arrived, each a round trip later. So `base.html` preloads the
+regular faces of Inter and EB Garamond (the italic waits until it's
+used), and the term and service pages, whose scripts import others,
+preload those with `<link rel="modulepreload">`. A test checks that
+every module a page's scripts import is on the page or preloaded, so
+the lists can't drift from the imports. Both were measured before they
+were kept; the figures are in `testing.md`, section 3.
+
 ## Design tokens
 
 `precentor-tokens.JSON` (project root) is the single source of truth

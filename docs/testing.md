@@ -11,7 +11,7 @@ automated test named. Anything I didn't get to before submission says so.
 
 | Check                       | What I used                                                                                     | What it found                                                                                                               | Resolved?                                                                                                                                         |
 | --------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 853 tests, all passing (1 November 2026, at `e55fd08`)                                                                | Nothing to resolve                                                                                                                                |
+| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 855 tests, all passing (1 November 2026, at `791158d`)                                                                | Nothing to resolve                                                                                                                                |
 | Deployment settings         | `python manage.py check --deploy` with `DEBUG` off                                              | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve                                                                                                                                |
 | Python style                | `flake8` with a line length of 120, excluding `venv` and migrations                             | 22 findings: two unused imports, one extra blank line, one invalid escape (`\W` in a test string), 16 long lines, a variable named `l`, a lambda assigned to a name | Resolved the unused imports, the blank line and the escape in `1f2e618`. Left the 16 long lines (121 to 139 characters, mostly test data), the `l` in `ordo/utils.py` and the lambda in a test, as they don't affect behaviour. Rerun on 31 October with flake8 7.5: two files in `accounts` ended in a blank line and one import there had grown too long, all fixed in `722ffc4`; the rest as before |
 | Leftover debugging          | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app. The two scripts in `tools/` print what they've done, on purpose                                     | Nothing to resolve                                                                                                                                |
@@ -102,12 +102,27 @@ same measurements give:
 | Library   | 95                 | 2.4 s (was 2.9)        |
 | Terms     | 96                 | 2.3 s (was 2.7)        |
 
+Two smaller steps followed, each measured with and without (three
+Lighthouse runs a page, or five timed loads) and kept only because it
+helped. Preloading the two main fonts (`094f805`), which a browser
+otherwise only finds once it has read the stylesheet, brought the first
+paint forward by about half a second on each page. Preloading the
+modules that the term and service pages' scripts import (`791158d`)
+brought the term page's last script forward from 831 to 648 ms; the
+service page gained only 32 ms. With both:
+
+| Page      | Mobile performance (three runs) | First contentful paint | Layout shift |
+| --------- | ------------------------------- | ---------------------- | ------------ |
+| A service | 93, 95, 95                      | 2.1 s                  | 0            |
+| Library   | 98, 99, 98                      | 1.7 s                  | 0            |
+| Terms     | 99, 99, 99                      | 1.5 s                  | 0            |
+
 These were measured on the development server, which doesn't compress
 files; the live site sends the compressed copy whitenoise makes.
 
 ## 4. Automated tests
 
-The suite has 853 tests, run on 1 November 2026 at commit `e55fd08`;
+The suite has 855 tests, run on 1 November 2026 at commit `791158d`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
@@ -143,6 +158,7 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | `planning/test_propers.py`                | 5     | The day's chant on a Proper slot: which part, Alleluia or Tract by date, not once proposed, not for other slots or the Ordinary Form; the propose page's own form |
 | `planning/test_pew_sheet.py`              | 6     | Which slots a pew sheet prints, its texts and composers and the options to leave them off, and each church's own |
 | `precentor_project/tests.py`              | 27    | The base template, the navigation and its wording, the Inbox count, the user menu, the 403 page, never storing signed-in pages,, the privacy page and footer, and the check on return addresses                |
+| `precentor_project/test_scripts.py`       | 2     | Every module a page's scripts import is on the page or preloaded |
 | `precentor_project/test_css.py`           | 4     | The one stylesheet: built from every CSS source as it is now, the layers declared first, and the only one pages link |
 | `precentor_project/test_browser.py`       | 15    | Signing in, type and control sizes, checkboxes, Settings, the user menu, page transitions and the skip link, in the browser |
 | `precentor_project/test_delete_pages.py`  | 5     | Going Back to a delete page after deleting                                                                         |
