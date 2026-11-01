@@ -1561,8 +1561,9 @@ PostgreSQL database described by `render.yaml`.
 - [Playwright](https://playwright.dev/python/) with Chromium, for the
   browser tests and the README screenshots
 - [Node.js](https://nodejs.org/), to run `build-tokens.js`, which turns
-  the design tokens in `precentor-tokens.JSON` into CSS variables, and
-  `build-font-fallback.js`
+  the design tokens in `precentor-tokens.JSON` into CSS variables,
+  `build-font-fallback.js`, and `build-css.js`, which joins the CSS
+  files into the one stylesheet every page links
 - [Utopia](https://utopia.fyi/), for the fluid type and spacing scales
 - [flake8](https://flake8.pycqa.org/), [ESLint](https://eslint.org/),
   the [W3C HTML](https://validator.w3.org/nu/) and

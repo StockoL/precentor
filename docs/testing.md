@@ -11,7 +11,7 @@ automated test named. Anything I didn't get to before submission says so.
 
 | Check                       | What I used                                                                                     | What it found                                                                                                               | Resolved?                                                                                                                                         |
 | --------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 849 tests, all passing (1 November 2026, at `49ec234`)                                                                | Nothing to resolve                                                                                                                                |
+| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 853 tests, all passing (1 November 2026, at `e55fd08`)                                                                | Nothing to resolve                                                                                                                                |
 | Deployment settings         | `python manage.py check --deploy` with `DEBUG` off                                              | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve                                                                                                                                |
 | Python style                | `flake8` with a line length of 120, excluding `venv` and migrations                             | 22 findings: two unused imports, one extra blank line, one invalid escape (`\W` in a test string), 16 long lines, a variable named `l`, a lambda assigned to a name | Resolved the unused imports, the blank line and the escape in `1f2e618`. Left the 16 long lines (121 to 139 characters, mostly test data), the `l` in `ordo/utils.py` and the lambda in a test, as they don't affect behaviour. Rerun on 31 October with flake8 7.5: two files in `accounts` ended in a blank line and one import there had grown too long, all fixed in `722ffc4`; the rest as before |
 | Leftover debugging          | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app. The two scripts in `tools/` print what they've done, on purpose                                     | Nothing to resolve                                                                                                                                |
@@ -91,15 +91,23 @@ are:
 | Library   | 75 / 89                            | 0.001              |
 | Terms     | 92 / 91                            | 0                  |
 
-What's left is about three seconds before anything appears on the
-simulated slow phone, as each of the 46 stylesheets is a request of its
-own. That follows from linking each CSS block separately rather than
-bundling them, which I chose so the CSS stays plain and readable, so I
-haven't changed it.
+That left about three seconds before anything appeared, as each of the
+46 stylesheets was a request of its own. With them joined into one
+(`e55fd08`), a service page makes 13 requests instead of 58, and the
+same measurements give:
+
+| Page      | Mobile performance | First contentful paint |
+| --------- | ------------------ | ---------------------- |
+| A service | 92 and 93          | 2.5 to 2.6 s (was 3.3) |
+| Library   | 95                 | 2.4 s (was 2.9)        |
+| Terms     | 96                 | 2.3 s (was 2.7)        |
+
+These were measured on the development server, which doesn't compress
+files; the live site sends the compressed copy whitenoise makes.
 
 ## 4. Automated tests
 
-The suite has 849 tests, run on 1 November 2026 at commit `49ec234`;
+The suite has 853 tests, run on 1 November 2026 at commit `e55fd08`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
@@ -135,6 +143,7 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | `planning/test_propers.py`                | 5     | The day's chant on a Proper slot: which part, Alleluia or Tract by date, not once proposed, not for other slots or the Ordinary Form; the propose page's own form |
 | `planning/test_pew_sheet.py`              | 6     | Which slots a pew sheet prints, its texts and composers and the options to leave them off, and each church's own |
 | `precentor_project/tests.py`              | 27    | The base template, the navigation and its wording, the Inbox count, the user menu, the 403 page, never storing signed-in pages,, the privacy page and footer, and the check on return addresses                |
+| `precentor_project/test_css.py`           | 4     | The one stylesheet: built from every CSS source as it is now, the layers declared first, and the only one pages link |
 | `precentor_project/test_browser.py`       | 15    | Signing in, type and control sizes, checkboxes, Settings, the user menu, page transitions and the skip link, in the browser |
 | `precentor_project/test_delete_pages.py`  | 5     | Going Back to a delete page after deleting                                                                         |
 | `precentor_project/test_isolation.py`     | 7     | Two complete churches: every address with an id tried as the other church, every page checked for the other church's text, and every model and route covered |
@@ -260,6 +269,7 @@ testing, fixed, and covered by a test where it could be.
 | `6bf1062` | At 320 pixels the score form was a few pixels wider than the screen, as a fieldset won't shrink below its widest row |
 | `a8194bf` | A site superuser opening an invitation link was told their account "belongs to no church" |
 | `49ec234` | The fallback fonts were about a third too wide, so the page jumped as the web fonts loaded |
+| `e55fd08` | Each page made 46 requests for its CSS before it could be drawn; now one stylesheet |
 | `5c8e834` | Deleting a church that had sung any hymns failed with a server error, as each hymn's entry protected its hymnal |
 
 **Left unfixed:** the 16 long lines, the variable `l` and the lambda
@@ -270,7 +280,6 @@ found by flake8 (see section 1). None affects how the app works.
 | Bug                                                                                                                                            | Effect                                                                                                         | Why it's not fixed yet                                                                  |
 | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | The browser test for confirming a piece failed once in a full run of the planning tests on 30 October | None for people using the site; a test can fail without a real fault | Not reproduced: on 1 November it passed 20 runs on its own and 6 runs of all the planning browser tests, as it has in every full run since. If it fails again, the traceback names the line |
-| Pages take about three seconds to appear on a slow phone (section 3) | Slower first view on a poor connection | Each stylesheet is its own request, by design; bundling them would trade away plain, separate CSS files |
 
 ## 8. Deployment check
 
