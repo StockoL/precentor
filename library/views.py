@@ -32,7 +32,8 @@ from .forms import HymnalForm, HymnEntryForm, HymnForm, ScoreForm, ScoreImportFo
 from .importing import (
     COLUMNS, IMPORT_EXAMPLE, MAX_BYTES, MAX_ROWS, ImportProblem, check_file, export_rows, save_import,
 )
-from .models import Hymn, Hymnal, HymnEntry, Score, ScoreImport, ScoreQuerySet, Tune
+from .hymn_importing import HYMN_COLUMNS, HYMN_EXAMPLE, check_hymn_file, save_hymn_import
+from .models import Hymn, Hymnal, HymnEntry, HymnImport, Score, ScoreImport, ScoreQuerySet, Tune
 from .sheets import fetch_sheet
 
 
@@ -442,7 +443,8 @@ class HymnalDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):
     context_object_name = "hymnal"
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(entries=self.object.numbered_entries(), **kwargs)
+        waiting = self.object.imports.filter(status=HymnImport.PENDING).first()
+        return super().get_context_data(entries=self.object.numbered_entries(), waiting=waiting, **kwargs)
 
 
 class HymnDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):
@@ -580,3 +582,94 @@ class ScoreImportListView(LibraryEditRequiredMixin, OrganisationScopedMixin, Lis
             .annotate(score_count=Count("scores"))
             .order_by("-status", "-created_at")
         )
+
+
+@role_required(can_edit_library)
+def hymn_import_template(request):
+    """The headers of a hymnal list, as a CSV to fill in, made from
+    HYMN_COLUMNS like the score template is from COLUMNS."""
+    response = HttpResponse(content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = 'attachment; filename="precentor-hymnal-template.csv"'
+    response.write("﻿")
+    csv.writer(response).writerow([header for header, _, _ in HYMN_COLUMNS])
+    return response
+
+
+class HymnImportView(LibraryEditRequiredMixin, FormView):
+    """Import a list into one hymnal, from a file or a Google Sheets link.
+    The book is chosen by the address, so every row belongs to it."""
+
+    form_class = ScoreImportForm
+    template_name = "library/hymn_import.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        self.hymnal = get_object_or_404(own(Hymnal, request), pk=kwargs["pk"], archived=False)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(
+            hymnal=self.hymnal, columns=HYMN_COLUMNS, example=HYMN_EXAMPLE, max_bytes=MAX_BYTES, **kwargs
+        )
+
+    def form_valid(self, form):
+        source = "file" if form.cleaned_data["file"] else "sheet_link"
+        try:
+            _, data, name = read_import(form)
+            checked = check_hymn_file(data)
+        except ImportProblem as problem:
+            form.add_error(source, str(problem))
+            return self.form_invalid(form)
+        if not checked.rows:
+            reasons = "; ".join(f"row {number}: {why}" for number, why in checked.skipped[:5])
+            form.add_error(source, f"None of the rows could be imported ({reasons}).")
+            return self.form_invalid(form)
+        batch = save_hymn_import(checked, self.hymnal, self.request.user, name)
+        if batch is None:
+            messages.info(self.request, f"{self.hymnal.short_name} already had everything in that list.")
+            return redirect(self.hymnal)
+        return redirect("library:hymn_import_detail", pk=batch.pk)
+
+
+class HymnImportDetailView(LibraryEditRequiredMixin, OrganisationScopedMixin, DetailView):
+    """What a hymnal import added and filled in, and the rows skipped."""
+
+    model = HymnImport
+    context_object_name = "hymn_import"
+    template_name = "library/hymn_import_detail.html"
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(can_remove=can_remove_import(self.request.user, self.object), **kwargs)
+
+
+@role_required(can_edit_library)
+@require_POST
+def keep_hymn_import(request, pk):
+    """Keep a pending hymnal import for good, as for scores."""
+    hymn_import = get_object_or_404(own(HymnImport, request), pk=pk, status=HymnImport.PENDING)
+    hymn_import.keep()
+    messages.success(request, f"Kept the import into {hymn_import.hymnal.short_name}.")
+    return redirect(hymn_import.hymnal)
+
+
+@login_required
+def remove_hymn_import(request, pk):
+    """Undo a pending hymnal import, after asking; Back or a second click
+    goes to the hymnals with a message, as for scores."""
+    hymn_import = own(HymnImport, request).filter(pk=pk, status=HymnImport.PENDING).first()
+    if hymn_import is None:
+        messages.info(request, "That import has already been removed or kept.")
+        return redirect("library:hymnal_list")
+    if not can_remove_import(request.user, hymn_import):
+        raise PermissionDenied
+    hymnal = hymn_import.hymnal
+    if request.method == "POST":
+        removed, kept = hymn_import.remove()
+        message = f"Removed the import into {hymnal.short_name}: {removed} hymn{pluralize(removed)} taken out."
+        if kept:
+            message += f" {kept} {pluralize(kept, 'has,have')} been sung, so kept."
+        messages.success(request, message)
+        return redirect(hymnal)
+    in_use = hymn_import.entries.filter(role_pieces__isnull=False).distinct().count()
+    return render(request, "library/hymn_import_confirm_remove.html", {
+        "hymn_import": hymn_import, "removing": hymn_import.entries.count() - in_use, "in_use": in_use,
+    })

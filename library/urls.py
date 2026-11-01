@@ -30,4 +30,9 @@ urlpatterns = [
     path("import/<int:pk>/", views.ScoreImportDetailView.as_view(), name="score_import_detail"),
     path("import/<int:pk>/keep/", views.keep_import, name="keep_import"),
     path("import/<int:pk>/remove/", views.remove_import, name="remove_import"),
+    path("hymnals/<int:pk>/import/", views.HymnImportView.as_view(), name="hymn_import"),
+    path("hymnals/import/template/", views.hymn_import_template, name="hymn_import_template"),
+    path("hymn-imports/<int:pk>/", views.HymnImportDetailView.as_view(), name="hymn_import_detail"),
+    path("hymn-imports/<int:pk>/keep/", views.keep_hymn_import, name="keep_hymn_import"),
+    path("hymn-imports/<int:pk>/remove/", views.remove_hymn_import, name="remove_hymn_import"),
 ]

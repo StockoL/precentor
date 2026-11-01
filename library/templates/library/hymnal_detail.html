@@ -6,14 +6,18 @@
         <h1>{{ hymnal.name }} <span class="badge badge--code">{{ hymnal.short_name }}</span></h1>
         {% if can.edit_library %}
         <div class="page-header__actions">
+            {% if not hymnal.archived %}<a class="btn-ghost" href="{% url 'library:hymn_import' hymnal.pk %}">Import a list</a>{% endif %}
             <a class="btn-ghost" href="{% url 'library:hymnal_update' hymnal.pk %}">Edit hymnal</a>
         </div>
         {% endif %}
     </header>
+    {% if waiting and can.edit_library %}
+    <p class="callout" role="status">An import into this book is waiting: <a href="{% url 'library:hymn_import_detail' waiting.pk %}">review it</a> to keep or remove it.</p>
+    {% endif %}
     <p>{{ hymnal.copies_owned }} cop{{ hymnal.copies_owned|pluralize:"y,ies" }}{% if hymnal.filing_location %}, kept at {{ hymnal.filing_location }}{% endif %}.{% if hymnal.archived %} Archived.{% endif %}</p>
 
-    <h2>Hymns sung from it</h2>
-    <p>Each one is added the first time its number is planned into a service.</p>
+    <h2>Hymns in it</h2>
+    <p>Each one is added the first time its number is planned into a service, or all at once by importing the book's list.</p>
     <ul role="list" class="flow" style="--flow-space: var(--spacing-xs);">
         {% for entry in entries %}
         <li class="list-row list-row--wrap">

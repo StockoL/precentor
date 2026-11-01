@@ -158,3 +158,54 @@ class ApplyingAHymnListTests(TestCase):
         HymnEntry.find_or_make(self.neh, "1")
         self.assertIsNone(self.apply("1,,,"))
         self.assertFalse(HymnImport.objects.exists())
+
+
+class HymnImportPagesTests(TestCase):
+    def setUp(self):
+        from accounts.testing import make_user
+
+        self.church = make_organisation()
+        self.neh = Hymnal.objects.create(organisation=self.church, name="New English Hymnal", short_name="NEH")
+        self.librarian = make_user("librarian", organisation=self.church)
+        self.client.force_login(self.librarian)
+
+    def upload(self, *lines):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        data = csv_bytes("Number,First line,Metre,Tune", *lines)
+        return self.client.post(f"/library/hymnals/{self.neh.pk}/import/",
+                                {"file": SimpleUploadedFile("neh.csv", data)}, follow=True)
+
+    def test_the_hymnal_page_links_to_its_import_and_the_template_has_the_headers(self):
+        self.assertContains(self.client.get(f"/library/hymnals/{self.neh.pk}/"), "Import a list")
+        response = self.client.get("/library/hymnals/import/template/")
+        self.assertEqual(response.content.decode("utf-8").lstrip("﻿").strip(), "Number,First line,Metre,Tune")
+
+    def test_importing_shows_what_changed_and_can_be_kept(self):
+        response = self.upload("1,Words,,", ",No number,,")
+        self.assertContains(response, "1 hymn added")
+        self.assertContains(response, "Row 3: no number")
+        batch = HymnImport.objects.get()
+        self.client.post(f"/library/hymn-imports/{batch.pk}/keep/")
+        batch.refresh_from_db()
+        self.assertFalse(batch.is_pending)
+
+    def test_removing_asks_first_then_undoes_it(self):
+        self.upload("1,Words,,")
+        batch = HymnImport.objects.get()
+        self.assertContains(self.client.get(f"/library/hymn-imports/{batch.pk}/remove/"), "takes out the 1 hymn")
+        self.client.post(f"/library/hymn-imports/{batch.pk}/remove/")
+        self.assertFalse(HymnEntry.objects.exists())
+
+    def test_a_list_with_nothing_new_says_so(self):
+        HymnEntry.find_or_make(self.neh, "1")
+        self.assertContains(self.upload("1,,,"), "NEH already had everything in that list.")
+
+    def test_viewers_cant_import_and_archived_books_take_none(self):
+        from accounts.testing import make_user
+
+        self.neh.archived = True
+        self.neh.save()
+        self.assertEqual(self.client.get(f"/library/hymnals/{self.neh.pk}/import/").status_code, 404)
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        self.assertEqual(self.client.get("/library/hymnals/import/template/").status_code, 403)

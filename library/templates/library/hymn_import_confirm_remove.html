@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Remove an import — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Remove the import into {{ hymn_import.hymnal.name }}?</h1>
+    <p>This takes out the {{ removing }} hymn{{ removing|pluralize }} it added, with any changes made to them since, and empties the details it filled in, unless they've been changed since.</p>
+    {% if in_use %}
+    <p>{{ in_use }} of its hymns {{ in_use|pluralize:"has,have" }} already been sung, so {{ in_use|pluralize:"it,they" }}'ll be kept.</p>
+    {% endif %}
+    <div class="cluster">
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn-danger" type="submit">Yes, remove it</button>
+        </form>
+        <a class="btn-ghost" href="{% url 'library:hymn_import_detail' hymn_import.pk %}">Keep it</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Import into {{ hymn_import.hymnal.short_name }} — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    {% with report=hymn_import.report hymnal=hymn_import.hymnal %}
+    <h1>Imported into {{ hymnal.name }}</h1>
+    <ul>
+        <li>{{ report.added }} hymn{{ report.added|pluralize }} added</li>
+        {% if report.filled %}<li>{{ report.filled }} already in the book had blank details filled in</li>{% endif %}
+        {% if report.unchanged %}<li>{{ report.unchanged }} already in the book had everything, so were left as they were</li>{% endif %}
+        {% if report.tunes_added %}<li>{{ report.tunes_added }} new tune{{ report.tunes_added|pluralize }}</li>{% endif %}
+    </ul>
+    {% if report.read_as_windows_1252 %}
+    <p>The file was saved in an older Excel format, so accented letters may need checking.</p>
+    {% endif %}
+    {% if report.skipped %}
+    <h2>{{ report.skipped|length }} row{{ report.skipped|pluralize }} skipped</h2>
+    <ul>
+        {% for number, why in report.skipped %}<li>Row {{ number }}: {{ why }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+    {% if report.ignored_columns %}
+    <p>These columns weren't recognised and were left out: {{ report.ignored_columns|join:", " }}.</p>
+    {% endif %}
+    <p><a href="{{ hymnal.get_absolute_url }}">See {{ hymnal.short_name }}</a></p>
+    {% endwith %}
+
+    {% if hymn_import.is_pending %}
+    <form method="post" action="{% url 'library:keep_hymn_import' hymn_import.pk %}" class="flow">
+        {% csrf_token %}
+        <p>Happy with it? Keep it, and the hymns are ordinary hymns in the book. After that the import can't be removed as a whole, though any hymn can still be edited.</p>
+        <div class="cluster">
+            <button class="btn-primary" type="submit">Keep this import</button>
+            {% if can_remove %}
+            <a class="btn-danger" href="{% url 'library:remove_hymn_import' hymn_import.pk %}">Remove this import</a>
+            {% endif %}
+        </div>
+    </form>
+    {% else %}
+    <p>This import has been kept.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Import a list into {{ hymnal.short_name }} — Precentor{% endblock %}
+{% block extra_js %}
+<script type="module" src="{% static 'src/js/import-form.js' %}"></script>
+{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Import a list into {{ hymnal.name }}</h1>
+    <p>If you already keep this book's numbers in a spreadsheet, you can bring them in at once instead of as each hymn is sung.</p>
+    <ol class="flow">
+        <li><a href="{% url 'library:hymn_import_template' %}">Download the template</a>.</li>
+        <li>Fill it in, one hymn per row. Only the <strong>Number</strong> is needed; the first line, metre and tune help with suggestions and the pew sheet when you have them.</li>
+        <li>Save it as a CSV, or in Google Sheets share it as Anyone with the link and copy the link.</li>
+        <li>Choose the file, or paste the link, below and press Import.</li>
+    </ol>
+    <p>Where {{ hymnal.short_name }} already has a number, nothing you've written for it changes: the list only fills in details that are blank. Afterwards you'll see what changed and can keep it or remove the whole import.</p>
+
+    <h2>An example</h2>
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Example rows">
+        <table class="data-table">
+            <thead>
+                <tr>{% for header, field, required in columns %}<th scope="col">{{ header }}{% if required %} (needed){% endif %}</th>{% endfor %}</tr>
+            </thead>
+            <tbody>
+                {% for row in example %}
+                <tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="flow" data-max-bytes="{{ max_bytes }}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="cluster">
+            <button class="btn-primary" type="submit">Import</button>
+            <a class="btn-ghost" href="{{ hymnal.get_absolute_url }}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
