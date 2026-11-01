@@ -6,7 +6,7 @@ from django.core.management import call_command
 from django.db import IntegrityError
 from django.test import TestCase
 
-from .calendar_data import DATA_DIR, PROPERS_FILE, load_propers
+from .calendar_data import DATA_DIR, PROPER_FILES, load_propers
 from .models import LiturgicalOccasion, ProperChant, chant_season, proper_chants
 
 
@@ -34,29 +34,43 @@ class ProperChantTests(TestCase):
 
 
 class LoadingPropersTests(TestCase):
-    def test_loads_the_file_and_again_without_doubling(self):
-        count = load_propers()
-        self.assertGreater(count, 4000)
-        self.assertEqual(load_propers(), count)
-        self.assertEqual(ProperChant.objects.count(), count)
+    def test_loads_both_forms_and_again_without_doubling(self):
+        counts = load_propers()
+        self.assertGreater(counts["historic"], 4000)
+        self.assertGreater(counts["current"], 400)
+        self.assertEqual(load_propers(), counts)
+        self.assertEqual(ProperChant.objects.count(), counts["historic"] + counts["current"])
 
     def test_a_days_chants_come_through(self):
         load_propers()
         advent = ProperChant.objects.filter(occasion_key="tempora:Adv1-0")
         self.assertEqual(advent.get(part="introit").incipit, "Ad te levavi animam meam")
         self.assertEqual(advent.get(part="communion").source, "Divinum Officium Tempora/Adv1-0")
+        now = ProperChant.objects.filter(calendar_use="current", occasion_key="advent_1_sunday")
+        self.assertEqual(now.get(part="introit").incipit, "Ad te levavi")
+        self.assertEqual(now.get(part="introit").source, "Graduale Romanum (1974), First Sunday of Advent")
+        holy_family = ProperChant.objects.filter(occasion_key="holy_family_of_jesus_mary_and_joseph")
+        self.assertEqual(holy_family.get(part="communion", cycle="A").incipit, "Tolle puerum")
 
-    def test_every_chant_belongs_to_a_1962_day(self):
-        keys = set()
-        for name in ("missalemeum/general_1962.json", "lms/england_1962.json", "lms/wales_1962.json"):
-            keys |= {o["key"] for o in json.loads((DATA_DIR / name).read_text(encoding="utf-8"))["occasions"]}
-        chants = json.loads(PROPERS_FILE.read_text(encoding="utf-8"))["chants"]
-        self.assertEqual({row["key"] for row in chants} - keys, set())
+    def test_every_chant_belongs_to_a_day_of_its_form(self):
+        days = {
+            "historic": ("missalemeum/general_1962.json", "lms/england_1962.json", "lms/wales_1962.json"),
+            "current": ("romcal/general_roman.json", "romcal/england.json", "romcal/wales.json"),
+        }
+        for path, calendar_use, _ in PROPER_FILES:
+            keys = set()
+            for name in days[calendar_use]:
+                keys |= {o["key"] for o in json.loads((DATA_DIR / name).read_text(encoding="utf-8"))["occasions"]}
+            chants = json.loads(path.read_text(encoding="utf-8"))["chants"]
+            with self.subTest(form=calendar_use):
+                self.assertEqual({row["key"] for row in chants} - keys, set())
 
     def test_the_calendar_command_loads_them(self):
         out = StringIO()
         call_command("load_calendar", stdout=out)
-        self.assertIn(f"proper chants (1962): {ProperChant.objects.count()}", out.getvalue())
+        historic = ProperChant.objects.filter(calendar_use="historic").count()
+        current = ProperChant.objects.filter(calendar_use="current").count()
+        self.assertIn(f"proper chants: {historic} for 1962, {current} for the Ordinary Form", out.getvalue())
 
 
 class ChoosingChantsTests(TestCase):

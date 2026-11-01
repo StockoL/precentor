@@ -6,7 +6,7 @@ from ordo.calendar_data import load_calendar_files, load_propers
 class Command(BaseCommand):
     help = (
         "Load the published calendars in ordo/data/ (General Roman, England "
-        "and Wales), and the 1962 Missal's chant names, into the database. "
+        "and Wales), and both forms' chant names, into the database. "
         "Safe to run again: existing rows are "
         "brought up to date, rows gone from the files are removed unless in "
         "use, and occasions entered by hand are left alone."
@@ -23,4 +23,5 @@ class Command(BaseCommand):
                     f"  Kept {occasion.name} ({occasion.key}): no longer in the data, but a service "
                     "or score uses it. Change those to another occasion, then load again to remove it."
                 ))
-        self.stdout.write(f"proper chants (1962): {load_propers()}")
+        counts = load_propers()
+        self.stdout.write(f"proper chants: {counts['historic']} for 1962, {counts['current']} for the Ordinary Form")

@@ -31,6 +31,12 @@ MISSALEMEUM_DIR = DATA_DIR / "missalemeum"
 LMS_DIR = DATA_DIR / "lms"
 # The 1962 Missal's chant names, exported from Divinum Officium.
 PROPERS_FILE = DATA_DIR / "divinum_officium" / "propers_1962.json"
+# Each form's chant names: the file, the form, and what each row's source
+# is a part of.
+PROPER_FILES = (
+    (PROPERS_FILE, "historic", "Divinum Officium"),
+    (DATA_DIR / "graduale_1974" / "propers_current.json", "current", "Graduale Romanum (1974),"),
+)
 # Each folder of data files, and the form its occasions belong to.
 SOURCES = ((ROMCAL_DIR, "current"), (MISSALEMEUM_DIR, "historic"), (LMS_DIR, "historic"))
 
@@ -136,19 +142,23 @@ def _load(data, calendar_use, seasons):
 
 
 @transaction.atomic
-def load_propers(path=PROPERS_FILE):
-    """Replace the 1962 proper chants with the file's. Nothing refers to
+def load_propers(files=PROPER_FILES):
+    """Replace each form's proper chants with its file's. Nothing refers to
     a chant, so they're simply cleared and loaded again. Returns how many
-    there are."""
+    there are of each, by form."""
     from .models import ProperChant
 
-    data = json.loads(Path(path).read_text(encoding="utf-8"))
-    ProperChant.objects.filter(calendar_use="historic").delete()
-    ProperChant.objects.bulk_create(
-        ProperChant(
-            occasion_key=row["key"], calendar_use="historic", part=row["part"], season=row["season"],
-            incipit=row["incipit"], source=f"Divinum Officium {row['source']}",
+    counts = {}
+    for path, calendar_use, source in files:
+        rows = json.loads(Path(path).read_text(encoding="utf-8"))["chants"]
+        ProperChant.objects.filter(calendar_use=calendar_use).delete()
+        ProperChant.objects.bulk_create(
+            ProperChant(
+                occasion_key=row["key"], calendar_use=calendar_use, part=row["part"],
+                season=row.get("season", ""), cycle=row.get("cycle", ""), incipit=row["incipit"],
+                source=f"{source} {row['source']}",
+            )
+            for row in rows
         )
-        for row in data["chants"]
-    )
-    return len(data["chants"])
+        counts[calendar_use] = len(rows)
+    return counts

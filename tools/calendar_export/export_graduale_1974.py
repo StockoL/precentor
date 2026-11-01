@@ -76,7 +76,7 @@ DAYS = [
     ("Epiphany", "epiphany_of_the_lord"),
     ("Baptism of the Lord", "baptism_of_the_lord"),
     ("Second Sunday", "ordinary_time_2_sunday"),
-    ("Third Sunday", "ordinary_time_3_sunday"),
+    ("Third Sunday", "sunday_of_the_word_of_god"),  # how the calendar keys it since 2019
     ("Presentation of the Lord", "presentation_of_the_lord"),
     ("Fourth Sunday", "ordinary_time_4_sunday"),
     ("Fifth Sunday", "ordinary_time_5_sunday"),
@@ -253,7 +253,7 @@ def main():
         for (part, cycle), words in settle(day).items():
             words = FIXES.get((key, part, cycle), words)
             if words:
-                chants.append({"key": key, "part": part, "cycle": cycle, "incipit": words, "row": name})
+                chants.append({"key": key, "part": part, "cycle": cycle, "incipit": words, "source": name})
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"source": SOURCE, "chants": chants}, ensure_ascii=False, indent=1) + "\n",
                    encoding="utf-8")

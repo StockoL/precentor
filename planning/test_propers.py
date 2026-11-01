@@ -52,7 +52,7 @@ class ProperSuggestionTests(ChantDayTestCase):
     def test_not_on_other_slots_or_without_data(self):
         self.assertIsNone(self.slot("Kyrie").proper_suggestion)
         self.assertIsNone(self.slot("Offertory").proper_suggestion)  # no Offertory loaded here
-        # An Ordinary Form day, even one sharing a key, has no chants yet.
+        # An Ordinary Form day sharing the key doesn't get the 1962 day's chants.
         self.service.occasion = LiturgicalOccasion.objects.create(
             name="Immaculate Conception", key="sancti:12-08", calendar_use="current"
         )
