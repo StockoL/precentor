@@ -97,3 +97,29 @@ class ChoosingChantsTests(TestCase):
         ordinary_form = LiturgicalOccasion(key="immaculate_conception", calendar_use="current")
         self.assertEqual(proper_chants(ordinary_form, date(2026, 12, 8)), {})
         self.assertEqual(proper_chants(None, date(2026, 12, 8)), {})
+
+
+class OrdinaryFormChantTests(TestCase):
+    """The Tenth Sunday in Ordinary Time has one Communion for Years A and
+    C and another for Year B. 14 June 2026 is in Year A, 13 June 2027 in
+    Year B."""
+
+    def setUp(self):
+        self.sunday = LiturgicalOccasion(key="ordinary_time_10_sunday", calendar_use="current")
+        for part, cycle, incipit in [("introit", "", "Dominus illuminatio mea"),
+                                     ("communion", "", "Dominus firmamentum meum"),
+                                     ("communion", "B", "Quicumque fecerit")]:
+            make_chant(occasion_key="ordinary_time_10_sunday", calendar_use="current", part=part, cycle=cycle,
+                       incipit=incipit)
+
+    def test_the_usual_chant_in_other_years(self):
+        self.assertEqual(proper_chants(self.sunday, date(2026, 6, 14)), {
+            "introit": "Dominus illuminatio mea", "communion": "Dominus firmamentum meum",
+        })
+
+    def test_the_years_own_chant_wins(self):
+        self.assertEqual(proper_chants(self.sunday, date(2027, 6, 13))["communion"], "Quicumque fecerit")
+
+    def test_the_two_forms_never_mix(self):
+        make_chant(occasion_key="ordinary_time_10_sunday", part="offertory", incipit="Not this form")
+        self.assertNotIn("offertory", proper_chants(self.sunday, date(2026, 6, 14)))

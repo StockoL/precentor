@@ -4,7 +4,7 @@ from django.db import models
 
 from accounts.querysets import OrganisationQuerySet
 
-from .dates import NATIONAL_SETTINGS, YearDates, apply_transfers
+from .dates import NATIONAL_SETTINGS, YearDates, apply_transfers, sunday_cycle
 from .utils import calculate_easter_sunday
 
 COLOUR_CHOICES = [
@@ -269,6 +269,9 @@ class ProperChant(models.Model):
     calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES)
     part = models.CharField(max_length=20, choices=PROPER_CHANT_PARTS)
     season = models.CharField(max_length=20, choices=PROPER_CHANT_SEASONS, blank=True)
+    # An Ordinary Form Sunday's chant for one year of the three-year cycle;
+    # blank for any year.
+    cycle = models.CharField(max_length=1, choices=[("A", "Year A"), ("B", "Year B"), ("C", "Year C")], blank=True)
     incipit = models.CharField(max_length=100)
     source = models.CharField(max_length=100, help_text="Where it came from, e.g. Divinum Officium Tempora/Adv1-0")
 
@@ -276,7 +279,7 @@ class ProperChant(models.Model):
         ordering = ["occasion_key", "part"]  # noqa
         constraints = [
             models.UniqueConstraint(
-                fields=["calendar_use", "occasion_key", "part", "season"], name="one_proper_chant_per_part"
+                fields=["calendar_use", "occasion_key", "part", "season", "cycle"], name="one_proper_chant_per_part"
             ),
         ]
 
@@ -298,18 +301,26 @@ def chant_season(day):
 
 def proper_chants(occasion, day):
     """
-    The names of the chants sung at an occasion's 1962 Mass on a date, as
-    {part: incipit}. A form marked for the date's season wins over the
-    usual one, so a saint's day in Lent has its Tract in place of the
-    Alleluia. Empty for the Ordinary Form, which has no chant data yet.
+    The names of the chants sung at an occasion's Mass on a date, as
+    {part: incipit}, in either form. A form marked for the date beats the
+    usual one: in 1962 a saint's day in Lent has its Tract in place of the
+    Alleluia, and in the Ordinary Form a Sunday can have its own chant for
+    the year of the cycle.
     """
-    if occasion is None or occasion.calendar_use != "historic":
+    if occasion is None:
         return {}
-    season = chant_season(day)
-    chants = {}
-    for chant in ProperChant.objects.filter(calendar_use="historic", occasion_key=occasion.key):
-        if chant.season == season or (chant.season == "" and chant.part not in chants):
-            chants[chant.part] = chant.incipit
+    # The seasons only matter to the 1962 saints' days, the cycle only to
+    # the Ordinary Form.
+    season = chant_season(day) if occasion.calendar_use == "historic" else ""
+    cycle = sunday_cycle(day) if occasion.calendar_use == "current" else ""
+    best = {}
+    for chant in ProperChant.objects.filter(calendar_use=occasion.calendar_use, occasion_key=occasion.key):
+        if chant.season not in ("", season) or chant.cycle not in ("", cycle):
+            continue
+        fit = (chant.season == season and season != "") + (chant.cycle == cycle and cycle != "")
+        if chant.part not in best or fit > best[chant.part][0]:
+            best[chant.part] = (fit, chant.incipit)
+    chants = {part: incipit for part, (_, incipit) in best.items()}
     if season == "septuagesima" and "tract" in chants:
         chants.pop("alleluia", None)
     return chants
