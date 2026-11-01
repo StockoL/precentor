@@ -345,3 +345,16 @@ def apply_transfers(day, transfers, dates):
             else:
                 moved = day + then.get("add_days", 0) * DAY
     return moved
+
+
+def sunday_cycle(day):
+    """
+    The Ordinary Form's year, A, B or C, that a date falls in, which
+    decides some Sundays' readings and chants. A liturgical year starts on
+    the first Sunday of Advent and is named by the calendar year it mostly
+    falls in: Year A is one whose number leaves 1 when divided by 3, so
+    Advent 2025 to November 2026 is Year A.
+    """
+    advent = YearDates(day.year).sunday_of_advent(1)
+    year = day.year + 1 if day >= advent else day.year
+    return "CAB"[year % 3]

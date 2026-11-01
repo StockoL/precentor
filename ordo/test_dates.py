@@ -2,7 +2,7 @@ from datetime import date
 
 from django.test import SimpleTestCase, TestCase
 
-from .dates import NATIONAL_SETTINGS, YearDates, apply_transfers, rule_names
+from .dates import NATIONAL_SETTINGS, YearDates, apply_transfers, rule_names, sunday_cycle
 from .models import LiturgicalOccasion
 
 GENERAL = NATIONAL_SETTINGS["general_roman"]
@@ -236,3 +236,13 @@ class OccasionDateTests(TestCase):
             name="40th Sunday", date_rule="date_of_ordinary_time", date_rule_args=[0, 40],
         )
         self.assertIsNone(ninth_week.date_for_year(2026))
+
+
+class SundayCycleTests(SimpleTestCase):
+    def test_the_cycle_turns_at_advent(self):
+        # Advent Sunday is 30 November 2025 and 29 November 2026.
+        self.assertEqual(sunday_cycle(date(2025, 11, 29)), "C")
+        self.assertEqual(sunday_cycle(date(2025, 11, 30)), "A")
+        self.assertEqual(sunday_cycle(date(2026, 11, 28)), "A")
+        self.assertEqual(sunday_cycle(date(2026, 11, 29)), "B")
+        self.assertEqual(sunday_cycle(date(2028, 1, 1)), "C")
