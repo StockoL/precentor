@@ -33,6 +33,7 @@ from .importing import (
     COLUMNS, IMPORT_EXAMPLE, MAX_BYTES, MAX_ROWS, ImportProblem, check_file, export_rows, save_import,
 )
 from .models import Hymn, Hymnal, HymnEntry, Score, ScoreImport, ScoreQuerySet, Tune
+from .sheets import fetch_sheet
 
 
 class ScoreListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
@@ -333,18 +334,23 @@ class ScoreImportView(LibraryEditRequiredMixin, FormView):
 
     def form_valid(self, form):
         upload = form.cleaned_data["file"]
-        # One byte past the limit is enough to know it's too big.
-        data = upload.read(MAX_BYTES + 1)
+        # The reasons go beside whichever was used, the file or the link.
+        source = "file" if upload else "sheet_link"
         try:
+            if upload:
+                # One byte past the limit is enough to know it's too big.
+                data, name = upload.read(MAX_BYTES + 1), upload.name
+            else:
+                data, name = fetch_sheet(form.cleaned_data["sheet_link"]), "a Google Sheet"
             checked = check_file(data, self.request.organisation)
         except ImportProblem as problem:
-            form.add_error("file", str(problem))
+            form.add_error(source, str(problem))
             return self.form_invalid(form)
         if not checked.scores:
             reasons = "; ".join(f"row {number}: {why}" for number, why in checked.skipped[:5])
-            form.add_error("file", f"None of the rows could be imported ({reasons}).")
+            form.add_error(source, f"None of the rows could be imported ({reasons}).")
             return self.form_invalid(form)
-        batch = save_import(checked, self.request.organisation, self.request.user, upload.name)
+        batch = save_import(checked, self.request.organisation, self.request.user, name)
         return redirect("library:score_import_detail", pk=batch.pk)
 
 

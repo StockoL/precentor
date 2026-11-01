@@ -1,3 +1,5 @@
+from unittest import mock
+
 from django.test import SimpleTestCase, TestCase
 
 from .importing import MAX_BYTES, MAX_ROWS, ImportProblem, read_rows
@@ -231,6 +233,28 @@ class ImportPagesTests(TestCase):
         response = self.upload("Title,Composer surname", ",Byrd")
         self.assertContains(response, "None of the rows could be imported (row 2: no title)")
         self.assertFalse(ScoreImport.objects.exists())
+
+    @mock.patch("library.views.fetch_sheet")
+    def test_a_google_sheets_link_imports_the_same_way(self, fetch_sheet):
+        fetch_sheet.return_value = csv_bytes("Title,Composer surname", "Ave verum,Byrd")
+        link = "https://docs.google.com/spreadsheets/d/1AbCdEfGhIjKlMnOpQrStUvWxYz/edit"
+        response = self.client.post("/library/import/", {"sheet_link": link}, follow=True)
+        fetch_sheet.assert_called_once_with(link)
+        self.assertContains(response, "1 score imported from a Google Sheet")
+
+    @mock.patch("library.views.fetch_sheet")
+    def test_a_sheet_that_cant_be_read_comes_back_with_the_reason(self, fetch_sheet):
+        fetch_sheet.side_effect = ImportProblem("Google didn't send the sheet")
+        response = self.client.post("/library/import/", {"sheet_link": "https://docs.google.com/spreadsheets/d/x"})
+        self.assertContains(response, "Google didn&#x27;t send the sheet")
+
+    def test_a_file_or_a_link_but_not_neither_or_both(self):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        neither = self.client.post("/library/import/", {})
+        self.assertContains(neither, "Choose a CSV file or paste a Google Sheets link.")
+        both = {"file": SimpleUploadedFile("a.csv", b"Title"), "sheet_link": "https://docs.google.com/x"}
+        self.assertContains(self.client.post("/library/import/", both), "not both")
 
     def test_viewers_cant_import_and_another_churchs_import_isnt_found(self):
         from accounts.testing import make_organisation, make_user

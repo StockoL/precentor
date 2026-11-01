@@ -11,8 +11,8 @@
     <ol class="flow">
         <li><a href="{% url 'library:import_template' %}">Download the template</a>.</li>
         <li>Copy your details into it, one score per row. Only <strong>Title</strong> and <strong>Composer surname</strong> are needed; leave anything you don't have blank.</li>
-        <li>Save it as a CSV. In Excel: Save As, then CSV UTF-8. In Google Sheets: File, Download, Comma-separated values.</li>
-        <li>Choose the file below and press Import.</li>
+        <li>Save it as a CSV. In Excel: Save As, then CSV UTF-8. In Google Sheets you can skip this: choose Share, set General access to Anyone with the link, and copy the link.</li>
+        <li>Choose the file, or paste the sheet's link, below and press Import.</li>
     </ol>
     <p>Nothing is final. Afterwards you'll see what was added and can keep it or remove the whole import in one go. Whatever you keep, you can edit any score and fill in what's missing at any time. Up to {{ max_rows|floatformat:"g" }} scores at a time.</p>
     <p class="list-row__meta"><a href="{% url 'library:score_import_list' %}">See earlier imports</a></p>

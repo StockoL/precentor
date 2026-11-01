@@ -107,12 +107,30 @@ class ScoreForm(forms.ModelForm):
 
 
 class ScoreImportForm(forms.Form):
-    """The spreadsheet to import, saved as CSV."""
+    """The spreadsheet to import: a file saved as CSV, or a link to a Google
+    Sheet shared as "anyone with the link can view". One or the other."""
 
     file = forms.FileField(
         label="Your CSV file",
+        required=False,
         widget=forms.ClearableFileInput(attrs={"accept": ".csv,text/csv"}),
     )
+    sheet_link = forms.CharField(
+        label="Or paste a Google Sheets link",
+        required=False,
+        max_length=500,
+        widget=forms.URLInput(attrs={"placeholder": "https://docs.google.com/spreadsheets/d/…"}),
+        help_text="The sheet must be shared as Anyone with the link can view.",
+    )
+
+    def clean(self):
+        cleaned = super().clean()
+        given = [bool(cleaned.get("file")), bool(cleaned.get("sheet_link", "").strip())]
+        if not any(given):
+            raise forms.ValidationError("Choose a CSV file or paste a Google Sheets link.")
+        if all(given):
+            raise forms.ValidationError("Choose a CSV file or paste a Google Sheets link, not both.")
+        return cleaned
 
 
 class HymnalForm(forms.ModelForm):
