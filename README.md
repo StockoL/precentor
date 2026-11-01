@@ -24,7 +24,8 @@ details are needed.
 >
 > Since then I've added importing and exporting the library as a
 > spreadsheet or straight from a Google Sheets link (§3.1), slots that know their kind (§3.2), grouped
-> suggestions with reasons (§3.3), hymnals and hymns built up by number,
+> suggestions with reasons (§3.3), hymnals and hymns built up by number
+> or imported as a list,
 > score texts with a pew sheet (§4), templates whose slots keep
 > their kinds, and the day's chants from the 1962 Missal offered on
 > Proper slots (§3.2). The live site is still the version I submitted on 23
@@ -257,6 +258,15 @@ a quiet line on the service until they are. A hymn is the text and an
 entry is its number in one book, so the same hymn sung from two books
 counts as one for "last sung" and suggestions, once someone confirms
 that they're the same: a hymn whose first line matches another's asks.
+
+A church that already keeps a book's numbers in a spreadsheet can
+import the list from the hymnal's page, from a file or a Google Sheets
+link: a number, and optionally its first line, metre and tune. New
+numbers come in as entries; for numbers the book already has, only
+blank details are filled, so nothing typed by hand is overwritten. As
+with scores, the import waits to be kept or removed as a whole, and
+removing it takes out what it added (unless sung) and empties what it
+filled in.
 
 A Hymn slot suggests a handful of hymns suited to the day, each with its
 reasons, and one click fills in the book and number. Hymns have their
@@ -644,6 +654,7 @@ aren't.
 
 - Repertoire suggestions (occasion, season, use type and not sung recently), with the reasons shown: built
 - Hymnals, with hymns built up by number as they're used, and tunes: built
+- Importing a hymnal's list, kept or removed as a whole: built
 - Score texts and translations, and a pew sheet: built
 - Templates whose slots keep their kinds: built
 - The day's chants offered on Proper slots: built for the 1962 Missal, not yet for the Ordinary Form
@@ -1160,7 +1171,14 @@ It also has Django's own `password`, `last_login`, `is_staff`,
 | Hymn `not_same_as`                       | ManyToMany to itself | symmetrical                       | "A different hymn", remembered            |
 | HymnEntry `hymn`, `hymnal`, `number`     | ForeignKey, CharField | number unique in the hymnal      | Where a hymn is printed: NEH 53           |
 | HymnEntry `tune`                         | ForeignKey           | optional, to Tune                 | The tune the book prints it with          |
+| HymnEntry `import_batch`                 | ForeignKey           | optional, to HymnImport           | The import that added it, while pending   |
 | Tune `name`, `metre`                     | CharField            | metre normalised                  | A tune by name, with its metre            |
+
+**library.HymnImport** (a hymnal's list, imported): `organisation`,
+`hymnal`, `created_by`, `created_at`, `original_filename` and `status`
+(pending or kept) as for ScoreImport; `report` (JSONField) for the
+result page, and `changes` (JSONField) recording each blank it filled
+and each tune it added, so removing it can undo them.
 
 **planning.SlotTemplate**
 
@@ -1510,8 +1528,10 @@ What's designed or wanted but not built yet:
   Ordinary Form, offered the same way as the 1962 ones, once there's a
   source whose terms are clear. Also the nine England and Wales 1962
   feasts, from the Commons the Latin Mass Society's Ordo gives them.
-- **Importing a hymnal's list** from a spreadsheet, reusing the score
-  import's batches, for a church that already keeps one.
+- **A Google Drive picker** on the import pages, to choose a file
+  from Drive after signing in to Google. It needs a Google Cloud
+  project, keys and a consent screen, and the Sheets link already
+  covers most of what it would do, so I left it out.
 
 ## 20. Technologies used
 

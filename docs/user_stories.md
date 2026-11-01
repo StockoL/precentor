@@ -99,6 +99,10 @@ These user stories drive the design and functionality of Precentor.
 - As a librarian, I want the church's hymn books in the library with
   their copies, and each hymn's first line and words added as we learn
   them, so the hymns we sing build into a record of our own.
+- As a librarian who already keeps a hymn book's numbers in a
+  spreadsheet, I want to import that list into the book without losing
+  anything we've corrected by hand, so the record is complete from the
+  start.
 - As a librarian, I want one page that shows what the library's details
   are missing, so I can fill the gaps when I have a spare half hour
   without being nagged about them.
