@@ -23,7 +23,7 @@ details are needed.
 > [`docs/overhaul_plan.md`](docs/overhaul_plan.md).
 >
 > Since then I've added importing and exporting the library as a
-> spreadsheet (§3.1), slots that know their kind (§3.2), grouped
+> spreadsheet or straight from a Google Sheets link (§3.1), slots that know their kind (§3.2), grouped
 > suggestions with reasons (§3.3), hymnals and hymns built up by number,
 > score texts with a pew sheet (§4), templates whose slots keep
 > their kinds, and the day's chants from the 1962 Missal offered on
@@ -156,7 +156,9 @@ their library in a spreadsheet, and typing hundreds of scores in again
 would put them off before they started. Import, on the Library page,
 explains Precentor's format, offers a template with the right headers
 and shows three example rows. Only the title and the composer's surname
-are needed. The file is checked before anything is saved: a row that
+are needed. A library kept in Google Sheets doesn't have to be
+downloaded first: with the sheet shared as "anyone with the link can
+view", its link can be pasted instead of choosing a file. The file is checked before anything is saved: a row that
 breaks the same rules as the score form is skipped, with its row number
 and the reason; rows that look like scores the church already has are
 pointed out but kept, as a church may own two editions; and the result
@@ -1325,7 +1327,7 @@ the role column in §2 says who may use each one.
 | User                        | Joining by invitation (`join`); sign-up for the owner     | Members page (`member_list`)                       | Role (`change_role`), owner (`make_owner`), own password (`password_change`) or by reset link (`reset_link`) | Removed, not deleted (`remove`), and brought back (`restore`); their own account, after their password (`delete_account`) | Members page                                                               |
 | Invitation                  | Invite someone (`invite`)                                 | Link shown once (`invitation_link`); Members page  | not available (cancel and make another)                                                         | Cancel (`invitation_cancel`)                                  | Members page, "Waiting to join"                                            |
 | Score                       | Add score (`score_create`), or many at once by importing   | Library (`score_list`), score page (`score_detail`), or all as a CSV (`export_library`) | Edit (`score_update`)                                                                          | Delete, after a confirmation (`score_delete`)                 | Search box, Language, Voicing, Suitable-for filters and sortable columns; the completeness page (`completeness`) |
-| Import (`ScoreImport`)      | Import a spreadsheet (`score_import`), from the template (`import_template`) | Result page (`score_import_detail`), Imports list (`score_import_list`) | Keep it (`keep_import`)                                                                          | Remove it and its scores, after a confirmation (`remove_import`) | Imports list, waiting ones first; a notice on the Library while one waits |
+| Import (`ScoreImport`)      | Import a spreadsheet or a Google Sheets link (`score_import`), from the template (`import_template`) | Result page (`score_import_detail`), Imports list (`score_import_list`) | Keep it (`keep_import`)                                                                          | Remove it and its scores, after a confirmation (`remove_import`) | Imports list, waiting ones first; a notice on the Library while one waits |
 | Hymnal                      | New hymnal (`hymnal_create`)                              | Hymnals (`hymnal_list`), its page (`hymnal_detail`) | Edit, archive (`hymnal_update`) | Delete, after a confirmation, unless hymns were sung from it (`hymnal_delete`) | Hymnals page, linked from the Library |
 | Hymn and its entries        | Made by typing a book and number into a Hymn slot           | Its page (`hymn_detail`), its hymnal's page          | Edit details (`hymn_update`), its tune in a book (`hymn_entry_update`), join with the same hymn (`same_hymn`) | not available: a hymn is part of the history | Each hymnal's page, in number order; the completeness page |
 | Tune                        | New tune (`tune_create`)                                  | Tunes (`tune_list`)                                  | Edit (`tune_update`) | not available | Tunes page, linked from Hymnals |
@@ -1410,6 +1412,13 @@ the role column in §2 says who may use each one.
   leaves nothing behind. In an export, a cell that starts with `=`, `+`,
   `-` or `@` gets an apostrophe in front, so a spreadsheet opens it as
   text instead of running it as a formula.
+- **A pasted Google Sheets link can't send the server elsewhere.** The
+  server never fetches the address that was typed. It takes the
+  sheet's ID out of the link with a strict pattern and builds Google's
+  own CSV export address from it, waits at most ten seconds, and reads
+  no more than the import's 2 MB limit. Anything Google sends that
+  isn't CSV, such as its sign-in page for a sheet that isn't shared, is
+  refused with a message saying how to share it.
 - **Going back is only ever to this site.** A form that returns to the
   page it was opened from, such as editing a score from a service, only
   follows that address if it's a page on this site, so a crafted link

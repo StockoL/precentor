@@ -88,6 +88,9 @@ These user stories drive the design and functionality of Precentor.
 - As a librarian, I want to bring our existing library in from the
   spreadsheet we already keep, so I don't have to type hundreds of
   scores in again.
+- As a librarian whose library lives in Google Sheets, I want to paste
+  the sheet's link rather than download it first, so bringing it in is
+  one step fewer.
 - As a librarian, I want to see which rows of my file were skipped and
   why, and to undo the whole import if it went wrong, so a messy
   spreadsheet can't leave a mess in the library.
