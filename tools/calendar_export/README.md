@@ -1,7 +1,7 @@
 # Calendar export
 
-Three one-off scripts that turn published calendars, and the 1962
-Missal's chants, into the data files Precentor loads. They aren't part
+Four one-off scripts that turn published calendars, and the chants of
+both forms of the Mass, into the data files Precentor loads. They aren't part
 of the app: nothing here is installed on the server, and the app never
 runs Node or imports any of these projects.
 
@@ -15,8 +15,11 @@ runs Node or imports any of these projects.
   chants, from
   [Divinum Officium](https://github.com/DivinumOfficium/divinum-officium)
   (MIT licence; the liturgical texts are in the public domain).
+- `export_graduale_1974.py`: the names of the Ordinary Form's proper
+  chants for Sundays and the major feasts, as the Graduale Romanum
+  (1974) assigns them, from a six-page table of them.
 
-I'm grateful to all three projects' authors;
+I'm grateful to the calendar and chant projects' authors;
 [`docs/acknowledgements.md`](../../docs/acknowledgements.md) says
 exactly how I've used each.
 
@@ -67,6 +70,29 @@ their own, a weekday in the Christmas octave that borrows another, St
 Zephyrinus, whose Common `C2-1b` isn't in the files, and the nine
 England and Wales days, which Divinum Officium doesn't have.
 
+`export_graduale_1974.py`, into `ordo/data/graduale_1974/`:
+
+- `propers_current.json`: each Sunday's and major feast's Introit,
+  Gradual, Alleluia, Tract, Sequence, Offertory and Communion, keyed
+  like the occasions in `ordo/data/romcal/`, with the year of the
+  Sunday cycle where the Graduale gives one ("A: Tolle puerum"), or
+  where a Lent Sunday's chant goes with a Gospel read in one year.
+
+The table is a PDF, so the script reads each piece of text with its
+position: the columns sit at fixed distances from the left edge, and
+read as plain text a year's alternative loses its column. `DAYS`
+pairs every row's name with an occasion's key, and the script stops if
+a row's name doesn't match the next one, so a misread can't pass. In
+Eastertide the first of two Alleluias is put where the Gradual goes, as
+for 1962. Seventy-three days are covered; the Mass at Midnight, Good
+Friday and the Easter Vigil are left out, as Precentor keeps one
+Christmas and the other two have no Mass of their own.
+
+I checked every row by eye against the PDF, and the days both forms
+keep against the 1962 chants: 113 agree, and the 37 that differ are
+either the same chant named more briefly or a day whose Mass changed in
+1970 (the Holy Family, 1 January, the Second Sunday of Lent and others).
+
 ## Changes to the source data
 
 romcal: only in names. The first letter is capitalised ("Fifth Sunday
@@ -75,6 +101,13 @@ in Ordinary Time"); the week is capitalised, as in the English Missal
 `NAME_CORRECTIONS` ("All Souls' Day").
 
 Missalemeum: none. Its names are used as they are.
+
+The Graduale's table: names are kept as it prints them, without a
+psalm verse after "...", an alternative after "vel.", or a note such
+as "ad lib". `FIXES` corrects five rows its layout alone can't settle,
+each with a note: two alternatives set outside their column, one set
+on the next line, a Sequence marked on Trinity Sunday, which has none,
+and the misprint "Sancticavit".
 
 Divinum Officium: only the opening words are kept, never the full
 texts. They stop at the first punctuation (or the next, after a single
@@ -110,6 +143,17 @@ git sparse-checkout set --no-cone web/www/missa/Latin/Tempora/ web/www/missa/Lat
 git checkout db57fc0
 python -I PATH/TO/export_divinum_officium.py .
 ```
+
+The Graduale's table, with pypdf in an environment of its own:
+
+```
+python -m venv graduale-env
+graduale-env/Scripts/pip install pypdf
+graduale-env/Scripts/python -I export_graduale_1974.py PATH/TO/propers1974.pdf
+```
+
+The PDF is at
+https://media.churchmusicassociation.org/publications/pdf/propers1974.pdf.
 
 The romcal versions are pinned in `package.json`. For Missalemeum I
 used commit `75adfbb` (16 October 2026), and for Divinum Officium
