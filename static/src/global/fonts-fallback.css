@@ -8,18 +8,18 @@
   @font-face {
     font-family: "EB Garamond Fallback";
     src: local("Georgia");
-    ascent-override: 83.75%;
-    descent-override: 24.78%;
+    ascent-override: 116.87%;
+    descent-override: 34.59%;
     line-gap-override: 0.00%;
-    size-adjust: 120.24%;
+    size-adjust: 86.16%;
   }
 
   @font-face {
     font-family: "Inter Fallback";
     src: local("Arial");
-    ascent-override: 70.06%;
-    descent-override: 17.44%;
+    ascent-override: 90.59%;
+    descent-override: 22.56%;
     line-gap-override: 0.00%;
-    size-adjust: 138.27%;
+    size-adjust: 106.94%;
   }
 }

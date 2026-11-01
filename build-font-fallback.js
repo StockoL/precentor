@@ -27,6 +27,13 @@
  *
  *   sizeAdjust      = (webAvgWidth / webUnitsPerEm)
  *                      / (fallbackAvgWidth / fallbackUnitsPerEm)
+ *
+ * Both average widths must be measured the same way. Each is the mean
+ * advance width of the characters in SAMPLE_TEXT, ordinary English, so
+ * letters count as often as they're read. (The OS/2 table's
+ * xAvgCharWidth won't do: in modern fonts it averages every glyph,
+ * ligatures and symbols included, which made both fallbacks about a
+ * third wider than the fonts they stand in for.)
  *   ascent-override  = |webAscent|  / (webUnitsPerEm * sizeAdjust)
  *   descent-override = |webDescent| / (webUnitsPerEm * sizeAdjust)
  *   line-gap-override= |webLineGap| / (webUnitsPerEm * sizeAdjust)
@@ -83,14 +90,23 @@ const FONT_STACKS = [
   },
 ];
 
-// Hardcoded because these are read from the user's system,
-// not the repo — and we can't read them from Node because Node
-// doesn't have access to the user's system fonts. These are
-// the same values Next.js uses for its local font fallback.
+// The system fonts aren't in the repository, so their average widths
+// are written here. They were measured with this script from Windows
+// 11's own files, by the same SAMPLE_TEXT as the webfonts:
+//   node build-font-fallback.js --measure C:\Windows\Fonts\georgia.ttf
 const FALLBACK_METRICS = {
-  Georgia: { unitsPerEm: 2048, xAvgCharWidth: 901 },
-  Arial: { unitsPerEm: 2048, xAvgCharWidth: 904 },
+  Georgia: { unitsPerEm: 2048, averageWidth: 897.1 },
+  Arial: { unitsPerEm: 2048, averageWidth: 900.1 },
 };
+
+// Ordinary English with a few capitals and figures, for averaging
+// character widths as they're met in reading.
+const SAMPLE_TEXT =
+  "The choir sings at the Sunday Mass and at Vespers in the evening. " +
+  "Each term the conductor plans the music for every service, and the " +
+  "librarian finds the copies, counts them and files them again after " +
+  "use. A motet by Byrd or Victoria, a hymn from the book, and a psalm " +
+  "with its antiphon: the list for 29 November is printed by Friday.";
 
 // ---------------------------------------------------------------------------
 // sfnt table reading (shared by the plain-TTF and decompressed-WOFF2 paths)
@@ -104,7 +120,6 @@ function readMetricsFromTables(buf, tables) {
   const unitsPerEm = buf.readUInt16BE(head + 18);
   const hheaLineGap = buf.readInt16BE(hhea + 8);
 
-  const xAvgCharWidth = buf.readInt16BE(os2 + 2);
   const fsSelection = buf.readUInt16BE(os2 + 62);
   const sTypoAscender = buf.readInt16BE(os2 + 68);
   const sTypoDescender = buf.readInt16BE(os2 + 70);
@@ -121,11 +136,85 @@ function readMetricsFromTables(buf, tables) {
 
   return {
     unitsPerEm,
-    xAvgCharWidth,
+    averageWidth: averageWidth(buf, tables),
     ascent: useTypoMetrics ? sTypoAscender : usWinAscent,
     descent: useTypoMetrics ? sTypoDescender : -usWinDescent,
     lineGap: useTypoMetrics ? sTypoLineGap : hheaLineGap,
   };
+}
+
+// The glyph a character is drawn with, from the cmap table's Windows
+// Unicode subtable: format 12 (full Unicode) if the font has one, else
+// format 4 (the Basic Multilingual Plane). 0 means the font lacks it.
+function glyphLookup(buf, tables) {
+  const cmap = tables["cmap"].offset;
+  const subtables = {};
+  for (let i = 0; i < buf.readUInt16BE(cmap + 2); i++) {
+    const record = cmap + 4 + i * 8;
+    const key = `${buf.readUInt16BE(record)}.${buf.readUInt16BE(record + 2)}`;
+    subtables[key] = cmap + buf.readUInt32BE(record + 4);
+  }
+  const format12 = subtables["3.10"];
+  if (format12 !== undefined && buf.readUInt16BE(format12) === 12) {
+    const groups = buf.readUInt32BE(format12 + 12);
+    return (code) => {
+      for (let i = 0; i < groups; i++) {
+        const group = format12 + 16 + i * 12;
+        const start = buf.readUInt32BE(group);
+        if (code >= start && code <= buf.readUInt32BE(group + 4)) {
+          return buf.readUInt32BE(group + 8) + (code - start);
+        }
+      }
+      return 0;
+    };
+  }
+  const table = subtables["3.1"];
+  const segments = buf.readUInt16BE(table + 6) / 2;
+  const ends = table + 14;
+  const starts = ends + segments * 2 + 2;
+  const deltas = starts + segments * 2;
+  const rangeOffsets = deltas + segments * 2;
+  return (code) => {
+    for (let i = 0; i < segments; i++) {
+      if (code > buf.readUInt16BE(ends + i * 2)) continue;
+      const start = buf.readUInt16BE(starts + i * 2);
+      if (code < start) return 0;
+      const delta = buf.readInt16BE(deltas + i * 2);
+      const rangeOffset = buf.readUInt16BE(rangeOffsets + i * 2);
+      if (rangeOffset === 0) return (code + delta) & 0xffff;
+      const glyph = buf.readUInt16BE(rangeOffsets + i * 2 + rangeOffset + (code - start) * 2);
+      return glyph === 0 ? 0 : (glyph + delta) & 0xffff;
+    }
+    return 0;
+  };
+}
+
+// The mean advance width of SAMPLE_TEXT's characters, in font units, from
+// the hmtx table (glyphs past numberOfHMetrics share the last width).
+function averageWidth(buf, tables) {
+  const glyphFor = glyphLookup(buf, tables);
+  const hmtx = tables["hmtx"].offset;
+  const metricsCount = buf.readUInt16BE(tables["hhea"].offset + 34);
+  let total = 0;
+  for (const character of SAMPLE_TEXT) {
+    const glyph = Math.min(glyphFor(character.codePointAt(0)), metricsCount - 1);
+    total += buf.readUInt16BE(hmtx + glyph * 4);
+  }
+  return total / [...SAMPLE_TEXT].length;
+}
+
+// A plain TrueType file's table directory, for --measure.
+function readTtfMetrics(fontPath) {
+  const buf = fs.readFileSync(fontPath);
+  const tables = {};
+  for (let i = 0; i < buf.readUInt16BE(4); i++) {
+    const record = 12 + i * 16;
+    tables[buf.toString("ascii", record, record + 4)] = {
+      offset: buf.readUInt32BE(record + 8),
+      length: buf.readUInt32BE(record + 12),
+    };
+  }
+  return readMetricsFromTables(buf, tables);
 }
 
 // ---------------------------------------------------------------------------
@@ -285,12 +374,10 @@ function formatPercent(value) {
 }
 
 function calculateOverrides(webMetrics, fallbackMetrics) {
-  const webAvgWidth = webMetrics.xAvgCharWidth / webMetrics.unitsPerEm;
+  const webAvgWidth = webMetrics.averageWidth / webMetrics.unitsPerEm;
   const fallbackAvgWidth =
-    fallbackMetrics.xAvgCharWidth / fallbackMetrics.unitsPerEm;
-  const sizeAdjust = webMetrics.xAvgCharWidth
-    ? webAvgWidth / fallbackAvgWidth
-    : 1;
+    fallbackMetrics.averageWidth / fallbackMetrics.unitsPerEm;
+  const sizeAdjust = webAvgWidth / fallbackAvgWidth;
 
   return {
     sizeAdjust: formatPercent(sizeAdjust),
@@ -343,4 +430,11 @@ function build() {
   );
 }
 
-build();
+if (process.argv[2] === "--measure") {
+  const metrics = readTtfMetrics(process.argv[3]);
+  console.log(
+    `unitsPerEm: ${metrics.unitsPerEm}, averageWidth: ${metrics.averageWidth.toFixed(1)}`,
+  );
+} else {
+  build();
+}
