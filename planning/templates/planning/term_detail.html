@@ -3,6 +3,9 @@
 {% block title %}{{ term }} — Precentor{% endblock %}
 {% block extra_js %}
 <script type="module" src="{% static 'src/js/comments.js' %}"></script>
+{# The modules it imports, fetched now rather than once it has arrived. #}
+<link rel="modulepreload" href="{% static 'src/js/ajax.js' %}">
+<link rel="modulepreload" href="{% static 'src/js/confirm-dialog.js' %}">
 {% endblock %}
 {% block content %}
 <div class="flow">

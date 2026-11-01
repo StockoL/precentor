@@ -4,6 +4,10 @@
 {% block extra_js %}
 <script type="module" src="{% static 'src/js/service-detail.js' %}"></script>
 <script type="module" src="{% static 'src/js/comments.js' %}"></script>
+{# The modules those import, fetched now rather than once each importer has arrived. #}
+<link rel="modulepreload" href="{% static 'src/js/ajax.js' %}">
+<link rel="modulepreload" href="{% static 'src/js/score-picker.js' %}">
+<link rel="modulepreload" href="{% static 'src/js/confirm-dialog.js' %}">
 {% endblock %}
 {% block content %}
 <div class="flow">
