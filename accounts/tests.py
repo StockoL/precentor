@@ -682,6 +682,13 @@ class JoinPageTests(TestCase):
         self.invitation.refresh_from_db()
         self.assertIsNone(self.invitation.used_at)
 
+    def test_a_site_administrator_is_told_they_have_no_church(self):
+        self.client.force_login(make_superuser())
+        response = self.client.get(self.url)
+        self.assertContains(response, "signed in as a site administrator")
+        self.assertContains(response, 'href="/admin/"')
+        self.assertNotContains(response, "belongs to no church")
+
     def test_if_someone_else_got_there_first_nothing_is_made(self):
         self.client.get(self.url)
         with mock.patch("accounts.models.Invitation.use", return_value=False):

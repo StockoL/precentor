@@ -4,8 +4,14 @@
 <div class="cover">
     <div class="center flow" data-intrinsic data-centered style="--center-max-width: 30ch;">
         <h1>You're already signed in</h1>
-        <p>Your account belongs to {{ request.organisation.name|default:"no church" }}, and each account belongs to one church. To join another, log out and use the invitation with a different email address.</p>
+        {% if request.organisation %}
+        <p>Your account belongs to {{ request.organisation.name }}, and each account belongs to one church. To join another, log out and use the invitation with a different email address.</p>
         <p><a href="{% url 'planning:term_list' %}">Back to your terms</a></p>
+        {% else %}
+        {# A site administrator, who belongs to no church by design. #}
+        <p>You're signed in as a site administrator, which has no church of its own. To join this church, log out and open the invitation again with the email address it's meant for.</p>
+        <p><a href="{% url 'admin:index' %}">Back to the admin site</a></p>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
