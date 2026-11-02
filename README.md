@@ -239,8 +239,12 @@ nine England and Wales feasts aren't in Divinum Officium, so those offer
 nothing.
 
 For the Ordinary Form the chants are the Graduale Romanum's (1974) for
-Sundays and the major feasts, 73 days in all, read from a table of
-them (see the same README). Some Sundays have a chant for one year of
+Sundays and the major feasts, read from a table of them (see the same
+README), with a few the table leaves out added from the Graduale
+itself. Christmas has four Masses, each with its own propers (the Vigil
+Mass, and the Masses during the Night, at Dawn and during the Day), so
+each is an occasion of its own, listed on 24 and 25 December with the
+day's celebration, and a service is given the one it is. Some Sundays have a chant for one year of
 the three-year cycle, such as the Holy Family's Year A Communion,
 "Tolle puerum", or a Lent Sunday's Communion for the Gospel read that
 year, and Precentor works out which year a service falls in. Weekdays

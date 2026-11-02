@@ -154,7 +154,11 @@ A solemnity that's impeded, and that has no transfer of its own in
 the data, moves to the next day not taken by a day of levels 1 to 8.
 Anything else impeded is left out for the year. Occasions entered by
 hand have no precedence; they're listed after the resolved days, so
-they always appear.
+they always appear. The same goes for the Ordinary Form's other
+Christmas Masses (the Vigil, the Night and Dawn), added on 2 November
+2026 so a service can be the Mass it is: each follows the day's
+celebration, in the order loaded, and the comparison with romcal leaves
+them out, as romcal has one Christmas.
 
 A lookup works out the whole year each time, in one query; at about
 250 occasions this is quick, so there's no cache to go stale when an

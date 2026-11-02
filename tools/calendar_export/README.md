@@ -84,9 +84,11 @@ read as plain text a year's alternative loses its column. `DAYS`
 pairs every row's name with an occasion's key, and the script stops if
 a row's name doesn't match the next one, so a misread can't pass. In
 Eastertide the first of two Alleluias is put where the Gradual goes, as
-for 1962. Seventy-three days are covered; the Mass at Midnight, Good
-Friday and the Easter Vigil are left out, as Precentor keeps one
-Christmas and the other two have no Mass of their own.
+for 1962. Good Friday and the Easter Vigil are left out, as they have no
+Mass of their own in the table's sense. `ADDITIONS` lists chants the
+table hasn't got, given from the Graduale itself: Year B's Communion
+on the fifth Sunday of Lent, and the Vigil and Dawn Masses of
+Christmas. 76 days and Masses are covered.
 
 I checked every row by eye against the PDF, and the days both forms
 keep against the 1962 chants: 113 agree, and the 37 that differ are
@@ -98,7 +100,11 @@ either the same chant named more briefly or a day whose Mass changed in
 romcal: only in names. The first letter is capitalised ("Fifth Sunday
 in Ordinary Time"); the week is capitalised, as in the English Missal
 ("Saturday of the Second Week of Lent"); and one typo is corrected, in
-`NAME_CORRECTIONS` ("All Souls' Day").
+`NAME_CORRECTIONS` ("All Souls' Day"). romcal has one Christmas, which
+is the Mass during the Day and named so; `CHRISTMAS_MASSES` adds the
+Vigil Mass and the Masses during the Night and at Dawn, each with its
+own propers, with no precedence so they're listed with the day's
+celebration and never in its place.
 
 Missalemeum: none. Its names are used as they are.
 
