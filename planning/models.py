@@ -174,10 +174,6 @@ class Service(models.Model):
         blank=True,
         help_text="Leave blank to follow the term's calendar.",
     )
-    hymns = models.CharField(
-        max_length=200, blank=True, help_text="Hymn numbers, e.g. 123, 345, 234"
-    )
-    psalm = models.CharField(max_length=100, blank=True, help_text="e.g. 150")
     # The template the slots came from, so a second template asks before
     # replacing them. String reference: SlotTemplate is defined below.
     slot_template = models.ForeignKey(
@@ -505,8 +501,7 @@ class SlotTemplate(models.Model):
     come ready-made (each new church gets its own copies from
     accounts.organisations), and a conductor can edit those or make more.
     Its slots are TemplateSlot rows, each with a kind and proper part, so
-    a service's slots arrive already classified. slot_names, the text the
-    slots were first written as, is no longer read; it's dropped later.
+    a service's slots arrive already classified.
     """
 
     # Whose template this is.
@@ -515,9 +510,6 @@ class SlotTemplate(models.Model):
     )
     objects = OrganisationQuerySet.as_manager()
     name = models.CharField(max_length=50, help_text="e.g. Mass, Vespers, Benediction")
-    slot_names = models.TextField(
-        "slots", help_text="One slot per line, in the order of the service."
-    )
 
     class Meta:
         ordering = ["name"]  # noqa

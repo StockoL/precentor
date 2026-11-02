@@ -219,21 +219,3 @@ class TemplateSlotTests(TemplateTestMixin, TestCase):
         slot.save()
         self.mass.apply_to(self.service)
         self.assertEqual(self.service.roles.get(role_name="Introit").kind, "hymn")
-
-    def test_existing_templates_are_split_into_rows(self):
-        import importlib
-
-        from django.apps import apps
-
-        from .models import TemplateSlot
-
-        migration = importlib.import_module("planning.migrations.0027_split_template_slots")
-        TemplateSlot.objects.all().delete()
-        self.vespers.slot_names = "Psalms\n\nhymn\nHymn\nMagnificat"
-        self.vespers.save()
-        migration.split_into_rows(apps, None)
-        self.assertEqual(
-            list(self.vespers.template_slots.values_list("name", "kind", "position")),
-            [("Psalms", "psalm", 1), ("hymn", "hymn", 2), ("Magnificat", "canticle", 3)],
-        )
-        self.assertEqual(self.vespers.template_slots.first().organisation, self.vespers.organisation)

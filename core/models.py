@@ -86,9 +86,6 @@ class SiteConfig(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(104)],
         help_text="In weeks, for hymns.",
     )
-    show_hymns_psalm = models.BooleanField(
-        "show hymns and psalm on the music list", default=True
-    )
 
     def set_crest(self, data, content_type):
         """Store a processed crest. The version is a fingerprint of the
