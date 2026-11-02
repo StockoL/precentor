@@ -806,15 +806,16 @@ class ProperChant(models.Model):
     calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES)
     part = models.CharField(max_length=20, choices=PROPER_CHANT_PARTS)  # introit … communion
     season = models.CharField(max_length=20, blank=True)  # "", "septuagesima" or "paschaltide"
+    cycle = models.CharField(max_length=1, blank=True)  # "", "A", "B" or "C", for the Ordinary Form
     incipit = models.CharField(max_length=100)  # "Populus Sion"
     source = models.CharField(max_length=100)
-    # one per calendar use, occasion key, part and season
+    # one per calendar use, occasion key, part, season and cycle
 
 def chant_season(day): ...          # Septuagesima to Holy Saturday; Easter to the Saturday after Pentecost
 def proper_chants(occasion, day): ...  # {part: incipit} for that day's Mass
 ```
 
-The opening words of each 1962 Mass's chants (migration `0019`): the
+The opening words of each day's chants (migrations `0019` and `0020`): the
 Introit, Gradual, Alleluia, Tract, Sequence, Offertory and Communion.
 Shared reference data like the calendar, with no church of its own, and
 loaded by `load_calendar` from `ordo/data/divinum_officium/`, which a
@@ -835,11 +836,18 @@ Alleluia, or in Eastertide, when Alleluias take the Gradual's place.
 Those forms are stored beside the usual one, marked with their season,
 and `proper_chants()` prefers the form for the date's season.
 
+**The Ordinary Form** has the Graduale Romanum's (1974) chants for
+Sundays and the major feasts, from a table read by
+`tools/calendar_export/export_graduale_1974.py`. Some Sundays have a
+chant for one year of the three-year cycle, marked in `cycle`, and
+`proper_chants()` prefers the date's year's own, as it prefers a
+season's form in 1962. The year comes from `ordo.dates.sunday_cycle()`,
+which turns at the first Sunday of Advent.
+
 **How planning uses it:** `Service.proper_chants` works the day out once
 per service, and `ServiceRole.proper_suggestion` gives a Proper slot its
 part (an Alleluia or Tract slot whichever the date has), unless that
-chant is already proposed. The Ordinary Form has no chant data yet, so
-its services offer nothing.
+chant is already proposed.
 
 ### `planning.Term`
 

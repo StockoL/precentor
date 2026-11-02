@@ -223,8 +223,8 @@ hymn at the Introit keeps the slot called Introit and shows it as a
 Hymn. A Proper slot also knows which proper it is (Introit, Gradual,
 Alleluia or Tract, Offertory, Communion).
 
-**The day's chant (1962).** On a service kept by the 1962 calendar, a
-Proper slot offers that day's chant beneath its search box, by its
+**The day's chant.** On a service with an occasion, a Proper slot
+offers that day's chant beneath its search box, by its
 opening words: "Populus Sion" for the Introit on the Second Sunday of
 Advent. One click proposes it as a reference, never confirmed, and it
 isn't offered again once it's there. An Alleluia or Tract slot takes
@@ -236,7 +236,17 @@ day's chants line up with no matching by name (see
 [`tools/calendar_export/README.md`](tools/calendar_export/README.md)).
 They cover 688 days; commemorations have no Mass of their own, and the
 nine England and Wales feasts aren't in Divinum Officium, so those offer
-nothing. Ordinary Form services offer nothing yet either.
+nothing.
+
+For the Ordinary Form the chants are the Graduale Romanum's (1974) for
+Sundays and the major feasts, 73 days in all, read from a table of
+them (see the same README). Some Sundays have a chant for one year of
+the three-year cycle, such as the Holy Family's Year A Communion,
+"Tolle puerum", or a Lent Sunday's Communion for the Gospel read that
+year, and Precentor works out which year a service falls in. Weekdays
+and most saints' days offer nothing, as the table doesn't cover them,
+and in the Ordinary Form the Graduale's chants are one choice among
+several, so a suggestion is only ever a suggestion.
 
 A piece in a slot is one of three things: a score from the library, a
 **hymn** by its book and number, or a short **reference** typed in, such
@@ -657,7 +667,7 @@ aren't.
 - Importing a hymnal's list, kept or removed as a whole: built
 - Score texts and translations, and a pew sheet: built
 - Templates whose slots keep their kinds: built
-- The day's chants offered on Proper slots: built for the 1962 Missal, not yet for the Ordinary Form
+- The day's chants offered on Proper slots: built, for the 1962 Missal and for the Ordinary Form's Sundays and major feasts
 - CCLI/copyright licence reporting export: not built
 - Choir roster awareness (auto-filtering by available voice parts): not built
 
@@ -697,13 +707,10 @@ aren't.
   That's a separate, mature domain with authoritative tools already
   serving it well, and duplicating it would mean building a different
   application inside Precentor.
-- The Ordinary Form's propers, and anything beyond the chants' names.
-  Precentor offers the 1962 Missal's chants (§3.2) but not the
-  Graduale Romanum's for the Ordinary Form: the index I found is
-  American, has no licence notice and would need checking by hand row
-  by row, and the Ordinary Form treats the Graduale as one choice among
-  several in any case. Only opening words are kept, never full texts,
-  translations or music.
+- Anything beyond the chants' names. Precentor offers each day's
+  chants by their opening words (§3.2), never full texts, translations
+  or music, and for the Ordinary Form only Sundays and the major
+  feasts.
 - Hymnal contents. Precentor ships no hymn numbers, first lines, tunes
   or metres. A church's hymns build up as it types a book and number
   into a slot, so nothing is copied from a published hymnal's index,
@@ -1221,13 +1228,14 @@ together.
 | Field          | Type      | Constraints                                | Purpose                                     |
 | -------------- | --------- | ------------------------------------------ | ------------------------------------------- |
 | `occasion_key` | CharField | max 100                                    | The occasion's key, e.g. `tempora:Adv2-0`   |
-| `calendar_use` | CharField | choices; 1962 only so far                  | Which form of the Mass                      |
+| `calendar_use` | CharField | choices                                    | Which form of the Mass                      |
 | `part`         | CharField | choices: Introit to Communion              | Which chant                                 |
 | `season`       | CharField | blank, Septuagesima or Eastertide          | A saint's day's form for that season        |
+| `cycle`        | CharField | blank, A, B or C                           | An Ordinary Form Sunday's chant for one year |
 | `incipit`      | CharField | max 100                                    | The opening words, e.g. Populus Sion        |
 | `source`       | CharField | max 100                                    | The file it came from                       |
 
-One chant per part, season and day in each form. It's matched to an
+One chant per part, season, year and day in each form. It's matched to an
 occasion by key, not a foreign key: occasions are rebuilt from their
 files, and a national calendar repeats a key to move a day whose Mass
 is the same.
@@ -1524,10 +1532,9 @@ What's designed or wanted but not built yet:
 - **Email.** Invitations and reset links are passed on by hand because
   Precentor sends no email. With a mail provider they could be sent
   directly, and people could reset their own passwords.
-- **Ordinary Form propers.** The Graduale Romanum's chants for the
-  Ordinary Form, offered the same way as the 1962 ones, once there's a
-  source whose terms are clear. Also the nine England and Wales 1962
-  feasts, from the Commons the Latin Mass Society's Ordo gives them.
+- **More propers.** The Ordinary Form's chants for weekdays and saints'
+  days, and the nine England and Wales 1962 feasts, from the Commons
+  the Latin Mass Society's Ordo gives them.
 - **A Google Drive picker** on the import pages, to choose a file
   from Drive after signing in to Google. It needs a Google Cloud
   project, keys and a consent screen, and the Sheets link already

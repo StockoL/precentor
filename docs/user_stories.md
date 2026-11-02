@@ -54,6 +54,9 @@ These user stories drive the design and functionality of Precentor.
   Proper slot to offer that day's chant, so I'm not looking up the
   Introit in the Liber every week, and I can still choose something
   else.
+- As a conductor in the Ordinary Form, I want Sundays' Proper slots to
+  offer the Graduale's chants for that year of the cycle, so the sung
+  propers are as easy to plan as the readings are to find.
 - As a conductor, I want templates for the services I plan often (Mass,
   Vespers, or my own), so a new service starts with its usual slots in
   one click, and I can still change them afterwards.
