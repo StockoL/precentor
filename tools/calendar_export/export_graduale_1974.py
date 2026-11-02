@@ -61,6 +61,13 @@ FIXES = {
     ("ordinary_time_18_sunday", "offertory", "C"): "Sanctificavit",
 }
 
+# Chants the index leaves out, given from the Graduale itself: (occasion,
+# part, year, opening words). The fifth Sunday of Lent lists Communions
+# for Years A and C only.
+ADDITIONS = [
+    ("lent_5_sunday", "communion", "B", "Qui mihi ministrat"),
+]
+
 # Every row of the table in order: its name as printed, and the Ordinary
 # Form occasion it is, or None for a row with no day of its own.
 DAYS = [
@@ -254,6 +261,9 @@ def main():
             words = FIXES.get((key, part, cycle), words)
             if words:
                 chants.append({"key": key, "part": part, "cycle": cycle, "incipit": words, "source": name})
+    names = {key: name for name, key in DAYS if key}
+    for key, part, cycle, words in ADDITIONS:
+        chants.append({"key": key, "part": part, "cycle": cycle, "incipit": words, "source": names[key]})
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"source": SOURCE, "chants": chants}, ensure_ascii=False, indent=1) + "\n",
                    encoding="utf-8")

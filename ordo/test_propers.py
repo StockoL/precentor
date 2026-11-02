@@ -137,3 +137,9 @@ class OrdinaryFormChantTests(TestCase):
     def test_the_two_forms_never_mix(self):
         make_chant(occasion_key="ordinary_time_10_sunday", part="offertory", incipit="Not this form")
         self.assertNotIn("offertory", proper_chants(self.sunday, date(2026, 6, 14)))
+
+    def test_the_loaded_data_gives_each_year_its_own_communion_in_lent(self):
+        load_propers()
+        lent_5 = LiturgicalOccasion(key="lent_5_sunday", calendar_use="current")
+        self.assertEqual(proper_chants(lent_5, date(2026, 3, 22))["communion"], "Videns Dominus")  # Year A
+        self.assertEqual(proper_chants(lent_5, date(2027, 3, 14))["communion"], "Qui mihi ministrat")  # Year B

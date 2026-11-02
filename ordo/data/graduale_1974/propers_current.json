@@ -3080,6 +3080,13 @@
    "cycle": "A",
    "incipit": "Amen dico vobis",
    "source": "Christ the King"
+  },
+  {
+   "key": "lent_5_sunday",
+   "part": "communion",
+   "cycle": "B",
+   "incipit": "Qui mihi ministrat",
+   "source": "Fifth Sunday in Lent"
   }
  ]
 }
