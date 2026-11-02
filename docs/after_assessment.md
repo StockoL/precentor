@@ -72,10 +72,10 @@ data, which is why the first step below is a copy.
    Render's build runs `migrate` and `load_calendar` itself.
 5. **Check the live site.** Run `check_copied_data` against the live
    database, then the deployment checks in `testing.md` (section 8) and
-   a look at the pages added since submission. Whether the free web
-   service has a shell to run the command in is something to check; if
-   not, run it locally with `DATABASE_URL` pointing at the live database
-   while my address is allowed.
+   a look at the pages added since submission. The free web service has
+   no shell, so the check runs from my own computer, with `DATABASE_URL`
+   set to the live database's external address while my address is
+   allowed in the database's settings, and removed again afterwards.
 6. **Drop the old columns.** Only once the check is clean on the live
    data: a migration removing the four old columns, and the code that
    still reads them (the template's text and the settings admin), as a
