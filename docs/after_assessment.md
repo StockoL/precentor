@@ -79,4 +79,5 @@ data, which is why the first step below is a copy.
 6. **Drop the old columns.** Only once the check is clean on the live
    data: a migration removing the four old columns, and the code that
    still reads them (the template's text and the settings admin), as a
-   commit and deploy of its own.
+   commit and deploy of its own. It's ready, and rehearsed, on the
+   `drop-old-columns` branch.
