@@ -463,7 +463,7 @@ class CreateOrganisationTests(TestCase):
         from .organisations import create_organisation
 
         ours, theirs = create_organisation("St Cecilia's"), create_organisation("St Elsewhere")
-        SlotTemplate.objects.for_organisation(ours).filter(name="Mass").update(slot_names="Introit")
+        SlotTemplate.objects.for_organisation(ours).get(name="Mass").set_slots(["Introit"])
         self.assertEqual(len(SlotTemplate.objects.for_organisation(theirs).get(name="Mass").slots), 10)
 
     def test_nothing_is_left_behind_if_it_fails(self):

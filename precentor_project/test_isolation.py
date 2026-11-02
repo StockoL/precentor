@@ -49,7 +49,7 @@ def build_church(marker):
     )
     use_type = UseType.objects.create(organisation=church, name=f"{marker} use")
     score.suited_use_types.add(use_type)
-    template = SlotTemplate.objects.create(organisation=church, name=f"{marker} template", slot_names="Introit")
+    template = SlotTemplate.objects.create(organisation=church, name=f"{marker} template")
     template.set_slots(["Introit"])
     term = Term.objects.create(
         organisation=church, name=f"{marker} term", start_date=date(2026, 11, 29),
@@ -222,7 +222,7 @@ NOT_CHURCH_DATA = {
 # would change something the snapshot would catch.
 POST_DATA = {
     "role": "viewer", "role_name": "A tried", "name": "A tried", "title": "A tried", "text": "A tried",
-    "body": "A tried", "slot_names": "A tried", "service_type": "A tried", "date": "2026-12-13",
+    "body": "A tried", "service_type": "A tried", "date": "2026-12-13",
     "start_date": "2026-11-29", "end_date": "2026-12-24", "calendar_use": "current", "confirm": "1",
     "replace": "1", "direction": "up", "order": "", "composer_surname": "A tried", "voicing": "SATB",
     "language": "Latin",

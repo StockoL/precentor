@@ -544,8 +544,8 @@ class ReplaceTemplateBrowserTest(PlaywrightTestCase):
             name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
         )
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
-        make_slot_template(name="Mass", slot_names="Introit\nKyrie")
-        make_slot_template(name="Vespers", slot_names="Psalms\nMagnificat")
+        make_slot_template(name="Mass", slots=["Introit", "Kyrie"])
+        make_slot_template(name="Vespers", slots=["Psalms", "Magnificat"])
 
     def test_another_template_asks_in_the_dialog(self):
         # Headless Chromium stops painting after this form's redirect back

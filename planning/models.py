@@ -529,17 +529,6 @@ class SlotTemplate(models.Model):
     def __str__(self):
         return self.name
 
-    @staticmethod
-    def names_from_text(text):
-        """Slot names from lines of text: trimmed, blank lines dropped, and
-        each name once whatever its case."""
-        names = []
-        for line in text.splitlines():
-            name = " ".join(line.split())
-            if name and name.lower() not in (n.lower() for n in names):
-                names.append(name)
-        return names
-
     @property
     def slots(self):
         """The slot names in order. Uses .all(), so prefetched rows cost

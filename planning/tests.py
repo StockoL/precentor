@@ -981,7 +981,7 @@ class PlanningOrganisationTests(TestCase):
             name="Lent", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
             calendar_use="current", organisation=church,
         )
-        template = make_slot_template(name="Benediction", slot_names="O salutaris", organisation=church)
+        template = make_slot_template(name="Benediction", slots=["O salutaris"], organisation=church)
         self.assertEqual(list(church.terms.all()), [term])
         self.assertEqual(list(church.slot_templates.all()), [template])
 

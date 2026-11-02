@@ -74,7 +74,7 @@ class SlotKindOnSaveTests(TestCase):
     def test_a_template_makes_classified_slots(self):
         from precentor_project.testing import make_slot_template
 
-        template = make_slot_template(organisation=self.service.organisation, slot_names="Kyrie\nCommunion hymn")
+        template = make_slot_template(organisation=self.service.organisation, slots=["Kyrie", "Communion hymn"])
         template.apply_to(self.service)
         self.assertEqual(list(self.service.roles.values_list("kind", flat=True)), ["ordinary", "hymn"])
 
