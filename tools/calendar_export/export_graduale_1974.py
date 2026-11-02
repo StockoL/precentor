@@ -63,9 +63,20 @@ FIXES = {
 
 # Chants the index leaves out, given from the Graduale itself: (occasion,
 # part, year, opening words). The fifth Sunday of Lent lists Communions
-# for Years A and C only.
+# for Years A and C only, and of Christmas's four Masses the index has
+# only the Night and the Day.
 ADDITIONS = [
     ("lent_5_sunday", "communion", "B", "Qui mihi ministrat"),
+    ("nativity_of_the_lord_vigil_mass", "introit", "", "Hodie scietis"),
+    ("nativity_of_the_lord_vigil_mass", "gradual", "", "Hodie scietis"),
+    ("nativity_of_the_lord_vigil_mass", "alleluia", "", "Crastina die"),
+    ("nativity_of_the_lord_vigil_mass", "offertory", "", "Tollite portas"),
+    ("nativity_of_the_lord_vigil_mass", "communion", "", "Revelabitur"),
+    ("nativity_of_the_lord_mass_at_dawn", "introit", "", "Lux fulgebit"),
+    ("nativity_of_the_lord_mass_at_dawn", "gradual", "", "Benedictus qui venit"),
+    ("nativity_of_the_lord_mass_at_dawn", "alleluia", "", "Dominus regnavit, decorem"),
+    ("nativity_of_the_lord_mass_at_dawn", "offertory", "", "Deus enim firmavit"),
+    ("nativity_of_the_lord_mass_at_dawn", "communion", "", "Exsulta, filia Sion"),
 ]
 
 # Every row of the table in order: its name as printed, and the Ordinary
@@ -76,7 +87,7 @@ DAYS = [
     ("Second Sunday of Advent", "advent_2_sunday"),
     ("Third Sunday of Advent", "advent_3_sunday"),
     ("Fourth Sunday of Advent", "advent_4_sunday"),
-    ("Nativity Mass at Midnight", None),  # Ordo has one Christmas; the Mass during the Day is used
+    ("Nativity Mass at Midnight", "nativity_of_the_lord_mass_during_the_night"),
     ("Nativity Mass at Day", "nativity_of_the_lord"),
     ("Holy Family", "holy_family_of_jesus_mary_and_joseph"),
     ("Blessed Virgin Mary", "mary_mother_of_god"),
@@ -263,7 +274,8 @@ def main():
                 chants.append({"key": key, "part": part, "cycle": cycle, "incipit": words, "source": name})
     names = {key: name for name, key in DAYS if key}
     for key, part, cycle, words in ADDITIONS:
-        chants.append({"key": key, "part": part, "cycle": cycle, "incipit": words, "source": names[key]})
+        chants.append({"key": key, "part": part, "cycle": cycle, "incipit": words,
+                       "source": names.get(key, "not in the table")})
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"source": SOURCE, "chants": chants}, ensure_ascii=False, indent=1) + "\n",
                    encoding="utf-8")

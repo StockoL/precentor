@@ -177,6 +177,41 @@
    "source": "Fourth Sunday of Advent"
   },
   {
+   "key": "nativity_of_the_lord_mass_during_the_night",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Dominus dixit",
+   "source": "Nativity Mass at Midnight"
+  },
+  {
+   "key": "nativity_of_the_lord_mass_during_the_night",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Tecum principium",
+   "source": "Nativity Mass at Midnight"
+  },
+  {
+   "key": "nativity_of_the_lord_mass_during_the_night",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Dominus dixit ad me",
+   "source": "Nativity Mass at Midnight"
+  },
+  {
+   "key": "nativity_of_the_lord_mass_during_the_night",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Laetentur caeli",
+   "source": "Nativity Mass at Midnight"
+  },
+  {
+   "key": "nativity_of_the_lord_mass_during_the_night",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "In splendoribus",
+   "source": "Nativity Mass at Midnight"
+  },
+  {
    "key": "nativity_of_the_lord",
    "part": "introit",
    "cycle": "",
@@ -3087,6 +3122,76 @@
    "cycle": "B",
    "incipit": "Qui mihi ministrat",
    "source": "Fifth Sunday in Lent"
+  },
+  {
+   "key": "nativity_of_the_lord_vigil_mass",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Hodie scietis",
+   "source": "not in the table"
+  },
+  {
+   "key": "nativity_of_the_lord_vigil_mass",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Hodie scietis",
+   "source": "not in the table"
+  },
+  {
+   "key": "nativity_of_the_lord_vigil_mass",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Crastina die",
+   "source": "not in the table"
+  },
+  {
+   "key": "nativity_of_the_lord_vigil_mass",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Tollite portas",
+   "source": "not in the table"
+  },
+  {
+   "key": "nativity_of_the_lord_vigil_mass",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Revelabitur",
+   "source": "not in the table"
+  },
+  {
+   "key": "nativity_of_the_lord_mass_at_dawn",
+   "part": "introit",
+   "cycle": "",
+   "incipit": "Lux fulgebit",
+   "source": "not in the table"
+  },
+  {
+   "key": "nativity_of_the_lord_mass_at_dawn",
+   "part": "gradual",
+   "cycle": "",
+   "incipit": "Benedictus qui venit",
+   "source": "not in the table"
+  },
+  {
+   "key": "nativity_of_the_lord_mass_at_dawn",
+   "part": "alleluia",
+   "cycle": "",
+   "incipit": "Dominus regnavit, decorem",
+   "source": "not in the table"
+  },
+  {
+   "key": "nativity_of_the_lord_mass_at_dawn",
+   "part": "offertory",
+   "cycle": "",
+   "incipit": "Deus enim firmavit",
+   "source": "not in the table"
+  },
+  {
+   "key": "nativity_of_the_lord_mass_at_dawn",
+   "part": "communion",
+   "cycle": "",
+   "incipit": "Exsulta, filia Sion",
+   "source": "not in the table"
   }
  ]
 }

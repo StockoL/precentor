@@ -143,3 +143,16 @@ class OrdinaryFormChantTests(TestCase):
         lent_5 = LiturgicalOccasion(key="lent_5_sunday", calendar_use="current")
         self.assertEqual(proper_chants(lent_5, date(2026, 3, 22))["communion"], "Videns Dominus")  # Year A
         self.assertEqual(proper_chants(lent_5, date(2027, 3, 14))["communion"], "Qui mihi ministrat")  # Year B
+
+    def test_each_christmas_mass_has_its_own_chants(self):
+        load_propers()
+        introits = {
+            "nativity_of_the_lord_vigil_mass": "Hodie scietis",
+            "nativity_of_the_lord_mass_during_the_night": "Dominus dixit",
+            "nativity_of_the_lord_mass_at_dawn": "Lux fulgebit",
+            "nativity_of_the_lord": "Puer natus est nobis",
+        }
+        for key, introit in introits.items():
+            mass = LiturgicalOccasion(key=key, calendar_use="current")
+            with self.subTest(mass=key):
+                self.assertEqual(proper_chants(mass, date(2026, 12, 25))["introit"], introit)
