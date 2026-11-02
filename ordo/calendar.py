@@ -140,6 +140,9 @@ def resolve_year(year, calendar_use="current", national_calendar="general_roman"
         displaced = result.get(target, [])
         result[target] = [solemnity, *kept_alongside(solemnity, displaced, target, dates)]
 
+    # Occasions without a precedence follow in the order they were added:
+    # Christmas's Masses during the Night then at Dawn, as they're loaded,
+    # and a conductor's own in the order made.
     for day, entries in unranked.items():
-        result.setdefault(day, []).extend(entries)
+        result.setdefault(day, []).extend(sorted(entries, key=lambda occasion: occasion.pk or 0))
     return result

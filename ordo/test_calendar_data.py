@@ -22,16 +22,16 @@ class LoadingTests(TestCase):
             set(counts),
             {"general_roman", "england", "wales", "general_roman (1962)", "england (1962)", "wales (1962)"},
         )
-        self.assertEqual((counts["general_roman"].created, counts["general_roman"].updated), (223, 0))
+        self.assertEqual((counts["general_roman"].created, counts["general_roman"].updated), (226, 0))
         self.assertEqual(counts["general_roman (1962)"].created, 702)
-        self.assertEqual(LiturgicalOccasion.objects.filter(calendar_use="current", calendar="general_roman").count(), 223)
+        self.assertEqual(LiturgicalOccasion.objects.filter(calendar_use="current", calendar="general_roman").count(), 226)
 
     def test_loading_again_updates_and_adds_nothing(self):
         load_calendar_files()
         total = LiturgicalOccasion.objects.count()
         counts = load_calendar_files()
         self.assertEqual(LiturgicalOccasion.objects.count(), total)
-        self.assertEqual((counts["general_roman"].created, counts["general_roman"].updated), (0, 223))
+        self.assertEqual((counts["general_roman"].created, counts["general_roman"].updated), (0, 226))
         self.assertEqual(counts["general_roman"].removed, 0)
 
     def test_an_edited_row_is_restored_and_a_conductors_own_is_left_alone(self):
@@ -58,7 +58,7 @@ class LoadingTests(TestCase):
     def test_the_command_loads_the_files(self):
         out = StringIO()
         call_command("load_calendar", stdout=out)
-        self.assertIn("general_roman: 223 added, 0 updated", out.getvalue())
+        self.assertIn("general_roman: 226 added, 0 updated", out.getvalue())
 
 
 class RealCalendarTests(TestCase):
@@ -70,7 +70,14 @@ class RealCalendarTests(TestCase):
 
     def test_sundays_and_solemnities(self):
         self.assertEqual(names(date(2026, 2, 8)), ["Fifth Sunday in Ordinary Time"])
-        self.assertEqual(names(date(2026, 12, 25)), ["The Nativity of the Lord (Christmas)"])
+        # Christmas Day keeps its Mass during the Day, with the two other
+        # Masses of that date listed after it.
+        self.assertEqual(names(date(2026, 12, 25)), [
+            "The Nativity of the Lord: Mass during the Day",
+            "The Nativity of the Lord: Mass during the Night",
+            "The Nativity of the Lord: Mass at Dawn",
+        ])
+        self.assertEqual(names(date(2026, 12, 24))[-1], "The Nativity of the Lord: Vigil Mass")
 
     def test_corpus_christi_moves_to_the_sunday_in_england(self):
         self.assertEqual(names(date(2026, 6, 4)), ["The Most Holy Body and Blood of Christ"])

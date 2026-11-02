@@ -46,7 +46,22 @@ const SEASONS = {
 // the source; none changes a title.
 const NAME_CORRECTIONS = {
   commemoration_of_all_the_faithful_departed: "The Commemoration of All the Faithful Departed (All Souls’ Day)",
+  // Named for the Mass it is, beside the other three below.
+  nativity_of_the_lord: "The Nativity of the Lord: Mass during the Day",
 };
+
+// Christmas has four Masses, each with its own propers, but romcal has one
+// Nativity, which stands for the Mass during the Day. The other three are
+// added so a service can be the one it is. They have no precedence, so the
+// calendar lists them with the day's celebration and never in its place.
+const CHRISTMAS_MASSES = [
+  ["nativity_of_the_lord_vigil_mass", "The Nativity of the Lord: Vigil Mass", 24],
+  ["nativity_of_the_lord_mass_during_the_night", "The Nativity of the Lord: Mass during the Night", 25],
+  ["nativity_of_the_lord_mass_at_dawn", "The Nativity of the Lord: Mass at Dawn", 25],
+].map(([key, name, day]) => ({
+  key, name, rank: "solemnity", precedence: "", is_proper_of_time: false, shares_with_memorials: false,
+  fixed_month: 12, fixed_day: day, transfers: [], colour: "white", season: null,
+}));
 
 const snake = (name) => name.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
 const precedenceCode = (precedence) => precedence.match(/_(\d+[A-F]?)$/)[1].toLowerCase();
@@ -145,6 +160,7 @@ function writeReference(file, header, days) {
 
     const occasions = [];
     for (const def of wanted.sort((a, b) => a.id.localeCompare(b.id))) occasions.push(await occasion(romcal, def));
+    if (!isNational) occasions.push(...CHRISTMAS_MASSES);
     writeJson(path.join(OUT_DIR, `${calendar}.json`), {
       source: "romcal 3.0.0-dev.140 (https://github.com/romcal/romcal), copyright 2018 Julian Pereira, MIT licence",
       calendar,
