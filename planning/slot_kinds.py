@@ -96,3 +96,8 @@ def classify(name):
 # Kinds whose music is usually a number in a book or a chant, not a score
 # in the library, so the add-piece form offers a reference box first.
 REFERENCE_FIRST = {"hymn", "psalm", "antiphon", "responsory"}
+
+# Kinds a day can have several chants of, outside the Mass's propers:
+# Palm Sunday's antiphons, hymn and responsory, the Easter Vigil's
+# canticles. A slot of one of these kinds is offered the day's chants of it.
+MANY_CHANT_KINDS = {"antiphon", "responsory", "hymn", "canticle"}

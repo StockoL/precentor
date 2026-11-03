@@ -9,9 +9,10 @@ from precentor_project.testing import make_term
 from .models import RolePiece, Service, ServiceRole
 
 
-def chant(key, part, incipit, season=""):
+def chant(key, part, incipit, season="", position=0):
     ProperChant.objects.create(
-        occasion_key=key, calendar_use="historic", part=part, season=season, incipit=incipit, source="test"
+        occasion_key=key, calendar_use="historic", part=part, season=season, incipit=incipit, source="test",
+        position=position,
     )
 
 
@@ -39,26 +40,49 @@ class ProperSuggestionTests(ChantDayTestCase):
     """The day's chant offered on a Proper slot."""
 
     def test_a_proper_slot_is_offered_its_chant(self):
-        self.assertEqual(self.slot("Introit").proper_suggestion, "Gaudens gaudebo in Domino")
+        self.assertEqual(self.slot("Introit").proper_suggestions, ["Gaudens gaudebo in Domino"])
 
     def test_alleluia_or_tract_takes_whichever_the_date_has(self):
-        self.assertEqual(self.slot("Alleluia or Tract").proper_suggestion, "Tota pulchra es")
+        self.assertEqual(self.slot("Alleluia or Tract").proper_suggestions, ["Tota pulchra es"])
 
     def test_not_once_it_is_proposed(self):
         introit = self.slot("Introit")
         RolePiece.objects.create(service_role=introit, reference="Gaudens gaudebo in Domino")
-        self.assertIsNone(ServiceRole.objects.get(pk=introit.pk).proper_suggestion)
+        self.assertEqual(ServiceRole.objects.get(pk=introit.pk).proper_suggestions, [])
 
     def test_not_on_other_slots_or_without_data(self):
-        self.assertIsNone(self.slot("Kyrie").proper_suggestion)
-        self.assertIsNone(self.slot("Offertory").proper_suggestion)  # no Offertory loaded here
+        self.assertEqual(self.slot("Kyrie").proper_suggestions, [])
+        self.assertEqual(self.slot("Offertory").proper_suggestions, [])  # no Offertory loaded here
         # An Ordinary Form day sharing the key doesn't get the 1962 day's chants.
         self.service.occasion = LiturgicalOccasion.objects.create(
             name="Immaculate Conception", key="sancti:12-08", calendar_use="current"
         )
         self.service.save()
         service = Service.objects.get(pk=self.service.pk)
-        self.assertIsNone(ServiceRole.objects.create(service=service, role_name="Introit").proper_suggestion)
+        self.assertEqual(ServiceRole.objects.create(service=service, role_name="Introit").proper_suggestions, [])
+
+
+class SeveralChantsTests(ChantDayTestCase):
+    """A day with three antiphons, as Palm Sunday has: each Antiphon slot
+    is offered those no Antiphon slot has yet."""
+
+    def setUp(self):
+        super().setUp()
+        for position, incipit in enumerate(["Hosanna filio David", "Pueri portantes", "Pueri vestimenta"]):
+            chant("sancti:12-08", "antiphon", incipit, position=position)
+
+    def test_each_antiphon_slot_is_offered_what_the_others_havent_taken(self):
+        first = self.slot("Procession antiphon")
+        self.assertEqual(first.proper_suggestions, ["Hosanna filio David", "Pueri portantes", "Pueri vestimenta"])
+        RolePiece.objects.create(service_role=first, reference="Hosanna filio David")
+        second = ServiceRole.objects.get(pk=self.slot("Second antiphon").pk)
+        self.assertEqual(second.proper_suggestions, ["Pueri portantes", "Pueri vestimenta"])
+
+    def test_the_same_words_in_another_part_are_still_offered(self):
+        introit = self.slot("Introit")
+        RolePiece.objects.create(service_role=introit, reference="Tota pulchra es")  # the Alleluia's words
+        alleluia = ServiceRole.objects.get(pk=self.slot("Alleluia or Tract").pk)
+        self.assertEqual(alleluia.proper_suggestions, ["Tota pulchra es"])
 
 
 class ProposePageChantTests(ChantDayTestCase):
@@ -88,4 +112,4 @@ class SequenceSlotTests(TestCase):
         service = Service.objects.create(term=term, date=date(2027, 3, 28), service_type="Sung Mass", occasion=easter)
         slot = ServiceRole.objects.create(service=service, role_name="Sequence")
         self.assertEqual((slot.kind, slot.proper_part), ("proper", "sequence"))
-        self.assertEqual(slot.proper_suggestion, "Victimae paschali laudes")
+        self.assertEqual(slot.proper_suggestions, ["Victimae paschali laudes"])
