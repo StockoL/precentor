@@ -5,6 +5,7 @@
    "key": "advent_1_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Ad te levavi",
    "source": "First Sunday of Advent"
   },
@@ -12,6 +13,7 @@
    "key": "advent_1_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Universi, qui te exspectant",
    "source": "First Sunday of Advent"
   },
@@ -19,6 +21,7 @@
    "key": "advent_1_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Ostende nobis",
    "source": "First Sunday of Advent"
   },
@@ -26,6 +29,7 @@
    "key": "advent_1_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Ad te Domine levavi",
    "source": "First Sunday of Advent"
   },
@@ -33,6 +37,7 @@
    "key": "advent_1_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Dominus dabit benignitatem",
    "source": "First Sunday of Advent"
   },
@@ -40,6 +45,7 @@
    "key": "immaculate_conception_of_the_blessed_virgin_mary",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Gaudens gaudebo",
    "source": "Immaculate Conception"
   },
@@ -47,6 +53,7 @@
    "key": "immaculate_conception_of_the_blessed_virgin_mary",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedicta es tu",
    "source": "Immaculate Conception"
   },
@@ -54,6 +61,7 @@
    "key": "immaculate_conception_of_the_blessed_virgin_mary",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Tota pulchra es",
    "source": "Immaculate Conception"
   },
@@ -61,6 +69,7 @@
    "key": "immaculate_conception_of_the_blessed_virgin_mary",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Ave, Maria",
    "source": "Immaculate Conception"
   },
@@ -68,6 +77,7 @@
    "key": "immaculate_conception_of_the_blessed_virgin_mary",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Gloriosa",
    "source": "Immaculate Conception"
   },
@@ -75,6 +85,7 @@
    "key": "advent_2_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Populus Sion",
    "source": "Second Sunday of Advent"
   },
@@ -82,6 +93,7 @@
    "key": "advent_2_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Ex Sion",
    "source": "Second Sunday of Advent"
   },
@@ -89,6 +101,7 @@
    "key": "advent_2_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Laetatus sum",
    "source": "Second Sunday of Advent"
   },
@@ -96,6 +109,7 @@
    "key": "advent_2_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Deus, tu convertens",
    "source": "Second Sunday of Advent"
   },
@@ -103,6 +117,7 @@
    "key": "advent_2_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Ierusalem, surge",
    "source": "Second Sunday of Advent"
   },
@@ -110,6 +125,7 @@
    "key": "advent_3_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Gaudete in Domino",
    "source": "Third Sunday of Advent"
   },
@@ -117,6 +133,7 @@
    "key": "advent_3_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Qui sedes, Domine",
    "source": "Third Sunday of Advent"
   },
@@ -124,6 +141,7 @@
    "key": "advent_3_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Excita, Domine",
    "source": "Third Sunday of Advent"
   },
@@ -131,6 +149,7 @@
    "key": "advent_3_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedixisti, Domine",
    "source": "Third Sunday of Advent"
   },
@@ -138,6 +157,7 @@
    "key": "advent_3_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Dicite: Pusillanimes",
    "source": "Third Sunday of Advent"
   },
@@ -145,6 +165,7 @@
    "key": "advent_4_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Rorate caeli",
    "source": "Fourth Sunday of Advent"
   },
@@ -152,6 +173,7 @@
    "key": "advent_4_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Prope est Dominus",
    "source": "Fourth Sunday of Advent"
   },
@@ -159,6 +181,7 @@
    "key": "advent_4_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Veni, Domine",
    "source": "Fourth Sunday of Advent"
   },
@@ -166,6 +189,7 @@
    "key": "advent_4_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Ave Maria",
    "source": "Fourth Sunday of Advent"
   },
@@ -173,6 +197,7 @@
    "key": "advent_4_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Ecce virgo",
    "source": "Fourth Sunday of Advent"
   },
@@ -180,6 +205,7 @@
    "key": "nativity_of_the_lord_mass_during_the_night",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Dominus dixit",
    "source": "Nativity Mass at Midnight"
   },
@@ -187,6 +213,7 @@
    "key": "nativity_of_the_lord_mass_during_the_night",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Tecum principium",
    "source": "Nativity Mass at Midnight"
   },
@@ -194,6 +221,7 @@
    "key": "nativity_of_the_lord_mass_during_the_night",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Dominus dixit ad me",
    "source": "Nativity Mass at Midnight"
   },
@@ -201,6 +229,7 @@
    "key": "nativity_of_the_lord_mass_during_the_night",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Laetentur caeli",
    "source": "Nativity Mass at Midnight"
   },
@@ -208,6 +237,7 @@
    "key": "nativity_of_the_lord_mass_during_the_night",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "In splendoribus",
    "source": "Nativity Mass at Midnight"
   },
@@ -215,6 +245,7 @@
    "key": "nativity_of_the_lord",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Puer natus est nobis",
    "source": "Nativity Mass at Day"
   },
@@ -222,6 +253,7 @@
    "key": "nativity_of_the_lord",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Viderunt omnes",
    "source": "Nativity Mass at Day"
   },
@@ -229,6 +261,7 @@
    "key": "nativity_of_the_lord",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Dies sanctificatus",
    "source": "Nativity Mass at Day"
   },
@@ -236,6 +269,7 @@
    "key": "nativity_of_the_lord",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Tui sunt caeli",
    "source": "Nativity Mass at Day"
   },
@@ -243,6 +277,7 @@
    "key": "nativity_of_the_lord",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Viderunt omnes",
    "source": "Nativity Mass at Day"
   },
@@ -250,6 +285,7 @@
    "key": "holy_family_of_jesus_mary_and_joseph",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Deus in loco sancto tuo",
    "source": "Holy Family"
   },
@@ -257,6 +293,7 @@
    "key": "holy_family_of_jesus_mary_and_joseph",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Unam petii",
    "source": "Holy Family"
   },
@@ -264,6 +301,7 @@
    "key": "holy_family_of_jesus_mary_and_joseph",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Gaudete, iusti",
    "source": "Holy Family"
   },
@@ -271,6 +309,7 @@
    "key": "holy_family_of_jesus_mary_and_joseph",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "In te speravi",
    "source": "Holy Family"
   },
@@ -278,6 +317,7 @@
    "key": "holy_family_of_jesus_mary_and_joseph",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Fili, quid fecisti",
    "source": "Holy Family"
   },
@@ -285,6 +325,7 @@
    "key": "holy_family_of_jesus_mary_and_joseph",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Tolle puerum",
    "source": "Holy Family"
   },
@@ -292,6 +333,7 @@
    "key": "mary_mother_of_god",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Salve, sancta Parens",
    "source": "Blessed Virgin Mary"
   },
@@ -299,6 +341,7 @@
    "key": "mary_mother_of_god",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Diffusa est gratia",
    "source": "Blessed Virgin Mary"
   },
@@ -306,6 +349,7 @@
    "key": "mary_mother_of_god",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Post partum, Virgo",
    "source": "Blessed Virgin Mary"
   },
@@ -313,6 +357,7 @@
    "key": "mary_mother_of_god",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Felix namque es",
    "source": "Blessed Virgin Mary"
   },
@@ -320,6 +365,7 @@
    "key": "mary_mother_of_god",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Exsulta, filia Sion",
    "source": "Blessed Virgin Mary"
   },
@@ -327,6 +373,7 @@
    "key": "epiphany_of_the_lord",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Ecce advenit",
    "source": "Epiphany"
   },
@@ -334,6 +381,7 @@
    "key": "epiphany_of_the_lord",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Omnes de Saba venient",
    "source": "Epiphany"
   },
@@ -341,6 +389,7 @@
    "key": "epiphany_of_the_lord",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Vidimus stellam",
    "source": "Epiphany"
   },
@@ -348,6 +397,7 @@
    "key": "epiphany_of_the_lord",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Reges Tharsis",
    "source": "Epiphany"
   },
@@ -355,6 +405,7 @@
    "key": "epiphany_of_the_lord",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Vidimus stellam",
    "source": "Epiphany"
   },
@@ -362,6 +413,7 @@
    "key": "baptism_of_the_lord",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Dilexisti",
    "source": "Baptism of the Lord"
   },
@@ -369,6 +421,7 @@
    "key": "baptism_of_the_lord",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedictus Dominus Deus",
    "source": "Baptism of the Lord"
   },
@@ -376,6 +429,7 @@
    "key": "baptism_of_the_lord",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedictus qui venit",
    "source": "Baptism of the Lord"
   },
@@ -383,6 +437,7 @@
    "key": "baptism_of_the_lord",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedictus qui venit",
    "source": "Baptism of the Lord"
   },
@@ -390,6 +445,7 @@
    "key": "baptism_of_the_lord",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Omnes qui in Christo baptizati estis",
    "source": "Baptism of the Lord"
   },
@@ -397,6 +453,7 @@
    "key": "ordinary_time_2_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Omnis terra",
    "source": "Second Sunday"
   },
@@ -404,6 +461,7 @@
    "key": "ordinary_time_2_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Misit Dominus",
    "source": "Second Sunday"
   },
@@ -411,6 +469,7 @@
    "key": "ordinary_time_2_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Laudate Deum",
    "source": "Second Sunday"
   },
@@ -418,6 +477,7 @@
    "key": "ordinary_time_2_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Iubilate Deo, universa terra",
    "source": "Second Sunday"
   },
@@ -425,6 +485,7 @@
    "key": "ordinary_time_2_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Laetabimur",
    "source": "Second Sunday"
   },
@@ -432,6 +493,7 @@
    "key": "ordinary_time_2_sunday",
    "part": "communion",
    "cycle": "B",
+   "position": 0,
    "incipit": "Dicit Andreas",
    "source": "Second Sunday"
   },
@@ -439,6 +501,7 @@
    "key": "ordinary_time_2_sunday",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Dicit Dominus: Implete hydrias",
    "source": "Second Sunday"
   },
@@ -446,6 +509,7 @@
    "key": "sunday_of_the_word_of_god",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Dominus secus mare",
    "source": "Third Sunday"
   },
@@ -453,6 +517,7 @@
    "key": "sunday_of_the_word_of_god",
    "part": "introit",
    "cycle": "C",
+   "position": 0,
    "incipit": "Adorate Deum",
    "source": "Third Sunday"
   },
@@ -460,6 +525,7 @@
    "key": "sunday_of_the_word_of_god",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Timebunt gentes",
    "source": "Third Sunday"
   },
@@ -467,6 +533,7 @@
    "key": "sunday_of_the_word_of_god",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Dominus regnavit, exsultet",
    "source": "Third Sunday"
   },
@@ -474,6 +541,7 @@
    "key": "sunday_of_the_word_of_god",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Dextera Domini",
    "source": "Third Sunday"
   },
@@ -481,6 +549,7 @@
    "key": "sunday_of_the_word_of_god",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Venite post me",
    "source": "Third Sunday"
   },
@@ -488,13 +557,55 @@
    "key": "sunday_of_the_word_of_god",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Comedite pinguia",
    "source": "Third Sunday"
   },
   {
    "key": "presentation_of_the_lord",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Ecce Dominus noster",
+   "source": "Presentation of the Lord"
+  },
+  {
+   "key": "presentation_of_the_lord",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 1,
+   "incipit": "Lumen ad revelationem gentium",
+   "source": "Presentation of the Lord"
+  },
+  {
+   "key": "presentation_of_the_lord",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 2,
+   "incipit": "Adorna",
+   "source": "Presentation of the Lord"
+  },
+  {
+   "key": "presentation_of_the_lord",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 3,
+   "incipit": "Responsum accepit",
+   "source": "Presentation of the Lord"
+  },
+  {
+   "key": "presentation_of_the_lord",
+   "part": "responsory",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Obtulerunt",
+   "source": "Presentation of the Lord"
+  },
+  {
+   "key": "presentation_of_the_lord",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Suscepimus",
    "source": "Presentation of the Lord"
   },
@@ -502,6 +613,7 @@
    "key": "presentation_of_the_lord",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Suscepimus",
    "source": "Presentation of the Lord"
   },
@@ -509,6 +621,7 @@
    "key": "presentation_of_the_lord",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Senex puerum portabat",
    "source": "Presentation of the Lord"
   },
@@ -516,6 +629,7 @@
    "key": "presentation_of_the_lord",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Diffusa est gratia",
    "source": "Presentation of the Lord"
   },
@@ -523,6 +637,7 @@
    "key": "presentation_of_the_lord",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Responsum",
    "source": "Presentation of the Lord"
   },
@@ -530,6 +645,7 @@
    "key": "ordinary_time_4_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Laetetur cor",
    "source": "Fourth Sunday"
   },
@@ -537,6 +653,7 @@
    "key": "ordinary_time_4_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Quis sicut Dominus",
    "source": "Fourth Sunday"
   },
@@ -544,6 +661,7 @@
    "key": "ordinary_time_4_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Adorabo",
    "source": "Fourth Sunday"
   },
@@ -551,6 +669,7 @@
    "key": "ordinary_time_4_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Bonum est confiteri",
    "source": "Fourth Sunday"
   },
@@ -558,6 +677,7 @@
    "key": "ordinary_time_4_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Illumina faciem tuam",
    "source": "Fourth Sunday"
   },
@@ -565,6 +685,7 @@
    "key": "ordinary_time_4_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Beati mundo corde",
    "source": "Fourth Sunday"
   },
@@ -572,6 +693,7 @@
    "key": "ordinary_time_5_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Venite, adoremus",
    "source": "Fifth Sunday"
   },
@@ -579,6 +701,7 @@
    "key": "ordinary_time_5_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Tollite hostias",
    "source": "Fifth Sunday"
   },
@@ -586,6 +709,7 @@
    "key": "ordinary_time_5_sunday",
    "part": "gradual",
    "cycle": "A",
+   "position": 0,
    "incipit": "Dispersit",
    "source": "Fifth Sunday"
   },
@@ -593,6 +717,7 @@
    "key": "ordinary_time_5_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Laudate Dominum",
    "source": "Fifth Sunday"
   },
@@ -600,6 +725,7 @@
    "key": "ordinary_time_5_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Perfice gressus meos",
    "source": "Fifth Sunday"
   },
@@ -607,6 +733,7 @@
    "key": "ordinary_time_5_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Introibo",
    "source": "Fifth Sunday"
   },
@@ -614,6 +741,7 @@
    "key": "ordinary_time_5_sunday",
    "part": "communion",
    "cycle": "B",
+   "position": 0,
    "incipit": "Multitudo languentium",
    "source": "Fifth Sunday"
   },
@@ -621,6 +749,7 @@
    "key": "ordinary_time_6_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Esto mihi",
    "source": "Sixth Sunday"
   },
@@ -628,6 +757,7 @@
    "key": "ordinary_time_6_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Tu es Deus",
    "source": "Sixth Sunday"
   },
@@ -635,6 +765,7 @@
    "key": "ordinary_time_6_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Cantate Domino",
    "source": "Sixth Sunday"
   },
@@ -642,6 +773,7 @@
    "key": "ordinary_time_6_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedictus es Domine",
    "source": "Sixth Sunday"
   },
@@ -649,6 +781,7 @@
    "key": "ordinary_time_6_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Manducaverunt",
    "source": "Sixth Sunday"
   },
@@ -656,6 +789,7 @@
    "key": "ordinary_time_7_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine, in tua misericordia",
    "source": "Seventh Sunday"
   },
@@ -663,6 +797,7 @@
    "key": "ordinary_time_7_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Ego dixi: Domine",
    "source": "Seventh Sunday"
   },
@@ -670,6 +805,7 @@
    "key": "ordinary_time_7_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Verba mea",
    "source": "Seventh Sunday"
   },
@@ -677,6 +813,7 @@
    "key": "ordinary_time_7_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Intende voci",
    "source": "Seventh Sunday"
   },
@@ -684,6 +821,7 @@
    "key": "ordinary_time_7_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Narrabo",
    "source": "Seventh Sunday"
   },
@@ -691,6 +829,7 @@
    "key": "ordinary_time_8_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Factus est Dominus",
    "source": "Eighth Sunday"
   },
@@ -698,6 +837,7 @@
    "key": "ordinary_time_8_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Ad Dominum",
    "source": "Eighth Sunday"
   },
@@ -705,6 +845,7 @@
    "key": "ordinary_time_8_sunday",
    "part": "gradual",
    "cycle": "C",
+   "position": 0,
    "incipit": "Bonum est confiteri",
    "source": "Eighth Sunday"
   },
@@ -712,6 +853,7 @@
    "key": "ordinary_time_8_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine Deus meus",
    "source": "Eighth Sunday"
   },
@@ -719,6 +861,7 @@
    "key": "ordinary_time_8_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine, convertere",
    "source": "Eighth Sunday"
   },
@@ -726,6 +869,7 @@
    "key": "ordinary_time_8_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Cantabo Domino",
    "source": "Eighth Sunday"
   },
@@ -733,6 +877,7 @@
    "key": "ash_wednesday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Misereris omnium",
    "source": "Ash Wednesday"
   },
@@ -740,6 +885,7 @@
    "key": "ash_wednesday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Miserere mei Deus",
    "source": "Ash Wednesday"
   },
@@ -747,13 +893,39 @@
    "key": "ash_wednesday",
    "part": "tract",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine, non secundum peccata nostra",
+   "source": "Ash Wednesday"
+  },
+  {
+   "key": "ash_wednesday",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Immutemur habitu",
+   "source": "Ash Wednesday"
+  },
+  {
+   "key": "ash_wednesday",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 1,
+   "incipit": "Iuxta vestibulum",
+   "source": "Ash Wednesday"
+  },
+  {
+   "key": "ash_wednesday",
+   "part": "responsory",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Emendemus in melius",
    "source": "Ash Wednesday"
   },
   {
    "key": "ash_wednesday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Exaltabo te",
    "source": "Ash Wednesday"
   },
@@ -761,6 +933,7 @@
    "key": "ash_wednesday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Qui meditabitur",
    "source": "Ash Wednesday"
   },
@@ -768,6 +941,7 @@
    "key": "lent_1_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Invocabit me",
    "source": "First Sunday in Lent"
   },
@@ -775,6 +949,7 @@
    "key": "lent_1_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Angelis suis",
    "source": "First Sunday in Lent"
   },
@@ -782,6 +957,7 @@
    "key": "lent_1_sunday",
    "part": "tract",
    "cycle": "",
+   "position": 0,
    "incipit": "Qui habitat",
    "source": "First Sunday in Lent"
   },
@@ -789,6 +965,7 @@
    "key": "lent_1_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Scapulis suis",
    "source": "First Sunday in Lent"
   },
@@ -796,6 +973,7 @@
    "key": "lent_1_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Scapulis suis",
    "source": "First Sunday in Lent"
   },
@@ -803,6 +981,7 @@
    "key": "lent_2_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Tibi dixit cor meum",
    "source": "Second Sunday in Lent"
   },
@@ -810,6 +989,7 @@
    "key": "lent_2_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Sciant gentes",
    "source": "Second Sunday in Lent"
   },
@@ -817,6 +997,7 @@
    "key": "lent_2_sunday",
    "part": "tract",
    "cycle": "",
+   "position": 0,
    "incipit": "Commovisti",
    "source": "Second Sunday in Lent"
   },
@@ -824,6 +1005,7 @@
    "key": "lent_2_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Meditabor",
    "source": "Second Sunday in Lent"
   },
@@ -831,6 +1013,7 @@
    "key": "lent_2_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Visionem",
    "source": "Second Sunday in Lent"
   },
@@ -838,6 +1021,7 @@
    "key": "lent_3_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Oculi mei",
    "source": "Third Sunday in Lent"
   },
@@ -845,6 +1029,7 @@
    "key": "lent_3_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Exsurge Domine",
    "source": "Third Sunday in Lent"
   },
@@ -852,6 +1037,7 @@
    "key": "lent_3_sunday",
    "part": "tract",
    "cycle": "",
+   "position": 0,
    "incipit": "Ad te levavi",
    "source": "Third Sunday in Lent"
   },
@@ -859,6 +1045,7 @@
    "key": "lent_3_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Iustitiae Domini",
    "source": "Third Sunday in Lent"
   },
@@ -866,6 +1053,7 @@
    "key": "lent_3_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Qui biberit aquam",
    "source": "Third Sunday in Lent"
   },
@@ -873,6 +1061,7 @@
    "key": "annunciation_of_the_lord",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Rorate caeli",
    "source": "Annunciation of the Lord"
   },
@@ -880,6 +1069,7 @@
    "key": "annunciation_of_the_lord",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Tollite portas",
    "source": "Annunciation of the Lord"
   },
@@ -887,6 +1077,7 @@
    "key": "annunciation_of_the_lord",
    "part": "tract",
    "cycle": "",
+   "position": 0,
    "incipit": "Audi, filia",
    "source": "Annunciation of the Lord"
   },
@@ -894,6 +1085,7 @@
    "key": "annunciation_of_the_lord",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Ave Maria",
    "source": "Annunciation of the Lord"
   },
@@ -901,6 +1093,7 @@
    "key": "annunciation_of_the_lord",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Ecce virgo",
    "source": "Annunciation of the Lord"
   },
@@ -908,6 +1101,7 @@
    "key": "lent_4_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Laetare Ierusalem",
    "source": "Fourth Sunday in Lent"
   },
@@ -915,6 +1109,7 @@
    "key": "lent_4_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Laetatus sum",
    "source": "Fourth Sunday in Lent"
   },
@@ -922,6 +1117,7 @@
    "key": "lent_4_sunday",
    "part": "tract",
    "cycle": "",
+   "position": 0,
    "incipit": "Qui confidunt",
    "source": "Fourth Sunday in Lent"
   },
@@ -929,6 +1125,7 @@
    "key": "lent_4_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Laudate Dominum",
    "source": "Fourth Sunday in Lent"
   },
@@ -936,6 +1133,7 @@
    "key": "lent_4_sunday",
    "part": "offertory",
    "cycle": "C",
+   "position": 0,
    "incipit": "Illumina oculos meos",
    "source": "Fourth Sunday in Lent"
   },
@@ -943,6 +1141,7 @@
    "key": "lent_4_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Ierusalem quae aedificatur",
    "source": "Fourth Sunday in Lent"
   },
@@ -950,6 +1149,7 @@
    "key": "lent_4_sunday",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Oportet te",
    "source": "Fourth Sunday in Lent"
   },
@@ -957,6 +1157,7 @@
    "key": "lent_5_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Iudica me, Deus",
    "source": "Fifth Sunday in Lent"
   },
@@ -964,6 +1165,7 @@
    "key": "lent_5_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Eripe me, Domine",
    "source": "Fifth Sunday in Lent"
   },
@@ -971,6 +1173,7 @@
    "key": "lent_5_sunday",
    "part": "tract",
    "cycle": "",
+   "position": 0,
    "incipit": "Saepe expugnaverunt",
    "source": "Fifth Sunday in Lent"
   },
@@ -978,6 +1181,7 @@
    "key": "lent_5_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Confitebor tibi, Domine",
    "source": "Fifth Sunday in Lent"
   },
@@ -985,6 +1189,7 @@
    "key": "lent_5_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Videns Dominus",
    "source": "Fifth Sunday in Lent"
   },
@@ -992,13 +1197,55 @@
    "key": "lent_5_sunday",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Nemo te condemnavit",
    "source": "Fifth Sunday in Lent"
   },
   {
    "key": "palm_sunday_of_the_passion_of_the_lord",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Hosanna filio David",
+   "source": "Palm Sunday"
+  },
+  {
+   "key": "palm_sunday_of_the_passion_of_the_lord",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 1,
+   "incipit": "Pueri Hebraeorum, portantes",
+   "source": "Palm Sunday"
+  },
+  {
+   "key": "palm_sunday_of_the_passion_of_the_lord",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 2,
+   "incipit": "Pueri Hebraeorum, vestimenta",
+   "source": "Palm Sunday"
+  },
+  {
+   "key": "palm_sunday_of_the_passion_of_the_lord",
+   "part": "hymn",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Gloria, laus, et honor",
+   "source": "Palm Sunday"
+  },
+  {
+   "key": "palm_sunday_of_the_passion_of_the_lord",
+   "part": "responsory",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Ingrediente Domino",
+   "source": "Palm Sunday"
+  },
+  {
+   "key": "palm_sunday_of_the_passion_of_the_lord",
    "part": "tract",
    "cycle": "",
+   "position": 0,
    "incipit": "Deus, Deus meus",
    "source": "Palm Sunday"
   },
@@ -1006,6 +1253,7 @@
    "key": "palm_sunday_of_the_passion_of_the_lord",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Christus factus est",
    "source": "Palm Sunday"
   },
@@ -1013,6 +1261,7 @@
    "key": "palm_sunday_of_the_passion_of_the_lord",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Improperium exspectavit",
    "source": "Palm Sunday"
   },
@@ -1020,6 +1269,7 @@
    "key": "palm_sunday_of_the_passion_of_the_lord",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Pater, si non potest",
    "source": "Palm Sunday"
   },
@@ -1027,6 +1277,7 @@
    "key": "thursday_of_the_lords_supper",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Nos autem gloriari",
    "source": "Maundy Thursday"
   },
@@ -1034,6 +1285,7 @@
    "key": "thursday_of_the_lords_supper",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Oculi omnium",
    "source": "Maundy Thursday"
   },
@@ -1041,13 +1293,71 @@
    "key": "thursday_of_the_lords_supper",
    "part": "tract",
    "cycle": "",
+   "position": 0,
    "incipit": "Ab ortu solis",
+   "source": "Maundy Thursday"
+  },
+  {
+   "key": "thursday_of_the_lords_supper",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Postquam surrexit Dominus",
+   "source": "Maundy Thursday"
+  },
+  {
+   "key": "thursday_of_the_lords_supper",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 1,
+   "incipit": "Dominus Iesus",
+   "source": "Maundy Thursday"
+  },
+  {
+   "key": "thursday_of_the_lords_supper",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 2,
+   "incipit": "Domine, tu mihi",
+   "source": "Maundy Thursday"
+  },
+  {
+   "key": "thursday_of_the_lords_supper",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 3,
+   "incipit": "Si ego Dominus",
+   "source": "Maundy Thursday"
+  },
+  {
+   "key": "thursday_of_the_lords_supper",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 4,
+   "incipit": "In hoc cognoscent omnes",
+   "source": "Maundy Thursday"
+  },
+  {
+   "key": "thursday_of_the_lords_supper",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 5,
+   "incipit": "Mandatum novum",
+   "source": "Maundy Thursday"
+  },
+  {
+   "key": "thursday_of_the_lords_supper",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 6,
+   "incipit": "Maneant in vobis",
    "source": "Maundy Thursday"
   },
   {
    "key": "thursday_of_the_lords_supper",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Ubi caritas est vera",
    "source": "Maundy Thursday"
   },
@@ -1055,13 +1365,159 @@
    "key": "thursday_of_the_lords_supper",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Hoc corpus",
    "source": "Maundy Thursday"
+  },
+  {
+   "key": "thursday_of_the_lords_supper",
+   "part": "hymn",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Pange lingua gloriosi",
+   "source": "Maundy Thursday"
+  },
+  {
+   "key": "friday_of_the_passion_of_the_lord",
+   "part": "tract",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Domine, exaudi",
+   "source": "Good Friday"
+  },
+  {
+   "key": "friday_of_the_passion_of_the_lord",
+   "part": "gradual",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Christus factus est",
+   "source": "Good Friday"
+  },
+  {
+   "key": "friday_of_the_passion_of_the_lord",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Ecce lignum Crucis",
+   "source": "Good Friday"
+  },
+  {
+   "key": "friday_of_the_passion_of_the_lord",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 1,
+   "incipit": "Crucem tuam",
+   "source": "Good Friday"
+  },
+  {
+   "key": "friday_of_the_passion_of_the_lord",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 2,
+   "incipit": "Popule meus",
+   "source": "Good Friday"
+  },
+  {
+   "key": "friday_of_the_passion_of_the_lord",
+   "part": "hymn",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Crux fidelis",
+   "source": "Good Friday"
+  },
+  {
+   "key": "holy_saturday",
+   "part": "tract",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Iubilate Domino",
+   "source": "Easter Vigil"
+  },
+  {
+   "key": "holy_saturday",
+   "part": "tract",
+   "cycle": "",
+   "position": 1,
+   "incipit": "Qui confidunt",
+   "source": "Easter Vigil"
+  },
+  {
+   "key": "holy_saturday",
+   "part": "canticle",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Cantemus Domino",
+   "source": "Easter Vigil"
+  },
+  {
+   "key": "holy_saturday",
+   "part": "canticle",
+   "cycle": "",
+   "position": 1,
+   "incipit": "Laudate Dominum",
+   "source": "Easter Vigil"
+  },
+  {
+   "key": "holy_saturday",
+   "part": "canticle",
+   "cycle": "",
+   "position": 2,
+   "incipit": "Vinea facta est",
+   "source": "Easter Vigil"
+  },
+  {
+   "key": "holy_saturday",
+   "part": "canticle",
+   "cycle": "",
+   "position": 3,
+   "incipit": "Attende caelum",
+   "source": "Easter Vigil"
+  },
+  {
+   "key": "holy_saturday",
+   "part": "canticle",
+   "cycle": "",
+   "position": 4,
+   "incipit": "Sicut cervus",
+   "source": "Easter Vigil"
+  },
+  {
+   "key": "holy_saturday",
+   "part": "alleluia",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Confitemini Domino",
+   "source": "Easter Vigil"
+  },
+  {
+   "key": "holy_saturday",
+   "part": "antiphon",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Vidi aquam",
+   "source": "Easter Vigil"
+  },
+  {
+   "key": "holy_saturday",
+   "part": "offertory",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Dextera Domini",
+   "source": "Easter Vigil"
+  },
+  {
+   "key": "holy_saturday",
+   "part": "communion",
+   "cycle": "",
+   "position": 0,
+   "incipit": "Pascha nostrum",
+   "source": "Easter Vigil"
   },
   {
    "key": "easter_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Resurrexi",
    "source": "Easter Sunday"
   },
@@ -1069,6 +1525,7 @@
    "key": "easter_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Haec dies",
    "source": "Easter Sunday"
   },
@@ -1076,6 +1533,7 @@
    "key": "easter_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Pascha nostrum",
    "source": "Easter Sunday"
   },
@@ -1083,6 +1541,7 @@
    "key": "easter_sunday",
    "part": "sequence",
    "cycle": "",
+   "position": 0,
    "incipit": "Victimae paschali laudes",
    "source": "Easter Sunday"
   },
@@ -1090,6 +1549,7 @@
    "key": "easter_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Terra tremuit",
    "source": "Easter Sunday"
   },
@@ -1097,6 +1557,7 @@
    "key": "easter_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Pascha nostrum",
    "source": "Easter Sunday"
   },
@@ -1104,6 +1565,7 @@
    "key": "divine_mercy_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Quasi modo",
    "source": "Second Sunday of Easter"
   },
@@ -1111,6 +1573,7 @@
    "key": "divine_mercy_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "In die resurrectionis",
    "source": "Second Sunday of Easter"
   },
@@ -1118,6 +1581,7 @@
    "key": "divine_mercy_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Post dies octo",
    "source": "Second Sunday of Easter"
   },
@@ -1125,6 +1589,7 @@
    "key": "divine_mercy_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Angelus Domini",
    "source": "Second Sunday of Easter"
   },
@@ -1132,6 +1597,7 @@
    "key": "divine_mercy_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Mitte manum tuam, et cognosce",
    "source": "Second Sunday of Easter"
   },
@@ -1139,6 +1605,7 @@
    "key": "easter_time_3_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Iubilate Deo",
    "source": "Third Sunday of Easter"
   },
@@ -1146,6 +1613,7 @@
    "key": "easter_time_3_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Cognoverunt discipuli",
    "source": "Third Sunday of Easter"
   },
@@ -1153,6 +1621,7 @@
    "key": "easter_time_3_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Oportebat",
    "source": "Third Sunday of Easter"
   },
@@ -1160,6 +1629,7 @@
    "key": "easter_time_3_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Lauda, anima mea",
    "source": "Third Sunday of Easter"
   },
@@ -1167,6 +1637,7 @@
    "key": "easter_time_3_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Surrexit Dominus",
    "source": "Third Sunday of Easter"
   },
@@ -1174,6 +1645,7 @@
    "key": "easter_time_3_sunday",
    "part": "communion",
    "cycle": "B",
+   "position": 0,
    "incipit": "Cantate Domino",
    "source": "Third Sunday of Easter"
   },
@@ -1181,6 +1653,7 @@
    "key": "easter_time_3_sunday",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Simon Ioannis",
    "source": "Third Sunday of Easter"
   },
@@ -1188,6 +1661,7 @@
    "key": "easter_time_4_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Misericordia Domini",
    "source": "Fourth Sunday of Easter"
   },
@@ -1195,6 +1669,7 @@
    "key": "easter_time_4_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Redemptionem",
    "source": "Fourth Sunday of Easter"
   },
@@ -1202,6 +1677,7 @@
    "key": "easter_time_4_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Ego sum pastor bonus",
    "source": "Fourth Sunday of Easter"
   },
@@ -1209,6 +1685,7 @@
    "key": "easter_time_4_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Deus, Deus meus",
    "source": "Fourth Sunday of Easter"
   },
@@ -1216,6 +1693,7 @@
    "key": "easter_time_4_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Ego sum pastor bonus",
    "source": "Fourth Sunday of Easter"
   },
@@ -1223,6 +1701,7 @@
    "key": "easter_time_5_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Cantate Domino",
    "source": "Fifth Sunday of Easter"
   },
@@ -1230,6 +1709,7 @@
    "key": "easter_time_5_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Dextera Dei",
    "source": "Fifth Sunday of Easter"
   },
@@ -1237,6 +1717,7 @@
    "key": "easter_time_5_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Christus resurgens",
    "source": "Fifth Sunday of Easter"
   },
@@ -1244,6 +1725,7 @@
    "key": "easter_time_5_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Iubilate Deo universa terra",
    "source": "Fifth Sunday of Easter"
   },
@@ -1251,6 +1733,7 @@
    "key": "easter_time_5_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Ego sum pastor",
    "source": "Fifth Sunday of Easter"
   },
@@ -1258,6 +1741,7 @@
    "key": "easter_time_5_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Tanto tempore",
    "source": "Fifth Sunday of Easter"
   },
@@ -1265,6 +1749,7 @@
    "key": "easter_time_6_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Vocem iucunditatis",
    "source": "Sixth Sunday of Easter"
   },
@@ -1272,6 +1757,7 @@
    "key": "easter_time_6_sunday",
    "part": "gradual",
    "cycle": "A",
+   "position": 0,
    "incipit": "Surrexit Christus, et illuxit",
    "source": "Sixth Sunday of Easter"
   },
@@ -1279,6 +1765,7 @@
    "key": "easter_time_6_sunday",
    "part": "alleluia",
    "cycle": "A",
+   "position": 0,
    "incipit": "Non vos relinquam",
    "source": "Sixth Sunday of Easter"
   },
@@ -1286,6 +1773,7 @@
    "key": "easter_time_6_sunday",
    "part": "gradual",
    "cycle": "B",
+   "position": 0,
    "incipit": "Exivi a Patre",
    "source": "Sixth Sunday of Easter"
   },
@@ -1293,6 +1781,7 @@
    "key": "easter_time_6_sunday",
    "part": "alleluia",
    "cycle": "B",
+   "position": 0,
    "incipit": "Ego vos elegi",
    "source": "Sixth Sunday of Easter"
   },
@@ -1300,6 +1789,7 @@
    "key": "easter_time_6_sunday",
    "part": "gradual",
    "cycle": "C",
+   "position": 0,
    "incipit": "Surrexit",
    "source": "Sixth Sunday of Easter"
   },
@@ -1307,6 +1797,7 @@
    "key": "easter_time_6_sunday",
    "part": "alleluia",
    "cycle": "C",
+   "position": 0,
    "incipit": "Spiritus sanctus docebit",
    "source": "Sixth Sunday of Easter"
   },
@@ -1314,6 +1805,7 @@
    "key": "easter_time_6_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedicite, gentes",
    "source": "Sixth Sunday of Easter"
   },
@@ -1321,6 +1813,7 @@
    "key": "easter_time_6_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Non vos relinquam orphanos",
    "source": "Sixth Sunday of Easter"
   },
@@ -1328,6 +1821,7 @@
    "key": "easter_time_6_sunday",
    "part": "communion",
    "cycle": "B",
+   "position": 0,
    "incipit": "Ego vos elegi",
    "source": "Sixth Sunday of Easter"
   },
@@ -1335,6 +1829,7 @@
    "key": "easter_time_6_sunday",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Spiritus Sanctus docebit vos",
    "source": "Sixth Sunday of Easter"
   },
@@ -1342,6 +1837,7 @@
    "key": "ascension_of_the_lord",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Viri Galilaei",
    "source": "Ascension of the Lord"
   },
@@ -1349,6 +1845,7 @@
    "key": "ascension_of_the_lord",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Ascendit Deus",
    "source": "Ascension of the Lord"
   },
@@ -1356,6 +1853,7 @@
    "key": "ascension_of_the_lord",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Dominus in Sina",
    "source": "Ascension of the Lord"
   },
@@ -1363,6 +1861,7 @@
    "key": "ascension_of_the_lord",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Ascendit Deus",
    "source": "Ascension of the Lord"
   },
@@ -1370,6 +1869,7 @@
    "key": "ascension_of_the_lord",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Data est mihi",
    "source": "Ascension of the Lord"
   },
@@ -1377,6 +1877,7 @@
    "key": "ascension_of_the_lord",
    "part": "communion",
    "cycle": "B",
+   "position": 0,
    "incipit": "Signa",
    "source": "Ascension of the Lord"
   },
@@ -1384,6 +1885,7 @@
    "key": "ascension_of_the_lord",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Psallite Domino",
    "source": "Ascension of the Lord"
   },
@@ -1391,6 +1893,7 @@
    "key": "easter_time_7_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Exaudi, Domine",
    "source": "Seventh Sunday of Easter"
   },
@@ -1398,6 +1901,7 @@
    "key": "easter_time_7_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Regnavit Dominus",
    "source": "Seventh Sunday of Easter"
   },
@@ -1405,6 +1909,7 @@
    "key": "easter_time_7_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Non vos relinquam",
    "source": "Seventh Sunday of Easter"
   },
@@ -1412,6 +1917,7 @@
    "key": "easter_time_7_sunday",
    "part": "alleluia",
    "cycle": "A",
+   "position": 0,
    "incipit": "Exivi a Patre",
    "source": "Seventh Sunday of Easter"
   },
@@ -1419,6 +1925,7 @@
    "key": "easter_time_7_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Ascendit Deus",
    "source": "Seventh Sunday of Easter"
   },
@@ -1426,6 +1933,7 @@
    "key": "easter_time_7_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Pater, cum essem",
    "source": "Seventh Sunday of Easter"
   },
@@ -1433,6 +1941,7 @@
    "key": "pentecost_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Spiritus Domini",
    "source": "Pentecost"
   },
@@ -1440,6 +1949,7 @@
    "key": "pentecost_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Emitte Spiritum tuum",
    "source": "Pentecost"
   },
@@ -1447,6 +1957,7 @@
    "key": "pentecost_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Veni, Sancte Spiritus",
    "source": "Pentecost"
   },
@@ -1454,6 +1965,7 @@
    "key": "pentecost_sunday",
    "part": "sequence",
    "cycle": "",
+   "position": 0,
    "incipit": "Veni, Sancte Spiritus",
    "source": "Pentecost"
   },
@@ -1461,6 +1973,7 @@
    "key": "pentecost_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Confirma hoc, Deus",
    "source": "Pentecost"
   },
@@ -1468,6 +1981,7 @@
    "key": "pentecost_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Factus est repente",
    "source": "Pentecost"
   },
@@ -1475,6 +1989,7 @@
    "key": "most_holy_trinity",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedicta sit",
    "source": "Most Holy Trinity"
   },
@@ -1482,6 +1997,7 @@
    "key": "most_holy_trinity",
    "part": "introit",
    "cycle": "C",
+   "position": 0,
    "incipit": "Caritas Dei",
    "source": "Most Holy Trinity"
   },
@@ -1489,6 +2005,7 @@
    "key": "most_holy_trinity",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedictus es, Domine",
    "source": "Most Holy Trinity"
   },
@@ -1496,6 +2013,7 @@
    "key": "most_holy_trinity",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedictus es, Domine",
    "source": "Most Holy Trinity"
   },
@@ -1503,6 +2021,7 @@
    "key": "most_holy_trinity",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedictus sit",
    "source": "Most Holy Trinity"
   },
@@ -1510,6 +2029,7 @@
    "key": "most_holy_trinity",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedicimus Deum",
    "source": "Most Holy Trinity"
   },
@@ -1517,6 +2037,7 @@
    "key": "most_holy_trinity",
    "part": "communion",
    "cycle": "B",
+   "position": 0,
    "incipit": "Data est mihi",
    "source": "Most Holy Trinity"
   },
@@ -1524,6 +2045,7 @@
    "key": "most_holy_body_and_blood_of_christ",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Cibavit eos",
    "source": "Body and Blood of Christ"
   },
@@ -1531,6 +2053,7 @@
    "key": "most_holy_body_and_blood_of_christ",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Oculi omnium",
    "source": "Body and Blood of Christ"
   },
@@ -1538,6 +2061,7 @@
    "key": "most_holy_body_and_blood_of_christ",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Caro mea",
    "source": "Body and Blood of Christ"
   },
@@ -1545,6 +2069,7 @@
    "key": "most_holy_body_and_blood_of_christ",
    "part": "sequence",
    "cycle": "",
+   "position": 0,
    "incipit": "Lauda, Sion",
    "source": "Body and Blood of Christ"
   },
@@ -1552,6 +2077,7 @@
    "key": "most_holy_body_and_blood_of_christ",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Portas caeli",
    "source": "Body and Blood of Christ"
   },
@@ -1559,6 +2085,7 @@
    "key": "most_holy_body_and_blood_of_christ",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Qui manducat",
    "source": "Body and Blood of Christ"
   },
@@ -1566,6 +2093,7 @@
    "key": "most_holy_body_and_blood_of_christ",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Hoc corpus",
    "source": "Body and Blood of Christ"
   },
@@ -1573,6 +2101,7 @@
    "key": "ordinary_time_9_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Respice in me",
    "source": "Ninth Sunday"
   },
@@ -1580,6 +2109,7 @@
    "key": "ordinary_time_9_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Iacta cogitatum tuum",
    "source": "Ninth Sunday"
   },
@@ -1587,6 +2117,7 @@
    "key": "ordinary_time_9_sunday",
    "part": "gradual",
    "cycle": "A",
+   "position": 0,
    "incipit": "Esto mihi",
    "source": "Ninth Sunday"
   },
@@ -1594,6 +2125,7 @@
    "key": "ordinary_time_9_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Deus, iudex iustus",
    "source": "Ninth Sunday"
   },
@@ -1601,6 +2133,7 @@
    "key": "ordinary_time_9_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Sperent in te",
    "source": "Ninth Sunday"
   },
@@ -1608,6 +2141,7 @@
    "key": "ordinary_time_9_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Ego clamavi",
    "source": "Ninth Sunday"
   },
@@ -1615,6 +2149,7 @@
    "key": "ordinary_time_10_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Dominus illuminatio mea",
    "source": "Tenth Sunday"
   },
@@ -1622,6 +2157,7 @@
    "key": "ordinary_time_10_sunday",
    "part": "introit",
    "cycle": "B",
+   "position": 0,
    "incipit": "Si iniquitates",
    "source": "Tenth Sunday"
   },
@@ -1629,6 +2165,7 @@
    "key": "ordinary_time_10_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Propitius esto",
    "source": "Tenth Sunday"
   },
@@ -1636,6 +2173,7 @@
    "key": "ordinary_time_10_sunday",
    "part": "gradual",
    "cycle": "C",
+   "position": 0,
    "incipit": "Exaltabo te",
    "source": "Tenth Sunday"
   },
@@ -1643,6 +2181,7 @@
    "key": "ordinary_time_10_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Deus, qui sedes",
    "source": "Tenth Sunday"
   },
@@ -1650,6 +2189,7 @@
    "key": "ordinary_time_10_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Illumina oculos meos",
    "source": "Tenth Sunday"
   },
@@ -1657,6 +2197,7 @@
    "key": "ordinary_time_10_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Dominus firmamentum meum",
    "source": "Tenth Sunday"
   },
@@ -1664,6 +2205,7 @@
    "key": "ordinary_time_10_sunday",
    "part": "communion",
    "cycle": "B",
+   "position": 0,
    "incipit": "Quicumque fecerit",
    "source": "Tenth Sunday"
   },
@@ -1671,6 +2213,7 @@
    "key": "ordinary_time_11_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Exaudi Domine",
    "source": "Eleventh Sunday"
   },
@@ -1678,6 +2221,7 @@
    "key": "ordinary_time_11_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Protector noster",
    "source": "Eleventh Sunday"
   },
@@ -1685,6 +2229,7 @@
    "key": "ordinary_time_11_sunday",
    "part": "gradual",
    "cycle": "B",
+   "position": 0,
    "incipit": "Bonum est confiteri",
    "source": "Eleventh Sunday"
   },
@@ -1692,6 +2237,7 @@
    "key": "ordinary_time_11_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine, in virtute tua",
    "source": "Eleventh Sunday"
   },
@@ -1699,6 +2245,7 @@
    "key": "ordinary_time_11_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedicam Dominum",
    "source": "Eleventh Sunday"
   },
@@ -1706,6 +2253,7 @@
    "key": "ordinary_time_11_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Unam petii",
    "source": "Eleventh Sunday"
   },
@@ -1713,6 +2261,7 @@
    "key": "ordinary_time_12_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Dominus fortitudo plebis suae",
    "source": "Twelfth Sunday"
   },
@@ -1720,6 +2269,7 @@
    "key": "ordinary_time_12_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Convertere, Domine",
    "source": "Twelfth Sunday"
   },
@@ -1727,6 +2277,7 @@
    "key": "ordinary_time_12_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "In te Domine, speravi",
    "source": "Twelfth Sunday"
   },
@@ -1734,6 +2285,7 @@
    "key": "ordinary_time_12_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Perfice gressus meos",
    "source": "Twelfth Sunday"
   },
@@ -1741,6 +2293,7 @@
    "key": "ordinary_time_12_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Quod dico vobis",
    "source": "Twelfth Sunday"
   },
@@ -1748,6 +2301,7 @@
    "key": "ordinary_time_12_sunday",
    "part": "communion",
    "cycle": "B",
+   "position": 0,
    "incipit": "Circuibo",
    "source": "Twelfth Sunday"
   },
@@ -1755,6 +2309,7 @@
    "key": "ordinary_time_12_sunday",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Qui vult venire",
    "source": "Twelfth Sunday"
   },
@@ -1762,6 +2317,7 @@
    "key": "nativity_of_john_the_baptist",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "De ventre matris meae",
    "source": "Nativity of John the Baptist"
   },
@@ -1769,6 +2325,7 @@
    "key": "nativity_of_john_the_baptist",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Priusquam te formarem",
    "source": "Nativity of John the Baptist"
   },
@@ -1776,6 +2333,7 @@
    "key": "nativity_of_john_the_baptist",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Tu, puer",
    "source": "Nativity of John the Baptist"
   },
@@ -1783,6 +2341,7 @@
    "key": "nativity_of_john_the_baptist",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Iustus ut palma",
    "source": "Nativity of John the Baptist"
   },
@@ -1790,6 +2349,7 @@
    "key": "nativity_of_john_the_baptist",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Tu, puer",
    "source": "Nativity of John the Baptist"
   },
@@ -1797,6 +2357,7 @@
    "key": "peter_and_paul_apostles",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Nunc scio vere",
    "source": "Saints Peter and Paul"
   },
@@ -1804,6 +2365,7 @@
    "key": "peter_and_paul_apostles",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Constitues eos",
    "source": "Saints Peter and Paul"
   },
@@ -1811,6 +2373,7 @@
    "key": "peter_and_paul_apostles",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Tu es Petrus",
    "source": "Saints Peter and Paul"
   },
@@ -1818,6 +2381,7 @@
    "key": "peter_and_paul_apostles",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Constitues eos",
    "source": "Saints Peter and Paul"
   },
@@ -1825,6 +2389,7 @@
    "key": "peter_and_paul_apostles",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Tu es Petrus",
    "source": "Saints Peter and Paul"
   },
@@ -1832,6 +2397,7 @@
    "key": "ordinary_time_13_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Omnes gentes",
    "source": "Thirteenth Sunday"
   },
@@ -1839,6 +2405,7 @@
    "key": "ordinary_time_13_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Venite, filii",
    "source": "Thirteenth Sunday"
   },
@@ -1846,6 +2413,7 @@
    "key": "ordinary_time_13_sunday",
    "part": "gradual",
    "cycle": "B",
+   "position": 0,
    "incipit": "Exaltabo te",
    "source": "Thirteenth Sunday"
   },
@@ -1853,6 +2421,7 @@
    "key": "ordinary_time_13_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Omnes gentes",
    "source": "Thirteenth Sunday"
   },
@@ -1860,6 +2429,7 @@
    "key": "ordinary_time_13_sunday",
    "part": "alleluia",
    "cycle": "A",
+   "position": 0,
    "incipit": "Christus resurgens",
    "source": "Thirteenth Sunday"
   },
@@ -1867,6 +2437,7 @@
    "key": "ordinary_time_13_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Sicut in holocausto",
    "source": "Thirteenth Sunday"
   },
@@ -1874,6 +2445,7 @@
    "key": "ordinary_time_13_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Inclina aurem tuam",
    "source": "Thirteenth Sunday"
   },
@@ -1881,6 +2453,7 @@
    "key": "ordinary_time_13_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Christus resurgens",
    "source": "Thirteenth Sunday"
   },
@@ -1888,6 +2461,7 @@
    "key": "ordinary_time_14_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Suscepimus",
    "source": "Fourteenth Sunday"
   },
@@ -1895,6 +2469,7 @@
    "key": "ordinary_time_14_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Esto mihi",
    "source": "Fourteenth Sunday"
   },
@@ -1902,6 +2477,7 @@
    "key": "ordinary_time_14_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Magnus Dominus",
    "source": "Fourteenth Sunday"
   },
@@ -1909,6 +2485,7 @@
    "key": "ordinary_time_14_sunday",
    "part": "alleluia",
    "cycle": "A",
+   "position": 0,
    "incipit": "Venite ad me",
    "source": "Fourteenth Sunday"
   },
@@ -1916,6 +2493,7 @@
    "key": "ordinary_time_14_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Populum humilem",
    "source": "Fourteenth Sunday"
   },
@@ -1923,6 +2501,7 @@
    "key": "ordinary_time_14_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Gustate et videte",
    "source": "Fourteenth Sunday"
   },
@@ -1930,6 +2509,7 @@
    "key": "ordinary_time_15_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Dum clamarem",
    "source": "Fifteenth Sunday"
   },
@@ -1937,6 +2517,7 @@
    "key": "ordinary_time_15_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Custodi me",
    "source": "Fifteenth Sunday"
   },
@@ -1944,6 +2525,7 @@
    "key": "ordinary_time_15_sunday",
    "part": "gradual",
    "cycle": "B",
+   "position": 0,
    "incipit": "Ostende nobis",
    "source": "Fifteenth Sunday"
   },
@@ -1951,6 +2533,7 @@
    "key": "ordinary_time_15_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Te decet hymnus",
    "source": "Fifteenth Sunday"
   },
@@ -1958,6 +2541,7 @@
    "key": "ordinary_time_15_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Ad te, Domine, levavi",
    "source": "Fifteenth Sunday"
   },
@@ -1965,6 +2549,7 @@
    "key": "ordinary_time_15_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Passer invenit",
    "source": "Fifteenth Sunday"
   },
@@ -1972,6 +2557,7 @@
    "key": "ordinary_time_16_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Ecce Deus adiuvat me",
    "source": "Sixteenth Sunday"
   },
@@ -1979,6 +2565,7 @@
    "key": "ordinary_time_16_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine, Dominus noster",
    "source": "Sixteenth Sunday"
   },
@@ -1986,6 +2573,7 @@
    "key": "ordinary_time_16_sunday",
    "part": "gradual",
    "cycle": "B",
+   "position": 0,
    "incipit": "Si ambulem",
    "source": "Sixteenth Sunday"
   },
@@ -1993,6 +2581,7 @@
    "key": "ordinary_time_16_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Eripe me",
    "source": "Sixteenth Sunday"
   },
@@ -2000,6 +2589,7 @@
    "key": "ordinary_time_16_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Iustitiae Domini",
    "source": "Sixteenth Sunday"
   },
@@ -2007,6 +2597,7 @@
    "key": "ordinary_time_16_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Acceptabis",
    "source": "Sixteenth Sunday"
   },
@@ -2014,6 +2605,7 @@
    "key": "ordinary_time_16_sunday",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Optimam partem",
    "source": "Sixteenth Sunday"
   },
@@ -2021,6 +2613,7 @@
    "key": "ordinary_time_17_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Deus in loco sancto suo",
    "source": "Seventeenth Sunday"
   },
@@ -2028,6 +2621,7 @@
    "key": "ordinary_time_17_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "In Deo speravit",
    "source": "Seventeenth Sunday"
   },
@@ -2035,6 +2629,7 @@
    "key": "ordinary_time_17_sunday",
    "part": "gradual",
    "cycle": "B",
+   "position": 0,
    "incipit": "Oculi omnium",
    "source": "Seventeenth Sunday"
   },
@@ -2042,6 +2637,7 @@
    "key": "ordinary_time_17_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Exsultate Deo",
    "source": "Seventeenth Sunday"
   },
@@ -2049,6 +2645,7 @@
    "key": "ordinary_time_17_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Exaltabo te",
    "source": "Seventeenth Sunday"
   },
@@ -2056,6 +2653,7 @@
    "key": "ordinary_time_17_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Simile est regnum caelorum",
    "source": "Seventeenth Sunday"
   },
@@ -2063,6 +2661,7 @@
    "key": "ordinary_time_17_sunday",
    "part": "communion",
    "cycle": "B",
+   "position": 0,
    "incipit": "Honora Dominum",
    "source": "Seventeenth Sunday"
   },
@@ -2070,6 +2669,7 @@
    "key": "ordinary_time_17_sunday",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Petite",
    "source": "Seventeenth Sunday"
   },
@@ -2077,6 +2677,7 @@
    "key": "ordinary_time_18_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Deus, in adiutorium",
    "source": "Eighteenth Sunday"
   },
@@ -2084,6 +2685,7 @@
    "key": "ordinary_time_18_sunday",
    "part": "introit",
    "cycle": "A",
+   "position": 0,
    "incipit": "Sitientes",
    "source": "Eighteenth Sunday"
   },
@@ -2091,6 +2693,7 @@
    "key": "ordinary_time_18_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedicam Dominum",
    "source": "Eighteenth Sunday"
   },
@@ -2098,6 +2701,7 @@
    "key": "ordinary_time_18_sunday",
    "part": "gradual",
    "cycle": "A",
+   "position": 0,
    "incipit": "Oculi omnium",
    "source": "Eighteenth Sunday"
   },
@@ -2105,6 +2709,7 @@
    "key": "ordinary_time_18_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine Deus salutis meae",
    "source": "Eighteenth Sunday"
   },
@@ -2112,6 +2717,7 @@
    "key": "ordinary_time_18_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Precatus est Moyses",
    "source": "Eighteenth Sunday"
   },
@@ -2119,6 +2725,7 @@
    "key": "ordinary_time_18_sunday",
    "part": "offertory",
    "cycle": "C",
+   "position": 0,
    "incipit": "Sanctificavit",
    "source": "Eighteenth Sunday"
   },
@@ -2126,6 +2733,7 @@
    "key": "ordinary_time_18_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Panem de caelo",
    "source": "Eighteenth Sunday"
   },
@@ -2133,6 +2741,7 @@
    "key": "transfiguration_of_the_lord",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Tibi dixit cor meum",
    "source": "Transfiguration of the Lord"
   },
@@ -2140,6 +2749,7 @@
    "key": "transfiguration_of_the_lord",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Speciosus forma",
    "source": "Transfiguration of the Lord"
   },
@@ -2147,6 +2757,7 @@
    "key": "transfiguration_of_the_lord",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Candor est lucis",
    "source": "Transfiguration of the Lord"
   },
@@ -2154,6 +2765,7 @@
    "key": "transfiguration_of_the_lord",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Gloria et honore",
    "source": "Transfiguration of the Lord"
   },
@@ -2161,6 +2773,7 @@
    "key": "transfiguration_of_the_lord",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Visionem",
    "source": "Transfiguration of the Lord"
   },
@@ -2168,6 +2781,7 @@
    "key": "ordinary_time_19_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Respice, Domine",
    "source": "Nineteenth Sunday"
   },
@@ -2175,6 +2789,7 @@
    "key": "ordinary_time_19_sunday",
    "part": "gradual",
    "cycle": "A",
+   "position": 0,
    "incipit": "Ostende",
    "source": "Nineteenth Sunday"
   },
@@ -2182,6 +2797,7 @@
    "key": "ordinary_time_19_sunday",
    "part": "gradual",
    "cycle": "B",
+   "position": 0,
    "incipit": "Respice, Domine",
    "source": "Nineteenth Sunday"
   },
@@ -2189,6 +2805,7 @@
    "key": "ordinary_time_19_sunday",
    "part": "gradual",
    "cycle": "C",
+   "position": 0,
    "incipit": "Beata gens",
    "source": "Nineteenth Sunday"
   },
@@ -2196,6 +2813,7 @@
    "key": "ordinary_time_19_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine, refugium",
    "source": "Nineteenth Sunday"
   },
@@ -2203,6 +2821,7 @@
    "key": "ordinary_time_19_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "In te speravi, Domine",
    "source": "Nineteenth Sunday"
   },
@@ -2210,6 +2829,7 @@
    "key": "ordinary_time_19_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Panis",
    "source": "Nineteenth Sunday"
   },
@@ -2217,6 +2837,7 @@
    "key": "ordinary_time_19_sunday",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Beatus servus",
    "source": "Nineteenth Sunday"
   },
@@ -2224,6 +2845,7 @@
    "key": "assumption_of_the_blessed_virgin_mary",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Signum magnum",
    "source": "Assumption of the Blessed Virgin Mary"
   },
@@ -2231,6 +2853,7 @@
    "key": "assumption_of_the_blessed_virgin_mary",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Audi, filia",
    "source": "Assumption of the Blessed Virgin Mary"
   },
@@ -2238,6 +2861,7 @@
    "key": "assumption_of_the_blessed_virgin_mary",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Assumpta est Maria",
    "source": "Assumption of the Blessed Virgin Mary"
   },
@@ -2245,6 +2869,7 @@
    "key": "assumption_of_the_blessed_virgin_mary",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Assumpta est Maria",
    "source": "Assumption of the Blessed Virgin Mary"
   },
@@ -2252,6 +2877,7 @@
    "key": "assumption_of_the_blessed_virgin_mary",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Beatam me dicent",
    "source": "Assumption of the Blessed Virgin Mary"
   },
@@ -2259,6 +2885,7 @@
    "key": "ordinary_time_20_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Protector noster",
    "source": "Twentieth Sunday"
   },
@@ -2266,6 +2893,7 @@
    "key": "ordinary_time_20_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Bonum est confidere",
    "source": "Twentieth Sunday"
   },
@@ -2273,6 +2901,7 @@
    "key": "ordinary_time_20_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Venite, exsultemus",
    "source": "Twentieth Sunday"
   },
@@ -2280,6 +2909,7 @@
    "key": "ordinary_time_20_sunday",
    "part": "alleluia",
    "cycle": "B",
+   "position": 0,
    "incipit": "Caro mea",
    "source": "Twentieth Sunday"
   },
@@ -2287,6 +2917,7 @@
    "key": "ordinary_time_20_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Immitet angelus",
    "source": "Twentieth Sunday"
   },
@@ -2294,6 +2925,7 @@
    "key": "ordinary_time_20_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Domus mea",
    "source": "Twentieth Sunday"
   },
@@ -2301,6 +2933,7 @@
    "key": "ordinary_time_20_sunday",
    "part": "communion",
    "cycle": "B",
+   "position": 0,
    "incipit": "Qui manducat",
    "source": "Twentieth Sunday"
   },
@@ -2308,6 +2941,7 @@
    "key": "ordinary_time_20_sunday",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Primum quaerite",
    "source": "Twentieth Sunday"
   },
@@ -2315,6 +2949,7 @@
    "key": "ordinary_time_21_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Inclina Domine",
    "source": "Twenty-first Sunday"
   },
@@ -2322,6 +2957,7 @@
    "key": "ordinary_time_21_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Bonum est confiteri",
    "source": "Twenty-first Sunday"
   },
@@ -2329,6 +2965,7 @@
    "key": "ordinary_time_21_sunday",
    "part": "alleluia",
    "cycle": "A",
+   "position": 0,
    "incipit": "Tu es Petrus",
    "source": "Twenty-first Sunday"
   },
@@ -2336,6 +2973,7 @@
    "key": "ordinary_time_21_sunday",
    "part": "alleluia",
    "cycle": "B",
+   "position": 0,
    "incipit": "Spiritus est qui vivificat",
    "source": "Twenty-first Sunday"
   },
@@ -2343,6 +2981,7 @@
    "key": "ordinary_time_21_sunday",
    "part": "alleluia",
    "cycle": "C",
+   "position": 0,
    "incipit": "Quoniam Deus",
    "source": "Twenty-first Sunday"
   },
@@ -2350,6 +2989,7 @@
    "key": "ordinary_time_21_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Exspectans exspectavi",
    "source": "Twenty-first Sunday"
   },
@@ -2357,6 +2997,7 @@
    "key": "ordinary_time_21_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "De fructu",
    "source": "Twenty-first Sunday"
   },
@@ -2364,6 +3005,7 @@
    "key": "ordinary_time_22_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Miserere",
    "source": "Twenty-second Sunday"
   },
@@ -2371,6 +3013,7 @@
    "key": "ordinary_time_22_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Timebunt gentes",
    "source": "Twenty-second Sunday"
   },
@@ -2378,6 +3021,7 @@
    "key": "ordinary_time_22_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Cantate Domino",
    "source": "Twenty-second Sunday"
   },
@@ -2385,6 +3029,7 @@
    "key": "ordinary_time_22_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine, in auxilium",
    "source": "Twenty-second Sunday"
   },
@@ -2392,6 +3037,7 @@
    "key": "ordinary_time_22_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine, memorabor",
    "source": "Twenty-second Sunday"
   },
@@ -2399,6 +3045,7 @@
    "key": "ordinary_time_22_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Qui vult venire",
    "source": "Twenty-second Sunday"
   },
@@ -2406,6 +3053,7 @@
    "key": "ordinary_time_23_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Iustus es Domine",
    "source": "Twenty-third Sunday"
   },
@@ -2413,6 +3061,7 @@
    "key": "ordinary_time_23_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Beata gens",
    "source": "Twenty-third Sunday"
   },
@@ -2420,6 +3069,7 @@
    "key": "ordinary_time_23_sunday",
    "part": "gradual",
    "cycle": "B",
+   "position": 0,
    "incipit": "Domine, refugium",
    "source": "Twenty-third Sunday"
   },
@@ -2427,6 +3077,7 @@
    "key": "ordinary_time_23_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine, exaudi",
    "source": "Twenty-third Sunday"
   },
@@ -2434,6 +3085,7 @@
    "key": "ordinary_time_23_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Oravi Deum meum",
    "source": "Twenty-third Sunday"
   },
@@ -2441,6 +3093,7 @@
    "key": "ordinary_time_23_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Vovete",
    "source": "Twenty-third Sunday"
   },
@@ -2448,6 +3101,7 @@
    "key": "nativity_of_the_blessed_virgin_mary",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Gaudeamus",
    "source": "Birth of the Blessed Virgin Mary"
   },
@@ -2455,6 +3109,7 @@
    "key": "nativity_of_the_blessed_virgin_mary",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedicta et venerabilis",
    "source": "Birth of the Blessed Virgin Mary"
   },
@@ -2462,6 +3117,7 @@
    "key": "nativity_of_the_blessed_virgin_mary",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Solemnitas",
    "source": "Birth of the Blessed Virgin Mary"
   },
@@ -2469,6 +3125,7 @@
    "key": "nativity_of_the_blessed_virgin_mary",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Beata es, Virgo Maria",
    "source": "Birth of the Blessed Virgin Mary"
   },
@@ -2476,6 +3133,7 @@
    "key": "nativity_of_the_blessed_virgin_mary",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Beatam me dicent",
    "source": "Birth of the Blessed Virgin Mary"
   },
@@ -2483,6 +3141,7 @@
    "key": "exaltation_of_the_holy_cross",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Nos autem gloriari",
    "source": "Exaltation of the Holy Cross"
   },
@@ -2490,6 +3149,7 @@
    "key": "exaltation_of_the_holy_cross",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Christus factus est",
    "source": "Exaltation of the Holy Cross"
   },
@@ -2497,6 +3157,7 @@
    "key": "exaltation_of_the_holy_cross",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Dulce lignum",
    "source": "Exaltation of the Holy Cross"
   },
@@ -2504,6 +3165,7 @@
    "key": "exaltation_of_the_holy_cross",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Protege, Domine",
    "source": "Exaltation of the Holy Cross"
   },
@@ -2511,6 +3173,7 @@
    "key": "exaltation_of_the_holy_cross",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Per signum Crucis",
    "source": "Exaltation of the Holy Cross"
   },
@@ -2518,6 +3181,7 @@
    "key": "ordinary_time_24_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Da pacem",
    "source": "Twenty-fourth Sunday"
   },
@@ -2525,6 +3189,7 @@
    "key": "ordinary_time_24_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Laetatus sum",
    "source": "Twenty-fourth Sunday"
   },
@@ -2532,6 +3197,7 @@
    "key": "ordinary_time_24_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Timebunt gentes",
    "source": "Twenty-fourth Sunday"
   },
@@ -2539,6 +3205,7 @@
    "key": "ordinary_time_24_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Sanctificavit",
    "source": "Twenty-fourth Sunday"
   },
@@ -2546,6 +3213,7 @@
    "key": "ordinary_time_24_sunday",
    "part": "offertory",
    "cycle": "C",
+   "position": 0,
    "incipit": "Precatus est Moyses",
    "source": "Twenty-fourth Sunday"
   },
@@ -2553,6 +3221,7 @@
    "key": "ordinary_time_24_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Tollite hostias",
    "source": "Twenty-fourth Sunday"
   },
@@ -2560,6 +3229,7 @@
    "key": "ordinary_time_24_sunday",
    "part": "communion",
    "cycle": "B",
+   "position": 0,
    "incipit": "Qui vult venire",
    "source": "Twenty-fourth Sunday"
   },
@@ -2567,6 +3237,7 @@
    "key": "ordinary_time_24_sunday",
    "part": "communion",
    "cycle": "C",
+   "position": 0,
    "incipit": "Dico vobis: Gaudium",
    "source": "Twenty-fourth Sunday"
   },
@@ -2574,6 +3245,7 @@
    "key": "ordinary_time_25_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Salus populi",
    "source": "Twenty-fifth Sunday"
   },
@@ -2581,6 +3253,7 @@
    "key": "ordinary_time_25_sunday",
    "part": "gradual",
    "cycle": "A",
+   "position": 0,
    "incipit": "Prope est Dominus",
    "source": "Twenty-fifth Sunday"
   },
@@ -2588,6 +3261,7 @@
    "key": "ordinary_time_25_sunday",
    "part": "gradual",
    "cycle": "B",
+   "position": 0,
    "incipit": "Dirigatur",
    "source": "Twenty-fifth Sunday"
   },
@@ -2595,6 +3269,7 @@
    "key": "ordinary_time_25_sunday",
    "part": "gradual",
    "cycle": "C",
+   "position": 0,
    "incipit": "Quis sicut Dominus",
    "source": "Twenty-fifth Sunday"
   },
@@ -2602,6 +3277,7 @@
    "key": "ordinary_time_25_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Confitemini",
    "source": "Twenty-fifth Sunday"
   },
@@ -2609,6 +3285,7 @@
    "key": "ordinary_time_25_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Si ambulavero",
    "source": "Twenty-fifth Sunday"
   },
@@ -2616,6 +3293,7 @@
    "key": "ordinary_time_25_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Tu mandasti",
    "source": "Twenty-fifth Sunday"
   },
@@ -2623,6 +3301,7 @@
    "key": "ordinary_time_26_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Omnia quae fecisti",
    "source": "Twenty-sixth Sunday"
   },
@@ -2630,6 +3309,7 @@
    "key": "ordinary_time_26_sunday",
    "part": "introit",
    "cycle": "A",
+   "position": 0,
    "incipit": "In nomine Domini",
    "source": "Twenty-sixth Sunday"
   },
@@ -2637,6 +3317,7 @@
    "key": "ordinary_time_26_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Oculi omnium",
    "source": "Twenty-sixth Sunday"
   },
@@ -2644,6 +3325,7 @@
    "key": "ordinary_time_26_sunday",
    "part": "gradual",
    "cycle": "A",
+   "position": 0,
    "incipit": "Christus factus est",
    "source": "Twenty-sixth Sunday"
   },
@@ -2651,6 +3333,7 @@
    "key": "ordinary_time_26_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Paratum cor meum",
    "source": "Twenty-sixth Sunday"
   },
@@ -2658,6 +3341,7 @@
    "key": "ordinary_time_26_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Super flumina",
    "source": "Twenty-sixth Sunday"
   },
@@ -2665,6 +3349,7 @@
    "key": "ordinary_time_26_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Memento verbi tui",
    "source": "Twenty-sixth Sunday"
   },
@@ -2672,6 +3357,7 @@
    "key": "ordinary_time_27_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "In voluntate tua",
    "source": "Twenty-seventh Sunday"
   },
@@ -2679,6 +3365,7 @@
    "key": "ordinary_time_27_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine, refugium",
    "source": "Twenty-seventh Sunday"
   },
@@ -2686,6 +3373,7 @@
    "key": "ordinary_time_27_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "In exitu Israel",
    "source": "Twenty-seventh Sunday"
   },
@@ -2693,6 +3381,7 @@
    "key": "ordinary_time_27_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Vir erat",
    "source": "Twenty-seventh Sunday"
   },
@@ -2700,6 +3389,7 @@
    "key": "ordinary_time_27_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "In salutari tuo",
    "source": "Twenty-seventh Sunday"
   },
@@ -2707,6 +3397,7 @@
    "key": "ordinary_time_28_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Si iniquitates",
    "source": "Twenty-eighth Sunday"
   },
@@ -2714,6 +3405,7 @@
    "key": "ordinary_time_28_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Ecce quam bonum",
    "source": "Twenty-eighth Sunday"
   },
@@ -2721,6 +3413,7 @@
    "key": "ordinary_time_28_sunday",
    "part": "gradual",
    "cycle": "A",
+   "position": 0,
    "incipit": "Si ambulem",
    "source": "Twenty-eighth Sunday"
   },
@@ -2728,6 +3421,7 @@
    "key": "ordinary_time_28_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Qui timent Dominum",
    "source": "Twenty-eighth Sunday"
   },
@@ -2735,6 +3429,7 @@
    "key": "ordinary_time_28_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Recordare mei",
    "source": "Twenty-eighth Sunday"
   },
@@ -2742,6 +3437,7 @@
    "key": "ordinary_time_28_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Aufer a me",
    "source": "Twenty-eighth Sunday"
   },
@@ -2749,6 +3445,7 @@
    "key": "ordinary_time_29_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Ego clamavi",
    "source": "Twenty-ninth Sunday"
   },
@@ -2756,6 +3453,7 @@
    "key": "ordinary_time_29_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Salvum fac populum",
    "source": "Twenty-ninth Sunday"
   },
@@ -2763,6 +3461,7 @@
    "key": "ordinary_time_29_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Lauda, anima mea",
    "source": "Twenty-ninth Sunday"
   },
@@ -2770,6 +3469,7 @@
    "key": "ordinary_time_29_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Meditabor",
    "source": "Twenty-ninth Sunday"
   },
@@ -2777,6 +3477,7 @@
    "key": "ordinary_time_29_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine, Dominus noster",
    "source": "Twenty-ninth Sunday"
   },
@@ -2784,6 +3485,7 @@
    "key": "ordinary_time_30_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Laetetur cor",
    "source": "Thirtieth Sunday"
   },
@@ -2791,6 +3493,7 @@
    "key": "ordinary_time_30_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Unam petii",
    "source": "Thirtieth Sunday"
   },
@@ -2798,6 +3501,7 @@
    "key": "ordinary_time_30_sunday",
    "part": "gradual",
    "cycle": "C",
+   "position": 0,
    "incipit": "Clamaverunt iusti",
    "source": "Thirtieth Sunday"
   },
@@ -2805,6 +3509,7 @@
    "key": "ordinary_time_30_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Lauda, Ierusalem",
    "source": "Thirtieth Sunday"
   },
@@ -2812,6 +3517,7 @@
    "key": "ordinary_time_30_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine, vivifica me",
    "source": "Thirtieth Sunday"
   },
@@ -2819,6 +3525,7 @@
    "key": "ordinary_time_30_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Laetabimur",
    "source": "Thirtieth Sunday"
   },
@@ -2826,6 +3533,7 @@
    "key": "all_saints",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Gaudeamus",
    "source": "Solemnity of All Saints"
   },
@@ -2833,6 +3541,7 @@
    "key": "all_saints",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Timete Dominum",
    "source": "Solemnity of All Saints"
   },
@@ -2840,6 +3549,7 @@
    "key": "all_saints",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Venite ad me",
    "source": "Solemnity of All Saints"
   },
@@ -2847,6 +3557,7 @@
    "key": "all_saints",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Iustorum animae",
    "source": "Solemnity of All Saints"
   },
@@ -2854,6 +3565,7 @@
    "key": "all_saints",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Beati mundo corde",
    "source": "Solemnity of All Saints"
   },
@@ -2861,6 +3573,7 @@
    "key": "commemoration_of_all_the_faithful_departed",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Requiem aeternam",
    "source": "Commemoration of the Faithful Departed"
   },
@@ -2868,6 +3581,7 @@
    "key": "commemoration_of_all_the_faithful_departed",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Requiem aeternam",
    "source": "Commemoration of the Faithful Departed"
   },
@@ -2875,6 +3589,7 @@
    "key": "commemoration_of_all_the_faithful_departed",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "De profundis",
    "source": "Commemoration of the Faithful Departed"
   },
@@ -2882,6 +3597,7 @@
    "key": "commemoration_of_all_the_faithful_departed",
    "part": "tract",
    "cycle": "",
+   "position": 0,
    "incipit": "Absolve, Domine",
    "source": "Commemoration of the Faithful Departed"
   },
@@ -2889,6 +3605,7 @@
    "key": "commemoration_of_all_the_faithful_departed",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Domine Iesu Christe",
    "source": "Commemoration of the Faithful Departed"
   },
@@ -2896,6 +3613,7 @@
    "key": "commemoration_of_all_the_faithful_departed",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Lux aeterna",
    "source": "Commemoration of the Faithful Departed"
   },
@@ -2903,6 +3621,7 @@
    "key": "ordinary_time_31_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Ne derelinquas me",
    "source": "Thirty-first Sunday"
   },
@@ -2910,6 +3629,7 @@
    "key": "ordinary_time_31_sunday",
    "part": "introit",
    "cycle": "C",
+   "position": 0,
    "incipit": "Misereris omnium",
    "source": "Thirty-first Sunday"
   },
@@ -2917,6 +3637,7 @@
    "key": "ordinary_time_31_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Suscepimus",
    "source": "Thirty-first Sunday"
   },
@@ -2924,6 +3645,7 @@
    "key": "ordinary_time_31_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Verbo Domini",
    "source": "Thirty-first Sunday"
   },
@@ -2931,6 +3653,7 @@
    "key": "ordinary_time_31_sunday",
    "part": "alleluia",
    "cycle": "C",
+   "position": 0,
    "incipit": "O quam bonus",
    "source": "Thirty-first Sunday"
   },
@@ -2938,6 +3661,7 @@
    "key": "ordinary_time_31_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Benedic, anima mea",
    "source": "Thirty-first Sunday"
   },
@@ -2945,6 +3669,7 @@
    "key": "ordinary_time_31_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Notas mihi fecisti",
    "source": "Thirty-first Sunday"
   },
@@ -2952,6 +3677,7 @@
    "key": "ordinary_time_32_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Intret oratio mea",
    "source": "Thirty-second Sunday"
   },
@@ -2959,6 +3685,7 @@
    "key": "ordinary_time_32_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Dirigatur",
    "source": "Thirty-second Sunday"
   },
@@ -2966,6 +3693,7 @@
    "key": "ordinary_time_32_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Qui posuit fines",
    "source": "Thirty-second Sunday"
   },
@@ -2973,6 +3701,7 @@
    "key": "ordinary_time_32_sunday",
    "part": "alleluia",
    "cycle": "A",
+   "position": 0,
    "incipit": "Quinque prudentes virgines",
    "source": "Thirty-second Sunday"
   },
@@ -2980,6 +3709,7 @@
    "key": "ordinary_time_32_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Gressus meos",
    "source": "Thirty-second Sunday"
   },
@@ -2987,6 +3717,7 @@
    "key": "ordinary_time_32_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Dominus regit me",
    "source": "Thirty-second Sunday"
   },
@@ -2994,6 +3725,7 @@
    "key": "ordinary_time_32_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Quinque prudentes virgines",
    "source": "Thirty-second Sunday"
   },
@@ -3001,6 +3733,7 @@
    "key": "ordinary_time_33_sunday",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Dicit Dominus: Ego",
    "source": "Thirty-third Sunday"
   },
@@ -3008,6 +3741,7 @@
    "key": "ordinary_time_33_sunday",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Liberasti nos",
    "source": "Thirty-third Sunday"
   },
@@ -3015,6 +3749,7 @@
    "key": "ordinary_time_33_sunday",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "De profundis",
    "source": "Thirty-third Sunday"
   },
@@ -3022,6 +3757,7 @@
    "key": "ordinary_time_33_sunday",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "De profundis",
    "source": "Thirty-third Sunday"
   },
@@ -3029,6 +3765,7 @@
    "key": "ordinary_time_33_sunday",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Amen dico vobis: quidquid",
    "source": "Thirty-third Sunday"
   },
@@ -3036,6 +3773,7 @@
    "key": "ordinary_time_33_sunday",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Domine, quinque talenta",
    "source": "Thirty-third Sunday"
   },
@@ -3043,6 +3781,7 @@
    "key": "presentation_of_the_blessed_virgin_mary",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Vultum tuum",
    "source": "Presentation of the Blessed Virgin Mary"
   },
@@ -3050,6 +3789,7 @@
    "key": "presentation_of_the_blessed_virgin_mary",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Concupivit rex",
    "source": "Presentation of the Blessed Virgin Mary"
   },
@@ -3057,6 +3797,7 @@
    "key": "presentation_of_the_blessed_virgin_mary",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Adorabo",
    "source": "Presentation of the Blessed Virgin Mary"
   },
@@ -3064,6 +3805,7 @@
    "key": "presentation_of_the_blessed_virgin_mary",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Afferentur",
    "source": "Presentation of the Blessed Virgin Mary"
   },
@@ -3071,6 +3813,7 @@
    "key": "presentation_of_the_blessed_virgin_mary",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Diffusa est gratia",
    "source": "Presentation of the Blessed Virgin Mary"
   },
@@ -3078,6 +3821,7 @@
    "key": "our_lord_jesus_christ_king_of_the_universe",
    "part": "introit",
    "cycle": "",
+   "position": 0,
    "incipit": "Dignus est Agnus",
    "source": "Christ the King"
   },
@@ -3085,6 +3829,7 @@
    "key": "our_lord_jesus_christ_king_of_the_universe",
    "part": "gradual",
    "cycle": "",
+   "position": 0,
    "incipit": "Dominabitur",
    "source": "Christ the King"
   },
@@ -3092,6 +3837,7 @@
    "key": "our_lord_jesus_christ_king_of_the_universe",
    "part": "alleluia",
    "cycle": "",
+   "position": 0,
    "incipit": "Potestas eius",
    "source": "Christ the King"
   },
@@ -3099,6 +3845,7 @@
    "key": "our_lord_jesus_christ_king_of_the_universe",
    "part": "offertory",
    "cycle": "",
+   "position": 0,
    "incipit": "Postula a me",
    "source": "Christ the King"
   },
@@ -3106,6 +3853,7 @@
    "key": "our_lord_jesus_christ_king_of_the_universe",
    "part": "communion",
    "cycle": "",
+   "position": 0,
    "incipit": "Sedebit Dominus",
    "source": "Christ the King"
   },
@@ -3113,6 +3861,7 @@
    "key": "our_lord_jesus_christ_king_of_the_universe",
    "part": "communion",
    "cycle": "A",
+   "position": 0,
    "incipit": "Amen dico vobis",
    "source": "Christ the King"
   },
