@@ -214,14 +214,14 @@ might need an extra motet, or have no setting at all, as on Good
 Friday).
 
 Each slot has a **kind**: Proper, Ordinary, Hymn, Psalm, Canticle,
-Antiphon, Motet, Organ or Other, shown as a small badge beside its name.
+Antiphon, Responsory, Motet, Organ or Other, shown as a small badge beside its name.
 The kind is worked out from the name when the slot is added (Introit is
 a Proper, Kyrie the Ordinary, Communion hymn a Hymn, Opening voluntary
 Organ), and it can be chosen when adding a slot or changed on any slot
 later. That matters because practice varies: a church that sings a
 hymn at the Introit keeps the slot called Introit and shows it as a
 Hymn. A Proper slot also knows which proper it is (Introit, Gradual,
-Alleluia or Tract, Offertory, Communion).
+Alleluia or Tract, Sequence, Offertory, Communion).
 
 **The day's chant.** On a service with an occasion, a Proper slot
 offers that day's chant beneath its search box, by its
@@ -238,10 +238,27 @@ They cover 688 days; commemorations have no Mass of their own, and the
 nine England and Wales feasts aren't in Divinum Officium, so those offer
 nothing.
 
+**Days with more to sing.** Some days have several chants where most
+have one, and Precentor offers all of them in the order they're sung.
+Palm Sunday has its procession's antiphons, hymn and responsory; Ash
+Wednesday and Candlemas their own antiphons and responsories; Holy
+Week's Mandatum antiphons, the Good Friday chants and the Easter Vigil's
+canticles; and in 1962 the Ember days have a Gradual after each of
+their extra readings. An Antiphon, Responsory, Hymn or Canticle slot is
+offered the day's chants of its kind, and a Gradual slot all the day's
+graduals. A chant goes from the list once it's proposed in a slot of
+the same kind, so a church that wants two antiphons adds two Antiphon
+slots and the second offers what the first hasn't taken. There's no
+procession kind: where a slot sits in the service already says what
+it's for, and its kind says what's sung. The Easter Vigil's one
+Alleluia or Tract slot offers both, in the order of the form: the
+Tracts first in the Ordinary Form, the Alleluia first in 1962.
+
 For the Ordinary Form the chants are the Graduale Romanum's (1974) for
 Sundays and the major feasts, read from a table of them (see the same
 README), with a few the table leaves out added from the Graduale
-itself. Christmas has four Masses, each with its own propers (the Vigil
+itself. Holy Week is included, read from the same table as the
+Sundays. Christmas has four Masses, each with its own propers (the Vigil
 Mass, and the Masses during the Night, at Dawn and during the Day), so
 each is an occasion of its own, listed on 24 and 25 December with the
 day's celebration, and a service is given the one it is. Some Sundays have a chant for one year of
@@ -1154,7 +1171,7 @@ It also has Django's own `password`, `last_login`, `is_staff`,
 | `service`           | ForeignKey           | to Service              | The service it's in              |
 | `organisation`      | ForeignKey           | copied from the service | Whose slot                       |
 | `role_name`         | CharField            | max 50                  | e.g. Introit, Offertory motet    |
-| `kind`              | CharField            | one of nine kinds       | How it's shown and grouped       |
+| `kind`              | CharField            | one of ten kinds        | How it's shown and grouped       |
 | `proper_part`       | CharField            | optional                | Which proper it is, e.g. Introit |
 | `is_not_applicable` | BooleanField         | default False           | Marked N/A, so it needs no piece |
 | `position`          | PositiveIntegerField | default 0               | Order within the service         |
@@ -1233,13 +1250,16 @@ together.
 | -------------- | --------- | ------------------------------------------ | ------------------------------------------- |
 | `occasion_key` | CharField | max 100                                    | The occasion's key, e.g. `tempora:Adv2-0`   |
 | `calendar_use` | CharField | choices                                    | Which form of the Mass                      |
-| `part`         | CharField | choices: Introit to Communion              | Which chant                                 |
+| `part`         | CharField | choices: Introit to Communion, Antiphon, Responsory, Hymn, Canticle | Which chant              |
 | `season`       | CharField | blank, Septuagesima or Eastertide          | A saint's day's form for that season        |
 | `cycle`        | CharField | blank, A, B or C                           | An Ordinary Form Sunday's chant for one year |
+| `position`     | PositiveSmallIntegerField | default 0                  | Its place among the day's chants of a part  |
 | `incipit`      | CharField | max 100                                    | The opening words, e.g. Populus Sion        |
 | `source`       | CharField | max 100                                    | The file it came from                       |
 
-One chant per part, season, year and day in each form. It's matched to an
+One chant per part, season, year, position and day in each form; most
+days have one of each part, at position 0, and a day with several, such
+as Palm Sunday's antiphons, numbers them in the order sung. It's matched to an
 occasion by key, not a foreign key: occasions are rebuilt from their
 files, and a national calendar repeats a key to move a day whose Mass
 is the same.
