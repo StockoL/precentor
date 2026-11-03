@@ -16658,8 +16658,16 @@
    "key": "tempora:093-3",
    "part": "gradual",
    "season": "",
-   "incipit": "Beata gens",
+   "incipit": "Quis sicut Dominus",
    "source": "Tempora/093-3"
+  },
+  {
+   "key": "tempora:093-3",
+   "part": "gradual",
+   "season": "",
+   "incipit": "Beata gens",
+   "source": "Tempora/093-3",
+   "position": 1
   },
   {
    "key": "tempora:093-5",
@@ -16713,6 +16721,44 @@
   {
    "key": "tempora:093-6",
    "part": "gradual",
+   "season": "",
+   "incipit": "Propitius esto",
+   "source": "Tempora/093-6"
+  },
+  {
+   "key": "tempora:093-6",
+   "part": "gradual",
+   "season": "",
+   "incipit": "Protector noster",
+   "source": "Tempora/093-6",
+   "position": 1
+  },
+  {
+   "key": "tempora:093-6",
+   "part": "gradual",
+   "season": "",
+   "incipit": "Convertere, Domine",
+   "source": "Tempora/093-6",
+   "position": 2
+  },
+  {
+   "key": "tempora:093-6",
+   "part": "gradual",
+   "season": "",
+   "incipit": "Dirigatur oratio mea sicut incensum",
+   "source": "Tempora/093-6",
+   "position": 3
+  },
+  {
+   "key": "tempora:093-6",
+   "part": "canticle",
+   "season": "",
+   "incipit": "Benedictus es",
+   "source": "Tempora/093-6"
+  },
+  {
+   "key": "tempora:093-6",
+   "part": "tract",
    "season": "",
    "incipit": "Laudate Dominum",
    "source": "Tempora/093-6"
@@ -17337,8 +17383,16 @@
    "key": "tempora:Adv3-3",
    "part": "gradual",
    "season": "",
-   "incipit": "Prope est Dominus omnibus invocantibus",
+   "incipit": "Tollite portas",
    "source": "Tempora/Adv3-3"
+  },
+  {
+   "key": "tempora:Adv3-3",
+   "part": "gradual",
+   "season": "",
+   "incipit": "Prope est Dominus omnibus invocantibus",
+   "source": "Tempora/Adv3-3",
+   "position": 1
   },
   {
    "key": "tempora:Adv3-4",
@@ -17427,6 +17481,44 @@
   {
    "key": "tempora:Adv3-6",
    "part": "gradual",
+   "season": "",
+   "incipit": "A summo cœlo egressio ejus",
+   "source": "Tempora/Adv3-6"
+  },
+  {
+   "key": "tempora:Adv3-6",
+   "part": "gradual",
+   "season": "",
+   "incipit": "In sole posuit tabernaculum suum",
+   "source": "Tempora/Adv3-6",
+   "position": 1
+  },
+  {
+   "key": "tempora:Adv3-6",
+   "part": "gradual",
+   "season": "",
+   "incipit": "Domine, Deus virtutum",
+   "source": "Tempora/Adv3-6",
+   "position": 2
+  },
+  {
+   "key": "tempora:Adv3-6",
+   "part": "gradual",
+   "season": "",
+   "incipit": "Excita, Domine",
+   "source": "Tempora/Adv3-6",
+   "position": 3
+  },
+  {
+   "key": "tempora:Adv3-6",
+   "part": "canticle",
+   "season": "",
+   "incipit": "Benedictus es",
+   "source": "Tempora/Adv3-6"
+  },
+  {
+   "key": "tempora:Adv3-6",
+   "part": "tract",
    "season": "",
    "incipit": "Qui regis Israël",
    "source": "Tempora/Adv3-6"
@@ -21082,8 +21174,16 @@
    "key": "tempora:Pasc7-3",
    "part": "alleluia",
    "season": "",
-   "incipit": "Veni, Sancte Spiritus",
+   "incipit": "Verbo Domini cœli firmati sunt",
    "source": "Tempora/Pasc7-3"
+  },
+  {
+   "key": "tempora:Pasc7-3",
+   "part": "alleluia",
+   "season": "",
+   "incipit": "Veni, Sancte Spiritus",
+   "source": "Tempora/Pasc7-3",
+   "position": 1
   },
   {
    "key": "tempora:Pasc7-3",
@@ -21199,10 +21299,50 @@
   },
   {
    "key": "tempora:Pasc7-6",
-   "part": "gradual",
+   "part": "alleluia",
+   "season": "",
+   "incipit": "Spiritus est",
+   "source": "Tempora/Pasc7-6"
+  },
+  {
+   "key": "tempora:Pasc7-6",
+   "part": "alleluia",
+   "season": "",
+   "incipit": "Spiritus ejus ornavit cœlos",
+   "source": "Tempora/Pasc7-6",
+   "position": 1
+  },
+  {
+   "key": "tempora:Pasc7-6",
+   "part": "alleluia",
+   "season": "",
+   "incipit": "Cum complerentur dies Pentecostes",
+   "source": "Tempora/Pasc7-6",
+   "position": 2
+  },
+  {
+   "key": "tempora:Pasc7-6",
+   "part": "alleluia",
+   "season": "",
+   "incipit": "Veni, Sancte Spiritus",
+   "source": "Tempora/Pasc7-6",
+   "position": 3
+  },
+  {
+   "key": "tempora:Pasc7-6",
+   "part": "alleluia",
+   "season": "",
+   "incipit": "Benedictus es",
+   "source": "Tempora/Pasc7-6",
+   "position": 4
+  },
+  {
+   "key": "tempora:Pasc7-6",
+   "part": "alleluia",
    "season": "",
    "incipit": "Laudate Dominum",
-   "source": "Tempora/Pasc7-6"
+   "source": "Tempora/Pasc7-6",
+   "position": 5
   },
   {
    "key": "tempora:Pasc7-6",
@@ -27214,6 +27354,13 @@
    "key": "tempora:Quad1-3",
    "part": "gradual",
    "season": "",
+   "incipit": "Tribulationes cordis mei dilatatæ sunt",
+   "source": "Tempora/Quad1-3"
+  },
+  {
+   "key": "tempora:Quad1-3",
+   "part": "tract",
+   "season": "",
    "incipit": "De necessitatibus meis eripe me",
    "source": "Tempora/Quad1-3"
   },
@@ -27304,6 +27451,44 @@
   {
    "key": "tempora:Quad1-6",
    "part": "gradual",
+   "season": "",
+   "incipit": "Propitius esto",
+   "source": "Tempora/Quad1-6"
+  },
+  {
+   "key": "tempora:Quad1-6",
+   "part": "gradual",
+   "season": "",
+   "incipit": "Protector noster",
+   "source": "Tempora/Quad1-6",
+   "position": 1
+  },
+  {
+   "key": "tempora:Quad1-6",
+   "part": "gradual",
+   "season": "",
+   "incipit": "Convertere, Domine",
+   "source": "Tempora/Quad1-6",
+   "position": 2
+  },
+  {
+   "key": "tempora:Quad1-6",
+   "part": "gradual",
+   "season": "",
+   "incipit": "Dirigatur oratio mea sicut incensum",
+   "source": "Tempora/Quad1-6",
+   "position": 3
+  },
+  {
+   "key": "tempora:Quad1-6",
+   "part": "canticle",
+   "season": "",
+   "incipit": "Benedictus es",
+   "source": "Tempora/Quad1-6"
+  },
+  {
+   "key": "tempora:Quad1-6",
+   "part": "tract",
    "season": "",
    "incipit": "Laudate Dominum",
    "source": "Tempora/Quad1-6"
@@ -27879,8 +28064,16 @@
    "key": "tempora:Quad4-3",
    "part": "gradual",
    "season": "",
-   "incipit": "Beata gens",
+   "incipit": "Venite, filii",
    "source": "Tempora/Quad4-3"
+  },
+  {
+   "key": "tempora:Quad4-3",
+   "part": "gradual",
+   "season": "",
+   "incipit": "Beata gens",
+   "source": "Tempora/Quad4-3",
+   "position": 1
   },
   {
    "key": "tempora:Quad4-3",
@@ -28326,6 +28519,13 @@
   {
    "key": "tempora:Quad6-3",
    "part": "gradual",
+   "season": "",
+   "incipit": "Ne avertas faciem tuam",
+   "source": "Tempora/Quad6-3"
+  },
+  {
+   "key": "tempora:Quad6-3",
+   "part": "tract",
    "season": "",
    "incipit": "Domine, exaudi orationem meam",
    "source": "Tempora/Quad6-3"

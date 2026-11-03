@@ -202,14 +202,54 @@ def split_gradual(lines):
     return parts
 
 
+# On days with extra readings, the chant after the last of them, which
+# Divinum Officium doesn't mark as anything but the Graduale.
+AFTER_LAST_READING = {
+    "Tempora/Adv3-6": "tract",
+    "Tempora/Quad1-3": "tract",
+    "Tempora/Quad1-6": "tract",
+    "Tempora/093-6": "tract",
+    "Tempora/Quad6-3": "tract",
+    "Tempora/Pasc7-6": "alleluia",
+}
+
+
+def reading_chants(path):
+    """The chants after the extra readings before the Epistle on the Ember
+    days and a few Lenten Wednesdays, in order: a Gradual after each (an
+    Alleluia in Pentecost week), and on the Saturdays the Benedictus es
+    sung after the reading from Daniel."""
+    found = []
+    for number in range(1, 6):
+        if f"GradualeL{number}" in sections(path):
+            # Only the chant itself, not the Gloria that can follow it.
+            lines = lines_for(path, f"GradualeL{number}") or []
+            lines = lines[: lines.index("_")] if "_" in lines else lines
+            texts = [line for line in lines if not line.startswith("!")]
+            part = "alleluia" if texts and re.match(r"^allel[uú][ij]a\.?$", texts[0].strip(), re.I) else "gradual"
+            words = next((words_of(line) for line in texts[part == "alleluia":] if words_of(line)), None)
+            if words:
+                found.append((part, "", incipit(words)))
+        if f"LectioL{number}" in sections(path):
+            lines = lines_for(path, f"LectioL{number}") or []
+            hymn = next((i for i, line in enumerate(lines) if line.strip() == "!Hymnus"), None)
+            if hymn is not None:
+                found.append(("canticle", "", first_words(lines[hymn + 1:])))
+    return found
+
+
 def chants(path):
-    """Every chant of a day, as (part, season, incipit)."""
+    """Every chant of a day, as (part, season, incipit), in the order sung."""
     found = []
     for part, section in (("introit", "Introitus"), ("offertory", "Offertorium"), ("communion", "Communio")):
         words = first_words(lines_for(path, section))
         if words:
             found.append((part, "", words))
-    for part, words in split_gradual(lines_for(path, "Graduale")).items():
+    found += reading_chants(path)
+    gradual = split_gradual(lines_for(path, "Graduale"))
+    if path in AFTER_LAST_READING and list(gradual) == ["gradual"]:
+        gradual = {AFTER_LAST_READING[path]: gradual["gradual"]}
+    for part, words in gradual.items():
         if words:
             found.append((part, "", words))
     # Only the few days with a Sequence of their own have one, so it isn't
@@ -250,8 +290,15 @@ def main():
         found = chants(path) if find(path) else []
         if not found:
             missing.append(key)
+        # A day with several chants of one part, such as an Ember Saturday's
+        # graduals, numbers them in the order sung from the second on.
+        counted = {}
         for part, season, words in found:
-            rows.append({"key": key, "part": part, "season": season, "incipit": words, "source": path})
+            row = {"key": key, "part": part, "season": season, "incipit": words, "source": path}
+            position = counted[part, season] = counted.get((part, season), -1) + 1
+            if position:
+                row["position"] = position
+            rows.append(row)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(
         json.dumps({"source": SOURCE, "chants": rows}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
