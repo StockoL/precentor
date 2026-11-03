@@ -76,3 +76,16 @@ class ProposePageChantTests(ChantDayTestCase):
         self.client.post(f"/roles/{introit.pk}/pieces/add/", {"reference": "Gaudens gaudebo in Domino"})
         self.assertEqual(RolePiece.objects.get(service_role=introit).reference, "Gaudens gaudebo in Domino")
         self.assertNotContains(self.client.get(f"/roles/{introit.pk}/pieces/add/"), "For this day")
+
+
+class SequenceSlotTests(TestCase):
+    def test_a_sequence_slot_is_offered_the_days_sequence(self):
+        from ordo.calendar_data import load_propers
+
+        load_propers()
+        easter = LiturgicalOccasion.objects.create(name="Easter Sunday", key="easter_sunday", calendar_use="current")
+        term = make_term(start_date=date(2027, 3, 1), end_date=date(2027, 4, 30))
+        service = Service.objects.create(term=term, date=date(2027, 3, 28), service_type="Sung Mass", occasion=easter)
+        slot = ServiceRole.objects.create(service=service, role_name="Sequence")
+        self.assertEqual((slot.kind, slot.proper_part), ("proper", "sequence"))
+        self.assertEqual(slot.proper_suggestion, "Victimae paschali laudes")
