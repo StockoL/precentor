@@ -132,8 +132,10 @@ def lines_for(path, part, depth=0):
     source = borrows_from(path)
     if source and source != path:
         return lines_for(source, part, depth + 1)
-    # A weekday with nothing of its own sings the Sunday's Mass.
-    weekday = re.match(r"^(Tempora/.+?\d)-[1-6]", path)
+    # A weekday with nothing of its own sings the Sunday's Mass. Holy
+    # Week's reformed days (Quad6-5r, "r" for the 1955 reform) aren't
+    # weekdays of Palm Sunday: their ceremonies are listed by hand below.
+    weekday = re.match(r"^(Tempora/.+?\d)-[1-6](?!r)", path)
     if weekday:
         return lines_for(f"{weekday.group(1)}-0", part, depth + 1)
     return None
@@ -189,7 +191,8 @@ def split_gradual(lines):
         verses = [incipit(words) for _, words in texts]
         return {"gradual": verses[0], "alleluia": verses[1]} if len(verses) > 1 else {"alleluia": verses[0]}
     parts = {"gradual": incipit(texts[0][1])}
-    tract = next((i for i, line in enumerate(lines) if line.strip() == "!Tractus"), None)
+    # "!Tractus", sometimes followed by its psalm verses ("!Tractus 21:2-9").
+    tract = next((i for i, line in enumerate(lines) if re.match(r"!Tractus\b", line.strip())), None)
     if tract is not None:
         parts["tract"] = next((incipit(words) for i, words in texts if i > tract), None)
         return parts
@@ -199,19 +202,148 @@ def split_gradual(lines):
     return parts
 
 
+# On days with extra readings, the chant after the last of them, which
+# Divinum Officium doesn't mark as anything but the Graduale.
+AFTER_LAST_READING = {
+    "Tempora/Adv3-6": "tract",
+    "Tempora/Quad1-3": "tract",
+    "Tempora/Quad1-6": "tract",
+    "Tempora/093-6": "tract",
+    "Tempora/Quad6-3": "tract",
+    "Tempora/Pasc7-6": "alleluia",
+}
+
+
+# The chants of the days with ceremonies of their own, beyond the Mass's
+# propers, in the order sung. Divinum Officium writes these out as prose
+# with rubrics, so they're listed by hand from the file named, and each
+# opening is checked against it (see ceremony_chants). Lauds after the
+# Vigil, and the Vigil of Pentecost's prophecies, gone since 1955, are left out.
+CEREMONIES = {
+    "tempora:Quadp3-3": ("Tempora/Quadp3-3", [  # Ash Wednesday
+        ("antiphon", "Exaudi nos, Domine"),
+        ("antiphon", "Immutemur habitu"),
+        ("antiphon", "Inter vestibulum et altare"),
+        ("responsory", "Emendemus in melius"),
+    ]),
+    "sancti:02-02": ("Sancti/02-02", [  # Candlemas
+        ("antiphon", "Lumen ad revelationem gentium"),
+        ("canticle", "Nunc dimittis"),
+        ("antiphon", "Exsurge, Domine"),
+        ("antiphon", "Adorna thalamum tuum, Sion"),
+        ("antiphon", "Responsum accepit Simeon"),
+        ("responsory", "Obtulerunt pro eo Domino"),
+    ]),
+    "tempora:Quad6-0r": ("Tempora/Quad6-0r", [  # Palm Sunday
+        ("antiphon", "Hosanna filio David"),
+        ("antiphon", "Pueri Hebræorum, portantes"),
+        ("antiphon", "Pueri Hebræorum vestimenta"),
+        ("antiphon", "Occurrunt turbæ"),
+        ("antiphon", "Cum Angelis et pueris"),
+        ("antiphon", "Turba multa"),
+        ("antiphon", "Cœperunt omnes"),
+        ("antiphon", "Omnes collaudant"),
+        ("antiphon", "Fulgentibus palmis"),
+        ("antiphon", "Ave, Rex noster"),
+        ("hymn", "Gloria, laus et honor"),
+        ("responsory", "Ingrediente Domino"),
+    ]),
+    "tempora:Quad6-4r": ("Tempora/Quad6-4", [  # Maundy Thursday
+        ("antiphon", "Mandatum novum"),
+        ("antiphon", "Postquam surrexit Dominus"),
+        ("antiphon", "Dominus Jesus, postquam cœnavit"),
+        ("antiphon", "Domine, tu mihi lavas pedes"),
+        ("antiphon", "Si ego, Dominus et Magister"),
+        ("antiphon", "In hoc cognoscent omnes"),
+        ("antiphon", "Maneant in vobis"),
+        ("antiphon", "Benedicta sit sancta Trinitas"),
+        ("antiphon", "Ubi caritas et amor"),
+        ("hymn", "Pange lingua gloriosi"),
+        ("antiphon", "Diviserunt sibi"),
+    ]),
+    "tempora:Quad6-5r": ("Tempora/Quad6-5r", [  # Good Friday
+        ("tract", "Domine, audivi"),
+        ("responsory", "Eripe me, Domine"),
+        ("antiphon", "Ecce lignum Crucis"),
+        ("antiphon", "Popule meus"),
+        ("antiphon", "Crucem tuam"),
+        ("hymn", "Crux fidelis"),
+    ]),
+    "tempora:Quad6-6r": ("Tempora/Quad6-6r", [  # Easter Vigil
+        ("canticle", "Cantemus Domino"),
+        ("canticle", "Vinea facta est"),
+        ("canticle", "Attende, cælum"),
+        ("canticle", "Sicut cervus"),
+        ("alleluia", "Confitemini Domino"),
+        ("tract", "Laudate Dominum"),
+    ]),
+}
+
+
+def plain(text):
+    """Words to compare, without accents, case or punctuation."""
+    decomposed = unicodedata.normalize("NFD", text)
+    text = "".join(c for c in decomposed if not unicodedata.combining(c)).lower()
+    return " ".join(re.sub(r"[^\w\s]", " ", text).split())
+
+
+def ceremony_chants(key):
+    """A day's chants from CEREMONIES, as (part, season, incipit), after
+    checking each opens a line of its file (verse marks aside), so a typing
+    slip, or a chant the file doesn't have, stops the export."""
+    if key not in CEREMONIES:
+        return []
+    path, listed = CEREMONIES[key]
+    lines = [plain(re.sub(r"^(Ant\.|[vVR]\.)\s*", "", line)) for line in find(path).read_text(encoding="utf-8").splitlines()]
+    for part, words in listed:
+        if not any(line.startswith(plain(words)) for line in lines):
+            sys.exit(f"{key}: no line of {path} opens with {words!r}")
+    return [(part, "", words) for part, words in listed]
+
+
+def reading_chants(path):
+    """The chants after the extra readings before the Epistle on the Ember
+    days and a few Lenten Wednesdays, in order: a Gradual after each (an
+    Alleluia in Pentecost week), and on the Saturdays the Benedictus es
+    sung after the reading from Daniel."""
+    found = []
+    for number in range(1, 6):
+        if f"GradualeL{number}" in sections(path):
+            # Only the chant itself, not the Gloria that can follow it.
+            lines = lines_for(path, f"GradualeL{number}") or []
+            lines = lines[: lines.index("_")] if "_" in lines else lines
+            texts = [line for line in lines if not line.startswith("!")]
+            part = "alleluia" if texts and re.match(r"^allel[uú][ij]a\.?$", texts[0].strip(), re.I) else "gradual"
+            words = next((words_of(line) for line in texts[part == "alleluia":] if words_of(line)), None)
+            if words:
+                found.append((part, "", incipit(words)))
+        if f"LectioL{number}" in sections(path):
+            lines = lines_for(path, f"LectioL{number}") or []
+            hymn = next((i for i, line in enumerate(lines) if line.strip() == "!Hymnus"), None)
+            if hymn is not None:
+                found.append(("canticle", "", first_words(lines[hymn + 1:])))
+    return found
+
+
 def chants(path):
-    """Every chant of a day, as (part, season, incipit)."""
+    """Every chant of a day, as (part, season, incipit), in the order sung."""
     found = []
     for part, section in (("introit", "Introitus"), ("offertory", "Offertorium"), ("communion", "Communio")):
         words = first_words(lines_for(path, section))
         if words:
             found.append((part, "", words))
-    for part, words in split_gradual(lines_for(path, "Graduale")).items():
+    found += reading_chants(path)
+    gradual = split_gradual(lines_for(path, "Graduale"))
+    if path in AFTER_LAST_READING and list(gradual) == ["gradual"]:
+        gradual = {AFTER_LAST_READING[path]: gradual["gradual"]}
+    for part, words in gradual.items():
         if words:
             found.append((part, "", words))
     # Only the few days with a Sequence of their own have one, so it isn't
-    # looked for in a Common or the Sunday.
-    if "Sequentia" in sections(path):
+    # looked for in a Common or the Sunday, unless the day's rule asks for
+    # it: All Souls' Dies iræ is in the Requiem Common.
+    rule = [line.strip() for line in sections(path).get("Rule", [])]
+    if "Sequentia" in sections(path) or "Sequentia" in rule:
         sequence = first_words(lines_for(path, "Sequentia"))
         if sequence:
             found.append(("sequence", "", sequence))
@@ -242,11 +374,18 @@ def main():
     for key in keys():
         kind, _, name = key.partition(":")
         path = f"{kind.capitalize()}/{name}"
-        found = chants(path) if find(path) else []
+        found = (chants(path) if find(path) else []) + ceremony_chants(key)
         if not found:
             missing.append(key)
+        # A day with several chants of one part, such as an Ember Saturday's
+        # graduals, numbers them in the order sung from the second on.
+        counted = {}
         for part, season, words in found:
-            rows.append({"key": key, "part": part, "season": season, "incipit": words, "source": path})
+            row = {"key": key, "part": part, "season": season, "incipit": words, "source": path}
+            position = counted[part, season] = counted.get((part, season), -1) + 1
+            if position:
+                row["position"] = position
+            rows.append(row)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(
         json.dumps({"source": SOURCE, "chants": rows}, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"

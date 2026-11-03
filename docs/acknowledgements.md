@@ -172,8 +172,9 @@ How I used it:
 - **The 1962 Mass chants.** A one-off script,
   [`tools/calendar_export/export_divinum_officium.py`](../tools/calendar_export/export_divinum_officium.py),
   reads its Latin Mass files and writes the opening words of each day's
-  Introit, Gradual, Alleluia, Tract, Sequence, Offertory and Communion
-  into `ordo/data/divinum_officium/propers_1962.json`, which
+  Introit, Gradual, Alleluia, Tract, Sequence, Offertory and Communion,
+  and of the chants of Ash Wednesday's, Candlemas's and Holy Week's
+  ceremonies, into `ordo/data/divinum_officium/propers_1962.json`, which
   `manage.py load_calendar` loads. It follows the files' own
   references to Commons and other days. Only the opening words are
   kept, with the accents removed; no full texts are copied.

@@ -186,9 +186,11 @@ function initServiceDetail() {
         });
         form.reset();
         // Once the day's chant is proposed, it's no longer offered.
-        const chant = form.querySelector("[data-propose-reference]");
-        if (chant && chant.dataset.proposeReference === fields.get("reference")) {
-          chant.closest(".role-block__proper-suggestion").remove();
+        const chants = form.querySelectorAll("[data-propose-reference]");
+        const chant = [...chants].find((button) => button.dataset.proposeReference === fields.get("reference"));
+        if (chant) {
+          chant.remove();
+          if (chants.length === 1) form.querySelector(".role-block__proper-suggestion").remove();
         }
         showToast("Piece proposed.", "success");
       } catch (err) {

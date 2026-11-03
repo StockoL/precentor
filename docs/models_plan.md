@@ -804,19 +804,24 @@ service form uses it to suggest an occasion from the date.
 class ProperChant(models.Model):
     occasion_key = models.CharField(max_length=100)  # e.g. "tempora:Adv2-0"
     calendar_use = models.CharField(max_length=20, choices=CALENDAR_USE_CHOICES)
-    part = models.CharField(max_length=20, choices=PROPER_CHANT_PARTS)  # introit … communion
+    part = models.CharField(max_length=20, choices=PROPER_CHANT_PARTS)  # introit … communion, antiphon …
     season = models.CharField(max_length=20, blank=True)  # "", "septuagesima" or "paschaltide"
     cycle = models.CharField(max_length=1, blank=True)  # "", "A", "B" or "C", for the Ordinary Form
+    position = models.PositiveSmallIntegerField(default=0)  # order among a day's chants of one part
     incipit = models.CharField(max_length=100)  # "Populus Sion"
     source = models.CharField(max_length=100)
-    # one per calendar use, occasion key, part, season and cycle
+    # one per calendar use, occasion key, part, season, cycle and position
 
 def chant_season(day): ...          # Septuagesima to Holy Saturday; Easter to the Saturday after Pentecost
-def proper_chants(occasion, day): ...  # {part: incipit} for that day's Mass
+def proper_chants(occasion, day): ...  # {part: [incipits in the order sung]} for that day
 ```
 
-The opening words of each day's chants (migrations `0019` and `0020`): the
-Introit, Gradual, Alleluia, Tract, Sequence, Offertory and Communion.
+The opening words of each day's chants (migrations `0019` to `0021`): the
+Introit, Gradual, Alleluia, Tract, Sequence, Offertory and Communion, and
+on the days with ceremonies of their own (Palm Sunday, Holy Week, Ash
+Wednesday, Candlemas) their antiphons, responsories, hymns and
+canticles. `position` orders several chants of one part on a day: Palm
+Sunday's antiphons, or an Ember Saturday's four graduals.
 Shared reference data like the calendar, with no church of its own, and
 loaded by `load_calendar` from `ordo/data/divinum_officium/`, which a
 one-off script exports from Divinum Officium (see
@@ -1012,15 +1017,20 @@ sends the whole new order, not one move, and `set_slot_order` refuses
 a list that isn't exactly the service's slots, so a page that's out of
 date can't lose or duplicate one.
 
-**Kinds, fixed as a set but free per slot:** `kind` is one of nine
-(Proper, Ordinary, Hymn, Psalm, Canticle, Antiphon, Motet, Organ,
-Other) and decides how a slot is shown and grouped. `proper_part` says
+**Kinds, fixed as a set but free per slot:** `kind` is one of ten
+(Proper, Ordinary, Hymn, Psalm, Canticle, Antiphon, Responsory, Motet,
+Organ, Other) and decides how a slot is shown and grouped. `proper_part` says
 which proper a slot is (Introit, Gradual and so on), so the day's chant
 can one day be found for it. They're separate on purpose: a church that
 sings a hymn at the Introit keeps the slot's proper part and changes its
 kind to Hymn, so it prints as a hymn. The set of kinds is fixed in
 `planning/slot_kinds.py`, but any one slot's kind can be changed; a
-label the set lacks, such as Responsory, is Other.
+label the set lacks, such as Fanfare, is Other. Responsory joined the
+set, and Sequence the proper parts, for the days with more to sing
+(migration `planning/0028`, which reclassified slots already named so).
+There's no Procession kind: a procession's chants are antiphons, a hymn
+or a responsory, and the slot's place in the service says it's a
+procession.
 
 **Classified from the name:** `slot_kinds.classify()` knows the usual
 names (Introit, Kyrie, Magnificat) and, failing that, goes by the last

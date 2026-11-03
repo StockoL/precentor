@@ -83,7 +83,12 @@ class RomcalReferenceTests(TestCase):
         days = {}
         for year in range(2020, 2041):
             for day, occasions in resolve_year(year, "current", calendar).items():
-                days[day.isoformat()] = [o.key for o in occasions]
+                # Occasions with no precedence (Christmas's other Masses,
+                # or a conductor's own) are Precentor's additions, which
+                # romcal hasn't got.
+                ranked = [o.key for o in occasions if o.precedence]
+                if ranked:
+                    days[day.isoformat()] = ranked
         return days
 
     def test_every_day_agrees_except_the_known_differences(self):

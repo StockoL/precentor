@@ -14,6 +14,7 @@ KIND_CHOICES = [
     ("psalm", "Psalm"),
     ("canticle", "Canticle"),
     ("antiphon", "Antiphon"),
+    ("responsory", "Responsory"),
     ("motet", "Motet"),
     ("organ", "Organ"),
     ("other", "Other"),
@@ -25,6 +26,7 @@ PROPER_PART_CHOICES = [
     ("alleluia", "Alleluia"),
     ("tract", "Tract"),
     ("alleluia_or_tract", "Alleluia or Tract"),
+    ("sequence", "Sequence"),
     ("offertory", "Offertory"),
     ("communion", "Communion"),
     ("magnificat_antiphon", "Magnificat antiphon"),
@@ -39,6 +41,7 @@ NAMES = {
     "alleluia": ("proper", "alleluia"),
     "tract": ("proper", "tract"),
     "alleluia or tract": ("proper", "alleluia_or_tract"),
+    "sequence": ("proper", "sequence"),
     "offertory": ("proper", "offertory"),
     "offertory antiphon": ("proper", "offertory"),
     "communion": ("proper", "communion"),
@@ -67,6 +70,8 @@ LAST_WORDS = {
     "psalm": "psalm",
     "psalms": "psalm",
     "antiphon": "antiphon",
+    "responsory": "responsory",
+    "responsories": "responsory",
     "motet": "motet",
     "anthem": "motet",
     "voluntary": "organ",
@@ -90,4 +95,9 @@ def classify(name):
 
 # Kinds whose music is usually a number in a book or a chant, not a score
 # in the library, so the add-piece form offers a reference box first.
-REFERENCE_FIRST = {"hymn", "psalm", "antiphon"}
+REFERENCE_FIRST = {"hymn", "psalm", "antiphon", "responsory"}
+
+# Kinds a day can have several chants of, outside the Mass's propers:
+# Palm Sunday's antiphons, hymn and responsory, the Easter Vigil's
+# canticles. A slot of one of these kinds is offered the day's chants of it.
+MANY_CHANT_KINDS = {"antiphon", "responsory", "hymn", "canticle"}

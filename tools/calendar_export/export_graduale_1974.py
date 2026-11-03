@@ -33,10 +33,26 @@ SOURCE = "Graduale Romanum (1974), Sundays and major feasts"
 # The columns' left edges in points, and the chant in each.
 CALENDAR, INTROIT, GRADUAL, OFFERTORY, COMMUNION = 42, 122, 257, 384, 483
 COLUMN_PARTS = {INTROIT: "introit", OFFERTORY: "offertory", COMMUNION: "communion"}
-# Marks that start an entry in any column; the processional antiphons,
-# responsories and hymns of Palm Sunday and the Presentation have no slot.
+# Marks that start an entry in any column. Good Friday's Improperia,
+# under VARIA, are offered as antiphons; its CONCLUSIO has no slot.
 MARKS = {"IN.": "introit", "GR.": "gradual", "AL.": "alleluia", "TR.": "tract", "SEQ.": "sequence",
-         "ANT.": None, "RESP.": None, "HYM.": None, "CANT.": None, "VARIA:": None, "CONCLUSIO:": None}
+         "ANT.": "antiphon", "RESP.": "responsory", "HYM.": "hymn", "CANT.": "canticle", "VARIA:": "antiphon",
+         "CONCLUSIO:": None}
+
+# Parts a day can have several of, each kept in order, where for the rest a
+# second chant is an alternative and only the first is kept.
+MANY = {"antiphon", "responsory", "hymn", "canticle", "tract"}
+
+# Chants the index lists under another part: (occasion, opening words) ->
+# the part they are. At the Easter Vigil the first two chants after the
+# readings are Tracts, though the index lists all seven as canticles; and
+# Maundy Thursday's Pange lingua, printed after its Communion, is the hymn
+# for the procession that follows.
+REPARTED = {
+    ("holy_saturday", "Iubilate Domino"): "tract",
+    ("holy_saturday", "Qui confidunt"): "tract",
+    ("thursday_of_the_lords_supper", "Pange lingua gloriosi"): "hymn",
+}
 
 # Some Lent Sundays give a chant for when a particular Gospel is read,
 # which belongs to one year of the cycle: the prodigal son is the fourth
@@ -61,6 +77,24 @@ FIXES = {
     ("ordinary_time_18_sunday", "offertory", "C"): "Sanctificavit",
 }
 
+# Chants the index leaves out, given from the Graduale itself: (occasion,
+# part, year, opening words). The fifth Sunday of Lent lists Communions
+# for Years A and C only, and of Christmas's four Masses the index has
+# only the Night and the Day.
+ADDITIONS = [
+    ("lent_5_sunday", "communion", "B", "Qui mihi ministrat"),
+    ("nativity_of_the_lord_vigil_mass", "introit", "", "Hodie scietis"),
+    ("nativity_of_the_lord_vigil_mass", "gradual", "", "Hodie scietis"),
+    ("nativity_of_the_lord_vigil_mass", "alleluia", "", "Crastina die"),
+    ("nativity_of_the_lord_vigil_mass", "offertory", "", "Tollite portas"),
+    ("nativity_of_the_lord_vigil_mass", "communion", "", "Revelabitur"),
+    ("nativity_of_the_lord_mass_at_dawn", "introit", "", "Lux fulgebit"),
+    ("nativity_of_the_lord_mass_at_dawn", "gradual", "", "Benedictus qui venit"),
+    ("nativity_of_the_lord_mass_at_dawn", "alleluia", "", "Dominus regnavit, decorem"),
+    ("nativity_of_the_lord_mass_at_dawn", "offertory", "", "Deus enim firmavit"),
+    ("nativity_of_the_lord_mass_at_dawn", "communion", "", "Exsulta, filia Sion"),
+]
+
 # Every row of the table in order: its name as printed, and the Ordinary
 # Form occasion it is, or None for a row with no day of its own.
 DAYS = [
@@ -69,7 +103,7 @@ DAYS = [
     ("Second Sunday of Advent", "advent_2_sunday"),
     ("Third Sunday of Advent", "advent_3_sunday"),
     ("Fourth Sunday of Advent", "advent_4_sunday"),
-    ("Nativity Mass at Midnight", None),  # Ordo has one Christmas; the Mass during the Day is used
+    ("Nativity Mass at Midnight", "nativity_of_the_lord_mass_during_the_night"),
     ("Nativity Mass at Day", "nativity_of_the_lord"),
     ("Holy Family", "holy_family_of_jesus_mary_and_joseph"),
     ("Blessed Virgin Mary", "mary_mother_of_god"),
@@ -92,8 +126,8 @@ DAYS = [
     ("Fifth Sunday in Lent", "lent_5_sunday"),
     ("Palm Sunday", "palm_sunday_of_the_passion_of_the_lord"),
     ("Maundy Thursday", "thursday_of_the_lords_supper"),
-    ("Good Friday", None),  # no Mass
-    ("Easter Vigil", None),  # part of Easter, which has its own row
+    ("Good Friday", "friday_of_the_passion_of_the_lord"),
+    ("Easter Vigil", "holy_saturday"),  # the calendar's "Holy Saturday/Easter Vigil"
     ("Easter Sunday", "easter_sunday"),
     ("Second Sunday of Easter", "divine_mercy_sunday"),
     ("Third Sunday of Easter", "easter_time_3_sunday"),
@@ -188,6 +222,8 @@ def incipit(text):
     """The opening words as the index prints them, without a psalm verse
     after "...", an alternative after "vel.", or a note in brackets."""
     text = re.split(r"\.\.\.|\s+vel\.(?:\s+|$)|;|\(|\s+ad\.? lib\b|Imposition of Ashes", text)[0]
+    # Labels before a list: "for washing of feet:", "Improperia:".
+    text = re.sub(r"^\s*(for [^:]+|Improperia):\s*", "", text)
     return " ".join(text.split()).strip(" ,;:-")
 
 
@@ -213,7 +249,13 @@ def entries(column, lines):
         pieces = GOSPEL.split(text)
         split.append((part, cycle, pieces[0]))
         split += [(part, GOSPELS[gospel.lower()], words) for gospel, words in zip(pieces[1::2], pieces[2::2])]
-    return [(part, cycle, incipit(text)) for part, cycle, text in split if part and incipit(text)]
+    # "Hosanna filio David; Pueri Hebraeorum, portantes; …" is one chant each.
+    listed = []
+    for part, cycle, text in split:
+        # A label before a list ("for washing of feet:") belongs to none of it.
+        text = re.sub(r"^\s*(for [^:]+|Improperia):\s*", "", text)
+        listed += [(part, cycle, one) for one in text.split(";")]
+    return [(part, cycle, incipit(text)) for part, cycle, text in listed if part and incipit(text)]
 
 
 def settle(chants):
@@ -221,8 +263,9 @@ def settle(chants):
     One day's chants put in order. In Eastertide two Alleluias are sung,
     the first where the Gradual would be: listed as a pair ("- Exivi a
     Patre - Ego vos elegi") or as two Alleluias on a day without a Gradual,
-    the first goes in the Gradual's place. Otherwise a second chant for
-    the same part and year is an alternative and the first is kept.
+    the first goes in the Gradual's place. Several antiphons, canticles
+    and the like are kept in order; otherwise a second chant for the same
+    part and year is an alternative and the first is kept.
     """
     paired = []
     for part, cycle, words in chants:
@@ -237,7 +280,9 @@ def settle(chants):
             paired[plain[0]] = ("gradual", "", paired[plain[0]][2])
     settled = {}
     for part, cycle, words in paired:
-        settled.setdefault((part, cycle), words)
+        kept = settled.setdefault((part, cycle), [])
+        if part in MANY or not kept:
+            kept.append(words)
     return settled
 
 
@@ -250,10 +295,17 @@ def main():
         day = []
         for column in (INTROIT, GRADUAL, OFFERTORY, COMMUNION):
             day += entries(column, [text for page, y, col, text in sorted(found) if col == column])
-        for (part, cycle), words in settle(day).items():
-            words = FIXES.get((key, part, cycle), words)
-            if words:
-                chants.append({"key": key, "part": part, "cycle": cycle, "incipit": words, "source": name})
+        day = [(REPARTED.get((key, words), part), cycle, words) for part, cycle, words in day]
+        for (part, cycle), listed in settle(day).items():
+            for position, words in enumerate(listed):
+                words = FIXES.get((key, part, cycle), words) if not position else words
+                if words:
+                    chants.append({"key": key, "part": part, "cycle": cycle, "position": position,
+                                   "incipit": words, "source": name})
+    names = {key: name for name, key in DAYS if key}
+    for key, part, cycle, words in ADDITIONS:
+        chants.append({"key": key, "part": part, "cycle": cycle, "incipit": words,
+                       "source": names.get(key, "not in the table")})
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps({"source": SOURCE, "chants": chants}, ensure_ascii=False, indent=1) + "\n",
                    encoding="utf-8")

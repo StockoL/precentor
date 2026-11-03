@@ -11,7 +11,7 @@ from accounts.querysets import OrganisationQuerySet
 from library.models import Hymnal, HymnEntry, Score, Tune
 from ordo.models import CALENDAR_USE_CHOICES, proper_chants
 
-from .slot_kinds import KIND_CHOICES, PROPER_PART_CHOICES, REFERENCE_FIRST, classify
+from .slot_kinds import KIND_CHOICES, MANY_CHANT_KINDS, PROPER_PART_CHOICES, REFERENCE_FIRST, classify
 
 
 def comment_count_on(model, pks):
@@ -199,9 +199,21 @@ class Service(models.Model):
 
     @cached_property
     def proper_chants(self):
-        """The names of the chants of this day's 1962 Mass, {part: incipit},
-        worked out once for all its slots. Empty without a 1962 occasion."""
+        """The names of the chants of this day's Mass, {part: [incipits]},
+        worked out once for all its slots. Empty without an occasion."""
         return proper_chants(self.occasion, self.date)
+
+    @cached_property
+    def references_proposed(self):
+        """The typed references already proposed in this service, grouped by
+        their slot's (kind, proper part), from one query for all its slots."""
+        proposed = {}
+        rows = RolePiece.objects.filter(service_role__service=self).exclude(reference="").values_list(
+            "service_role__kind", "service_role__proper_part", "reference"
+        )
+        for kind, part, reference in rows:
+            proposed.setdefault((kind, part), set()).add(reference)
+        return proposed
 
     def asks_before_using(self, template):
         """Using another template replaces the slots, so the conductor is
@@ -465,20 +477,34 @@ class ServiceRole(models.Model):
         return hymn_suggestions(self, window)
 
     @property
-    def proper_suggestion(self):
-        """The day's chant for a Proper slot that knows its part, such as
-        "Ad te levavi animam meam" for the Introit, unless it's already
-        proposed. An Alleluia or Tract slot takes whichever the date has."""
+    def proper_suggestions(self):
+        """
+        The day's chants this slot can take, in the order sung: a Proper
+        slot its part's ("Ad te levavi" for the Introit; an Alleluia or
+        Tract slot whichever the date has, or both), and an Antiphon, Responsory,
+        Hymn or Canticle slot the day's chants of its kind, such as Palm
+        Sunday's three antiphons. A chant already proposed in a slot of the
+        same kind and part is left out, so a second Antiphon slot offers the
+        antiphons the first hasn't taken.
+        """
         chants = self.service.proper_chants
-        if self.kind != "proper" or not chants:
-            return None
-        if self.proper_part == "alleluia_or_tract":
-            incipit = chants.get("tract") or chants.get("alleluia")
+        if not chants:
+            return []
+        if self.kind == "proper" and self.proper_part == "alleluia_or_tract":
+            # Only the Easter Vigil has both: in the Ordinary Form its Tracts
+            # come after the readings, before the Alleluia; in 1962 the
+            # Alleluia comes first, then the Tract.
+            tracts, alleluias = chants.get("tract", []), chants.get("alleluia", [])
+            historic = self.service.occasion.calendar_use == "historic"
+            offered = alleluias + tracts if historic else tracts + alleluias
+        elif self.kind == "proper":
+            offered = chants.get(self.proper_part, [])
+        elif self.kind in MANY_CHANT_KINDS and not self.proper_part:
+            offered = chants.get(self.kind, [])
         else:
-            incipit = chants.get(self.proper_part)
-        if not incipit or any(piece.reference == incipit for piece in self.pieces.all()):
-            return None
-        return incipit
+            return []
+        taken = self.service.references_proposed.get((self.kind, self.proper_part), set())
+        return [incipit for incipit in offered if incipit not in taken]
 
     @property
     def takes_reference_first(self):

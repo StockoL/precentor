@@ -31,6 +31,11 @@ class ClassifyTests(SimpleTestCase):
     def test_a_magnificat_antiphon_knows_its_proper_part(self):
         self.assertEqual(classify("Magnificat antiphon"), ("antiphon", "magnificat_antiphon"))
 
+    def test_a_sequence_is_a_proper_and_a_responsory_a_kind(self):
+        self.assertEqual(classify("Sequence"), ("proper", "sequence"))
+        self.assertEqual(classify("Palm Sunday responsory"), ("responsory", ""))
+        self.assertEqual(classify("Responsories"), ("responsory", ""))
+
     def test_a_name_it_doesnt_know_is_other(self):
         self.assertEqual(classify("Procession"), ("other", ""))
         self.assertEqual(classify(""), ("other", ""))
@@ -187,7 +192,7 @@ class ChangeKindTests(TestCase):
         self.assertIn(">Motet<", response.json()["fragments"][f"kind-badge-{self.slot.pk}"])
 
     def test_a_kind_that_isnt_listed_is_refused(self):
-        response = self.client.post(self.url, {"kind": "responsory"}, headers={"X-Requested-With": "XMLHttpRequest"})
+        response = self.client.post(self.url, {"kind": "fanfare"}, headers={"X-Requested-With": "XMLHttpRequest"})
         self.assertEqual(response.status_code, 400)
         self.slot.refresh_from_db()
         self.assertEqual(self.slot.kind, "proper")
@@ -202,3 +207,32 @@ class ChangeKindTests(TestCase):
         response = self.client.get(self.service.get_absolute_url())
         self.assertContains(response, f'<select id="kind-{self.slot.pk}" name="kind">')
         self.assertContains(response, '<option value="proper" selected>Proper</option>', html=True)
+
+
+class SequenceAndResponsoryMigrationTests(TestCase):
+    """Migration 0028 reclassifies slots made as Other before these kinds
+    existed, and leaves a kind someone chose."""
+
+    def test_slots_still_other_are_reclassified(self):
+        import importlib
+        from datetime import date
+
+        from django.apps import apps
+
+        from precentor_project.testing import make_slot_template, make_term
+
+        from .models import Service, ServiceRole
+
+        term = make_term()
+        service = Service.objects.create(term=term, date=date(2026, 1, 4), service_type="Sung Mass")
+        sequence = ServiceRole.objects.create(service=service, role_name="Sequence", kind="other")
+        responsory = ServiceRole.objects.create(service=service, role_name="Palm responsory", kind="other")
+        chosen = ServiceRole.objects.create(service=service, role_name="Sequence motet", kind="motet")
+        template = make_slot_template(organisation=term.organisation, slot_names="Sequence")
+        template.template_slots.update(kind="other", proper_part="")
+        importlib.import_module("planning.migrations.0028_sequence_and_responsory").reclassify(apps, None)
+        for slot, expected in [(sequence, ("proper", "sequence")), (responsory, ("responsory", "")),
+                               (chosen, ("motet", ""))]:
+            slot.refresh_from_db()
+            self.assertEqual((slot.kind, slot.proper_part), expected)
+        self.assertEqual(template.template_slots.get().proper_part, "sequence")

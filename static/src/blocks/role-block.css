@@ -103,6 +103,14 @@
     flex-basis: 100%;
   }
 
+  /* A day can offer several chants; they wrap with room between rows. */
+  .role-block__proper-suggestion {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-3xs);
+  }
+
   .role-block__hymn-suggestions button,
   .role-block__proper-suggestion button {
     font-size: var(--typography-step--1);

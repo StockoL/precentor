@@ -59,13 +59,38 @@ that row is kept so it can override the general one.
   like the occasions in `general_1962.json`. Divinum Officium's file
   names are those keys, as Missalemeum is built on its files, so no
   matching by name is needed. A saint's day also has its Tract for
-  Lent and its Alleluias for Eastertide, marked with that season.
+  Lent and its Alleluias for Eastertide, marked with that season. A
+  day with several chants of one part numbers them from the second on,
+  with `position`, in the order sung.
 
 The script follows Divinum Officium's own references: a part that
 names another day or a Common, a file that starts by naming the file
 it builds on, a "vide C4a" rule in the Mass file or the saint's
-Office file, and a weekday that sings the Sunday's Mass. Twenty-three
-days get no chants: twelve commemorations, which have no Mass of
+Office file, and a weekday that sings the Sunday's Mass (but not Holy
+Week's reformed days, such as `Quad6-5r`, which aren't weekdays of
+Palm Sunday). A Tract is marked "!Tractus", sometimes with its psalm
+verses after it, and a Sequence the day's rule asks for, such as All
+Souls' Dies irae, is looked for in the Common the day is taken from.
+
+On the Ember days and a few Lenten Wednesdays, the Mass has extra
+readings before the Epistle, each with its own Gradual (an Alleluia in
+Pentecost week), and on the Saturdays the Benedictus es after the
+reading from Daniel, which is offered as a Canticle. These are read in
+order. Divinum Officium marks the chant after the last reading only as
+the Graduale, so `AFTER_LAST_READING` names the six days where it's a
+Tract or an Alleluia.
+
+Ash Wednesday, Candlemas and Holy Week have antiphons, responsories,
+hymns and canticles outside the Mass, which Divinum Officium writes out
+as prose with rubrics. `CEREMONIES` lists them by hand, in the order
+sung, from the file each is read in, and the script stops if a
+chant's opening isn't found at the start of a line of that file, so
+nothing is typed from memory. I checked the list and chose the kinds:
+on Good Friday "Eripe me" is a Responsory, and Sicut cervus is a
+Canticle. Lauds after the Vigil is left out, as are the Vigil of
+Pentecost's prophecies, which the 1955 reform removed.
+
+Twenty-three days get no chants: twelve commemorations, which have no Mass of
 their own, a weekday in the Christmas octave that borrows another, St
 Zephyrinus, whose Common `C2-1b` isn't in the files, and the nine
 England and Wales days, which Divinum Officium doesn't have.
@@ -84,9 +109,18 @@ read as plain text a year's alternative loses its column. `DAYS`
 pairs every row's name with an occasion's key, and the script stops if
 a row's name doesn't match the next one, so a misread can't pass. In
 Eastertide the first of two Alleluias is put where the Gradual goes, as
-for 1962. Seventy-three days are covered; the Mass at Midnight, Good
-Friday and the Easter Vigil are left out, as Precentor keeps one
-Christmas and the other two have no Mass of their own.
+for 1962. The table's antiphons, responsories, hymns and canticles, on
+Palm Sunday, Holy Week, Ash Wednesday and the Presentation, are kept as
+those parts, each in order, and a list of them ("Hosanna filio David;
+Pueri Hebraeorum, portantes") is split into one chant each. Good Friday
+and the Easter Vigil are keyed to the calendar's own days for them.
+`REPARTED` moves three chants the table files under another part: the
+Vigil's first two chants after the readings are Tracts, not canticles,
+and Maundy Thursday's Pange lingua is the procession's hymn.
+`ADDITIONS` lists chants the
+table hasn't got, given from the Graduale itself: Year B's Communion
+on the fifth Sunday of Lent, and the Vigil and Dawn Masses of
+Christmas. 78 days and Masses are covered, with 494 chants.
 
 I checked every row by eye against the PDF, and the days both forms
 keep against the 1962 chants: 113 agree, and the 37 that differ are
@@ -98,7 +132,11 @@ either the same chant named more briefly or a day whose Mass changed in
 romcal: only in names. The first letter is capitalised ("Fifth Sunday
 in Ordinary Time"); the week is capitalised, as in the English Missal
 ("Saturday of the Second Week of Lent"); and one typo is corrected, in
-`NAME_CORRECTIONS` ("All Souls' Day").
+`NAME_CORRECTIONS` ("All Souls' Day"). romcal has one Christmas, which
+is the Mass during the Day and named so; `CHRISTMAS_MASSES` adds the
+Vigil Mass and the Masses during the Night and at Dawn, each with its
+own propers, with no precedence so they're listed with the day's
+celebration and never in its place.
 
 Missalemeum: none. Its names are used as they are.
 
