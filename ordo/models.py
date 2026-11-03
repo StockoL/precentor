@@ -243,6 +243,13 @@ PROPER_CHANT_PARTS = [
     ("sequence", "Sequence"),
     ("offertory", "Offertory"),
     ("communion", "Communion"),
+    # Chants outside the Mass's propers that some days have, often several
+    # of: Palm Sunday's antiphons, hymn and responsory, the Easter Vigil's
+    # canticles.
+    ("antiphon", "Antiphon"),
+    ("responsory", "Responsory"),
+    ("hymn", "Hymn"),
+    ("canticle", "Canticle"),
 ]
 
 # A saint's day can fall in Lent or Eastertide, when its Mass sings a
@@ -272,14 +279,18 @@ class ProperChant(models.Model):
     # An Ordinary Form Sunday's chant for one year of the three-year cycle;
     # blank for any year.
     cycle = models.CharField(max_length=1, choices=[("A", "Year A"), ("B", "Year B"), ("C", "Year C")], blank=True)
+    # Where a day has several chants of one part, the order they're sung
+    # in; 0 for the rest. It only sorts them and is never shown.
+    position = models.PositiveSmallIntegerField(default=0)
     incipit = models.CharField(max_length=100)
     source = models.CharField(max_length=100, help_text="Where it came from, e.g. Divinum Officium Tempora/Adv1-0")
 
     class Meta:
-        ordering = ["occasion_key", "part"]  # noqa
+        ordering = ["occasion_key", "part", "position"]  # noqa
         constraints = [
             models.UniqueConstraint(
-                fields=["calendar_use", "occasion_key", "part", "season", "cycle"], name="one_proper_chant_per_part"
+                fields=["calendar_use", "occasion_key", "part", "season", "cycle", "position"],
+                name="one_proper_chant_per_part",
             ),
         ]
 
@@ -302,10 +313,10 @@ def chant_season(day):
 def proper_chants(occasion, day):
     """
     The names of the chants sung at an occasion's Mass on a date, as
-    {part: incipit}, in either form. A form marked for the date beats the
-    usual one: in 1962 a saint's day in Lent has its Tract in place of the
-    Alleluia, and in the Ordinary Form a Sunday can have its own chant for
-    the year of the cycle.
+    {part: [incipits in the order sung]}, in either form; most parts have
+    one. A form marked for the date beats the usual one: in 1962 a saint's
+    day in Lent has its Tract in place of the Alleluia, and in the Ordinary
+    Form a Sunday can have its own chant for the year of the cycle.
     """
     if occasion is None:
         return {}
@@ -318,9 +329,12 @@ def proper_chants(occasion, day):
         if chant.season not in ("", season) or chant.cycle not in ("", cycle):
             continue
         fit = (chant.season == season and season != "") + (chant.cycle == cycle and cycle != "")
-        if chant.part not in best or fit > best[chant.part][0]:
-            best[chant.part] = (fit, chant.incipit)
-    chants = {part: incipit for part, (_, incipit) in best.items()}
+        place = (chant.part, chant.position)
+        if place not in best or fit > best[place][0]:
+            best[place] = (fit, chant.incipit)
+    chants = {}
+    for (part, _), (_, incipit) in sorted(best.items()):
+        chants.setdefault(part, []).append(incipit)
     if season == "septuagesima" and "tract" in chants:
         chants.pop("alleluia", None)
     return chants

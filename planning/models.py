@@ -477,9 +477,9 @@ class ServiceRole(models.Model):
         if self.kind != "proper" or not chants:
             return None
         if self.proper_part == "alleluia_or_tract":
-            incipit = chants.get("tract") or chants.get("alleluia")
+            incipit = (chants.get("tract") or chants.get("alleluia") or [None])[0]
         else:
-            incipit = chants.get(self.proper_part)
+            incipit = (chants.get(self.proper_part) or [None])[0]
         if not incipit or any(piece.reference == incipit for piece in self.pieces.all()):
             return None
         return incipit

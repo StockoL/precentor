@@ -96,16 +96,16 @@ class ChoosingChantsTests(TestCase):
 
     def test_the_usual_chants(self):
         self.assertEqual(proper_chants(self.immaculate, date(2026, 12, 8)), {
-            "introit": "Gaudens gaudebo", "gradual": "Benedicta es tu", "alleluia": "Tota pulchra es",
+            "introit": ["Gaudens gaudebo"], "gradual": ["Benedicta es tu"], "alleluia": ["Tota pulchra es"],
         })
 
     def test_in_lent_the_tract_takes_the_alleluias_place(self):
         chants = proper_chants(self.immaculate, date(2027, 3, 1))
-        self.assertEqual(chants["tract"], "Fundamenta ejus")
+        self.assertEqual(chants["tract"], ["Fundamenta ejus"])
         self.assertNotIn("alleluia", chants)
 
     def test_in_eastertide_the_seasons_form_wins(self):
-        self.assertEqual(proper_chants(self.immaculate, date(2027, 4, 10))["gradual"], "Tu gloria Jerusalem")
+        self.assertEqual(proper_chants(self.immaculate, date(2027, 4, 10))["gradual"], ["Tu gloria Jerusalem"])
 
     def test_nothing_for_the_ordinary_form_or_no_occasion(self):
         ordinary_form = LiturgicalOccasion(key="immaculate_conception", calendar_use="current")
@@ -128,11 +128,11 @@ class OrdinaryFormChantTests(TestCase):
 
     def test_the_usual_chant_in_other_years(self):
         self.assertEqual(proper_chants(self.sunday, date(2026, 6, 14)), {
-            "introit": "Dominus illuminatio mea", "communion": "Dominus firmamentum meum",
+            "introit": ["Dominus illuminatio mea"], "communion": ["Dominus firmamentum meum"],
         })
 
     def test_the_years_own_chant_wins(self):
-        self.assertEqual(proper_chants(self.sunday, date(2027, 6, 13))["communion"], "Quicumque fecerit")
+        self.assertEqual(proper_chants(self.sunday, date(2027, 6, 13))["communion"], ["Quicumque fecerit"])
 
     def test_the_two_forms_never_mix(self):
         make_chant(occasion_key="ordinary_time_10_sunday", part="offertory", incipit="Not this form")
@@ -141,8 +141,8 @@ class OrdinaryFormChantTests(TestCase):
     def test_the_loaded_data_gives_each_year_its_own_communion_in_lent(self):
         load_propers()
         lent_5 = LiturgicalOccasion(key="lent_5_sunday", calendar_use="current")
-        self.assertEqual(proper_chants(lent_5, date(2026, 3, 22))["communion"], "Videns Dominus")  # Year A
-        self.assertEqual(proper_chants(lent_5, date(2027, 3, 14))["communion"], "Qui mihi ministrat")  # Year B
+        self.assertEqual(proper_chants(lent_5, date(2026, 3, 22))["communion"], ["Videns Dominus"])  # Year A
+        self.assertEqual(proper_chants(lent_5, date(2027, 3, 14))["communion"], ["Qui mihi ministrat"])  # Year B
 
     def test_each_christmas_mass_has_its_own_chants(self):
         load_propers()
@@ -155,4 +155,14 @@ class OrdinaryFormChantTests(TestCase):
         for key, introit in introits.items():
             mass = LiturgicalOccasion(key=key, calendar_use="current")
             with self.subTest(mass=key):
-                self.assertEqual(proper_chants(mass, date(2026, 12, 25))["introit"], introit)
+                self.assertEqual(proper_chants(mass, date(2026, 12, 25))["introit"], [introit])
+
+    def test_several_chants_of_one_part_come_in_the_order_sung(self):
+        for position, incipit in [(2, "Pueri Hebraeorum, vestimenta"), (0, "Hosanna filio David"),
+                                  (1, "Pueri Hebraeorum, portantes")]:
+            make_chant(occasion_key="palm_sunday", calendar_use="current", part="antiphon", position=position,
+                       incipit=incipit)
+        palm_sunday = LiturgicalOccasion(key="palm_sunday", calendar_use="current")
+        self.assertEqual(proper_chants(palm_sunday, date(2027, 3, 21))["antiphon"], [
+            "Hosanna filio David", "Pueri Hebraeorum, portantes", "Pueri Hebraeorum, vestimenta",
+        ])

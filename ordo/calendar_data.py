@@ -155,7 +155,8 @@ def load_propers(files=PROPER_FILES):
         ProperChant.objects.bulk_create(
             ProperChant(
                 occasion_key=row["key"], calendar_use=calendar_use, part=row["part"],
-                season=row.get("season", ""), cycle=row.get("cycle", ""), incipit=row["incipit"],
+                season=row.get("season", ""), cycle=row.get("cycle", ""), position=row.get("position", 0),
+                incipit=row["incipit"],
                 source=f"{source} {row['source']}",
             )
             for row in rows
