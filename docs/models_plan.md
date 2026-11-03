@@ -814,7 +814,14 @@ class ProperChant(models.Model):
 
 def chant_season(day): ...          # Septuagesima to Holy Saturday; Easter to the Saturday after Pentecost
 def proper_chants(occasion, day): ...  # {part: [incipits in the order sung]} for that day
+def weekday_sunday(day, national_calendar): ...  # the Sunday an Ordinary Form weekday borrows from
 ```
+
+A plain Ordinary Form weekday isn't an occasion, so a service on one has
+none; `Service.proper_chants` then asks `weekday_sunday()` for the Sunday
+before, if it's one of Ordinary Time, Advent (to 16 December) or
+Eastertide after the octave, and offers its chants. 1962 needs no such
+step, as its export already gives each weekday the Sunday's chants.
 
 The opening words of each day's chants (migrations `0019` to `0021`): the
 Introit, Gradual, Alleluia, Tract, Sequence, Offertory and Communion, and

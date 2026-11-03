@@ -264,9 +264,13 @@ each is an occasion of its own, listed on 24 and 25 December with the
 day's celebration, and a service is given the one it is. Some Sundays have a chant for one year of
 the three-year cycle, such as the Holy Family's Year A Communion,
 "Tolle puerum", or a Lent Sunday's Communion for the Gospel read that
-year, and Precentor works out which year a service falls in. Weekdays
-and most saints' days offer nothing, as the table doesn't cover them,
-and in the Ordinary Form the Graduale's chants are one choice among
+year, and Precentor works out which year a service falls in. As in
+1962, a weekday with no Mass of its own sings the Sunday before's
+propers, so a service on a plain weekday of Ordinary Time, of Advent
+up to 16 December, or of Eastertide after its octave is offered that
+Sunday's chants. Lent's weekdays, the last days of Advent, the octaves
+and most saints' days have Masses of their own that the table doesn't
+cover, so they offer nothing rather than the wrong chants. In the Ordinary Form the Graduale's chants are one choice among
 several, so a suggestion is only ever a suggestion.
 
 A piece in a slot is one of three things: a score from the library, a
