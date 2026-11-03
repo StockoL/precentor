@@ -113,3 +113,32 @@ class SequenceSlotTests(TestCase):
         slot = ServiceRole.objects.create(service=service, role_name="Sequence")
         self.assertEqual((slot.kind, slot.proper_part), ("proper", "sequence"))
         self.assertEqual(slot.proper_suggestions, ["Victimae paschali laudes"])
+
+
+class HolyWeekSlotTests(TestCase):
+    """From the loaded data: the Easter Vigil's Alleluia or Tract slot and
+    its Canticle slots, and Palm Sunday's antiphons."""
+
+    def setUp(self):
+        from ordo.calendar_data import load_propers
+
+        load_propers()
+        self.term = make_term(start_date=date(2027, 3, 1), end_date=date(2027, 4, 30))
+
+    def service(self, key, day):
+        occasion = LiturgicalOccasion.objects.create(name=key, key=key, calendar_use="current")
+        return Service.objects.create(term=self.term, date=day, service_type="Liturgy", occasion=occasion)
+
+    def test_the_vigils_tracts_then_its_alleluia(self):
+        vigil = self.service("holy_saturday", date(2027, 3, 27))
+        slot = ServiceRole.objects.create(service=vigil, role_name="Alleluia or Tract")
+        self.assertEqual(slot.proper_suggestions, ["Iubilate Domino", "Qui confidunt", "Confitemini Domino"])
+        canticle = ServiceRole.objects.create(service=vigil, role_name="Canticle", kind="canticle")
+        self.assertEqual(canticle.proper_suggestions[0], "Cantemus Domino")
+        self.assertEqual(len(canticle.proper_suggestions), 5)
+
+    def test_palm_sundays_antiphons_in_order(self):
+        palm = self.service("palm_sunday_of_the_passion_of_the_lord", date(2027, 3, 21))
+        slot = ServiceRole.objects.create(service=palm, role_name="Procession antiphon")
+        self.assertEqual(slot.proper_suggestions,
+                         ["Hosanna filio David", "Pueri Hebraeorum, portantes", "Pueri Hebraeorum, vestimenta"])

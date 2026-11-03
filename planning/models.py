@@ -485,7 +485,7 @@ class ServiceRole(models.Model):
         """
         The day's chants this slot can take, in the order sung: a Proper
         slot its part's ("Ad te levavi" for the Introit; an Alleluia or
-        Tract slot whichever the date has), and an Antiphon, Responsory,
+        Tract slot whichever the date has, or both), and an Antiphon, Responsory,
         Hymn or Canticle slot the day's chants of its kind, such as Palm
         Sunday's three antiphons. A chant already proposed in a slot of the
         same kind and part is left out, so a second Antiphon slot offers the
@@ -495,7 +495,8 @@ class ServiceRole(models.Model):
         if not chants:
             return []
         if self.kind == "proper" and self.proper_part == "alleluia_or_tract":
-            offered = chants.get("tract") or chants.get("alleluia") or []
+            # Only the Easter Vigil has both: its Tracts, then its Alleluia.
+            offered = chants.get("tract", []) + chants.get("alleluia", [])
         elif self.kind == "proper":
             offered = chants.get(self.proper_part, [])
         elif self.kind in MANY_CHANT_KINDS and not self.proper_part:
