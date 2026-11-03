@@ -132,8 +132,10 @@ def lines_for(path, part, depth=0):
     source = borrows_from(path)
     if source and source != path:
         return lines_for(source, part, depth + 1)
-    # A weekday with nothing of its own sings the Sunday's Mass.
-    weekday = re.match(r"^(Tempora/.+?\d)-[1-6]", path)
+    # A weekday with nothing of its own sings the Sunday's Mass. Holy
+    # Week's reformed days (Quad6-5r, "r" for the 1955 reform) aren't
+    # weekdays of Palm Sunday: their ceremonies are listed by hand below.
+    weekday = re.match(r"^(Tempora/.+?\d)-[1-6](?!r)", path)
     if weekday:
         return lines_for(f"{weekday.group(1)}-0", part, depth + 1)
     return None
@@ -189,7 +191,8 @@ def split_gradual(lines):
         verses = [incipit(words) for _, words in texts]
         return {"gradual": verses[0], "alleluia": verses[1]} if len(verses) > 1 else {"alleluia": verses[0]}
     parts = {"gradual": incipit(texts[0][1])}
-    tract = next((i for i, line in enumerate(lines) if line.strip() == "!Tractus"), None)
+    # "!Tractus", sometimes followed by its psalm verses ("!Tractus 21:2-9").
+    tract = next((i for i, line in enumerate(lines) if re.match(r"!Tractus\b", line.strip())), None)
     if tract is not None:
         parts["tract"] = next((incipit(words) for i, words in texts if i > tract), None)
         return parts
@@ -210,8 +213,10 @@ def chants(path):
         if words:
             found.append((part, "", words))
     # Only the few days with a Sequence of their own have one, so it isn't
-    # looked for in a Common or the Sunday.
-    if "Sequentia" in sections(path):
+    # looked for in a Common or the Sunday, unless the day's rule asks for
+    # it: All Souls' Dies iræ is in the Requiem Common.
+    rule = [line.strip() for line in sections(path).get("Rule", [])]
+    if "Sequentia" in sections(path) or "Sequentia" in rule:
         sequence = first_words(lines_for(path, "Sequentia"))
         if sequence:
             found.append(("sequence", "", sequence))

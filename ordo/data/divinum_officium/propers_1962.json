@@ -13953,6 +13953,13 @@
    "source": "Sancti/11-02m1"
   },
   {
+   "key": "sancti:11-02m1",
+   "part": "sequence",
+   "season": "",
+   "incipit": "Dies iræ",
+   "source": "Sancti/11-02m1"
+  },
+  {
    "key": "sancti:11-02m2",
    "part": "introit",
    "season": "",
@@ -13988,6 +13995,13 @@
    "source": "Sancti/11-02m2"
   },
   {
+   "key": "sancti:11-02m2",
+   "part": "sequence",
+   "season": "",
+   "incipit": "Dies iræ",
+   "source": "Sancti/11-02m2"
+  },
+  {
    "key": "sancti:11-02m3",
    "part": "introit",
    "season": "",
@@ -14020,6 +14034,13 @@
    "part": "tract",
    "season": "",
    "incipit": "Absolve, Domine",
+   "source": "Sancti/11-02m3"
+  },
+  {
+   "key": "sancti:11-02m3",
+   "part": "sequence",
+   "season": "",
+   "incipit": "Dies iræ",
    "source": "Sancti/11-02m3"
   },
   {
@@ -28212,6 +28233,13 @@
    "source": "Tempora/Quad6-0r"
   },
   {
+   "key": "tempora:Quad6-0r",
+   "part": "tract",
+   "season": "",
+   "incipit": "Deus, Deus meus",
+   "source": "Tempora/Quad6-0r"
+  },
+  {
    "key": "tempora:Quad6-1",
    "part": "introit",
    "season": "",
@@ -28329,62 +28357,6 @@
    "season": "",
    "incipit": "Christus factus est pro nobis",
    "source": "Tempora/Quad6-4r"
-  },
-  {
-   "key": "tempora:Quad6-5r",
-   "part": "introit",
-   "season": "",
-   "incipit": "Domine, ne longe facias auxilium",
-   "source": "Tempora/Quad6-5r"
-  },
-  {
-   "key": "tempora:Quad6-5r",
-   "part": "offertory",
-   "season": "",
-   "incipit": "Improperium exspectavit cor meum",
-   "source": "Tempora/Quad6-5r"
-  },
-  {
-   "key": "tempora:Quad6-5r",
-   "part": "communion",
-   "season": "",
-   "incipit": "Pater, si non potest hic",
-   "source": "Tempora/Quad6-5r"
-  },
-  {
-   "key": "tempora:Quad6-5r",
-   "part": "gradual",
-   "season": "",
-   "incipit": "Tenuisti manum dexteram meam",
-   "source": "Tempora/Quad6-5r"
-  },
-  {
-   "key": "tempora:Quad6-6r",
-   "part": "introit",
-   "season": "",
-   "incipit": "Domine, ne longe facias auxilium",
-   "source": "Tempora/Quad6-6r"
-  },
-  {
-   "key": "tempora:Quad6-6r",
-   "part": "offertory",
-   "season": "",
-   "incipit": "Improperium exspectavit cor meum",
-   "source": "Tempora/Quad6-6r"
-  },
-  {
-   "key": "tempora:Quad6-6r",
-   "part": "communion",
-   "season": "",
-   "incipit": "Pater, si non potest hic",
-   "source": "Tempora/Quad6-6r"
-  },
-  {
-   "key": "tempora:Quad6-6r",
-   "part": "gradual",
-   "season": "",
-   "incipit": "Tenuisti manum dexteram meam",
-   "source": "Tempora/Quad6-6r"
   },
   {
    "key": "tempora:Quadp1-0",
