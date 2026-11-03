@@ -137,6 +137,29 @@ class HolyWeekSlotTests(TestCase):
         self.assertEqual(canticle.proper_suggestions[0], "Cantemus Domino")
         self.assertEqual(len(canticle.proper_suggestions), 5)
 
+    def test_the_1962_vigils_alleluia_then_its_tract(self):
+        occasion = LiturgicalOccasion.objects.create(name="Vigil", key="tempora:Quad6-6r", calendar_use="historic")
+        term = make_term(start_date=date(2027, 3, 1), end_date=date(2027, 4, 30), calendar_use="historic")
+        vigil = Service.objects.create(term=term, date=date(2027, 3, 27), service_type="Vigil", occasion=occasion)
+        slot = ServiceRole.objects.create(service=vigil, role_name="Alleluia or Tract")
+        self.assertEqual(slot.proper_suggestions, ["Confitemini Domino", "Laudate Dominum"])
+        # Nothing of Palm Sunday's Mass, which the Vigil used to borrow.
+        introit = ServiceRole.objects.create(service=vigil, role_name="Introit")
+        self.assertEqual(introit.proper_suggestions, [])
+
+    def test_an_ember_saturdays_graduals_in_order(self):
+        occasion = LiturgicalOccasion.objects.create(name="Ember", key="tempora:Quad1-6", calendar_use="historic")
+        term = make_term(start_date=date(2027, 2, 1), end_date=date(2027, 3, 31), calendar_use="historic")
+        ember = Service.objects.create(term=term, date=date(2027, 2, 20), service_type="Mass", occasion=occasion)
+        gradual = ServiceRole.objects.create(service=ember, role_name="Gradual")
+        self.assertEqual(gradual.proper_suggestions,
+                         ["Propitius esto", "Protector noster", "Convertere, Domine",
+                          "Dirigatur oratio mea sicut incensum"])
+        canticle = ServiceRole.objects.create(service=ember, role_name="Canticle", kind="canticle")
+        self.assertEqual(canticle.proper_suggestions, ["Benedictus es"])
+        tract = ServiceRole.objects.create(service=ember, role_name="Tract")
+        self.assertEqual(tract.proper_suggestions, ["Laudate Dominum"])
+
     def test_palm_sundays_antiphons_in_order(self):
         palm = self.service("palm_sunday_of_the_passion_of_the_lord", date(2027, 3, 21))
         slot = ServiceRole.objects.create(service=palm, role_name="Procession antiphon")

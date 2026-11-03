@@ -495,8 +495,12 @@ class ServiceRole(models.Model):
         if not chants:
             return []
         if self.kind == "proper" and self.proper_part == "alleluia_or_tract":
-            # Only the Easter Vigil has both: its Tracts, then its Alleluia.
-            offered = chants.get("tract", []) + chants.get("alleluia", [])
+            # Only the Easter Vigil has both: in the Ordinary Form its Tracts
+            # come after the readings, before the Alleluia; in 1962 the
+            # Alleluia comes first, then the Tract.
+            tracts, alleluias = chants.get("tract", []), chants.get("alleluia", [])
+            historic = self.service.occasion.calendar_use == "historic"
+            offered = alleluias + tracts if historic else tracts + alleluias
         elif self.kind == "proper":
             offered = chants.get(self.proper_part, [])
         elif self.kind in MANY_CHANT_KINDS and not self.proper_part:

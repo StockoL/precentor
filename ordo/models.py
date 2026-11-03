@@ -335,6 +335,8 @@ def proper_chants(occasion, day):
     chants = {}
     for (part, _), (_, incipit) in sorted(best.items()):
         chants.setdefault(part, []).append(incipit)
-    if season == "septuagesima" and "tract" in chants:
+    # A saint's day in Lent sings its Lenten Tract in place of the Alleluia.
+    # The Easter Vigil, whose Tract is its own and not the season's, has both.
+    if any(part == "tract" and fit for (part, _), (fit, _) in best.items()):
         chants.pop("alleluia", None)
     return chants
