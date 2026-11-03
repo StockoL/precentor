@@ -228,7 +228,7 @@ class SequenceAndResponsoryMigrationTests(TestCase):
         sequence = ServiceRole.objects.create(service=service, role_name="Sequence", kind="other")
         responsory = ServiceRole.objects.create(service=service, role_name="Palm responsory", kind="other")
         chosen = ServiceRole.objects.create(service=service, role_name="Sequence motet", kind="motet")
-        template = make_slot_template(organisation=term.organisation, slot_names="Sequence")
+        template = make_slot_template(organisation=term.organisation, slots=["Sequence"])
         template.template_slots.update(kind="other", proper_part="")
         importlib.import_module("planning.migrations.0028_sequence_and_responsory").reclassify(apps, None)
         for slot, expected in [(sequence, ("proper", "sequence")), (responsory, ("responsory", "")),

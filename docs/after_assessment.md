@@ -78,7 +78,7 @@ data, which is why the first step below is a copy.
    allowed in the database's settings, and removed again afterwards.
 6. **Drop the old columns.** Only once the check is clean on the live
    data: merge the `drop-old-columns` branch, which removes the four
-   columns (`planning/0028`, `core/0015`), the code that still wrote
+   columns (`planning/0029`, `core/0015`), the code that still wrote
    them, and the check itself, then deploy again. I rehearsed it on the
    migrated rehearsal database: both migrations applied, the typed
    hymns stayed as pieces in their Hymns slots, and every page opened.

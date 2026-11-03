@@ -14,7 +14,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planning', '0027_split_template_slots'),
+        ('planning', '0028_sequence_and_responsory'),
     ]
 
     operations = [

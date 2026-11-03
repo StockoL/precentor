@@ -942,7 +942,7 @@ each service's hymns into one Hymns slot, a confirmed reference piece
 per comma-separated hymn in the order typed, and the psalm into a Psalm
 slot. Confirmed, because that text was what the music list already
 printed. The fields stayed, still holding the old text, until the
-copies had been checked on real data; `planning/0028` and
+copies had been checked on real data; `planning/0029` and
 `core/0015` then dropped them, with `SiteConfig.show_hymns_psalm`.
 
 **Status labels:** `status` returns a raw value, which templates use
@@ -1079,7 +1079,7 @@ JavaScript. The formset refuses a template with no slots or the same
 slot twice, whatever its case, and the template and its rows are saved
 in one transaction. Migration `planning/0027` split existing templates
 into rows, with its own copy of the name table; the old text column was
-dropped by `planning/0028` once the rows had been checked on real data.
+dropped by `planning/0029` once the rows had been checked on real data.
 
 Applying a template copies each row's name, kind and proper part into
 a new `ServiceRole`, skipping names the service already has (ignoring
