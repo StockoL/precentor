@@ -9,7 +9,7 @@ from django.utils.functional import cached_property
 
 from accounts.querysets import OrganisationQuerySet
 from library.models import Hymnal, HymnEntry, Score, Tune
-from ordo.models import CALENDAR_USE_CHOICES, proper_chants
+from ordo.models import CALENDAR_USE_CHOICES, proper_chants, weekday_sunday
 
 from .slot_kinds import KIND_CHOICES, MANY_CHANT_KINDS, PROPER_PART_CHOICES, REFERENCE_FIRST, classify
 
@@ -204,8 +204,14 @@ class Service(models.Model):
     @cached_property
     def proper_chants(self):
         """The names of the chants of this day's Mass, {part: [incipits]},
-        worked out once for all its slots. Empty without an occasion."""
-        return proper_chants(self.occasion, self.date)
+        worked out once for all its slots. An Ordinary Form weekday with no
+        occasion sings the Sunday before's; otherwise it's empty without one."""
+        from core.models import SiteConfig
+
+        occasion = self.occasion
+        if occasion is None and self.effective_calendar_use() == "current":
+            occasion = weekday_sunday(self.date, SiteConfig.national_calendar_of(self.organisation_id))
+        return proper_chants(occasion, self.date)
 
     @cached_property
     def references_proposed(self):

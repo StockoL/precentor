@@ -340,3 +340,26 @@ def proper_chants(occasion, day):
     if any(part == "tract" and fit for (part, _), (fit, _) in best.items()):
         chants.pop("alleluia", None)
     return chants
+
+
+# The Ordinary Form Sundays whose propers carry into the weekdays after
+# them: those of Ordinary Time, Advent and Eastertide after its octave.
+# Lent's weekdays have Masses of their own, as do 17 to 24 December and
+# the octaves, which are occasions in their own right.
+WEEKDAY_SUNDAYS = ("ordinary_time_", "sunday_of_the_word_of_god", "advent_", "divine_mercy_sunday", "easter_time_")
+
+
+def weekday_sunday(day, national_calendar="general_roman"):
+    """
+    The Sunday whose propers an Ordinary Form weekday with nothing of its
+    own sings, as in 1962: the one before it, if that Sunday is kept as a
+    Sunday of Ordinary Time, Advent (to 16 December) or Eastertide. None
+    otherwise, including on a Sunday or after one a feast replaced.
+    """
+    if day.weekday() == 6 or (day.month, day.day) >= (12, 17):
+        return None
+    sunday = day - timedelta(days=day.weekday() + 1)
+    kept = occasion_for_date(sunday, "current", national_calendar)
+    if kept and kept[0].rank == "sunday" and kept[0].key.startswith(WEEKDAY_SUNDAYS):
+        return kept[0]
+    return None

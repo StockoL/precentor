@@ -7,7 +7,7 @@ from django.db import IntegrityError
 from django.test import TestCase
 
 from .calendar_data import DATA_DIR, PROPER_FILES, load_propers
-from .models import LiturgicalOccasion, ProperChant, chant_season, proper_chants
+from .models import LiturgicalOccasion, ProperChant, chant_season, proper_chants, weekday_sunday
 
 
 def make_chant(**fields):
@@ -166,3 +166,30 @@ class OrdinaryFormChantTests(TestCase):
         self.assertEqual(proper_chants(palm_sunday, date(2027, 3, 21))["antiphon"], [
             "Hosanna filio David", "Pueri Hebraeorum, portantes", "Pueri Hebraeorum, vestimenta",
         ])
+
+
+class WeekdaySundayTests(TestCase):
+    """Which Sunday's propers an Ordinary Form weekday sings, from the
+    loaded calendar. Advent 2026 starts on 29 November; Easter 2027 is on
+    28 March, with Ash Wednesday on 10 February."""
+
+    @classmethod
+    def setUpTestData(cls):
+        call_command("load_calendar", stdout=StringIO())
+
+    def key(self, day):
+        sunday = weekday_sunday(day)
+        return sunday.key if sunday else None
+
+    def test_a_weekday_takes_the_sunday_before(self):
+        self.assertEqual(self.key(date(2027, 2, 9)), "ordinary_time_5_sunday")
+        self.assertEqual(self.key(date(2026, 12, 12)), "advent_2_sunday")
+        self.assertEqual(self.key(date(2027, 4, 6)), "divine_mercy_sunday")
+
+    def test_none_for_days_with_masses_of_their_own(self):
+        for day in [date(2026, 12, 17), date(2026, 12, 29), date(2027, 3, 2), date(2027, 3, 31)]:
+            with self.subTest(day=day):
+                self.assertIsNone(self.key(day))  # late Advent, Christmas, Lent, the Easter octave
+
+    def test_none_on_a_sunday(self):
+        self.assertIsNone(self.key(date(2027, 2, 7)))

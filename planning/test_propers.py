@@ -165,3 +165,29 @@ class HolyWeekSlotTests(TestCase):
         slot = ServiceRole.objects.create(service=palm, role_name="Procession antiphon")
         self.assertEqual(slot.proper_suggestions,
                          ["Hosanna filio David", "Pueri Hebraeorum, portantes", "Pueri Hebraeorum, vestimenta"])
+
+
+class WeekdaySlotTests(TestCase):
+    """An Ordinary Form weekday with no occasion of its own is offered the
+    Sunday before's chants, from the loaded data."""
+
+    @classmethod
+    def setUpTestData(cls):
+        from io import StringIO
+
+        from django.core.management import call_command
+
+        call_command("load_calendar", stdout=StringIO())
+
+    def introit(self, calendar_use, day):
+        term = make_term(start_date=date(2027, 1, 1), end_date=date(2027, 3, 31), calendar_use=calendar_use)
+        service = Service.objects.create(term=term, date=day, service_type="Said Mass")
+        return ServiceRole.objects.create(service=service, role_name="Introit").proper_suggestions
+
+    def test_a_weekday_offers_the_sundays_chants(self):
+        sunday = LiturgicalOccasion.objects.get(key="ordinary_time_5_sunday", calendar_use="current")
+        expected = ProperChant.objects.get(occasion_key=sunday.key, calendar_use="current", part="introit")
+        self.assertEqual(self.introit("current", date(2027, 2, 9)), [expected.incipit])
+
+    def test_not_for_a_1962_service_without_an_occasion(self):
+        self.assertEqual(self.introit("historic", date(2027, 2, 9)), [])
