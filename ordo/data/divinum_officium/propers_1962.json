@@ -1500,6 +1500,51 @@
    "source": "Sancti/02-02"
   },
   {
+   "key": "sancti:02-02",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Lumen ad revelationem gentium",
+   "source": "Sancti/02-02"
+  },
+  {
+   "key": "sancti:02-02",
+   "part": "canticle",
+   "season": "",
+   "incipit": "Nunc dimittis",
+   "source": "Sancti/02-02"
+  },
+  {
+   "key": "sancti:02-02",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Exsurge, Domine",
+   "source": "Sancti/02-02",
+   "position": 1
+  },
+  {
+   "key": "sancti:02-02",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Adorna thalamum tuum, Sion",
+   "source": "Sancti/02-02",
+   "position": 2
+  },
+  {
+   "key": "sancti:02-02",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Responsum accepit Simeon",
+   "source": "Sancti/02-02",
+   "position": 3
+  },
+  {
+   "key": "sancti:02-02",
+   "part": "responsory",
+   "season": "",
+   "incipit": "Obtulerunt pro eo Domino",
+   "source": "Sancti/02-02"
+  },
+  {
    "key": "sancti:02-03",
    "part": "introit",
    "season": "",
@@ -28433,6 +28478,99 @@
    "source": "Tempora/Quad6-0r"
   },
   {
+   "key": "tempora:Quad6-0r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Hosanna filio David",
+   "source": "Tempora/Quad6-0r"
+  },
+  {
+   "key": "tempora:Quad6-0r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Pueri Hebræorum, portantes",
+   "source": "Tempora/Quad6-0r",
+   "position": 1
+  },
+  {
+   "key": "tempora:Quad6-0r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Pueri Hebræorum vestimenta",
+   "source": "Tempora/Quad6-0r",
+   "position": 2
+  },
+  {
+   "key": "tempora:Quad6-0r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Occurrunt turbæ",
+   "source": "Tempora/Quad6-0r",
+   "position": 3
+  },
+  {
+   "key": "tempora:Quad6-0r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Cum Angelis et pueris",
+   "source": "Tempora/Quad6-0r",
+   "position": 4
+  },
+  {
+   "key": "tempora:Quad6-0r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Turba multa",
+   "source": "Tempora/Quad6-0r",
+   "position": 5
+  },
+  {
+   "key": "tempora:Quad6-0r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Cœperunt omnes",
+   "source": "Tempora/Quad6-0r",
+   "position": 6
+  },
+  {
+   "key": "tempora:Quad6-0r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Omnes collaudant",
+   "source": "Tempora/Quad6-0r",
+   "position": 7
+  },
+  {
+   "key": "tempora:Quad6-0r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Fulgentibus palmis",
+   "source": "Tempora/Quad6-0r",
+   "position": 8
+  },
+  {
+   "key": "tempora:Quad6-0r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Ave, Rex noster",
+   "source": "Tempora/Quad6-0r",
+   "position": 9
+  },
+  {
+   "key": "tempora:Quad6-0r",
+   "part": "hymn",
+   "season": "",
+   "incipit": "Gloria, laus et honor",
+   "source": "Tempora/Quad6-0r"
+  },
+  {
+   "key": "tempora:Quad6-0r",
+   "part": "responsory",
+   "season": "",
+   "incipit": "Ingrediente Domino",
+   "source": "Tempora/Quad6-0r"
+  },
+  {
    "key": "tempora:Quad6-1",
    "part": "introit",
    "season": "",
@@ -28557,6 +28695,181 @@
    "season": "",
    "incipit": "Christus factus est pro nobis",
    "source": "Tempora/Quad6-4r"
+  },
+  {
+   "key": "tempora:Quad6-4r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Mandatum novum",
+   "source": "Tempora/Quad6-4r"
+  },
+  {
+   "key": "tempora:Quad6-4r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Postquam surrexit Dominus",
+   "source": "Tempora/Quad6-4r",
+   "position": 1
+  },
+  {
+   "key": "tempora:Quad6-4r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Dominus Jesus, postquam cœnavit",
+   "source": "Tempora/Quad6-4r",
+   "position": 2
+  },
+  {
+   "key": "tempora:Quad6-4r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Domine, tu mihi lavas pedes",
+   "source": "Tempora/Quad6-4r",
+   "position": 3
+  },
+  {
+   "key": "tempora:Quad6-4r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Si ego, Dominus et Magister",
+   "source": "Tempora/Quad6-4r",
+   "position": 4
+  },
+  {
+   "key": "tempora:Quad6-4r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "In hoc cognoscent omnes",
+   "source": "Tempora/Quad6-4r",
+   "position": 5
+  },
+  {
+   "key": "tempora:Quad6-4r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Maneant in vobis",
+   "source": "Tempora/Quad6-4r",
+   "position": 6
+  },
+  {
+   "key": "tempora:Quad6-4r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Benedicta sit sancta Trinitas",
+   "source": "Tempora/Quad6-4r",
+   "position": 7
+  },
+  {
+   "key": "tempora:Quad6-4r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Ubi caritas et amor",
+   "source": "Tempora/Quad6-4r",
+   "position": 8
+  },
+  {
+   "key": "tempora:Quad6-4r",
+   "part": "hymn",
+   "season": "",
+   "incipit": "Pange lingua gloriosi",
+   "source": "Tempora/Quad6-4r"
+  },
+  {
+   "key": "tempora:Quad6-4r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Diviserunt sibi",
+   "source": "Tempora/Quad6-4r",
+   "position": 9
+  },
+  {
+   "key": "tempora:Quad6-5r",
+   "part": "tract",
+   "season": "",
+   "incipit": "Domine, audivi",
+   "source": "Tempora/Quad6-5r"
+  },
+  {
+   "key": "tempora:Quad6-5r",
+   "part": "responsory",
+   "season": "",
+   "incipit": "Eripe me, Domine",
+   "source": "Tempora/Quad6-5r"
+  },
+  {
+   "key": "tempora:Quad6-5r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Ecce lignum Crucis",
+   "source": "Tempora/Quad6-5r"
+  },
+  {
+   "key": "tempora:Quad6-5r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Popule meus",
+   "source": "Tempora/Quad6-5r",
+   "position": 1
+  },
+  {
+   "key": "tempora:Quad6-5r",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Crucem tuam",
+   "source": "Tempora/Quad6-5r",
+   "position": 2
+  },
+  {
+   "key": "tempora:Quad6-5r",
+   "part": "hymn",
+   "season": "",
+   "incipit": "Crux fidelis",
+   "source": "Tempora/Quad6-5r"
+  },
+  {
+   "key": "tempora:Quad6-6r",
+   "part": "canticle",
+   "season": "",
+   "incipit": "Cantemus Domino",
+   "source": "Tempora/Quad6-6r"
+  },
+  {
+   "key": "tempora:Quad6-6r",
+   "part": "canticle",
+   "season": "",
+   "incipit": "Vinea facta est",
+   "source": "Tempora/Quad6-6r",
+   "position": 1
+  },
+  {
+   "key": "tempora:Quad6-6r",
+   "part": "canticle",
+   "season": "",
+   "incipit": "Attende, cælum",
+   "source": "Tempora/Quad6-6r",
+   "position": 2
+  },
+  {
+   "key": "tempora:Quad6-6r",
+   "part": "canticle",
+   "season": "",
+   "incipit": "Sicut cervus",
+   "source": "Tempora/Quad6-6r",
+   "position": 3
+  },
+  {
+   "key": "tempora:Quad6-6r",
+   "part": "alleluia",
+   "season": "",
+   "incipit": "Confitemini Domino",
+   "source": "Tempora/Quad6-6r"
+  },
+  {
+   "key": "tempora:Quad6-6r",
+   "part": "tract",
+   "season": "",
+   "incipit": "Laudate Dominum",
+   "source": "Tempora/Quad6-6r"
   },
   {
    "key": "tempora:Quadp1-0",
@@ -29088,6 +29401,36 @@
    "part": "tract",
    "season": "",
    "incipit": "Domine, non secundum peccata nostra",
+   "source": "Tempora/Quadp3-3"
+  },
+  {
+   "key": "tempora:Quadp3-3",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Exaudi nos, Domine",
+   "source": "Tempora/Quadp3-3"
+  },
+  {
+   "key": "tempora:Quadp3-3",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Immutemur habitu",
+   "source": "Tempora/Quadp3-3",
+   "position": 1
+  },
+  {
+   "key": "tempora:Quadp3-3",
+   "part": "antiphon",
+   "season": "",
+   "incipit": "Inter vestibulum et altare",
+   "source": "Tempora/Quadp3-3",
+   "position": 2
+  },
+  {
+   "key": "tempora:Quadp3-3",
+   "part": "responsory",
+   "season": "",
+   "incipit": "Emendemus in melius",
    "source": "Tempora/Quadp3-3"
   },
   {

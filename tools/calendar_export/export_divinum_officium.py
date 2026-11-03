@@ -214,6 +214,93 @@ AFTER_LAST_READING = {
 }
 
 
+# The chants of the days with ceremonies of their own, beyond the Mass's
+# propers, in the order sung. Divinum Officium writes these out as prose
+# with rubrics, so they're listed by hand from the file named, and each
+# opening is checked against it (see ceremony_chants). Lauds after the
+# Vigil, and the Vigil of Pentecost's prophecies, gone since 1955, are left out.
+CEREMONIES = {
+    "tempora:Quadp3-3": ("Tempora/Quadp3-3", [  # Ash Wednesday
+        ("antiphon", "Exaudi nos, Domine"),
+        ("antiphon", "Immutemur habitu"),
+        ("antiphon", "Inter vestibulum et altare"),
+        ("responsory", "Emendemus in melius"),
+    ]),
+    "sancti:02-02": ("Sancti/02-02", [  # Candlemas
+        ("antiphon", "Lumen ad revelationem gentium"),
+        ("canticle", "Nunc dimittis"),
+        ("antiphon", "Exsurge, Domine"),
+        ("antiphon", "Adorna thalamum tuum, Sion"),
+        ("antiphon", "Responsum accepit Simeon"),
+        ("responsory", "Obtulerunt pro eo Domino"),
+    ]),
+    "tempora:Quad6-0r": ("Tempora/Quad6-0r", [  # Palm Sunday
+        ("antiphon", "Hosanna filio David"),
+        ("antiphon", "Pueri Hebræorum, portantes"),
+        ("antiphon", "Pueri Hebræorum vestimenta"),
+        ("antiphon", "Occurrunt turbæ"),
+        ("antiphon", "Cum Angelis et pueris"),
+        ("antiphon", "Turba multa"),
+        ("antiphon", "Cœperunt omnes"),
+        ("antiphon", "Omnes collaudant"),
+        ("antiphon", "Fulgentibus palmis"),
+        ("antiphon", "Ave, Rex noster"),
+        ("hymn", "Gloria, laus et honor"),
+        ("responsory", "Ingrediente Domino"),
+    ]),
+    "tempora:Quad6-4r": ("Tempora/Quad6-4", [  # Maundy Thursday
+        ("antiphon", "Mandatum novum"),
+        ("antiphon", "Postquam surrexit Dominus"),
+        ("antiphon", "Dominus Jesus, postquam cœnavit"),
+        ("antiphon", "Domine, tu mihi lavas pedes"),
+        ("antiphon", "Si ego, Dominus et Magister"),
+        ("antiphon", "In hoc cognoscent omnes"),
+        ("antiphon", "Maneant in vobis"),
+        ("antiphon", "Benedicta sit sancta Trinitas"),
+        ("antiphon", "Ubi caritas et amor"),
+        ("hymn", "Pange lingua gloriosi"),
+        ("antiphon", "Diviserunt sibi"),
+    ]),
+    "tempora:Quad6-5r": ("Tempora/Quad6-5r", [  # Good Friday
+        ("tract", "Domine, audivi"),
+        ("responsory", "Eripe me, Domine"),
+        ("antiphon", "Ecce lignum Crucis"),
+        ("antiphon", "Popule meus"),
+        ("antiphon", "Crucem tuam"),
+        ("hymn", "Crux fidelis"),
+    ]),
+    "tempora:Quad6-6r": ("Tempora/Quad6-6r", [  # Easter Vigil
+        ("canticle", "Cantemus Domino"),
+        ("canticle", "Vinea facta est"),
+        ("canticle", "Attende, cælum"),
+        ("canticle", "Sicut cervus"),
+        ("alleluia", "Confitemini Domino"),
+        ("tract", "Laudate Dominum"),
+    ]),
+}
+
+
+def plain(text):
+    """Words to compare, without accents, case or punctuation."""
+    decomposed = unicodedata.normalize("NFD", text)
+    text = "".join(c for c in decomposed if not unicodedata.combining(c)).lower()
+    return " ".join(re.sub(r"[^\w\s]", " ", text).split())
+
+
+def ceremony_chants(key):
+    """A day's chants from CEREMONIES, as (part, season, incipit), after
+    checking each opens a line of its file (verse marks aside), so a typing
+    slip, or a chant the file doesn't have, stops the export."""
+    if key not in CEREMONIES:
+        return []
+    path, listed = CEREMONIES[key]
+    lines = [plain(re.sub(r"^(Ant\.|[vVR]\.)\s*", "", line)) for line in find(path).read_text(encoding="utf-8").splitlines()]
+    for part, words in listed:
+        if not any(line.startswith(plain(words)) for line in lines):
+            sys.exit(f"{key}: no line of {path} opens with {words!r}")
+    return [(part, "", words) for part, words in listed]
+
+
 def reading_chants(path):
     """The chants after the extra readings before the Epistle on the Ember
     days and a few Lenten Wednesdays, in order: a Gradual after each (an
@@ -287,7 +374,7 @@ def main():
     for key in keys():
         kind, _, name = key.partition(":")
         path = f"{kind.capitalize()}/{name}"
-        found = chants(path) if find(path) else []
+        found = (chants(path) if find(path) else []) + ceremony_chants(key)
         if not found:
             missing.append(key)
         # A day with several chants of one part, such as an Ember Saturday's
