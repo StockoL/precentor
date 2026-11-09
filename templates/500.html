@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{# Django renders this page with no context, so it still works when the database is what failed. The nav therefore shows the signed-out links. #}
+{% block title %}Something went wrong — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Something went wrong</h1>
+    <p>Precentor couldn't show this page because of a fault on its side, not anything you did. Please try again in a minute.</p>
+    <p><a class="btn-primary" href="{% url 'planning:term_list' %}">Go to Terms</a></p>
+</div>
+{% endblock %}

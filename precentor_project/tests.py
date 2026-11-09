@@ -1,4 +1,5 @@
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
+from django.views.defaults import server_error
 
 from accounts.testing import make_user
 
@@ -249,6 +250,17 @@ class ForbiddenPageTests(TestCase):
         self.assertTemplateUsed(response, "403.html")
         self.assertContains(response, "<h1>Not available to you</h1>", status_code=403, html=True)
         self.assertContains(response, 'href="/"', status_code=403)
+
+
+class ServerErrorPageTests(TestCase):
+    def test_a_fault_uses_the_house_style_and_a_link_home(self):
+        # Django's own handler, as it runs on a fault: no request context,
+        # so the page can't depend on the database.
+        response = server_error(RequestFactory().get("/"))
+        self.assertEqual(response.status_code, 500)
+        self.assertContains(response, "<h1>Something went wrong</h1>", status_code=500, html=True)
+        self.assertContains(response, 'href="/static/src/precentor.css"', status_code=500)
+        self.assertContains(response, 'href="/"', status_code=500)
 
 
 class FaviconTests(TestCase):
