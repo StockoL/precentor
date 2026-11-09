@@ -1,3 +1,4 @@
+import re
 from datetime import date
 
 from django.core.exceptions import ValidationError
@@ -323,6 +324,15 @@ class TuneChoiceTests(ReferencePieceTestMixin, TestCase):
         self.choose(self.usual)
         self.piece.refresh_from_db()
         self.assertEqual((self.piece.tune, self.piece.sung_tune), (None, self.usual))
+
+    def test_the_tune_form_is_in_a_div_not_a_span(self):
+        # A <span> may hold only text-level content, so the HTML
+        # validator refused the tune's <form> inside one.
+        self.client.force_login(self.conductor)
+        page = self.client.get(self.service.get_absolute_url()).content.decode()
+        row = re.search(rf'<li id="piece-row-{self.piece.pk}".*?</li>', page, re.S).group(0)
+        self.assertIn('action="/pieces/', row)
+        self.assertRegex(row, r"^<li [^>]*>\s*<div>\s*NEH 53")
 
     def test_another_churchs_tune_or_a_librarian_is_refused(self):
         from library.models import Tune
