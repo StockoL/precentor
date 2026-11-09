@@ -294,7 +294,8 @@ def ceremony_chants(key):
     if key not in CEREMONIES:
         return []
     path, listed = CEREMONIES[key]
-    lines = [plain(re.sub(r"^(Ant\.|[vVR]\.)\s*", "", line)) for line in find(path).read_text(encoding="utf-8").splitlines()]
+    text = find(path).read_text(encoding="utf-8")
+    lines = [plain(re.sub(r"^(Ant\.|[vVR]\.)\s*", "", line)) for line in text.splitlines()]
     for part, words in listed:
         if not any(line.startswith(plain(words)) for line in lines):
             sys.exit(f"{key}: no line of {path} opens with {words!r}")

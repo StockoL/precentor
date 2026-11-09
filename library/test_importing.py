@@ -486,7 +486,9 @@ class ExportTests(TestCase):
 
         response = self.export()
         self.assertEqual(response["Content-Type"], "text/csv; charset=utf-8")
-        self.assertRegex(response["Content-Disposition"], r'attachment; filename="precentor-library-\d{4}-\d{2}-\d{2}\.csv"')
+        self.assertRegex(
+            response["Content-Disposition"], r'attachment; filename="precentor-library-\d{4}-\d{2}-\d{2}\.csv"'
+        )
         text = response.content.decode("utf-8")
         self.assertTrue(text.startswith("﻿"))
         rows = list(csv.reader(text.lstrip("﻿").splitlines()))

@@ -52,7 +52,11 @@ RANK_CHOICES = [
 # Elizabeth of Hungary.
 OF_PRECEDENCE_CHOICES = [
     ("1", "1: The Paschal Triduum"),
-    ("2", "2: Christmas, Epiphany, Ascension, Pentecost; Sundays of Advent, Lent and Easter; Ash Wednesday; Holy Week; the Easter Octave"),
+    (
+        "2",
+        "2: Christmas, Epiphany, Ascension, Pentecost; Sundays of Advent, Lent and Easter; "
+        "Ash Wednesday; Holy Week; the Easter Octave",
+    ),
     ("3", "3: Solemnities of the General Calendar; All Souls"),
     ("4a", "4a: Principal patron of the place or country"),
     ("4b", "4b: Dedication of one's own church"),

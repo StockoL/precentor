@@ -232,7 +232,8 @@ class CrestViewTests(TestCase):
         self.assertEqual(self.client.post(self.config.crest_url).status_code, 405)
 
     def test_an_old_address_or_no_crest_finds_nothing(self):
-        self.assertEqual(self.client.get(f"/settings/crest/{self.config.organisation_id}/000000000000/").status_code, 404)
+        address = f"/settings/crest/{self.config.organisation_id}/000000000000/"
+        self.assertEqual(self.client.get(address).status_code, 404)
         self.config.clear_crest()
         self.config.save()
         self.assertEqual(self.config.crest_url, "")

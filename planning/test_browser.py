@@ -465,7 +465,9 @@ class SlotOrderBrowserTest(PlaywrightTestCase):
             name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
         )
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
-        self.roles = [ServiceRole.objects.create(service=self.service, role_name=n) for n in ("Introit", "Gloria", "Communion")]
+        self.roles = [
+            ServiceRole.objects.create(service=self.service, role_name=n) for n in ("Introit", "Gloria", "Communion")
+        ]
 
     def order(self):
         return self.page.eval_on_selector_all(
@@ -579,7 +581,8 @@ class RemoveSlotBrowserTest(PlaywrightTestCase):
         )
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
         self.introit, self.motet, self.communion = [
-            ServiceRole.objects.create(service=self.service, role_name=n) for n in ("Introit", "Offertory motet", "Communion")
+            ServiceRole.objects.create(service=self.service, role_name=n)
+            for n in ("Introit", "Offertory motet", "Communion")
         ]
         score = make_score(title="Ave verum", composer_surname="Byrd")
         RolePiece.objects.create(service_role=self.motet, score=score)
@@ -618,8 +621,12 @@ class OccasionCalendarFilterBrowserTest(PlaywrightTestCase):
         self.term = make_term(
             name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current"
         )
-        self.new = LiturgicalOccasion.objects.create(name="Baptism of the Lord", calendar_use="current", fixed_month=1, fixed_day=11)
-        self.old = LiturgicalOccasion.objects.create(name="Holy Family", calendar_use="historic", fixed_month=1, fixed_day=11)
+        self.new = LiturgicalOccasion.objects.create(
+            name="Baptism of the Lord", calendar_use="current", fixed_month=1, fixed_day=11
+        )
+        self.old = LiturgicalOccasion.objects.create(
+            name="Holy Family", calendar_use="historic", fixed_month=1, fixed_day=11
+        )
 
     def visible_options(self):
         return self.page.eval_on_selector_all(

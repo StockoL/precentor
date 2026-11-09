@@ -567,7 +567,10 @@ class ServiceNeighbourLinkTests(TestCase):
             name="Other", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31),
             calendar_use="current",
         )
-        make = lambda t, d, kind: Service.objects.create(term=t, date=d, service_type=kind)
+
+        def make(t, d, kind):
+            return Service.objects.create(term=t, date=d, service_type=kind)
+
         self.first = make(term, date(2026, 1, 4), "Sung Mass")
         self.middle = make(term, date(2026, 1, 11), "Sung Mass")
         self.last = make(term, date(2026, 1, 11), "Vespers")  # same day, later id
@@ -969,7 +972,9 @@ class MusicListCrestTests(TestCase):
     def test_a_banner_carries_the_name_so_it_is_not_written_again(self):
         response = self.page("banner")
         self.assertContains(
-            response, f'<img class="music-list-banner" src="{self.config.crest_url}" alt="St Cecilia&#x27;s">', html=True
+            response,
+            f'<img class="music-list-banner" src="{self.config.crest_url}" alt="St Cecilia&#x27;s">',
+            html=True,
         )
         self.assertNotContains(response, "music-list-church-name")
 

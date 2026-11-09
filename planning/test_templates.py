@@ -8,7 +8,10 @@ from precentor_project.testing import make_score, make_slot_template, make_term,
 from .forms import SlotTemplateForm
 from .models import Service, ServiceRole, SlotTemplate
 
-MASS = ["Introit", "Kyrie", "Gloria", "Gradual", "Alleluia or Tract", "Credo", "Offertory", "Sanctus", "Agnus Dei", "Communion"]
+MASS = [
+    "Introit", "Kyrie", "Gloria", "Gradual", "Alleluia or Tract",
+    "Credo", "Offertory", "Sanctus", "Agnus Dei", "Communion",
+]
 VESPERS = ["Psalms", "Hymn", "Magnificat", "Marian antiphon"]
 
 

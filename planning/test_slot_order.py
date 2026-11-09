@@ -13,7 +13,9 @@ class SlotOrderTests(TestCase):
         self.client.force_login(make_user("conductor"))
         term = make_term(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
-        self.roles = [ServiceRole.objects.create(service=self.service, role_name=n) for n in ("Introit", "Gloria", "Communion")]
+        self.roles = [
+            ServiceRole.objects.create(service=self.service, role_name=n) for n in ("Introit", "Gloria", "Communion")
+        ]
 
     def names(self):
         return list(self.service.roles.values_list("role_name", flat=True))

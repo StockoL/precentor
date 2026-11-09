@@ -24,7 +24,8 @@ class LoadingTests(TestCase):
         )
         self.assertEqual((counts["general_roman"].created, counts["general_roman"].updated), (226, 0))
         self.assertEqual(counts["general_roman (1962)"].created, 702)
-        self.assertEqual(LiturgicalOccasion.objects.filter(calendar_use="current", calendar="general_roman").count(), 226)
+        general = LiturgicalOccasion.objects.filter(calendar_use="current", calendar="general_roman")
+        self.assertEqual(general.count(), 226)
 
     def test_loading_again_updates_and_adds_nothing(self):
         load_calendar_files()
@@ -110,7 +111,8 @@ class ListableOccasionTests(TestCase):
         load_calendar_files()
 
     def keys(self, national_calendar, keep=()):
-        return {(o.calendar_use, o.calendar, o.key) for o in LiturgicalOccasion.objects.listable(national_calendar, keep)}
+        listed = LiturgicalOccasion.objects.listable(national_calendar, keep)
+        return {(o.calendar_use, o.calendar, o.key) for o in listed}
 
     def test_both_forms_of_the_general_calendar(self):
         listed = self.keys("general_roman")
@@ -120,7 +122,9 @@ class ListableOccasionTests(TestCase):
     def test_fourth_class_days_and_other_countries_are_left_out(self):
         listed = self.keys("england")
         self.assertFalse([k for k in listed if k[1] == "wales"])
-        fourth_class = LiturgicalOccasion.objects.filter(calendar_use="historic", rank="class_4").values_list("key", flat=True)
+        fourth_class = LiturgicalOccasion.objects.filter(
+            calendar_use="historic", rank="class_4"
+        ).values_list("key", flat=True)
         self.assertFalse({("historic", "general_roman", k) for k in fourth_class} & listed)
 
     def test_a_national_row_takes_the_general_rows_place(self):
@@ -158,7 +162,9 @@ class OccasionLookupNationalCalendarTests(TestCase):
         self.client.force_login(make_user("viewer"))
 
     def names(self, **params):
-        response = self.client.get("/ordo/occasion-lookup/", {"date": "2026-04-23", "calendar_use": "current", **params})
+        response = self.client.get(
+            "/ordo/occasion-lookup/", {"date": "2026-04-23", "calendar_use": "current", **params}
+        )
         return [o["name"] for o in response.json()["occasions"]]
 
     def test_the_national_calendar_is_used(self):
@@ -200,6 +206,8 @@ class RemovedFromTheDataTests(TestCase):
         self.assertIn("Kept Old day (old_day)", out.getvalue())
 
     def test_occasions_entered_by_hand_are_never_removed(self):
-        own = LiturgicalOccasion.objects.create(name="Patronal festival", calendar="england", fixed_month=8, fixed_day=9)
+        own = LiturgicalOccasion.objects.create(
+            name="Patronal festival", calendar="england", fixed_month=8, fixed_day=9
+        )
         load_calendar_files()
         self.assertTrue(LiturgicalOccasion.objects.filter(pk=own.pk).exists())
