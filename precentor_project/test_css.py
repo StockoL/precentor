@@ -7,12 +7,16 @@ page. They read the files directly, so the suite doesn't need Node.
 
 import hashlib
 import re
+from pathlib import Path
 
+from django.apps import apps
 from django.conf import settings
 from django.test import SimpleTestCase
 
 SOURCE_DIR = settings.BASE_DIR / "static" / "src"
 BUILT = SOURCE_DIR / "precentor.css"
+# Linked on its own by the sign-in pages, never built in (it says why).
+NO_TRANSITION = SOURCE_DIR / "no-page-transition.css"
 REBUILD = "Run `node build-css.js` to build static/src/precentor.css again."
 
 
@@ -30,7 +34,7 @@ class OneStylesheetTests(SimpleTestCase):
         on_disk = sorted(
             path.relative_to(SOURCE_DIR).as_posix()
             for path in SOURCE_DIR.rglob("*.css")
-            if path != BUILT
+            if path not in (BUILT, NO_TRANSITION)
         )
         self.assertEqual(sorted(listed_sources()), on_disk, REBUILD)
 
@@ -49,3 +53,20 @@ class OneStylesheetTests(SimpleTestCase):
         base = (settings.BASE_DIR / "templates" / "base.html").read_text(encoding="utf-8")
         links = re.findall(r'<link rel="stylesheet" href="([^"]+)"', base)
         self.assertEqual(links, ["{% static 'src/precentor.css' %}"])
+
+    def test_no_template_has_a_style_block(self):
+        # CSS belongs in the stylesheets. The HTML validator also reads
+        # CSS inside a page, and flagged @view-transition when the
+        # sign-in pages kept it in a <style> block.
+        # The project's own template folders: the shared one, and those of
+        # the apps that sit at the top of the project.
+        folders = [settings.BASE_DIR / "templates"] + [
+            Path(app.path) / "templates"
+            for app in apps.get_app_configs()
+            if Path(app.path).parent == settings.BASE_DIR
+        ]
+        templates = [path for folder in folders for path in folder.rglob("*.html")]
+        self.assertGreater(len(templates), 50)
+        for path in templates:
+            with self.subTest(template=path.name):
+                self.assertNotIn("<style", path.read_text(encoding="utf-8"))

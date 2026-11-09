@@ -1,12 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Join {{ invitation.organisation.name }} — Precentor{% endblock %}
 {% block extra_head %}
-{# No page transition, for the same reason as the login page: the page after signing in froze in automated testing. #}
-<style>
-  @view-transition {
-    navigation: none;
-  }
-</style>
+{# No page transition, as on the login page; the stylesheet says why. #}
+<link rel="stylesheet" href="{% static 'src/no-page-transition.css' %}">
 {% endblock %}
 {% block content %}
 <div class="cover">

@@ -1,0 +1,15 @@
+/*
+ * The sign-in pages (log in, register, join) turn off the page
+ * transitions that global-styles.css turns on. A transition needs both
+ * pages to opt in, so signing in becomes a plain page load. In automated
+ * testing, Chromium held the page after signing in frozen for about four
+ * seconds before giving up on the transition.
+ *
+ * Those three pages link this file after precentor.css, so it comes last
+ * and wins. It is kept out of precentor.css because @view-transition
+ * can't be limited to some pages: there it would turn transitions off
+ * on every page.
+ */
+@view-transition {
+  navigation: none;
+}

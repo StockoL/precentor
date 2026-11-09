@@ -1,12 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Log in — Precentor{% endblock %}
 {% block extra_head %}
-{# No page transition out of the login page. In automated testing, Chromium held the page after login frozen for about four seconds before giving up on the transition. A transition needs both pages to opt in, so opting out here makes login a plain page load. #}
-<style>
-  @view-transition {
-    navigation: none;
-  }
-</style>
+{# No page transition out of the login page; the stylesheet says why. #}
+<link rel="stylesheet" href="{% static 'src/no-page-transition.css' %}">
 {% endblock %}
 {% block content %}
 <div class="cover">
