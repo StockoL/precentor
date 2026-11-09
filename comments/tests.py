@@ -221,6 +221,13 @@ class AddCommentViewTests(TestCase):
         self.assertIn("comment--open_with_replies", fragments[f"comment-{comment.pk}"])
         self.assertIn("A reply", fragments[f"comment-{comment.pk}"])
 
+    def test_replies_are_indented_by_the_stylesheet(self):
+        comment = Comment.objects.create(author=self.user, body="A query", target=self.term)
+        Comment.objects.create(author=self.user, body="A reply", target=self.term, parent=comment)
+        response = self.client.get(self.term.get_absolute_url())
+        self.assertContains(response, 'class="comment__replies flow"')
+        self.assertNotContains(response, "margin-inline-start")
+
     def test_add_comment_ajax_nested_reply_returns_400_with_form_errors(self):
         comment = Comment.objects.create(
             author=self.user, body="A query", target=self.term

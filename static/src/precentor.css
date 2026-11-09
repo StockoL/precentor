@@ -50,7 +50,7 @@
  *   blocks/template-slot.css
  *   utilities/utilities.css
  *
- * Fingerprint: 107a91d5cbf10b1ead4532589fb50dd42db25f7ea3a23f5f17c17d3a3a412e2e
+ * Fingerprint: ad9d77d2d93fc1241cf2ed6a8a9eb2700be95d850f76fe28163388fc52e30fb8
  */
 
 /* ---- global/layers.css ---- */
@@ -919,6 +919,11 @@
     border-inline-start-color: var(--colors-inactive-border);
     background-color: var(--colors-surface-sunken);
     opacity: 0.8;
+  }
+
+  /* Replies sit indented under the comment they answer. */
+  .comment__replies {
+    margin-inline-start: var(--spacing-m);
   }
 }
 

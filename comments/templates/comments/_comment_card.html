@@ -15,7 +15,7 @@
         {% endif %}
     </div>
 
-    <ul role="list" class="flow" style="--flow-space: var(--spacing-3xs); margin-inline-start: var(--spacing-m);">
+    <ul role="list" class="comment__replies flow" style="--flow-space: var(--spacing-3xs);">
         {% for reply in comment.replies.all %}
         {% include "comments/_reply_row.html" %}
         {% endfor %}

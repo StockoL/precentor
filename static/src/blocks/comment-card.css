@@ -32,4 +32,9 @@
     background-color: var(--colors-surface-sunken);
     opacity: 0.8;
   }
+
+  /* Replies sit indented under the comment they answer. */
+  .comment__replies {
+    margin-inline-start: var(--spacing-m);
+  }
 }
