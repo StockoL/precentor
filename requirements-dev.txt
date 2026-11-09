@@ -4,3 +4,6 @@
 # only, never installed in production alongside requirements.txt. After
 # installing, also run: playwright install chromium
 playwright==1.61.0
+
+# The Python style check, set up in .flake8.
+flake8==7.4.1
