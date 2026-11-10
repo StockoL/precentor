@@ -7,7 +7,7 @@ part, the migrations meeting real data, tried on a copy first.
 
 ## What the merge does to the data
 
-`post-submission` adds 26 migrations. Three of them move data rather
+`post-submission` adds 28 migrations. Three of them move data rather
 than only adding columns:
 
 - `planning/0020` gives every existing slot a kind and proper part,
@@ -55,13 +55,45 @@ its music list. Then `post-submission` migrated the same database:
 That was SQLite with made-up data; the live site is Postgres with real
 data, which is why the first step below is a copy.
 
+## Rehearsed on the live data, 10 November 2026
+
+I exported the live database from the Render dashboard (the plan offers
+an export, a `pg_dump` in directory format) and restored it into a
+local PostgreSQL 17.11, the same version Render runs. The copy held 13
+churches, 13 people, 8 scores, 3 terms, 2 services, 10 slots, 1 piece
+and 26 templates. No service had hymns or a psalm typed in, and no
+church had hidden them.
+
+- **As submitted.** `main` at `50aa979`, checked out separately, opened
+  the copy with nothing to migrate, and all 123 of its pages answered
+  without an error for every church.
+- **The merge.** On `post-submission` at `a2ccdf1`, all 28 migrations
+  ran (two more than on 2 November: the chants' order within a part,
+  and Sequence and Responsory slots). Then `load_calendar` loaded 4,210
+  chants for 1962 and 494 for the Ordinary Form, and
+  `check_copied_data` said "Checked 0 services with hymns or a psalm,
+  and 26 templates. Everything was copied."
+- **What the data migrations did.** Every one of the 10 slots was given
+  a kind (five Ordinary, five Propers with their parts), and the 26
+  templates became 182 rows, one for each line of their old text.
+- **The pages.** All 177 pages, now including the pew sheets, hymnals,
+  tunes and completeness, opened for every church in Chromium with no
+  error in the page or the console.
+- **Time and memory**, measured on a fresh copy on my own computer:
+  `migrate` 1.5 seconds and 87 MB at most, `load_calendar` 1.8 seconds
+  and 68 MB, `check_copied_data` 0.5 seconds and 58 MB. Render's free
+  web service allows 512 MB.
+
+Nothing failed, so the merge can go ahead as below.
+
 ## On the day
 
 1. **Copy the live data.** Take a backup of the Render database and
    restore it into a local Postgres. The database accepts no outside
    connections (`ipAllowList` is empty in `render.yaml`), so the copy
    comes from Render's backups, or from allowing my own address for a
-   moment in the dashboard. I haven't yet checked which the plan offers.
+   moment in the dashboard. The plan offers an export from the
+   dashboard, which is how the rehearsal above was done.
 2. **Rehearse on the copy.** With `DATABASE_URL` pointing at it:
    `python manage.py migrate`, `python manage.py load_calendar`, then
    `python manage.py check_copied_data`. Stop if it reports a problem.
