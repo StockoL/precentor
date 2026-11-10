@@ -532,11 +532,18 @@ the two known issues below are in a test and in the testing browser.
 ## 8. Deployment check
 
 On the [live site](https://precentor.onrender.com), after each deploy.
+The merge of the work since submission is rehearsed in
+[`after_assessment.md`](after_assessment.md); its last column is filled
+in once that deploy is done.
 
-| ID   | Check                         | Expected                                                                 | Result   |
-| ---- | ----------------------------- | ------------------------------------------------------------------------ | -------- |
-| D01  | The site loads                | The sign-in page, after up to a minute if the site was asleep            | Pass: the sign-in page loaded on the live site on 23 October |
-| D02  | `http://` goes to `https://`  | Typing `http://precentor.onrender.com` ends on the `https://` address    | Pass: `http://precentor.onrender.com/` answered 301, to `https://precentor.onrender.com/` |
-| D03  | `DEBUG` is off                | A made-up address shows Precentor's 404 page, not Django's debug page    | Pass: a made-up address answered 404 with Precentor's own page |
-| D04  | Static files and the crest    | Styles, fonts and an uploaded crest all load                             | Pass: stylesheets and the favicon answered 200 from their hashed static addresses; the crest was uploaded and shown on the live site on 22 October |
-| D05  | Register and plan             | Register a test church, add a score, a term and a service, propose and confirm a piece, open the music list | Pass on the live site on 23 October: registered a test church, added a score, a term and a service, applied the Mass template, proposed and confirmed a piece, and saw it on the music list |
+| ID | Check | Expected | At the first deploy, 23 October | After the merge |
+| -- | ----- | -------- | ------------------------------- | --------------- |
+| D01 | The site loads | The sign-in page, after up to a minute if the site was asleep | Pass: the sign-in page loaded on the live site on 23 October |  |
+| D02 | `http://` goes to `https://` | Typing `http://precentor.onrender.com` ends on the `https://` address | Pass: `http://precentor.onrender.com/` answered 301, to `https://precentor.onrender.com/` |  |
+| D03 | `DEBUG` is off | A made-up address shows Precentor's 404 page, not Django's debug page | Pass: a made-up address answered 404 with Precentor's own page |  |
+| D04 | Static files and the crest | Styles, fonts and an uploaded crest all load | Pass: stylesheets and the favicon answered 200 from their hashed static addresses; the crest was uploaded and shown on the live site on 22 October |  |
+| D05 | Register and plan | Register a test church, add a score, a term and a service, propose and confirm a piece, open the music list | Pass on the live site on 23 October: registered a test church, added a score, a term and a service, applied the Mass template, proposed and confirmed a piece, and saw it on the music list |  |
+| D06 | The build | Render's build log shows the 28 new migrations applied, `load_calendar` loading the chants, then "Your service is live" | Not part of the first deploy |  |
+| D07 | The copied data | `python manage.py check_copied_data`, run from my computer against the live database, ends "Everything was copied" | Not part of the first deploy |  |
+| D08 | The pages added since | Hymnals, a hymnal, the pew sheet, the completeness page, the template editor, the Library's Season and Use menus, and a Proper slot offering the day's chant all open and work | Not part of the first deploy |  |
+| D09 | Real devices | The checks in the table at the end of section 6, on my phone and tablet | Not part of the first deploy |  |
