@@ -71,6 +71,43 @@ days.
 
 The other documents are listed in §9.
 
+## Contents
+
+- [1. The Problem](#1-the-problem)
+- [2. Who This Is For](#2-who-this-is-for)
+  - [A church's first visit](#a-churchs-first-visit)
+- [3. Core Domain Concepts](#3-core-domain-concepts)
+  - [3.1 Score](#31-score)
+  - [3.2 Term, Service, and Slots](#32-term-service-and-slots)
+  - [3.3 Proposing and Confirming](#33-proposing-and-confirming)
+  - [3.4 Ordo (the Liturgical Calendar)](#34-ordo-the-liturgical-calendar)
+  - [3.5 Rehearsal Lead-Time (dropped)](#35-rehearsal-lead-time-dropped)
+  - [3.6 Last Sung](#36-last-sung)
+- [4. The Public Music List](#4-the-public-music-list)
+- [5. Roles and Permissions, Revisited](#5-roles-and-permissions-revisited)
+- [6. Comment Threads](#6-comment-threads)
+- [7. Scope Discipline (MoSCoW)](#7-scope-discipline-moscow)
+- [8. Out of Scope](#8-out-of-scope)
+- [9. Supporting Documents](#9-supporting-documents)
+- [10. Why This Project](#10-why-this-project)
+- [11. Acknowledgements](#11-acknowledgements)
+- [12. Deployment](#12-deployment)
+- [13. Data model](#13-data-model)
+  - [Relationships](#relationships)
+  - [Fields](#fields)
+  - [Rules the database enforces](#rules-the-database-enforces)
+- [14. Screenshots: phones, dark mode and the keyboard](#14-screenshots-phones-dark-mode-and-the-keyboard)
+  - [How the screenshots were made](#how-the-screenshots-were-made)
+- [15. Features and CRUD](#15-features-and-crud)
+  - [Validation and feedback](#validation-and-feedback)
+- [16. Design decisions that depart from convention](#16-design-decisions-that-depart-from-convention)
+- [17. Security](#17-security)
+- [18. Running it locally](#18-running-it-locally)
+- [19. Environment variables](#19-environment-variables)
+- [20. Future work](#20-future-work)
+- [21. Technologies used](#21-technologies-used)
+- [22. Testing](#22-testing)
+
 ---
 
 ## 1. The Problem
