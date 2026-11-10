@@ -473,45 +473,49 @@ class ScoreFilterTests(TestCase):
         self.assertContains(self.client.get("/library/", {"q": "ave"}), ">Clear</a>")
 
 
-class ScoreSuitabilityRankingTests(TestCase):
+class ScoreSuitedForFilterTests(TestCase):
+    """The Library's Suitable-for filters list only the scores tagged for
+    what's chosen. The piece picker ranks by the same tags instead."""
+
     def setUp(self):
         self.user = make_user("viewer")
         self.client.force_login(self.user)
         self.occasion = LiturgicalOccasion.objects.create(name="Advent Sunday 4")
-        self.other_occasion = LiturgicalOccasion.objects.create(
-            name="Ordinary Time 7"
-        )
-        self.untagged = make_score(
-            title="Untagged Anthem", composer_surname="Nobody"
-        )
-        self.matching = make_score(
-            title="Zzz Matching Anthem", composer_surname="Somebody"
-        )
+        self.other_occasion = LiturgicalOccasion.objects.create(name="Ordinary Time 7")
+        self.untagged = make_score(title="Untagged Anthem", composer_surname="Nobody")
+        self.matching = make_score(title="Zzz Matching Anthem", composer_surname="Somebody", language="Latin")
         self.matching.suited_occasions.add(self.occasion)
-        self.non_matching = make_score(
-            title="Aaa Non-Matching Anthem", composer_surname="Someone Else"
-        )
+        self.non_matching = make_score(title="Aaa Non-Matching Anthem", composer_surname="Someone Else")
         self.non_matching.suited_occasions.add(self.other_occasion)
 
-    def test_untagged_score_still_appears_in_suited_for_query(self):
-        response = self.client.get(
-            "/library/", {"suited_occasion": self.occasion.pk}
-        )
-        self.assertContains(response, "Untagged Anthem")
+    def titles(self, **params):
+        return [score.title for score in self.client.get("/library/", params).context["scores"]]
 
-    def test_matching_score_sorts_above_non_matching(self):
-        response = self.client.get(
-            "/library/", {"suited_occasion": self.occasion.pk}
-        )
-        titles = [score.title for score in response.context["scores"]]
-        self.assertLess(
-            titles.index(self.matching.title), titles.index(self.untagged.title)
-        )
-        self.assertLess(
-            titles.index(self.matching.title), titles.index(self.non_matching.title)
-        )
+    def test_only_scores_suited_to_the_occasion_are_listed(self):
+        self.assertEqual(self.titles(suited_occasion=self.occasion.pk), ["Zzz Matching Anthem"])
 
-    def test_a_score_with_several_tags_appears_once(self):
+    def test_seasons_and_uses_filter_the_same_way(self):
+        from ordo.models import LiturgicalSeason
+
+        advent = LiturgicalSeason.objects.create(name="Advent")
+        mass = make_use_type(name="Mass", organisation=self.user.organisation)
+        self.matching.suited_seasons.add(advent)
+        self.non_matching.suited_use_types.add(mass)
+        self.assertEqual(self.titles(suited_season=advent.pk), ["Zzz Matching Anthem"])
+        self.assertEqual(self.titles(suited_use_type=mass.pk), ["Aaa Non-Matching Anthem"])
+
+    def test_filters_combine(self):
+        self.assertEqual(self.titles(suited_occasion=self.occasion.pk, language="Latin"), ["Zzz Matching Anthem"])
+        self.assertEqual(self.titles(suited_occasion=self.occasion.pk, language="English"), [])
+
+    def test_a_score_with_several_tags_is_listed_once(self):
+        self.matching.suited_occasions.add(self.other_occasion)
+        self.assertEqual(self.titles(suited_occasion=self.occasion.pk), ["Zzz Matching Anthem"])
+
+    def test_a_value_that_isnt_a_number_is_ignored(self):
+        self.assertEqual(len(self.titles(suited_occasion="advent")), 3)
+
+    def test_ranking_for_the_picker_keeps_every_score_once(self):
         # Ranking used to join through the tags, so a score tagged with
         # two occasions came back twice: once suited, once not.
         self.matching.suited_occasions.add(self.other_occasion)
