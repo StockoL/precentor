@@ -12,7 +12,7 @@
    * This is deliberately NOT the same job as .center (see center.css):
    * - Wrapper caps to a wide site max-width (--layout-wrapper-max-width),
    *   not the narrower typographic reading measure.
-   * - Wrapper has no content-box gutter trick and no alignment exceptions —
+   * - Wrapper has no content-box gutter trick and no alignment exceptions:
    *   it is a single-purpose outer shell, applied once per section.
    * - Its gutter var is namespaced (--wrapper-gutters) rather than the shared
    *   --gutter used by compositions like .cluster/.grid, because --gutter

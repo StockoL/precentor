@@ -5,12 +5,12 @@
 @layer blocks {
   /*
    * Contextual accent tied to whatever's in view (a Service's own
-   * occasion), not "today's date" globally — see the design decision
+   * occasion), not "today's date" globally. See the design decision
    * to avoid modelling full season date-ranges in ordo. The colour
    * name stored on LiturgicalOccasion.colour (violet/red/green/white/
    * rose) is deliberately identical to the liturgical-* token suffix,
    * so templates can build the variable name directly via string
-   * interpolation — no separate colour-mapping code needed anywhere.
+   * interpolation, so no separate colour-mapping code is needed.
    *
    * All rules fall back to --colors-action-primary when no --accent
    * is set inline (i.e. the page has no occasion in context), so

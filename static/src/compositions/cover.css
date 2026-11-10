@@ -11,7 +11,7 @@
    * remaining space and centres itself vertically via auto margins.
    *
    * Solves a different axis to .center (see center.css), which only
-   * caps/centers content horizontally — the two are meant to be used
+   * caps and centres content horizontally. The two are meant to be used
    * together, not as alternatives: .cover for vertical placement on
    * the page, .center (nested inside) for the horizontal width cap.
    */

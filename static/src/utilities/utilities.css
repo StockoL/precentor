@@ -4,7 +4,7 @@
 
 @layer utilities {
   /*
-   * Single-purpose overrides. No !important needed anywhere here —
+   * Single-purpose overrides. No !important needed anywhere here:
    * cascade layer order (declared in layers.css) already guarantees
    * the utilities layer beats blocks/compositions/global/reset
    * regardless of selector specificity, which is one of the real

@@ -7,7 +7,7 @@
    * A small, inline, coloured state chip. Used for Service.status
    * (not_started/in_progress/complete) and RolePiece confirmation
    * (proposed/confirmed). Deliberately distinct from .comment's
-   * card-level state treatment (see comment-card.css) — comments are
+   * card-level state treatment (see comment-card.css): comments are
    * a bigger unit of content, so their state reads as a background/
    * border accent rather than a small chip, even though both draw
    * from the same colour tokens.

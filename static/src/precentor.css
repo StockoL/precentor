@@ -50,7 +50,7 @@
  *   blocks/template-slot.css
  *   utilities/utilities.css
  *
- * Fingerprint: 65580fe10aa8700bd9ca1627f111567fb8be649d71199d6c2afeef4069ea4d1e
+ * Fingerprint: 83a7e80eab2c174521a3816bce704c6bb17a95d1f5eafb13dc5db02b4d106007
  */
 
 /* ---- global/layers.css ---- */
@@ -60,12 +60,12 @@
 
 /*
  * Declares cascade-layer precedence, lowest to highest priority.
- * This must be the first stylesheet linked in base.html — everything
+ * This must be the first file in build-css.js's SOURCES. Everything
  * else declares which of these layers it belongs to, but this file is
  * what establishes that reset always loses to global, which always
  * loses to compositions, which always loses to blocks, then utilities, etc.
  *
- * Deliberately no @import here (or anywhere in this project) — @import
+ * Deliberately no @import here (or anywhere in this project): @import
  * chains are sequential, render-blocking network requests. Every file
  * is linked individually as a plain <link> in base.html instead, which
  * the browser can request in parallel; @layer alone (not load order)
@@ -254,7 +254,7 @@
  * EB Garamond and Inter, self-hosted as variable woff2 files (latin
  * subset). Each file embeds a continuous weight axis, so one @font-face
  * rule per style with a weight *range* covers every weight in that
- * range from a single download — no separate 400/600/700 files needed.
+ * range from a single download, with no separate 400/600/700 files.
  * font-display: swap avoids invisible text while the fonts load.
  */
 @layer global {
@@ -578,7 +578,7 @@
   /*
    * The Flow
    * Manages vertical rhythm between direct siblings using the owl selector.
-   * Notice the absence of flexbox — this relies purely on native block flow.
+   * There is no flexbox here; this relies purely on native block flow.
    */
   .flow > * + * {
     margin-block-start: var(--flow-space, 1em);
@@ -696,7 +696,7 @@
    * This is deliberately NOT the same job as .center (see center.css):
    * - Wrapper caps to a wide site max-width (--layout-wrapper-max-width),
    *   not the narrower typographic reading measure.
-   * - Wrapper has no content-box gutter trick and no alignment exceptions —
+   * - Wrapper has no content-box gutter trick and no alignment exceptions:
    *   it is a single-purpose outer shell, applied once per section.
    * - Its gutter var is namespaced (--wrapper-gutters) rather than the shared
    *   --gutter used by compositions like .cluster/.grid, because --gutter
@@ -727,7 +727,7 @@
    * remaining space and centres itself vertically via auto margins.
    *
    * Solves a different axis to .center (see center.css), which only
-   * caps/centers content horizontally — the two are meant to be used
+   * caps and centres content horizontally. The two are meant to be used
    * together, not as alternatives: .cover for vertical placement on
    * the page, .center (nested inside) for the horizontal width cap.
    */
@@ -765,7 +765,7 @@
    * A small, inline, coloured state chip. Used for Service.status
    * (not_started/in_progress/complete) and RolePiece confirmation
    * (proposed/confirmed). Deliberately distinct from .comment's
-   * card-level state treatment (see comment-card.css) — comments are
+   * card-level state treatment (see comment-card.css): comments are
    * a bigger unit of content, so their state reads as a background/
    * border accent rather than a small chip, even though both draw
    * from the same colour tokens.
@@ -872,8 +872,8 @@
 
 @layer blocks {
   /*
-   * Shared visual identity only (border, radius, shadow, background) —
-   * composes with more specific blocks (.role-block, .term-card) that
+   * Shared visual identity only (border, radius, shadow, background);
+   * it composes with more specific blocks (.role-block, .term-card) that
    * add their own padding/behaviour, rather than duplicating this look
    * per component.
    */
@@ -895,7 +895,7 @@
    * Styles the .comment / .comment--{state} classes already present
    * in comments/_thread.html (comment.state is open / open_with_replies
    * / closed). Card-level accent (left border + background tint)
-   * rather than a small chip — see badge.css for why the two state
+   * rather than a small chip. See badge.css for why the two state
    * systems share a colour vocabulary but not a visual treatment.
    */
   .comment {
@@ -1322,7 +1322,7 @@
 
   /*
    * "No border" per the redesign brief, achieved with a transparent
-   * 1px border rather than omitting the property — keeps box size
+   * 1px border rather than omitting the property, which keeps box size
    * identical to the other variants so a ghost+danger pair (Edit/
    * Delete, Cancel/Yes-delete) lines up without a size jump.
    */
@@ -2003,7 +2003,7 @@
   /*
    * Separates one Service role (Setting, Anthem, etc.) from the next
    * on service_detail.html. Composes with .card (card.css), which
-   * supplies the shared border/radius/shadow/background — this file
+   * supplies the shared border/radius/shadow/background, so this file
    * only holds what's specific to a role block.
    */
   .role-block {
@@ -2143,7 +2143,7 @@
 @layer blocks {
   /*
    * Simple row-per-item lists (term's service list, score list, comment
-   * inbox) — a border-top separator between rows, with the first row's
+   * inbox): a border-top separator between rows, with the first row's
    * border removed so the list doesn't double up against its container.
    *
    * A row is an <li>, which the global layer caps at the 60ch reading
@@ -2190,7 +2190,7 @@
   /*
    * "X of Y services complete", shown on the term dashboard.
    * data-all-complete is set in the template only when every service
-   * in the term is complete — reuses the success colour token rather
+   * in the term is complete. It reuses the success colour token rather
    * than inventing a new one, keeping it visually related to (though
    * not identical to) the badge system.
    */
@@ -2213,12 +2213,12 @@
 @layer blocks {
   /*
    * Contextual accent tied to whatever's in view (a Service's own
-   * occasion), not "today's date" globally — see the design decision
+   * occasion), not "today's date" globally. See the design decision
    * to avoid modelling full season date-ranges in ordo. The colour
    * name stored on LiturgicalOccasion.colour (violet/red/green/white/
    * rose) is deliberately identical to the liturgical-* token suffix,
    * so templates can build the variable name directly via string
-   * interpolation — no separate colour-mapping code needed anywhere.
+   * interpolation, so no separate colour-mapping code is needed.
    *
    * All rules fall back to --colors-action-primary when no --accent
    * is set inline (i.e. the page has no occasion in context), so
@@ -2301,8 +2301,8 @@
     margin: 0;
   }
 
-  /* column-*width*-driven (via the shorthand), not a fixed column-count —
-     lets the browser decide how many columns fit, avoiding a sparse look
+  /* column-*width*-driven (via the shorthand), not a fixed column-count:
+     it lets the browser decide how many columns fit, avoiding a sparse look
      for a short list, e.g. half a term. */
   .music-list-columns {
     columns: 18rem;
@@ -2426,13 +2426,13 @@
 }
 
 /*
- * Deliberately OUTSIDE @layer — unlayered CSS always wins over any
+ * Deliberately OUTSIDE @layer: unlayered CSS always wins over any
  * layered rule in the cascade, regardless of layer order or selector
  * specificity. That guarantee matters specifically here: at the
  * moment of printing, these overrides must win unconditionally over
  * .site-nav (nav.css) and .music-list (above), with no risk of a
  * layer-ordering mistake ever silently letting nav/controls print.
- * No !important needed — cascade layers already provide the
+ * No !important needed; cascade layers already provide the
  * guarantee !important is usually reached for.
  */
 @media print {
@@ -2697,7 +2697,7 @@
 
 @layer utilities {
   /*
-   * Single-purpose overrides. No !important needed anywhere here —
+   * Single-purpose overrides. No !important needed anywhere here:
    * cascade layer order (declared in layers.css) already guarantees
    * the utilities layer beats blocks/compositions/global/reset
    * regardless of selector specificity, which is one of the real

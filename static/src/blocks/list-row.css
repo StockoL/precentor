@@ -5,7 +5,7 @@
 @layer blocks {
   /*
    * Simple row-per-item lists (term's service list, score list, comment
-   * inbox) — a border-top separator between rows, with the first row's
+   * inbox): a border-top separator between rows, with the first row's
    * border removed so the list doesn't double up against its container.
    *
    * A row is an <li>, which the global layer caps at the 60ch reading

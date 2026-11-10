@@ -7,7 +7,7 @@
    * Styles the .comment / .comment--{state} classes already present
    * in comments/_thread.html (comment.state is open / open_with_replies
    * / closed). Card-level accent (left border + background tint)
-   * rather than a small chip — see badge.css for why the two state
+   * rather than a small chip. See badge.css for why the two state
    * systems share a colour vocabulary but not a visual treatment.
    */
   .comment {

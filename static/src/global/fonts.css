@@ -6,7 +6,7 @@
  * EB Garamond and Inter, self-hosted as variable woff2 files (latin
  * subset). Each file embeds a continuous weight axis, so one @font-face
  * rule per style with a weight *range* covers every weight in that
- * range from a single download — no separate 400/600/700 files needed.
+ * range from a single download, with no separate 400/600/700 files.
  * font-display: swap avoids invisible text while the fonts load.
  */
 @layer global {

@@ -6,7 +6,7 @@
   /*
    * Separates one Service role (Setting, Anthem, etc.) from the next
    * on service_detail.html. Composes with .card (card.css), which
-   * supplies the shared border/radius/shadow/background — this file
+   * supplies the shared border/radius/shadow/background, so this file
    * only holds what's specific to a role block.
    */
   .role-block {

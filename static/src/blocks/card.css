@@ -4,8 +4,8 @@
 
 @layer blocks {
   /*
-   * Shared visual identity only (border, radius, shadow, background) —
-   * composes with more specific blocks (.role-block, .term-card) that
+   * Shared visual identity only (border, radius, shadow, background);
+   * it composes with more specific blocks (.role-block, .term-card) that
    * add their own padding/behaviour, rather than duplicating this look
    * per component.
    */

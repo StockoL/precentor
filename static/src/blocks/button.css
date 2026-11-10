@@ -84,7 +84,7 @@
 
   /*
    * "No border" per the redesign brief, achieved with a transparent
-   * 1px border rather than omitting the property — keeps box size
+   * 1px border rather than omitting the property, which keeps box size
    * identical to the other variants so a ghost+danger pair (Edit/
    * Delete, Cancel/Yes-delete) lines up without a size jump.
    */
