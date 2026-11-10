@@ -226,6 +226,28 @@ class HymnImportPagesTests(TestCase):
         self.client.post(f"/library/hymn-imports/{batch.pk}/remove/")
         self.assertFalse(HymnEntry.objects.exists())
 
+    def test_keeping_or_removing_twice_says_so(self):
+        self.upload("1,Words,,")
+        batch = HymnImport.objects.get()
+        for second in ("keep", "remove"):
+            with self.subTest(second=second):
+                self.client.post(f"/library/hymn-imports/{batch.pk}/keep/")
+                response = self.client.post(f"/library/hymn-imports/{batch.pk}/{second}/", follow=True)
+                self.assertRedirects(response, "/library/hymnals/")
+                self.assertContains(response, "That import has already been removed or kept.")
+
+    def test_a_viewer_cant_remove_and_a_conductor_can(self):
+        from accounts.testing import make_user
+
+        self.upload("1,Words,,")
+        url = f"/library/hymn-imports/{HymnImport.objects.get().pk}/remove/"
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        self.assertEqual(self.client.get(url).status_code, 403)
+        self.assertEqual(self.client.post(url).status_code, 403)
+        self.client.force_login(make_user("conductor", organisation=self.church))
+        self.client.post(url)
+        self.assertFalse(HymnImport.objects.exists())
+
     def test_a_list_with_nothing_new_says_so(self):
         HymnEntry.find_or_make(self.neh, "1")
         self.assertContains(self.upload("1,,,"), "NEH already had everything in that list.")

@@ -340,6 +340,62 @@ class KeepImportTests(TestCase):
         self.assertEqual(self.client.post(self.url).status_code, 403)
 
 
+class SecondClickAndRoleTests(TestCase):
+    """Keeping or removing an import that's already gone says so, and
+    removing is refused to Viewers and to Librarians who didn't make it."""
+
+    GONE = "That import has already been removed or kept."
+
+    def setUp(self):
+        from accounts.testing import make_organisation, make_user
+
+        from .importing import check_file, save_import
+
+        self.church = make_organisation()
+        self.maker = make_user("librarian", organisation=self.church)
+        checked = check_file(csv_bytes("Title,Composer surname", "Ave verum,Byrd"), self.church)
+        self.batch = save_import(checked, self.church, self.maker, "library.csv")
+        self.keep = f"/library/import/{self.batch.pk}/keep/"
+        self.remove = f"/library/import/{self.batch.pk}/remove/"
+
+    def test_keeping_twice_says_so_and_goes_to_the_library(self):
+        self.client.force_login(self.maker)
+        self.client.post(self.keep)
+        response = self.client.post(self.keep, follow=True)
+        self.assertRedirects(response, "/library/")
+        self.assertContains(response, self.GONE)
+        response = self.client.post(self.remove, follow=True)
+        self.assertRedirects(response, "/library/")
+        self.assertContains(response, self.GONE)
+
+    def test_removing_by_role(self):
+        from accounts.testing import make_user
+
+        from .models import ScoreImport
+
+        for who, user, status in [
+            ("a viewer", make_user("viewer", organisation=self.church), 403),
+            ("another librarian", make_user("librarian", organisation=self.church), 403),
+            ("the librarian who made it", self.maker, 200),
+            ("a conductor", make_user("conductor", organisation=self.church), 200),
+        ]:
+            with self.subTest(who=who):
+                self.client.force_login(user)
+                self.assertEqual(self.client.get(self.remove).status_code, status)
+        self.client.post(self.remove)
+        self.assertFalse(ScoreImport.objects.exists())
+
+    def test_a_viewer_is_refused_even_once_its_gone(self):
+        from accounts.testing import make_user
+
+        self.client.force_login(self.maker)
+        self.client.post(self.keep)
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        for url in (self.keep, self.remove):
+            with self.subTest(url=url):
+                self.assertEqual(self.client.post(url).status_code, 403)
+
+
 class RemoveImportTests(TestCase):
     def setUp(self):
         from accounts.testing import make_organisation, make_user
