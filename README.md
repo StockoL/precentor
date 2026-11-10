@@ -869,14 +869,11 @@ not oversights, when an assessor reads this document.
   conductor, the librarian and the site owner (the church), used to
   check the finished application against its original intent.
 - [`docs/erd.mmd`](docs/erd.mmd) (Mermaid source, which GitHub renders):
-  the entity relationship diagram for Score, Term, Service, Service
-  Role, Role Piece, Ordo (Liturgical Occasion), Organisation, User and
-  Comment. Its
-  notes cover two simplifications: a slot template copies its names
-  into a service's slots, so the slots themselves keep no link to it,
-  and Comment's
-  polymorphic relationship is drawn as
-  three edges for readability, though it's a single Django
+  the entity relationship diagram for all 23 tables, from churches and
+  people to hymns, tunes and the day's chants. Its notes explain what
+  it simplifies: a slot template copies its slots into a service, so
+  they keep no link to it, and a comment's link to a term, service or
+  piece is drawn as three edges, though it's a single Django
   `GenericForeignKey` in the code.
 - [`docs/models_plan.md`](docs/models_plan.md): the Django app breakdown
   and field-level model plan that turned the ERD into code. I wrote it
@@ -894,6 +891,9 @@ not oversights, when an assessor reads this document.
 - [`docs/score_import_plan.md`](docs/score_import_plan.md): earlier
   designs for importing a library from a spreadsheet, superseded by the
   simpler import I built (§3.1).
+- [`docs/merge_record.md`](docs/merge_record.md): how the work since my
+  first submission reached the live site on 10 November 2026, rehearsed
+  first on a copy of the live data, and what happened at each step.
 - [`docs/overhaul_plan.md`](docs/overhaul_plan.md): the overhaul before
   deployment, phase by phase, with a log of what each phase found.
 - [`docs/acknowledgements.md`](docs/acknowledgements.md): every outside
@@ -994,6 +994,12 @@ To deploy it from a fresh copy of the repository:
 Later deploys happen by themselves whenever `main` changes on GitHub.
 After one, it's worth checking that the login page loads, that `http://`
 sends you to `https://`, and that the crest still shows on Settings.
+The full list I run is in [the testing record's section 8](docs/testing.md#8-deployment-check).
+
+The work since my first submission reached the live site this way on
+10 November 2026, after I'd rehearsed it on a copy of the live data;
+[`docs/merge_record.md`](docs/merge_record.md) has the plan and what
+happened at each step.
 
 ## 13. Data model
 
@@ -1051,9 +1057,10 @@ erDiagram
   %% - LITURGICAL_OCCASION, LITURGICAL_SEASON and PROPER_CHANT are
   %%   shared by every church and loaded by manage.py load_calendar; a
   %%   chant is matched to its occasion by key, not a foreign key
-  %% - the four columns kept only until after assessment (a service's
-  %%   hymns and psalm, a template's slot_names and the settings'
-  %%   show_hymns_psalm) are left out
+  %% - the four old columns (a service's hymns and psalm, a template's
+  %%   slot_names and the settings' show_hymns_psalm) are left out: their
+  %%   contents were copied into slots and rows, checked on the live
+  %%   data, and a migration that drops them is the next step
   ORGANISATION ||--o{ USER : has
   ORGANISATION ||--o{ INVITATION : sends
   ORGANISATION ||--|| SITE_CONFIG : has
@@ -1825,6 +1832,13 @@ Everything below is read in `precentor_project/settings.py`.
 
 What's designed or wanted but not built yet:
 
+- **Dropping the four old columns.** Before slots had kinds, a
+  service's hymns and psalm and a template's slots were kept as text.
+  The merge copied them into slots and rows, and the copy was checked
+  on the live data. A migration removing the old columns, with the
+  little code that still reads them, is ready on the
+  `drop-old-columns` branch and goes out as a deploy of its own
+  ([`docs/merge_record.md`](docs/merge_record.md), step 6).
 - **A rebuilt music list,** with a choice of paper sizes and columns.
 - **Email.** Invitations and reset links are passed on by hand because
   Precentor sends no email. With a mail provider they could be sent
@@ -1897,28 +1911,34 @@ each change before it was committed.
 
 ## 22. Testing
 
-[`docs/testing.md`](docs/testing.md) has the full record, all of it run
-again on 10 November 2026 on the code now live. In short:
+[`docs/testing.md`](docs/testing.md) has the full record. The manual
+tests were run on 10 November 2026, and every check again the same day
+at `8908668`, each with the checker's own screenshots. In short:
 
-- **954 automated tests** cover the models, views, forms, permissions,
+- **[954 automated tests](docs/testing.md#4-automated-tests)** cover the models, views, forms, permissions,
   each church's own data, the import and export, and the liturgical
   calendar and its chants. 68 of them are browser tests, which start a
   real server and drive Chromium through Playwright, so the JavaScript
   is tested too.
-- **Manual tests:** 65 rows covering every feature, each carried out in
-  Google Chrome with its result, and screenshots beside them. Six
-  failed and were fixed, each with its commit.
-- **Widths and browsers:** 25 pages at 320, 375, 768, 1024 and 1280
+- **[Manual tests](docs/testing.md#5-manual-tests):** 65 rows covering every
+  feature, grouped by feature, each carried out in Google Chrome with
+  its result and screenshots beside them. Six failed and were fixed,
+  each with its commit.
+- **[Widths and browsers](docs/testing.md#6-responsiveness-usability-and-the-keyboard):** 25 pages at 320, 375, 768, 1024 and 1280
   pixels in Chromium, Firefox and WebKit, with nothing wider than the
   window and no console errors; the keyboard alone; dark mode, with
   every piece of text meeting WCAG AA contrast; and without JavaScript.
-- **Validation:** every page's HTML, 74 in all, with no errors; the CSS,
-  where the only errors are newer CSS the validator doesn't know yet;
-  ESLint and flake8 with no findings.
-- **Lighthouse:** accessibility, best practices and SEO 100 on every
-  page checked, on desktop and mobile.
-- **Bugs found and fixed,** each with its commit, and the two known
-  issues, neither in the app itself.
+- **[Real devices](docs/testing.md#real-devices):** my iPhone, iPad and PC, on
+  the live site.
+- **[Validation](docs/testing.md#2-html-and-css-validation):** every page's HTML,
+  75 in all, with no errors, and the 25 main pages again on the W3C's
+  online checker; the CSS, where the only errors are newer CSS the
+  validator doesn't know yet; ESLint and flake8 with no findings.
+- **[Lighthouse](docs/testing.md#3-lighthouse-scores):** accessibility, best
+  practices and SEO 100 on every page checked, on desktop and mobile;
+  performance 100 on desktop and 94 to 99 on a simulated phone.
+- **[Bugs found and fixed](docs/testing.md#7-bugs-found-and-fixed),** each with
+  its commit, and the three known issues, none in the app itself.
 
 ---
 
