@@ -65,6 +65,37 @@ class ConfirmToggleBrowserTest(PlaywrightTestCase):
         # Toast auto-dismisses on its own (6s timer).
         self.page.wait_for_selector(".toast--success", state="detached", timeout=8000)
 
+    def test_the_button_is_busy_during_a_request_and_usable_after_an_error(self):
+        button = f"#confirm-toggle-{self.piece.pk}"
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.wait_for_selector(button)
+        # Hold every request until the test lets it go, then answer with a
+        # server error, counting how many were sent.
+        self.page.evaluate("""() => {
+            window.__sent = 0;
+            window.fetch = () => {
+                window.__sent += 1;
+                return new Promise((resolve) => {
+                    window.__release = () => resolve(new Response("{}", {status: 500}));
+                });
+            };
+        }""")
+        self.page.click(button)
+        self.page.wait_for_function("window.__sent === 1")
+        assert self.page.is_disabled(button)
+        assert self.page.get_attribute(button, "aria-busy") == "true"
+        # A second click while it's busy sends nothing.
+        self.page.click(button, force=True)
+        assert self.page.evaluate("window.__sent") == 1
+
+        self.page.evaluate("window.__release()")
+        self.page.wait_for_selector(".toast--danger")
+        assert self.page.is_enabled(button)
+        assert self.page.get_attribute(button, "aria-busy") is None
+        assert self.page.evaluate("document.activeElement.id") == button.lstrip("#")
+        self.piece.refresh_from_db()
+        assert self.piece.is_confirmed is False
+
 
 class ProposePieceBrowserTest(PlaywrightTestCase):
     def setUp(self):
