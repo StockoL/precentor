@@ -42,6 +42,8 @@
         {% include "planning/_role_pieces.html" %}
 
         {% if can.plan %}
+        {# Without JavaScript, the link opens a page with one list of scores and a reference box. #}
+        <p data-fallback-for="add-piece-form-{{ role.pk }}"><a href="{% url 'planning:add_piece' role.pk %}">Propose a piece</a></p>
         {% include "planning/_add_piece_form.html" with form=role.piece_form %}
         {% endif %}
     </div>

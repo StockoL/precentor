@@ -109,6 +109,40 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
         self.page.wait_for_selector(".toast--success")
         assert "Piece proposed" in self.page.inner_text(".toast--success")
 
+    def submit_and_wait_for_the_new_form(self, form):
+        # A refused submit swaps in a new form; mark the old one to know.
+        self.page.evaluate(f"document.querySelector('{form}').dataset.old = 'yes'")
+        self.page.click(f"{form} button[type=submit]")
+        self.page.wait_for_function(
+            f"!document.querySelector('{form}').dataset.old"
+            f" && document.querySelector('{form} .score-combobox__input') !== null"
+        )
+
+    def test_a_refused_submit_keeps_one_fallback_link_its_error_and_its_values(self):
+        form = f"#add-piece-form-{self.role.pk}"
+        fallback = f"[data-fallback-for=add-piece-form-{self.role.pk}]"
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.wait_for_selector(f"{form} .score-combobox__input")
+
+        # Nothing chosen, three times: each refusal swapped in the form's
+        # fragment, which also held the fallback paragraph, so they piled up.
+        for _ in range(3):
+            self.submit_and_wait_for_the_new_form(form)
+        links = self.page.locator(fallback).count()
+        assert links == 1, f"{links} fallback paragraphs after three refused submits"
+        assert not self.page.is_visible(fallback)
+        assert "Choose one" in self.page.inner_text(f"{form} .errorlist")
+
+        # A score and a reference both is refused too, keeping what was typed.
+        self.page.fill(f"{form} .score-combobox__input", "Browser Anthem")
+        self.page.click(f"{form} .score-combobox__listbox li[role=option]")
+        self.page.fill(f"{form} input[name=reference]", "Psalm 23")
+        self.submit_and_wait_for_the_new_form(form)
+        assert self.page.input_value(f"{form} input[name=reference]") == "Psalm 23"
+        assert self.page.locator(f"{form} .errorlist").count() == 1
+        assert self.page.locator(fallback).count() == 1
+        assert not RolePiece.objects.filter(service_role=self.role).exists()
+
     def test_a_hymn_is_chosen_by_book_and_number(self):
         from library.models import Hymnal
 
