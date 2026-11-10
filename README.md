@@ -1519,7 +1519,70 @@ the role column in §2 says who may use each one.
 - **Permissions** give a "Not available to you" page (403) that says
   why, and another church's records give "Page not found" (404).
 
-## 16. Security
+## 16. Design decisions that depart from convention
+
+Some choices go against what a reader might expect, or against what the
+usual checklists ask for. Each one is deliberate, and this is why.
+
+- **An unknown address shows a page, not a redirect.** The common
+  advice is to send a mistyped address to the home page. Precentor
+  answers with a "Page not found" page, a real 404 status and a Go to
+  Terms button instead. A silent redirect hides the mistake: the person
+  doesn't learn the link was wrong, and a browser or another site is
+  told a missing page exists. The button still gets them home in one
+  click.
+- **Another church's record is "not found", not "forbidden".** Opening a
+  record from another church by its address gives the same 404 page as
+  an address that never existed. A 403 would confirm the record is
+  there.
+- **A refused action shows a page, not the sign-in screen.** Django's
+  `user_passes_test` and `permission_required` decorators send someone
+  who fails the check to log in, even when they're signed in already,
+  which would loop. The "Not available to you" page (403) says their
+  role doesn't include this, that they can still see everything and
+  comment, and to ask a conductor.
+- **Slots are reordered with buttons as well as by dragging.** Dragging
+  can't be done from a keyboard or by many assistive technologies, so
+  each slot has Move up and Move down buttons, which also work without
+  JavaScript. Dragging is an extra for a mouse or a finger, and sends
+  the new order to the server when it's dropped.
+- **Removing someone switches their account off.** The usual delete
+  would take their comments' authorship with it. A removed member can't
+  sign in, but their name stays on what they wrote, and the owner can
+  bring them back from the Members page.
+- **There's no email.** Invitations and reset links are made by the
+  owner and passed on by hand, and nobody can reset their own password.
+  Precentor has no mail provider, so the usual "Forgot your password?"
+  link would promise something it can't do; I took it out rather than
+  leave it broken (§20).
+- **Deleting is refused where history would be lost.** A score that
+  has been planned for a service can't be deleted, a hymn can't be
+  deleted at all, and a hymnal that has been used is archived instead.
+  The score's page says why. What a choir sang is the record the
+  library exists to keep.
+- **Comments can't be edited, and only closed threads can be deleted.**
+  Most comment systems allow both. Here a thread is a short working
+  record between a conductor and a librarian, so what was said stays as
+  it was said, and nothing can be removed from a discussion still under
+  way (§6).
+- **Printing sits outside the cascade layers.** Every other rule lives in
+  a layer, but the print rules for the music list and pew sheet are
+  left unlayered and use points rather than the fluid scale. Unlayered
+  rules beat every layered one, so a printed list can never show the
+  buttons, and points are the unit paper is measured in.
+- **Some lists carry `role="list"` though the validator calls it
+  unnecessary.** Safari stops announcing a list as a list once its
+  bullets are removed with `list-style: none`. The attribute puts that
+  back, so the W3C checker's warnings of this kind are expected (see
+  [`docs/testing.md`](docs/testing.md)).
+- **The sign-in pages load a second stylesheet.** Every other page links
+  only `precentor.css`. Log in, Register and Join also link
+  `no-page-transition.css`, which turns off the page transitions the
+  rest of the site uses. `@view-transition` can't be limited to some
+  pages, so it can't live in the shared file, and without it Chromium
+  held the page after signing in frozen for several seconds.
+
+## 17. Security
 
 - **Secrets stay out of the repository.** `SECRET_KEY`, the database
   address and the allowed hosts are read from environment variables. A
@@ -1583,7 +1646,7 @@ the role column in §2 says who may use each one.
   follows that address if it's a page on this site, so a crafted link
   can't send someone elsewhere after they save.
 
-## 17. Running it locally
+## 18. Running it locally
 
 These steps are for Windows with PowerShell; on macOS or Linux, activate
 the virtual environment with `source venv/bin/activate` instead. You
@@ -1644,7 +1707,7 @@ need Python 3.14 and git.
    once with `pip install -r requirements-dev.txt`, then
    `playwright install chromium`.
 
-## 18. Environment variables
+## 19. Environment variables
 
 Everything below is read in `precentor_project/settings.py`.
 
@@ -1658,7 +1721,7 @@ Everything below is read in `precentor_project/settings.py`.
 | `RENDER_EXTERNAL_HOSTNAME` | Set by Render; added to the allowed hosts and trusted origins                                    | none                                  |
 | `SECURE_HSTS_SECONDS`      | How long browsers are told to use only HTTPS, when `DEBUG` is off                                | 3600 (one hour)                       |
 
-## 19. Future work
+## 20. Future work
 
 What's designed or wanted but not built yet:
 
@@ -1682,7 +1745,7 @@ What's designed or wanted but not built yet:
   to that score, so the Ave verum is typed again for each composer who
   set it. A shared text would be entered once.
 
-## 20. Technologies used
+## 21. Technologies used
 
 **Languages:** HTML, CSS, JavaScript (hand-written ES modules, no
 framework) and Python.
@@ -1732,7 +1795,7 @@ The architecture, the data model, the design and every decision about
 what Precentor does and how are my own, and I reviewed and approved
 each change before it was committed.
 
-## 21. Testing
+## 22. Testing
 
 [`docs/testing.md`](docs/testing.md) has the full record. In short:
 
