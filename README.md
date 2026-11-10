@@ -149,9 +149,11 @@ There are three user roles, reflecting how the work is actually divided:
 | --------------------------- | ---------------------------------------------------------------------------------------------------- | ---------- |
 | **Conductor**               | Planning (terms, services, slots, proposing, confirming, N/A), slot templates, the library, Settings | Everything |
 | **Librarian / Music Admin** | The library: scores, copies owned, filing location, importing and exporting it                       | Everything |
-| **Viewer**                  | Nothing, apart from taking part in comments                                                          | Everything |
+| **Viewer**                  | Nothing, apart from taking part in comments                                                          | Everything, drafts included |
 
-Everyone takes part in the comment threads (see §6). A site superuser
+Everyone takes part in the comment threads (see §6). Viewers are
+read-only members who can comment, and commenting on a draft needs sight
+of it, so they see work in progress as well as what's settled. A site superuser
 has no role inside the app; they look after the site from Django's
 admin pages.
 
@@ -1585,6 +1587,13 @@ the role column in §2 says who may use each one.
   styles outline in red. Forms check what the database would refuse, such
   as a template name already used in the church or an address already
   registered, so the message is plain rather than a server error.
+  They also refuse dates that make no sense (a term ending before it
+  starts, a service outside its term, or new term dates that would
+  leave services outside it) and the same piece twice in one slot.
+- **A button can't be pressed twice.** While a form's request is on
+  its way, its button is disabled and marked busy, so a double-click
+  sends it once. Confirm asks for a state rather than switching, so
+  even two requests leave a piece as asked.
 - **Success and warning messages** appear after an action, such as
   "Ben Jonson is now a Librarian." or "That invitation has already been
   used or cancelled.", shown at the top of the next page.
@@ -1637,6 +1646,12 @@ usual checklists ask for. Each one is deliberate, and this is why.
   deleted at all, and a hymnal that has been used is archived instead.
   The score's page says why. What a choir sang is the record the
   library exists to keep.
+- **Viewers see drafts.** A read-only role often sees only what's
+  finished. Here a Viewer is a read-only member who can comment, and
+  commenting on a draft needs sight of it, so Viewers see the draft
+  music list, the pew sheet and every proposed piece, while changing
+  nothing. Signed-out visitors see none of it, and another church's
+  members get "not found".
 - **Comments can't be edited, and only closed threads can be deleted.**
   Most comment systems allow both. Here a thread is a short working
   record between a conductor and a librarian, so what was said stays as
@@ -1877,12 +1892,12 @@ each change before it was committed.
 [`docs/testing.md`](docs/testing.md) has the full record, all of it run
 again on 10 November 2026 on the code now live. In short:
 
-- **913 automated tests** cover the models, views, forms, permissions,
+- **936 automated tests** cover the models, views, forms, permissions,
   each church's own data, the import and export, and the liturgical
-  calendar and its chants. 62 of them are browser tests, which start a
+  calendar and its chants. 63 of them are browser tests, which start a
   real server and drive Chromium through Playwright, so the JavaScript
   is tested too.
-- **Manual tests:** 60 rows covering every feature, each carried out in
+- **Manual tests:** 64 rows covering every feature, each carried out in
   Google Chrome with its result, and screenshots beside them. Six
   failed and were fixed, each with its commit.
 - **Widths and browsers:** 25 pages at 320, 375, 768, 1024 and 1280
