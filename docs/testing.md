@@ -496,14 +496,32 @@ _Test figure 21. R05: Settings in dark mode._
 
 ### Real devices
 
-These are checked by me on the live site after the deploy, on my own
-phone and tablet: signing in, Terms, a service, the library, the music
-list and the pew sheet.
+These were checked by me on the live site after the deploy, on my own
+phone and tablet and on the PC I built Precentor on: signing in,
+Terms, a service, the library, the music list and the pew sheet.
 
 | Device | Browser | Width | What was checked | Result | Screenshot |
 | ------ | ------- | ----- | ---------------- | ------ | ---------- |
-|        |         |       |                  |        |            |
-|        |         |       |                  |        |            |
+| iPhone 14 Pro, iOS 27.0.1 | Safari | 393 points | Signing in, Terms, a service, the library, the music list, the pew sheet | Pass | Test figure 22 |
+| iPad Pro 12.9-inch (3rd generation), iPadOS 26.7.2 | Safari | 1024 points | The same | Pass | Test figure 23 |
+| PC, Windows 11 Home 26H2 | Chrome | 1920 pixels | The same | Pass | Test figure 24 |
+
+The screenshots aren't from the devices themselves. They show the demo
+church's Sung Mass at each device's size, taken with Playwright: in
+WebKit, the engine Safari uses, for the iPhone and the iPad, and in
+Chrome for the PC.
+
+![A service page at the iPhone 14 Pro's size: the menu, the Third Sunday of Advent, Sung Mass on Sun 13 Dec 2026 with its buttons stacked, its term, status and occasion, and the first slot starting](screenshots/testing/d09-iphone-14-pro.png)
+
+_Test figure 22. D09: a service at the iPhone 14 Pro's size, 393 points wide._
+
+![The same service page at the 12.9-inch iPad Pro's size, with the heading and its buttons on one line and the Introit, Kyrie and Gradual slots below](screenshots/testing/d09-ipad-pro-12-9.png)
+
+_Test figure 23. D09: the same at the 12.9-inch iPad Pro's size, 1024 points wide._
+
+![The same service page on a 1920 by 1080 screen, the content centred with space either side](screenshots/testing/d09-pc-1920.png)
+
+_Test figure 24. D09: the same on a 1920 by 1080 screen._
 
 ## 7. Bugs found and fixed
 
@@ -576,12 +594,12 @@ in once that deploy is done.
 
 | ID | Check | Expected | At the first deploy, 23 October | After the merge |
 | -- | ----- | -------- | ------------------------------- | --------------- |
-| D01 | The site loads | The sign-in page, after up to a minute if the site was asleep | Pass: the sign-in page loaded on the live site on 23 October |  |
-| D02 | `http://` goes to `https://` | Typing `http://precentor.onrender.com` ends on the `https://` address | Pass: `http://precentor.onrender.com/` answered 301, to `https://precentor.onrender.com/` |  |
-| D03 | `DEBUG` is off | A made-up address shows Precentor's 404 page, not Django's debug page | Pass: a made-up address answered 404 with Precentor's own page |  |
-| D04 | Static files and the crest | Styles, fonts and an uploaded crest all load | Pass: stylesheets and the favicon answered 200 from their hashed static addresses; the crest was uploaded and shown on the live site on 22 October |  |
-| D05 | Register and plan | Register a test church, add a score, a term and a service, propose and confirm a piece, open the music list | Pass on the live site on 23 October: registered a test church, added a score, a term and a service, applied the Mass template, proposed and confirmed a piece, and saw it on the music list |  |
-| D06 | The build | Render's build log shows the 28 new migrations applied, `load_calendar` loading the chants, then "Your service is live" | Not part of the first deploy |  |
-| D07 | The copied data | `python manage.py check_copied_data`, run from my computer against the live database, ends "Everything was copied" | Not part of the first deploy |  |
-| D08 | The pages added since | Hymnals, a hymnal, the pew sheet, the completeness page, the template editor, the Library's Season and Use menus, and a Proper slot offering the day's chant all open and work | Not part of the first deploy |  |
-| D09 | Real devices | The checks in the table at the end of section 6, on my phone and tablet | Not part of the first deploy |  |
+| D01 | The site loads | The sign-in page, after up to a minute if the site was asleep | Pass: the sign-in page loaded on the live site on 23 October | Pass on 10 November: the sign-in page answered 200 |
+| D02 | `http://` goes to `https://` | Typing `http://precentor.onrender.com` ends on the `https://` address | Pass: `http://precentor.onrender.com/` answered 301, to `https://precentor.onrender.com/` | Pass: `http://precentor.onrender.com/` answered 301, to the `https://` address |
+| D03 | `DEBUG` is off | A made-up address shows Precentor's 404 page, not Django's debug page | Pass: a made-up address answered 404 with Precentor's own page | Pass: a made-up address answered 404 with Precentor's own page |
+| D04 | Static files and the crest | Styles, fonts and an uploaded crest all load | Pass: stylesheets and the favicon answered 200 from their hashed static addresses; the crest was uploaded and shown on the live site on 22 October | Pass: both stylesheets and the preloaded font answered 200 from their hashed addresses; a crest uploaded to a test church showed, from `/settings/crest/<church>/<version>/` |
+| D05 | Register and plan | Register a test church, add a score, a term and a service, propose and confirm a piece, open the music list | Pass on the live site on 23 October: registered a test church, added a score, a term and a service, applied the Mass template, proposed and confirmed a piece, and saw it on the music list | Pass: registered a test church, added a score, a term and a service (its occasion set from the date), applied the Mass template, proposed and confirmed a piece, and saw it on the music list; the church was then deleted |
+| D06 | The build | Render's build log shows the 28 new migrations applied, `load_calendar` loading the chants, then "Your service is live" | Not part of the first deploy | Pass: Render reported the deploy successful, and the pages that need the new migrations work (D08) |
+| D07 | The copied data | `python manage.py check_copied_data`, run from my computer against the live database, ends "Everything was copied" | Not part of the first deploy | Pass: run from my computer against the live database, with no difference reported |
+| D08 | The pages added since | Hymnals, a hymnal, the pew sheet, the completeness page, the template editor, the Library's Season and Use menus, and a Proper slot offering the day's chant all open and work | Not part of the first deploy | Pass: the Introit offered Ad te levavi; the pew sheet listed the piece; a hymnal was created and its page opened; the completeness page and the template editor opened; the Library's Season and Use menus listed Advent (1) and Mass (1), and Advent filtered it to 1 score |
+| D09 | Real devices | The checks in the table at the end of section 6, on my phone and tablet | Not part of the first deploy | Pass: on an iPhone 14 Pro and a 12.9-inch iPad Pro in Safari, and on my PC in Chrome (section 6, Real devices) |
