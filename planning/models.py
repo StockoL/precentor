@@ -727,6 +727,23 @@ class RolePiece(models.Model):
     def __str__(self):
         return f"{self.title} ({'confirmed' if self.is_confirmed else 'proposed'})"
 
+    def removal_warnings(self):
+        """
+        What removing this piece would lose, said before it goes: being on
+        the music list, and its comments. Empty when nothing is lost, and
+        then it goes at once. Comments are counted with .all(), so a page
+        that prefetched them costs no query per row.
+        """
+        warnings = []
+        if self.is_confirmed:
+            warnings.append("It's confirmed, so it will leave the music list.")
+        count = len(self.comments.all())
+        if count == 1:
+            warnings.append("Its comment goes with it.")
+        elif count:
+            warnings.append(f"Its {count} comments go with it.")
+        return warnings
+
     @property
     def sheet_title(self):
         """

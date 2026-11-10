@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Remove {{ piece.title }}? — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Remove {{ piece.title }}?</h1>
+    <p>From the {{ role.role_name }} at {{ service }}.</p>
+    {% for warning in piece.removal_warnings %}<p>{{ warning }}</p>{% endfor %}
+    <p><strong>This can't be undone.</strong></p>
+    <div class="cluster">
+        <form method="post" action="{% url 'planning:remove_piece' piece.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="confirm" value="1">
+            <input type="hidden" name="next" value="{{ service.get_absolute_url }}">
+            <button class="btn-danger" type="submit">Remove</button>
+        </form>
+        <a class="btn-ghost" href="{{ service.get_absolute_url }}">Cancel</a>
+    </div>
+</div>
+{% endblock %}

@@ -6,6 +6,7 @@ from collections import Counter
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models import Prefetch
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -576,6 +577,50 @@ def toggle_confirm(request, piece_pk):
         ),
         "service-status-badge": render_to_string(
             "planning/_service_status_badge.html", {"service": service}, request=request
+        ),
+    }
+    return ajax_or_redirect(request, fragments, service.get_absolute_url())
+
+
+@role_required(can_plan)
+def remove_piece(request, piece_pk):
+    """
+    Take a piece out of its slot. One that's only proposed, with no
+    comments, goes at once; one that would lose something (its place on
+    the music list, or comments) asks first, in a dialog with JavaScript
+    or on this page without, and goes when the answer comes back with
+    confirm=1. Only a POST removes anything.
+
+    A piece already gone (Back, or a second click) can't say which service
+    it was on, so the form sends the service's address as next, and the
+    person goes back there with a message rather than "not found". With
+    JavaScript the message waits for the reload the script then does.
+    """
+    next_url = safe_next(request, request.POST.get("next") or request.GET.get("next"))
+    piece = own(RolePiece, request).select_related("service_role__service").filter(pk=piece_pk).first()
+    if piece is None:
+        messages.info(request, "That piece has already been removed.")
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse({"fragments": {}}, status=410)
+        return redirect(next_url or "planning:term_list")
+    role = piece.service_role
+    service = role.service
+    if request.method != "POST" or (piece.removal_warnings() and not request.POST.get("confirm")):
+        return render(request, "planning/remove_piece_confirm.html", {"piece": piece, "role": role, "service": service})
+    title = piece.title
+    piece.delete()
+    if request.headers.get("X-Requested-With") != "XMLHttpRequest":
+        messages.success(request, f"Removed {title} from the {role.role_name}.")
+    # The slot's list (with its empty line if that was the last piece), the
+    # status, which the pieces decide, and the slot's form, which offers a
+    # removed chant again.
+    fragments = {
+        f"role-{role.pk}-pieces": render_to_string("planning/_role_pieces.html", {"role": role}, request=request),
+        "service-status-badge": render_to_string(
+            "planning/_service_status_badge.html", {"service": service}, request=request
+        ),
+        f"add-piece-form-{role.pk}": render_to_string(
+            "planning/_add_piece_form.html", {"role": role, "form": RolePieceForm(role=role)}, request=request
         ),
     }
     return ajax_or_redirect(request, fragments, service.get_absolute_url())

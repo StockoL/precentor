@@ -72,6 +72,7 @@ urlpatterns = [
     path("pieces/<int:piece_pk>/tune/", views.set_tune, name="set_tune"),
     path("services/<int:pk>/sheet/", views.service_pew_sheet, name="service_pew_sheet"),
     path("roles/<int:role_pk>/remove/", views.remove_slot, name="remove_slot"),
+    path("pieces/<int:piece_pk>/remove/", views.remove_piece, name="remove_piece"),
     path("services/<int:service_pk>/slots/order/", views.reorder_slots, name="reorder_slots"),
     path(
         "pieces/<int:piece_pk>/toggle-confirm/",
