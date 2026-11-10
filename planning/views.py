@@ -558,8 +558,15 @@ def add_piece(request, role_pk):
 @role_required(can_plan)
 @require_POST
 def toggle_confirm(request, piece_pk):
+    """
+    Confirm or unconfirm a piece. The button sends the state it asks for,
+    so the same request twice, from a double click, leaves the piece as
+    asked rather than turning it back. A page opened before the button
+    sent it posts nothing, and toggles as it always did.
+    """
     piece = get_object_or_404(own(RolePiece, request), pk=piece_pk)
-    piece.is_confirmed = not piece.is_confirmed
+    wanted = request.POST.get("confirmed")
+    piece.is_confirmed = wanted == "1" if wanted in ("0", "1") else not piece.is_confirmed
     piece.save()
 
     service = piece.service_role.service
