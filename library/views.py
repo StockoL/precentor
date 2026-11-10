@@ -384,12 +384,19 @@ class ScoreImportDetailView(LibraryEditRequiredMixin, OrganisationScopedMixin, D
     model = ScoreImport
     context_object_name = "score_import"
     template_name = "library/score_import_detail.html"
+    # The most scores listed on the page; a longer import says how many.
+    LISTED = 100
 
     def get_context_data(self, **kwargs):
+        scores = self.object.scores.all()
         return super().get_context_data(
             can_remove=can_remove_import(self.request.user, self.object),
-            no_voicing=self.object.scores.filter(voicing="").count(),
+            no_voicing=scores.filter(voicing="").count(),
             unspecified=ScoreQuerySet.UNSPECIFIED,
+            # In the library's own order (Score.Meta), in one query: each
+            # row reads only the score's own fields.
+            imported_scores=scores[: self.LISTED],
+            imported_count=scores.count(),
             **kwargs,
         )
 

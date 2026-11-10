@@ -28,6 +28,36 @@
     {% endif %}
     {% endwith %}
 
+    {% if imported_scores %}
+    <h2 id="imported-heading">The scores it brought in</h2>
+    {% if imported_count > imported_scores|length %}
+    <p>The first {{ imported_scores|length }} of {{ imported_count }}, in library order.</p>
+    {% endif %}
+    {# As the library's table: scrolls sideways in its own box on a narrow screen. #}
+    <div class="table-scroll" role="region" aria-labelledby="imported-heading" tabindex="0">
+        <table class="data-table data-table--narrow">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Composer</th>
+                    <th scope="col">Voicing</th>
+                    <th scope="col">Language</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for score in imported_scores %}
+                <tr>
+                    <td><a href="{{ score.get_absolute_url }}">{{ score.title }}</a></td>
+                    <td>{{ score.composer_catalogue }}</td>
+                    <td>{{ score.voicing|default:"(unspecified)" }}</td>
+                    <td>{{ score.language|default:"(unspecified)" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
     {% if score_import.is_pending %}
     <form method="post" action="{% url 'library:keep_import' score_import.pk %}" class="flow">
         {% csrf_token %}
