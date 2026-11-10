@@ -28,6 +28,16 @@ The checker turns away clients that ask too often, so the script waits
 ten seconds between pages and a run takes about a quarter of an hour.
 If it's turned away all the same, it prints what it had checked and the
 command that checks the rest.
+
+The same checker can be run locally, with no waiting: download
+vnu.windows.zip from github.com/validator/validator/releases, unzip it,
+start it with
+
+    vnu-runtime-image\\bin\\java -m vnu/nu.validator.servlet.Main 8888
+
+and point the script at it:
+
+    $env:VALIDATOR_URL = "http://127.0.0.1:8888/?out=json"
 """
 
 import io
@@ -60,7 +70,9 @@ from django.utils.encoding import force_bytes  # noqa: E402
 from django.utils.http import urlsafe_base64_encode  # noqa: E402
 from django.views.defaults import server_error  # noqa: E402
 
-CHECKER = "https://validator.w3.org/nu/?out=json"
+CHECKER = os.environ.get("VALIDATOR_URL", "https://validator.w3.org/nu/?out=json")
+# Only the public checker needs a pause between pages.
+PAUSE = 10 if "validator.w3.org" in CHECKER else 0
 PASSWORD = "testpass123"
 
 # Pages someone sees before signing in.
@@ -226,7 +238,8 @@ def check(html):
             input=html, capture_output=True,
         )
         try:
-            return json.loads(answer.stdout)["messages"]
+            reply = json.loads(answer.stdout)
+            return reply["messages"], reply.get("version", "unknown")
         except (json.JSONDecodeError, KeyError):
             if wait is None:
                 return None
@@ -235,6 +248,9 @@ def check(html):
 
 
 def main():
+    # The checker's messages have curly quotes; Windows would otherwise
+    # write a redirected file in its own code page.
+    sys.stdout.reconfigure(encoding="utf-8")
     setup_test_environment()
     test_db = connection.creation.create_test_db(verbosity=0, autoclobber=True)
     try:
@@ -244,19 +260,20 @@ def main():
         call_command("load_calendar", stdout=io.StringIO())
         rows, join_token = build()
         wanted = set(sys.argv[1:])
-        results, unchecked = [], []
+        results, unchecked, version = [], [], "unknown"
         for name, response in pages(rows, join_token):
             if wanted and name not in wanted:
                 continue
-            messages = None if unchecked else check(response.content)
-            if messages is None:
+            answer = None if unchecked else check(response.content)
+            if answer is None:
                 unchecked.append(name)
                 continue
+            messages, version = answer
             errors = [m for m in messages if m["type"] in ("error", "non-document-error")]
             warnings = [m for m in messages if m.get("subType") == "warning"]
             results.append((name, response.status_code, errors, warnings))
             print(f"  {name}: {len(errors)} errors, {len(warnings)} warnings", file=sys.stderr)
-            time.sleep(10)
+            time.sleep(PAUSE)
     finally:
         connection.creation.destroy_test_db(test_db, verbosity=0)
 
@@ -267,7 +284,7 @@ def main():
         names = " ".join(f'"{name}"' if " " in name else name for name in unchecked)
         print(f"The checker stopped answering. To check the rest later:\n\n"
               f"    python tools/validate_html.py {names}\n", file=sys.stderr)
-    print(f"Checked on {date.today().day} {date.today():%B %Y}")
+    print(f"Checked on {date.today().day} {date.today():%B %Y} by the Nu HTML Checker {version}")
     print()
     print("| Page | Status | Errors | Warnings |")
     print("| ---- | ------ | ------ | -------- |")
