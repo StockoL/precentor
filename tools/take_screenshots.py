@@ -31,9 +31,9 @@ django.setup()
 from PIL import Image  # noqa: E402
 from playwright.sync_api import sync_playwright  # noqa: E402
 
-from library.models import Score  # noqa: E402
+from library.models import Hymnal, Score  # noqa: E402
 from ordo.models import LiturgicalSeason  # noqa: E402
-from planning.models import Service, Term  # noqa: E402
+from planning.models import Service, SlotTemplate, Term  # noqa: E402
 
 BASE = "http://127.0.0.1:8766"
 OUT = ROOT / "docs" / "screenshots"
@@ -79,12 +79,24 @@ def shot(page, url, name, full_page=True):
     save(page.screenshot(full_page=full_page), name)
 
 
+def slot(page, service, name, filename):
+    """One slot of a service on its own, such as its Introit."""
+    page.goto(BASE + f"/services/{service.pk}/")
+    page.wait_for_load_state("networkidle")
+    block = page.locator(f"#role-block-{service.roles.get(role_name=name).pk}")
+    block.scroll_into_view_if_needed()
+    save(block.screenshot(), filename)
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     advent = Term.objects.get(name="Advent 2026")
     first_mass = Service.objects.filter(term=advent, service_type="Sung Mass").order_by("date").first()
+    missa_cantata = Service.objects.get(term__name="Advent 2026, 1962 Missal")
     score = Score.objects.get(title="Ave Maria", composer_surname="Parsons")
     advent_season = LiturgicalSeason.objects.get(name="Advent")
+    hymnal = Hymnal.objects.get(short_name="SAH", organisation=advent.organisation)
+    mass = SlotTemplate.objects.get(name="Mass", organisation=advent.organisation)
 
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
@@ -163,6 +175,14 @@ def main():
         page.wait_for_load_state("networkidle")
         save(page.screenshot(), "15-invitation-link.png")
         shot(page, "/members/", "16-members.png")
+        # The parts added since the first submission.
+        shot(page, "/library/hymnals/", "26-hymnals.png", full_page=False)
+        shot(page, f"/library/hymnals/{hymnal.pk}/", "27-hymnal.png")
+        shot(page, f"/services/{first_mass.pk}/sheet/", "28-pew-sheet.png")
+        shot(page, "/library/completeness/", "29-completeness.png")
+        shot(page, f"/templates/{mass.pk}/edit/", "30-template-editor.png")
+        slot(page, missa_cantata, "Introit", "31-chants-1962.png")
+        slot(page, first_mass, "Introit", "32-chants-ordinary-form.png")
         context.close()
 
         # Accessibility and responsive design.
