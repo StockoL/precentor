@@ -60,3 +60,51 @@ class ServiceDateTests(TestCase):
         self.assertFormError(response.context["form"], "date", self.message)
         service.refresh_from_db()
         self.assertEqual(service.date, date(2027, 2, 21))
+
+
+class TermStrandingTests(TestCase):
+    def setUp(self):
+        user = make_user("conductor")
+        self.client.force_login(user)
+        self.term = make_term(organisation=user.organisation, name="Lent 2027",
+                              start_date=date(2027, 2, 17), end_date=date(2027, 4, 3))
+        for day in (date(2027, 2, 21), date(2027, 3, 28), date(2027, 4, 3)):
+            Service.objects.create(term=self.term, date=day, service_type="Sung Mass")
+        self.url = f"/terms/{self.term.pk}/edit/"
+
+    def edit(self, name="Lent 2027", start="2027-02-17", end="2027-04-03"):
+        return self.client.post(self.url, {
+            "name": name, "start_date": start, "end_date": end, "calendar_use": self.term.calendar_use,
+        })
+
+    def assertUnchanged(self):
+        self.term.refresh_from_db()
+        self.assertEqual((self.term.start_date, self.term.end_date), (date(2027, 2, 17), date(2027, 4, 3)))
+
+    def test_an_earlier_end_naming_how_many_and_the_first(self):
+        form = self.edit(end="2027-03-27").context["form"]
+        self.assertFormError(form, "end_date", "2 services would fall outside these dates, "
+                                               "the first on Sun 28 Mar 2027. Move or delete them first.")
+        self.assertUnchanged()
+
+    def test_a_later_start_beside_the_start(self):
+        form = self.edit(start="2027-02-22").context["form"]
+        self.assertFormError(form, "start_date", "A service on Sun 21 Feb 2027 would fall outside these dates. "
+                                                 "Move or delete it first.")
+        self.assertUnchanged()
+
+    def test_both_dates_changed_says_so_above_them(self):
+        form = self.edit(start="2027-02-22", end="2027-03-27").context["form"]
+        self.assertIn("3 services would fall outside", form.non_field_errors()[0])
+        self.assertUnchanged()
+
+    def test_dates_on_the_first_and_last_services_are_allowed(self):
+        self.assertEqual(self.edit(start="2027-02-21", end="2027-04-03").status_code, 302)
+        self.term.refresh_from_db()
+        self.assertEqual(self.term.start_date, date(2027, 2, 21))
+
+    def test_renaming_a_term_with_services_already_outside_it(self):
+        Service.objects.create(term=self.term, date=date(2027, 5, 2), service_type="Sung Mass")
+        self.assertEqual(self.edit(name="Lent and Easter 2027").status_code, 302)
+        self.term.refresh_from_db()
+        self.assertEqual(self.term.name, "Lent and Easter 2027")
