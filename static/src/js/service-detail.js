@@ -241,6 +241,39 @@ function initServiceDetail() {
       return;
     }
 
+    // A piece that would lose something asks first, with the wording the
+    // page put on its form. The slot's list, the status and the slot's form
+    // come back, so a removed chant is offered again; focus goes to the
+    // form's first field, ready for another piece. A piece already gone
+    // answers 410 with a message waiting, and a reload shows it.
+    if (form.matches(".ajax-remove-piece")) {
+      event.preventDefault();
+      const { pieceTitle, slotName, confirmTitle } = form.dataset;
+      if (confirmTitle) {
+        const confirmed = await confirmAction({
+          title: confirmTitle,
+          message: form.dataset.confirmMessage,
+          confirmLabel: form.dataset.confirmLabel,
+        });
+        if (!confirmed) return;
+      }
+      const rolePk = form.closest(".role-block").dataset.rolePk;
+      const data = new FormData(form);
+      data.set("confirm", "1");
+      try {
+        const answer = await whileBusy(form, event.submitter, () => postForm(form.action, data));
+        applyFragments(answer.fragments);
+        const addForm = document.getElementById(`add-piece-form-${rolePk}`);
+        initScorePickers(addForm);
+        addForm.querySelector("input:not([type=hidden]), select")?.focus();
+        showToast(`Removed ${pieceTitle} from the ${slotName}.`, "success");
+      } catch (err) {
+        if (err instanceof AjaxError && err.status === 410) window.location.reload();
+        else showToast("Couldn't remove that piece. Try again.", "danger");
+      }
+      return;
+    }
+
     // A slot with pieces asks first, with the wording the page put on the
     // form. Focus then moves to the slot that took its place, or the one
     // before, or the Add a slot box when none are left.
