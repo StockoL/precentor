@@ -264,11 +264,13 @@ grateful to the maintainers of each of these packages.
 | [Django](https://www.djangoproject.com) | BSD-3-Clause | The web framework |
 | [Pillow](https://python-pillow.org) | MIT-CMU | Checking and cropping the crest image |
 | [WhiteNoise](https://whitenoise.readthedocs.io) | MIT | Serving static files |
-| [Gunicorn](https://gunicorn.org) | MIT | The web server on Heroku |
+| [Gunicorn](https://gunicorn.org) | MIT | The web server on Render |
 | [psycopg2](https://www.psycopg.org) | LGPL with exceptions | Connecting to PostgreSQL |
 | [dj-database-url](https://github.com/jazzband/dj-database-url) | BSD-3-Clause | Reading the database address from the environment |
 | [python-dotenv](https://github.com/theskumar/python-dotenv) | BSD-3-Clause | Loading settings from `.env` in development |
 | [Playwright](https://playwright.dev/python/) | Apache-2.0 | Browser tests (development only) |
+| [flake8](https://flake8.pycqa.org) | MIT | The Python style check (development only) |
+| [pypdf](https://github.com/py-pdf/pypdf) | BSD-3-Clause | Reading the Graduale's table, in the one-off chant export only |
 
 Django brings in asgiref and sqlparse (both BSD), tzdata (Apache-2.0)
 and packaging (Apache-2.0 or BSD-2-Clause).
