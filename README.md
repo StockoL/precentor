@@ -67,9 +67,9 @@ days.
   lists every outside source, what I took from it and its licence.
 - **Importing:** [`docs/score_import_plan.md`](docs/score_import_plan.md)
   keeps my earlier import designs as a record; the import I built is in
-  §3.1.
+  [§3.1](#31-score).
 
-The other documents are listed in §9.
+The other documents are listed in [§9](#9-supporting-documents).
 
 ## Contents
 
@@ -134,11 +134,13 @@ A spreadsheet serves this badly. It can't easily record relationships
 can't tell "still deciding" apart from "nothing planned here, on
 purpose".
 
+[↑ Back to contents](#contents)
+
 ## 2. Who This Is For
 
 Precentor is for church choirs and music departments, and one
 installation serves many of them. Each church registers as its own
-organisation and only ever sees its own scores, terms and people (§5).
+organisation and only ever sees its own scores, terms and people ([§5](#5-roles-and-permissions-revisited)).
 A school or music department can register the same way. (A benefice
 with several choirs under one director is an interesting edge case,
 but one account belongs to one organisation, so it's out of scope.)
@@ -151,7 +153,7 @@ There are three user roles, reflecting how the work is actually divided:
 | **Librarian / Music Admin** | The library: scores, copies owned, filing location, importing and exporting it                       | Everything |
 | **Viewer**                  | Nothing, apart from taking part in comments                                                          | Everything, drafts included |
 
-Everyone takes part in the comment threads (see §6). Viewers are
+Everyone takes part in the comment threads (see [§6](#6-comment-threads)). Viewers are
 read-only members who can comment, and commenting on a draft needs sight
 of it, so they see work in progress as well as what's settled. A site superuser
 has no role inside the app; they look after the site from Django's
@@ -161,17 +163,25 @@ admin pages.
 
 A conductor finds Precentor, registers their church and is signed straight in. With nothing planned yet, the Terms page shows the first steps their role allows.
 
+<a id="figure-1"></a>
+
 ![The sign-in page asking for an email address and password, with a link to register a church](docs/screenshots/01-sign-in.png)
 
 _Figure 1. Signing in by email. New visitors follow the link to register their church._
+
+<a id="figure-2"></a>
 
 ![The Register your church form with fields for the church's name, your name, email and password twice](docs/screenshots/02-register.png)
 
 _Figure 2. Registering a church: the person who registers becomes its owner and a Conductor._
 
+<a id="figure-3"></a>
+
 ![The Terms page for a new church showing a Getting started panel with links to Settings, adding a score and creating a term](docs/screenshots/03-first-steps.png)
 
 _Figure 3. A new church's first steps, shown until it has a term or a score._
+
+[↑ Back to contents](#contents)
 
 ## 3. Core Domain Concepts
 
@@ -200,17 +210,25 @@ seasons and occasions they suit.
 
 **In the app.** The librarian adds scores, finds them again with search and filters, and keeps each one's details up to date. The filters are Language and Voicing, and Season, Use and Occasion for what a score suits; each lists only what the library has, with a count, and choosing several shows the scores that match them all.
 
+<a id="figure-4"></a>
+
 ![The library filtered to the scores suited to Advent, with the Season menu showing Advent and columns for composer, voicing, language, copies and last sung](docs/screenshots/08-library-filtered.png)
 
 _Figure 4. The library filtered to music suited to Advent: the Season menu set to Advent, and its six scores._
+
+<a id="figure-5"></a>
 
 ![A score's page for Parsons' Ave Maria showing its details and the services it has been planned for](docs/screenshots/09-score.png)
 
 _Figure 5. A score's own page, with its details and where it has been used._
 
+<a id="figure-6"></a>
+
 ![The add-score form after submitting it empty, with error messages beside the required fields](docs/screenshots/10-score-form-errors.png)
 
 _Figure 6. Adding a score: each missing field is named beside the box that needs it._
+
+<a id="figure-7"></a>
 
 ![A confirmation page asking whether to delete the Ave Maria score](docs/screenshots/11-delete-confirmation.png)
 
@@ -234,16 +252,20 @@ already planned into a service. Export, beside Import, downloads the
 whole library in the same columns, so it can be kept as a copy, tidied
 in a spreadsheet and brought back in.
 
+<a id="figure-8"></a>
+
 ![The import page with its four steps, an example table of the columns, and a chosen file named our-library.csv shown as 1 KB](docs/screenshots/24-import.png)
 
 _Figure 8. Importing: the steps, an example of the columns, and the chosen file's size before it uploads._
+
+<a id="figure-9"></a>
 
 ![The result of an import: 4 scores imported, one row skipped for having no title, two that look like scores already in the library, a note that 2 have no voicing yet, a table of the four scores with their composer, voicing and language, and Keep and Remove buttons](docs/screenshots/25-import-result.png)
 
 _Figure 9. What an import brought in, listed score by score, what it skipped and why, and the choice to keep or remove it._
 
 **Texts.** A score can also hold the words it sets, a translation and
-who made the translation, for the pew sheet (§4). The score's page
+who made the translation, for the pew sheet ([§4](#4-the-public-music-list)). The score's page
 shows the text and translation side by side. They're typed by the
 church, and the form asks for only texts it's entitled to reproduce:
 the liturgical Latin is public domain, but many translations aren't.
@@ -253,6 +275,8 @@ scores with no voicing and with no language, each count linking to the
 Library's own filter so the numbers agree, and lists the scores planned
 as a motet or antiphon that have no text yet. None of it is required,
 and a count of nothing reads as done.
+
+<a id="figure-10"></a>
 
 ![The Library completeness page: every score has a voicing and a language, and the hymns section lists one hymn with no first line and five with no words](docs/screenshots/29-completeness.png)
 
@@ -268,7 +292,7 @@ earlier idea of an explicit "active term" flag was dropped, because it
 would have duplicated information the dates already provide.)
 
 A **Service** belongs to a Term and has a date, a type (Sung Mass,
-Vespers, etc.) and a liturgical occasion (see §3.4).
+Vespers, etc.) and a liturgical occasion (see [§3.4](#34-ordo-the-liturgical-calendar)).
 
 Each service is made up of musical **slots**, added per service:
 a Sung Mass might have a _Mass setting_, an _Introit_, an _Offertory
@@ -342,9 +366,13 @@ and most saints' days have Masses of their own that the table doesn't
 cover, so they offer nothing rather than the wrong chants. In the Ordinary Form the Graduale's chants are one choice among
 several, so a suggestion is only ever a suggestion.
 
+<a id="figure-11"></a>
+
 ![A 1962 Missa cantata's Introit slot, empty, with a button reading Ad te levavi animam meam under For this day](docs/screenshots/31-chants-1962.png)
 
 _Figure 11. The 1962 Missal's Introit for the First Sunday of Advent, offered in one click on an empty Proper slot._
+
+<a id="figure-12"></a>
 
 ![An Ordinary Form Sung Mass's Introit slot, with Rorate caeli confirmed and a button reading Ad te levavi under For this day](docs/screenshots/32-chants-ordinary-form.png)
 
@@ -390,9 +418,13 @@ church knows. Metres are written one way whatever is typed, so "LM" and
 from elsewhere in the same book by that tune's number, "NEH 53, tune
 NEH 115", so someone can keep a finger in the music.
 
+<a id="figure-13"></a>
+
 ![The Hymnals page listing St Aelred's Hymn Book, code SAH, with 60 copies in the choir vestry, and buttons for Tunes and New hymnal](docs/screenshots/26-hymnals.png)
 
 _Figure 13. Hymnals: the church's hymn books, as library entries with their copies and where they're kept._
+
+<a id="figure-14"></a>
 
 ![St Aelred's Hymn Book's page, with Import a list and Edit hymnal, and five hymns by number, one marked No first line yet](docs/screenshots/27-hymnal.png)
 
@@ -434,19 +466,27 @@ is kept, so no planning is lost. Applying the same template twice
 changes nothing, and afterwards the slots are ordinary slots, to move,
 mark N/A or remove like any other.
 
+<a id="figure-15"></a>
+
 ![The Mass template's edit form, each slot a row with its name, kind, proper part, order and a Remove box, and three blank rows at the end](docs/screenshots/30-template-editor.png)
 
 _Figure 15. Editing a template: each slot keeps its kind and proper part, and the blank rows add new ones._
 
 **In the app.** The conductor plans a term on the Terms page, opens it to see every service and its status, and opens a service to fill its slots.
 
+<a id="figure-16"></a>
+
 ![The Terms page with Michaelmas 2026, current and complete, and Advent 2026, upcoming, each with a progress bar](docs/screenshots/04-terms.png)
 
 _Figure 16. The Terms page: each term's progress at a glance._
 
+<a id="figure-17"></a>
+
 ![The Advent 2026 term page listing ten services, each marked Complete, In progress or Not started, followed by notices and a comment](docs/screenshots/05-term.png)
 
 _Figure 17. A term: its services in date order with their status, its notices and its comments._
+
+<a id="figure-18"></a>
 
 ![The Sung Mass for the First Sunday of Advent, with slots from the Mass template holding confirmed pieces, the Gloria and Credo marked N/A, the template buttons and a comment](docs/screenshots/06-service.png)
 
@@ -500,6 +540,8 @@ This status powers the Terms page's overview, so a conductor can scan a
 term and see at once which services still need attention.
 
 **In the app.** Typing in a slot's search box lists the library in its groups, each score with its reasons. Choosing one proposes it; Confirm settles it, or Propose and confirm does both at once. A score with no voicing says so quietly on its row, with a link to add one that comes back to the service afterwards.
+
+<a id="figure-19"></a>
 
 ![A service page with a slot's score search box open and a list of matching scores beneath it](docs/screenshots/07-propose-a-piece.png)
 
@@ -584,6 +626,8 @@ window** (eight weeks unless Settings says otherwise) moves below the
 others and says when it was sung. It isn't hidden: sometimes a piece
 is repeated on purpose.
 
+[↑ Back to contents](#contents)
+
 ## 4. The Public Music List
 
 Modelled on a real example (a termly printed list from a parish
@@ -629,15 +673,20 @@ state:
   disk on every deploy.
 - **The liturgical accent, reused.** Each entry's left-hand colour
   stripe uses `Service.occasion.colour` in the same way as the service
-  page (see §3.4, and the liturgical accent section of
+  page (see [§3.4](#34-ordo-the-liturgical-calendar), and the
+  [liturgical accent section](docs/design_system.md#liturgical-accent) of
   [`docs/design_system.md`](docs/design_system.md)), falling back to the
   house accent colour when a service has no occasion of its own.
 
 **In the app.** The music list lays out the whole term for the choir and congregation, with the church's name and crest, and prints on paper. A draft view marks slots still to be decided as TBC.
 
+<a id="figure-20"></a>
+
 ![The Advent 2026 music list in three columns, headed by the church's crest and name, with each service's pieces and the notices between services](docs/screenshots/12-music-list.png)
 
 _Figure 20. The public music list for Advent, with Public, Draft and Print at the foot._
+
+<a id="figure-21"></a>
 
 ![The Settings page with the church's name, national calendar, crest style, the current crest, accent colour and music list layout](docs/screenshots/14-settings.png)
 
@@ -652,9 +701,13 @@ form whose choices go in the address, so it needs no JavaScript. It
 uses the music list's styles, so it prints the same way: white, with
 the controls hidden, whichever theme is on.
 
+<a id="figure-22"></a>
+
 ![The pew sheet for the First Sunday of Advent, with each slot's music in order and the Ave Maria's Latin beside its English](docs/screenshots/28-pew-sheet.png)
 
 _Figure 22. The pew sheet: the service's confirmed music in order, with a motet's text beside its translation._
+
+[↑ Back to contents](#contents)
 
 ## 5. Roles and Permissions, Revisited
 
@@ -718,21 +771,31 @@ it stays true as pages are added.
 
 **In the app.** The owner invites people from the Members page. The link is shown once, to send by hand, and the new member joins in the role it names. Anyone without a permission sees a plain explanation, and another church's records simply don't exist for them.
 
+<a id="figure-23"></a>
+
 ![An invitation link for Anne, alto, in a read-only box, with the role, the expiry date and a note that it is only shown once](docs/screenshots/15-invitation-link.png)
 
 _Figure 23. An invitation link, shown once for the owner to pass on._
+
+<a id="figure-24"></a>
 
 ![The Members page listing the conductor, librarian and viewer with their roles, the owner badge and the owner's controls, and an invitation waiting to be used](docs/screenshots/16-members.png)
 
 _Figure 24. The Members page as the owner sees it._
 
+<a id="figure-25"></a>
+
 ![A Not available to you page shown to a Viewer who tried to create a term](docs/screenshots/17-forbidden.png)
 
 _Figure 25. A Viewer trying to create a term gets a 403 page that says why._
 
+<a id="figure-26"></a>
+
 ![A Page not found page shown to another church's member who opened this church's score by its address](docs/screenshots/18-not-found.png)
 
 _Figure 26. Someone from another church opening this church's score by its address gets a 404, as if it didn't exist._
+
+[↑ Back to contents](#contents)
 
 ## 6. Comment Threads
 
@@ -768,9 +831,13 @@ This remains a **"should have"**, not core to the MVP.
 
 **In the app.** Open threads from every service and term collect in the Inbox, and the number in the menu shows how many are waiting.
 
+<a id="figure-27"></a>
+
 ![The Inbox listing open comment threads with who wrote them and which term or service they are about](docs/screenshots/13-inbox.png)
 
 _Figure 27. The Inbox of open threads._
+
+[↑ Back to contents](#contents)
 
 ## 7. Scope Discipline (MoSCoW)
 
@@ -806,6 +873,8 @@ aren't.
 - The day's chants offered on Proper slots: built, for the 1962 Missal and for the Ordinary Form's Sundays and major feasts
 - CCLI/copyright licence reporting export: not built
 - Choir roster awareness (auto-filtering by available voice parts): not built
+
+[↑ Back to contents](#contents)
 
 ## 8. Out of Scope
 
@@ -845,7 +914,7 @@ aren't.
   serving it well, and duplicating it would mean building a different
   application inside Precentor.
 - Anything beyond the chants' names. Precentor offers each day's
-  chants by their opening words (§3.2), never full texts, translations
+  chants by their opening words ([§3.2](#32-term-service-and-slots)), never full texts, translations
   or music, and for the Ordinary Form only Sundays and the major
   feasts.
 - Hymnal contents. Precentor ships no hymn numbers, first lines, tunes
@@ -862,6 +931,8 @@ aren't.
 
 Each of these is noted here so that scope decisions read as choices,
 not oversights, when an assessor reads this document.
+
+[↑ Back to contents](#contents)
 
 ## 9. Supporting Documents
 
@@ -890,7 +961,7 @@ not oversights, when an assessor reads this document.
   occasion suggestions and the score suitability tags.
 - [`docs/score_import_plan.md`](docs/score_import_plan.md): earlier
   designs for importing a library from a spreadsheet, superseded by the
-  simpler import I built (§3.1).
+  simpler import I built ([§3.1](#31-score)).
 - [`docs/merge_record.md`](docs/merge_record.md): how the work since my
   first submission reached the live site on 10 November 2026, rehearsed
   first on a copy of the live data, and what happened at each step.
@@ -905,6 +976,8 @@ not oversights, when an assessor reads this document.
   same pattern had appeared more than once, instead of being guessed at
   up front.
 
+[↑ Back to contents](#contents)
+
 ## 10. Why This Project
 
 Precentor comes from my own experience as a church choral conductor. It
@@ -914,6 +987,8 @@ alongside a librarian or music administrator. Each design decision
 above has a concrete reason behind it, drawn from how church music
 planning actually works, instead of a generic "library system"
 template.
+
+[↑ Back to contents](#contents)
 
 ## 11. Acknowledgements
 
@@ -935,6 +1010,8 @@ Utopia. The typefaces are EB Garamond and Inter, both under the SIL
 Open Font License. [`docs/acknowledgements.md`](docs/acknowledgements.md)
 lists every source in full, with what I took from each and how, and
 my thanks to each.
+
+[↑ Back to contents](#contents)
 
 ## 12. Deployment
 
@@ -1000,6 +1077,8 @@ The work since my first submission reached the live site this way on
 10 November 2026, after I'd rehearsed it on a copy of the live data;
 [`docs/merge_record.md`](docs/merge_record.md) has the plan and what
 happened at each step.
+
+[↑ Back to contents](#contents)
 
 ## 13. Data model
 
@@ -1511,6 +1590,8 @@ max 50), such as Mass, Vespers or General. Each church has its own.
   form.
 - An invitation's stored fingerprint is unique.
 
+[↑ Back to contents](#contents)
+
 ## 14. Phones, dark mode and the keyboard
 
 Every page works from 320 pixels wide upwards, and none makes the page
@@ -1520,13 +1601,19 @@ its own box rather than widening the page. I checked 25 pages at five
 widths in three browser engines, and on my own iPhone and iPad
 ([the testing record, section 6](docs/testing.md#6-responsiveness-usability-and-the-keyboard)).
 
+<a id="figure-28"></a>
+
 ![The Terms page on a phone 390 pixels wide, with the term cards stacked in one column](docs/screenshots/19-mobile-terms.png)
 
 _Figure 28. The Terms page on a phone._
 
+<a id="figure-29"></a>
+
 ![A service page on a phone, with each slot's buttons wrapping under its name](docs/screenshots/20-mobile-service.png)
 
 _Figure 29. A service on a phone._
+
+<a id="figure-30"></a>
 
 ![The library on a phone, with the filters above the table](docs/screenshots/21-mobile-library.png)
 
@@ -1538,6 +1625,8 @@ colours are design tokens, each given a dark value where it needs one,
 so the whole app changes together, and every piece of text keeps WCAG
 AA contrast in both ([row R05](docs/testing.md#r05)).
 
+<a id="figure-31"></a>
+
 ![The First Sunday of Advent service page in dark colours](docs/screenshots/22-dark-service.png)
 
 _Figure 31. A service in dark mode, which follows the device's setting or the choice in the user menu._
@@ -1548,15 +1637,19 @@ navigation, the score search box works with the arrow keys, and slots
 move with Move up and Move down as well as by dragging
 ([row R04](docs/testing.md#r04)).
 
+<a id="figure-32"></a>
+
 ![The Terms page with a visible outline round the Terms link after pressing Tab](docs/screenshots/23-keyboard-focus.png)
 
 _Figure 32. Keyboard focus: links and buttons show an outline when reached with Tab._
+
+[↑ Back to contents](#contents)
 
 ## 15. Features and CRUD
 
 Each cell names the page, or the URL name in that app's `urls.py`, that
 does it. Every page is limited to the signed-in person's own church, and
-the role column in §2 says who may use each one.
+the role column in [§2](#2-who-this-is-for) says who may use each one.
 
 | Model                       | Create                                                    | Read                                               | Update                                                                                          | Delete                                                        | Locate                                                                     |
 | --------------------------- | --------------------------------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------- |
@@ -1607,6 +1700,8 @@ the role column in §2 says who may use each one.
 - **Permissions** give a "Not available to you" page (403) that says
   why, and another church's records give "Page not found" (404).
 
+[↑ Back to contents](#contents)
+
 ## 16. Design decisions that depart from convention
 
 Some choices go against what a reader might expect, or against what the
@@ -1642,7 +1737,7 @@ usual checklists ask for. Each one is deliberate, and this is why.
   owner and passed on by hand, and nobody can reset their own password.
   Precentor has no mail provider, so the usual "Forgot your password?"
   link would promise something it can't do; I took it out rather than
-  leave it broken (§20).
+  leave it broken ([§20](#20-future-work)).
 - **Deleting is refused where history would be lost.** A score that
   has been planned for a service can't be deleted, a hymn can't be
   deleted at all, and a hymnal that has been used is archived instead.
@@ -1658,7 +1753,7 @@ usual checklists ask for. Each one is deliberate, and this is why.
   Most comment systems allow both. Here a thread is a short working
   record between a conductor and a librarian, so what was said stays as
   it was said, and nothing can be removed from a discussion still under
-  way (§6).
+  way ([§6](#6-comment-threads)).
 - **Printing sits outside the cascade layers.** Every other rule lives in
   a layer, but the print rules for the music list and pew sheet are
   left unlayered and use points rather than the fluid scale. Unlayered
@@ -1675,6 +1770,8 @@ usual checklists ask for. Each one is deliberate, and this is why.
   rest of the site uses. `@view-transition` can't be limited to some
   pages, so it can't live in the shared file, and without it Chromium
   held the page after signing in frozen for several seconds.
+
+[↑ Back to contents](#contents)
 
 ## 17. Security
 
@@ -1695,7 +1792,7 @@ usual checklists ask for. Each one is deliberate, and this is why.
 - **One permissions module.** Every check of who may do what lives in
   `accounts/permissions.py`, used by views, by a decorator and mixin,
   and by templates through `can`, so a button and the page behind it
-  always agree. A test holds the whole roles table from §2 against those
+  always agree. A test holds the whole roles table from [§2](#2-who-this-is-for) against those
   checks.
 - **Each church only reaches its own data.** Every query on a church's
   data is limited to the signed-in person's organisation, which comes
@@ -1739,6 +1836,8 @@ usual checklists ask for. Each one is deliberate, and this is why.
   page it was opened from, such as editing a score from a service, only
   follows that address if it's a page on this site, so a crafted link
   can't send someone elsewhere after they save.
+
+[↑ Back to contents](#contents)
 
 ## 18. Running it locally
 
@@ -1821,15 +1920,17 @@ development database:
 3. `python manage.py runserver 8766` serves it.
 4. `python tools/take_screenshots.py`, in a second terminal with the same
    `DATABASE_URL`, drives Chromium through Playwright (already used for
-   the browser tests). It registers a new church for Figures 1 to 3,
+   the browser tests). It registers a new church for [Figures 1 to 3](#figure-1),
    signs in as the demo Conductor and Viewer for the rest, and saves
    each page at 1280 by 800 or, for the phone figures, 390 by 844. For
-   Figures 8 and 9 it imports a small file, then removes the import
+   Figures [8](#figure-8) and [9](#figure-9) it imports a small file, then removes the import
    through its own page, so the demo church is left as it was.
    Images over 300 KB are reduced to 256 colours.
 5. My local `.env` turns `DEBUG` on, which shows Django's debug page in
-   place of the 404 page, so for Figure 26 the script renders the page
+   place of the 404 page, so for [Figure 26](#figure-26) the script renders the page
    with `DEBUG` off through Django's test client and photographs that.
+
+[↑ Back to contents](#contents)
 
 ## 19. Environment variables
 
@@ -1844,6 +1945,8 @@ Everything below is read in `precentor_project/settings.py`.
 | `CSRF_TRUSTED_ORIGINS`     | Comma-separated origins allowed to post forms, such as `https://example.com`                     | none                                  |
 | `RENDER_EXTERNAL_HOSTNAME` | Set by Render; added to the allowed hosts and trusted origins                                    | none                                  |
 | `SECURE_HSTS_SECONDS`      | How long browsers are told to use only HTTPS, when `DEBUG` is off                                | 3600 (one hour)                       |
+
+[↑ Back to contents](#contents)
 
 ## 20. Future work
 
@@ -1875,6 +1978,8 @@ What's designed or wanted but not built yet:
 - **One text for many settings.** A score's text and translation belong
   to that score, so the Ave verum is typed again for each composer who
   set it. A shared text would be entered once.
+
+[↑ Back to contents](#contents)
 
 ## 21. Technologies used
 
@@ -1926,6 +2031,8 @@ The architecture, the data model, the design and every decision about
 what Precentor does and how are my own, and I reviewed and approved
 each change before it was committed.
 
+[↑ Back to contents](#contents)
+
 ## 22. Testing
 
 [`docs/testing.md`](docs/testing.md) has the full record. The manual
@@ -1962,3 +2069,5 @@ at `8908668`, each with the checker's own screenshots. In short:
 _The overhaul is recorded phase by phase in
 [`docs/overhaul_plan.md`](docs/overhaul_plan.md). What remains is
 under Future work._
+
+[↑ Back to contents](#contents)
