@@ -7,7 +7,7 @@ used, what it found and whether that's resolved.
 Everything here was run again on 10 November 2026 on the code that
 became the live site, between commits `61f3790` and `b500e3f`, on a
 local copy of the site with the invented demo church. Rows M59 and M60
-were added later the same day, at `4746a58`, and M61 to M64 at `59e3469`. The manual tests
+were added later the same day, at `4746a58`, M61 to M64 at `59e3469`, and M65 at `b0fafbf`. The manual tests
 were carried out in Google Chrome 157 on Windows 11, driven by
 Playwright and checked by me row by row, or by the automated test
 named. Playwright's own Chromium 149 hangs on cross-document page
@@ -18,7 +18,7 @@ the automated browser tests, where every page is opened by its address.
 
 | Check | What I used | What it found on 10 November | Resolved? |
 | ----- | ----------- | ---------------------------- | --------- |
-| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 936 tests, all passing, at `59e3469` (section 4) | Nothing to resolve. There were 553 at submission |
+| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 953 tests, all passing, at `b0fafbf` (section 4) | Nothing to resolve. There were 553 at submission |
 | Deployment settings | `python manage.py check --deploy` with `DEBUG` off | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve |
 | Migrations | `python manage.py makemigrations --check --dry-run`, and a rehearsal of the merge on a copy of the live database ([`after_assessment.md`](after_assessment.md)) | No missing migrations. On the copy, all 28 new migrations ran, `check_copied_data` found everything copied, and all 177 pages opened for every church | Nothing to resolve |
 | Python style | flake8 7.4.1 with the settings in `.flake8` (line length 120, `venv` and migrations left out) | No findings | At submission: two unused imports, a blank line and an escape, fixed in `1f2e618`; more in `722ffc4`; the 16 long lines, the variable `l` and the lambda left then were cleared in `86ad9e8` |
@@ -221,7 +221,7 @@ they're the slowest to fill a simulated phone's screen.
 
 ## 4. Automated tests
 
-The suite has 936 tests, run on 10 November 2026 at commit `59e3469`;
+The suite has 953 tests, run on 10 November 2026 at commit `b0fafbf`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
@@ -249,9 +249,10 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | `planning/test_templates.py`              | 26    | Slot templates as rows with kinds, editing them as a formset (order, remove, each name once), splitting old templates into rows, and applying them |
 | `planning/test_slot_order.py`             | 8     | Moving slots and reordering them |
 | `planning/test_remove_slot.py`            | 6     | Removing slots, asking first when they have pieces |
+| `planning/test_remove_piece.py`           | 13    | Removing one piece: at once when it's proposed with no comments, asking first when it's confirmed or has comments, what the page is sent back, a removed chant offered again, without JavaScript, a second removal, another church's piece, Viewers, and no extra query per piece |
 | `planning/test_service_form.py`           | 3     | The service form's calendar choice |
 | `planning/test_date_checks.py`            | 10    | A term ending before it starts, a service outside its term, and new term dates that would leave services outside it, at both ends, with a rename still allowed |
-| `planning/test_browser.py`                | 32    | The service page in the browser: the score picker and its suggestion groups, a search that finds nothing used as typed, a hymn by book and number, a suggested hymn filling them in, the day's chant proposed in one click, a typed reference, a refused proposal, a second piece after a score, proposing and confirming at once, confirming, dragging slots, changing a slot's kind, dialogs, a button kept busy during its request and usable after an error |
+| `planning/test_browser.py`                | 36    | The service page in the browser: the score picker and its suggestion groups, a search that finds nothing used as typed, a hymn by book and number, a suggested hymn filling them in, the day's chant proposed in one click, a typed reference, a refused proposal, a second piece after a score, proposing and confirming at once, confirming, dragging slots, changing a slot's kind, dialogs, a button kept busy during its request and usable after an error, taking a piece out from the keyboard |
 | `planning/test_slot_kinds.py`             | 23    | Classifying slot names, kinds on save and from templates, the migrations that classified existing slots (and later Sequences and Responsories), the badge, choosing and changing a kind, and a slot named Canticle |
 | `planning/test_reference_pieces.py`       | 37    | A piece as a score, a hymn or a reference and the rule between them, proposing each, showing them everywhere, copying hymns and the psalm into slots, the music list arrangement, a hymn's tune and its choices, the pew sheet's tune number, the first-line prompt, the same piece twice in a slot |
 | `planning/test_outside_library.py`        | 5     | A typed piece in a slot for scores marked as not in the library, with a link to add it for those who may, the score form filled in from it and coming back, and the propose page without JavaScript |
@@ -339,6 +340,7 @@ To run them, see "Running it locally" in the README.
 | M62  | Keeping an import twice    | Import a one-row file and open its result page in two tabs; Keep in the first, then in the second; import another, open its Remove page as a Viewer, then remove it as the Conductor | The first keeps it; the second goes to the Library saying it has already gone; the Viewer is refused; the Conductor removes it | Pass, since `65a4a2a`: "Kept 1 score from m62.csv."; the second tab went to the Library with "That import has already been removed or kept."; the Viewer got "Not available to you" (403); "Removed 1 score imported from m62b.csv." |
 | M63  | Term and service dates     | New term ending the day before it starts; a service on 25 December in Advent 2026 (29 November to 24 December); Advent to end on 23 December; then, with a service already dated 27 December, rename Advent and leave its dates | Each refused with a plain message beside the date; the rename saved | Pass, since `128c3a0`, `c56b704`, `a00e7b7` and `68721ad`: "A term can't end before it starts."; "Advent 2026 runs from Sun 29 Nov 2026 to Thu 24 Dec 2026, so the service needs a date in between."; "2 services would fall outside these dates, the first on Thu 24 Dec 2026. Move or delete them first."; the renamed term saved |
 | M64  | A Viewer sees drafts       | As the Viewer, open Advent 2026; Music list, then Draft; the Sung Mass of 13 December; its Pew sheet | Each service's status on the term; the draft with TBC for slots not yet settled; the proposed pieces marked Proposed with no Confirm buttons; the pew sheet | Pass: In progress and Not started on the term page; the draft's "DRAFT" banner with 30 TBC; 5 pieces marked Proposed and no Confirm button; the pew sheet for Sung Mass, Sun 13 Dec 2026 |
+| M65  | Removing a piece           | On the Sung Mass of 13 December, Tab to Remove on the Kyrie's proposed Missa brevis and press Enter; Remove the Gradual's Ave Maria, which has a comment, first with Cancel; Remove the confirmed Agnus Dei; with the service open in two tabs, remove the Credo's piece in each; open the service as the Viewer; with JavaScript off, Remove the confirmed Offertory and the proposed Communion; at 320 pixels, Remove the Introit's | Each button named with its piece and slot; a proposed piece with no comments goes at once, focus moving to its slot's form, with a message; the others ask first, saying what goes with them; the second tab says it has already gone; no Remove for the Viewer; without JavaScript a confirmation page, then back on the service with a message; the button fits at 320 | Pass, since `f3353c6`, `954347d` and `606aaf0`: buttons named like "Remove Vigilate (William Byrd) from the Communion"; the Kyrie's row went without a reload, focus in the Kyrie's form, and "Removed Missa brevis (Giovanni Pierluigi da Palestrina) from the Kyrie."; the Gradual's dialog read "Its comment goes with it. This can't be undone." with focus on Cancel, which kept it (Test figures 9 and 10); the Agnus Dei's read "It's confirmed, so it will leave the music list.", and the slot then showed "No pieces proposed yet." above its form; the second tab reloaded with "That piece has already been removed."; the Viewer saw 5 pieces and no Remove button; without JavaScript the Offertory's page said the same as the dialog (Test figure 11), and both came back to the service with "Removed Alma Redemptoris Mater (Plainchant) from the Offertory." and "Removed Vigilate (William Byrd) from the Communion."; at 320 the page was no wider than the window and the button sat between 172 and 261 pixels |
 
 ### Screenshots for the manual tests
 
@@ -378,6 +380,18 @@ _Test figure 7. M44: the pew sheet, with a motet's text beside its translation._
 
 _Test figure 8. M47: the Hymnals page._
 
+![The Gradual's slot on a service page: Ave Maria by Robert Parsons marked Proposed, with Confirm and Remove buttons beside it, and the slot's own Remove at the top right](screenshots/testing/m65-remove-button.png)
+
+_Test figure 9. M65: each piece has its own Remove, beside Confirm._
+
+![A dialog over the service page asking "Remove Ave Maria (Robert Parsons)?" with "Its comment goes with it. This can't be undone.", and Cancel outlined as focused beside Remove](screenshots/testing/m65-remove-dialog.png)
+
+_Test figure 10. M65: a piece with a comment asks first, with focus on Cancel. The message in the corner is from the Kyrie's piece, removed just before._
+
+![A page headed "Remove Alma Redemptoris Mater (Plainchant)?", saying it is from the Offertory at Sung Mass on Sun 13 Dec 2026, that it's confirmed so will leave the music list, and that this can't be undone, with Remove and Cancel](screenshots/testing/m65-remove-page.png)
+
+_Test figure 11. M65: without JavaScript the same question is a page of its own._
+
 ## 6. Responsiveness, usability and the keyboard
 
 Run on 10 November 2026 between `f15b70c` and `b500e3f`. R01 to R03 by
@@ -386,11 +400,11 @@ Google Chrome 157.
 
 | ID   | Check | Steps | Expected | Result |
 | ---- | ----- | ----- | -------- | ------ |
-| R01  | Phones: 320 and 375 pixels | Every main page at each width, in Chromium, Firefox and WebKit | Nothing wider than the screen except the library table, which scrolls in its own box; no console errors | Pass: all 25 pages at both widths in all three engines (Test figures 9 to 12). At submission the score form was 3 pixels too wide at 320, fixed in `6bf1062` |
-| R02  | Tablets: 768 and 1024 pixels | The same pages at each width | The layout fills the width without gaps or overlaps; no console errors | Pass: all 25 pages in all three engines (Test figure 13) |
-| R03  | Laptop: 1280 pixels | The same pages | The layout as in the README's screenshots; no console errors | Pass: all 25 pages in all three engines (Test figure 14); the README's figures were taken again on the same code |
-| R04  | Keyboard alone | Sign in, open a service, propose and confirm a piece, using only the keyboard | Every step reachable with Tab, Enter and the arrow keys, with a visible outline on each control | Pass: signed in, opened Advent 2026 and its Midnight Mass, chose Mozart's Ave verum corpus with the arrow keys, proposed and confirmed it, using only Tab, typing, the arrow keys and Enter. Every control showed an outline (a term's card is outlined as a whole), and after Confirm the focus stayed on the button, now reading Unconfirm (Test figure 15) |
-| R05  | Dark mode | Switch the device to dark, then choose Dark in the user menu | Every page readable, with the same contrast as in light | Pass: every visible piece of text on the 25 pages measured against its background, 1,403 in each theme: all meet WCAG AA, the lowest ratio 4.83 in light and 5.7 in dark. Dark chosen in the user menu on a light device applied at once and carried to the next page (Test figures 16 to 18) |
+| R01  | Phones: 320 and 375 pixels | Every main page at each width, in Chromium, Firefox and WebKit | Nothing wider than the screen except the library table, which scrolls in its own box; no console errors | Pass: all 25 pages at both widths in all three engines (Test figures 12 to 15). At submission the score form was 3 pixels too wide at 320, fixed in `6bf1062` |
+| R02  | Tablets: 768 and 1024 pixels | The same pages at each width | The layout fills the width without gaps or overlaps; no console errors | Pass: all 25 pages in all three engines (Test figure 16) |
+| R03  | Laptop: 1280 pixels | The same pages | The layout as in the README's screenshots; no console errors | Pass: all 25 pages in all three engines (Test figure 17); the README's figures were taken again on the same code |
+| R04  | Keyboard alone | Sign in, open a service, propose and confirm a piece, using only the keyboard | Every step reachable with Tab, Enter and the arrow keys, with a visible outline on each control | Pass: signed in, opened Advent 2026 and its Midnight Mass, chose Mozart's Ave verum corpus with the arrow keys, proposed and confirmed it, using only Tab, typing, the arrow keys and Enter. Every control showed an outline (a term's card is outlined as a whole), and after Confirm the focus stayed on the button, now reading Unconfirm (Test figure 18) |
+| R05  | Dark mode | Switch the device to dark, then choose Dark in the user menu | Every page readable, with the same contrast as in light | Pass: every visible piece of text on the 25 pages measured against its background, 1,403 in each theme: all meet WCAG AA, the lowest ratio 4.83 in light and 5.7 in dark. Dark chosen in the user menu on a light device applied at once and carried to the next page (Test figures 19 to 21) |
 | R06  | Without JavaScript | Turn JavaScript off; propose a piece, confirm it, remove a slot | Each works through ordinary pages | Pass: Sicut cervus proposed from the propose page; after Confirm and a fresh load it read Confirmed; Remove asked first on a page of its own, and the slot went |
 
 ### Widths and browsers
@@ -442,43 +456,43 @@ not Safari itself. The manual tests used Google Chrome 157.
 
 ![A service page at 320 pixels in Chromium: the heading, its buttons and the first slot fitting the width](screenshots/testing/r01-320-service-chromium.png)
 
-_Test figure 9. R01: a service at 320 pixels in Chromium._
+_Test figure 12. R01: a service at 320 pixels in Chromium._
 
 ![The same service page at 320 pixels in Firefox](screenshots/testing/r01-320-service-firefox.png)
 
-_Test figure 10. R01: the same in Firefox._
+_Test figure 13. R01: the same in Firefox._
 
 ![The same service page at 320 pixels in WebKit](screenshots/testing/r01-320-service-webkit.png)
 
-_Test figure 11. R01: the same in WebKit, the engine Safari uses._
+_Test figure 14. R01: the same in WebKit, the engine Safari uses._
 
 ![The library at 320 pixels, its filters stacked and the table scrolling inside its own box](screenshots/testing/r01-320-library-chromium.png)
 
-_Test figure 12. R01: the library at 320 pixels; only the table scrolls sideways._
+_Test figure 15. R01: the library at 320 pixels; only the table scrolls sideways._
 
 ![A service page at 768 pixels](screenshots/testing/r02-768-service-chromium.png)
 
-_Test figure 13. R02: a service at 768 pixels._
+_Test figure 16. R02: a service at 768 pixels._
 
 ![The library at 1280 pixels, with the search box and the Language, Voicing, Season and Use menus in one row above the table](screenshots/testing/r03-1280-library-chromium.png)
 
-_Test figure 14. R03: the library at 1280 pixels._
+_Test figure 17. R03: the library at 1280 pixels._
 
 ![The Terms page after pressing Tab three times, with an outline round the Terms link and round the first term's card](screenshots/testing/r04-keyboard-focus.png)
 
-_Test figure 15. R04: keyboard focus, shown round the link and the card it's in._
+_Test figure 18. R04: keyboard focus, shown round the link and the card it's in._
 
 ![A service page in dark colours](screenshots/testing/r05-dark-service.png)
 
-_Test figure 16. R05: a service in dark mode._
+_Test figure 19. R05: a service in dark mode._
 
 ![The music list in dark colours, with the liturgical colours lightened](screenshots/testing/r05-dark-music-list.png)
 
-_Test figure 17. R05: the music list in dark mode._
+_Test figure 20. R05: the music list in dark mode._
 
 ![The Settings page in dark colours](screenshots/testing/r05-dark-settings.png)
 
-_Test figure 18. R05: Settings in dark mode._
+_Test figure 21. R05: Settings in dark mode._
 
 ### Real devices
 
@@ -538,6 +552,7 @@ testing, fixed, and covered by a test where it could be.
 | `128c3a0` | A term could end before it started (row M63); tests in `4875a87` |
 | `c56b704` | A service could be dated outside its term (row M63); tests in `f494aed` |
 | `a00e7b7`, `68721ad` | Changing a term's dates could leave its services outside it (row M63); tests in `ed0e69f` |
+| `f3353c6`, `954347d`, `606aaf0` | A piece could only go with its whole slot, so a wrong or replaced proposal stayed listed until the slot was removed and rebuilt. Each piece now has its own Remove (row M65); tests in `68961ec`, `7d5638b` and `b0fafbf` |
 
 The flake8 findings left at submission (16 long lines, a variable named
 `l` and a lambda) were cleared in `86ad9e8`. No fault found in the app is left unfixed;

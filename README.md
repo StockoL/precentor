@@ -402,6 +402,14 @@ Each slot has its own **Remove** button. An empty slot goes straight
 away; one with pieces proposed asks first, saying how many pieces go
 with it, because those pieces and their comments are deleted too.
 
+Each **piece** has a Remove button too, beside Confirm, for a proposal
+that was wrong or has been replaced. A proposed piece with no comments
+goes at once. A confirmed one asks first, because it will leave the
+music list, and so does one with comments, which go with it. The
+slot's form is sent back with the change, so a chant taken out is
+offered again, and without JavaScript the question is a page of its
+own.
+
 Slots keep the order they're given, and a new one goes at the end, so
 they can be **moved**: dragged by the handle beside the name, or moved
 with the Move up and Move down buttons, which work from the keyboard,
@@ -1571,7 +1579,7 @@ the role column in §2 says who may use each one.
 | Service                     | New service (`service_create`), occasion suggested from the date | Service page (`service_detail`), term page, pew sheet (`service_pew_sheet`) | Edit (`service_update`)                                                                         | Delete, after a confirmation (`service_delete`)               | Term page in date order; previous and next links on each service           |
 | Notice (`TermMarker`)       | New notice (`marker_create`)                              | Term page and music list                           | Edit (`marker_update`)                                                                          | Delete (`marker_delete`)                                      | Term page                                                                  |
 | Slot (`ServiceRole`)        | Add a slot (`add_role`) or from a template (`apply_template`) | Service page                                   | Move (`move_slot`), drag to reorder (`reorder_slots`), change kind (`change_kind`), mark N/A when adding | Remove (`remove_slot`), asking first if it has pieces         | Service page                                                               |
-| Piece (`RolePiece`)         | Propose a score, a hymn by book and number, or a reference, or propose and confirm at once (`add_piece`) | Service page, score page history, music list       | Confirm and unconfirm (`toggle_confirm`); a hymn's tune (`set_tune`)                                                        | not available on its own (removed with its slot)              | Service page; the score page lists where each score was used               |
+| Piece (`RolePiece`)         | Propose a score, a hymn by book and number, or a reference, or propose and confirm at once (`add_piece`) | Service page, score page history, music list       | Confirm and unconfirm (`toggle_confirm`); a hymn's tune (`set_tune`)                                                        | Remove (`remove_piece`), asking first if it's confirmed or has comments | Service page; the score page lists where each score was used               |
 | Slot template               | New template (`slot_template_create`)                     | Templates page (`slot_template_list`)              | Edit (`slot_template_update`)                                                                   | Delete (`slot_template_delete`)                               | Templates page; buttons on each service                                    |
 | Template slot (`TemplateSlot`) | A blank row on the template form (`slot_template_create`, `slot_template_update`) | Templates page, listed under each template; the template form | Name, kind, proper part and order on the template form | The row's Remove box on the template form | The template form, in order |
 | Use type                    | Typed on the score form                                   | Score page; the Library's Use filter               | not available                                                                                   | not available                                                 | Library filter                                                             |
@@ -1892,12 +1900,12 @@ each change before it was committed.
 [`docs/testing.md`](docs/testing.md) has the full record, all of it run
 again on 10 November 2026 on the code now live. In short:
 
-- **936 automated tests** cover the models, views, forms, permissions,
+- **953 automated tests** cover the models, views, forms, permissions,
   each church's own data, the import and export, and the liturgical
-  calendar and its chants. 63 of them are browser tests, which start a
+  calendar and its chants. 67 of them are browser tests, which start a
   real server and drive Chromium through Playwright, so the JavaScript
   is tested too.
-- **Manual tests:** 64 rows covering every feature, each carried out in
+- **Manual tests:** 65 rows covering every feature, each carried out in
   Google Chrome with its result, and screenshots beside them. Six
   failed and were fixed, each with its commit.
 - **Widths and browsers:** 25 pages at 320, 375, 768, 1024 and 1280
