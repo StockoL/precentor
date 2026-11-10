@@ -175,7 +175,9 @@ function initServiceDetail() {
     if (form.matches(".ajax-propose-piece")) {
       event.preventDefault();
       const rolePk = form.dataset.rolePk;
-      const fields = new FormData(form);
+      // The button pressed goes with the fields, so "Propose and confirm"
+      // sends confirm=1. Enter in a field and a chant's button don't.
+      const fields = new FormData(form, event.submitter);
       try {
         const data = await postForm(form.action, fields);
         const unmatched = applyFragments(data.fragments);
@@ -195,7 +197,7 @@ function initServiceDetail() {
           chant.remove();
           if (chants.length === 1) form.querySelector(".role-block__proper-suggestion").remove();
         }
-        showToast("Piece proposed.", "success");
+        showToast(fields.get("confirm") ? "Piece proposed and confirmed." : "Piece proposed.", "success");
       } catch (err) {
         if (err instanceof AjaxError) {
           // The swapped-in form fragment carries a brand-new .score-combobox

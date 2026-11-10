@@ -35,6 +35,7 @@
         {{ form.as_p }}
         <div class="cluster">
             <button class="btn-primary" type="submit">Propose piece</button>
+            <button type="submit" name="confirm" value="1">Propose and confirm<span class="visually-hidden"> for the {{ role.role_name }}</span></button>
             <a class="btn-ghost" href="{{ role.service.get_absolute_url }}">Cancel</a>
         </div>
     </form>

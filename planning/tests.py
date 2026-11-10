@@ -179,6 +179,33 @@ class RolePieceWorkflowTests(TestCase):
         self.assertEqual(list(fragments.keys()), [f"piece-row-{piece.pk}"])
         self.assertIn("Test Anthem", fragments[f"piece-row-{piece.pk}"])
 
+    def test_propose_and_confirm_saves_it_confirmed_and_updates_the_status(self):
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+        response = self.client.post(
+            f"/roles/{role.pk}/pieces/add/",
+            {"score": self.score.pk, "confirm": "1"},
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertTrue(role.pieces.get().is_confirmed)
+        fragments = response.json()["fragments"]
+        self.assertIn("Unconfirm", fragments[f"piece-row-{role.pieces.get().pk}"])
+        self.assertIn(">Complete<", fragments["service-status-badge"])
+
+    def test_propose_and_confirm_works_without_javascript(self):
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+        self.assertContains(self.client.get(f"/roles/{role.pk}/pieces/add/"), 'name="confirm" value="1"')
+        response = self.client.post(f"/roles/{role.pk}/pieces/add/", {"score": self.score.pk, "confirm": "1"})
+        self.assertRedirects(response, self.service.get_absolute_url(), fetch_redirect_response=False)
+        self.assertTrue(role.pieces.get().is_confirmed)
+        self.assertContains(self.client.get(self.service.get_absolute_url()), ">Complete<")
+
+    def test_a_viewer_cant_propose_and_confirm(self):
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+        self.client.force_login(make_user("viewer", organisation=self.service.organisation))
+        response = self.client.post(f"/roles/{role.pk}/pieces/add/", {"score": self.score.pk, "confirm": "1"})
+        self.assertEqual(response.status_code, 403)
+        self.assertFalse(role.pieces.exists())
+
     def test_add_piece_ajax_invalid_returns_400_with_form_fragment(self):
         role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
 

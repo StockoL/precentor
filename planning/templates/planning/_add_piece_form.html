@@ -16,7 +16,9 @@ reads the list of scores the service page sends once for every slot.
     {% if not role.takes_reference_first %}{% include "planning/_piece_reference_input.html" %}{% endif %}
     {{ form.non_field_errors }}
     {{ form.score.errors }}
+    {# Propose piece comes first, so Enter in a field proposes without confirming. #}
     <button type="submit">Propose piece</button>
+    <button type="submit" name="confirm" value="1">Propose and confirm<span class="visually-hidden"> for the {{ role.role_name }}</span></button>
     {% if role.hymn_suggestions %}{% include "planning/_hymn_suggestions.html" %}{% endif %}
     {% with chants=role.proper_suggestions %}{% if chants %}
     {# The day's chants for this slot: one click proposes one as a reference (service-detail.js). #}

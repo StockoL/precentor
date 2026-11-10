@@ -513,7 +513,9 @@ def add_piece(request, role_pk):
     With JavaScript, the service page posts here from each slot's
     combobox. Without it, each slot links here instead: a page with one
     ranked list of scores, so the service page never has to carry a full
-    <select> per slot.
+    <select> per slot. "Propose and confirm" sends confirm=1, and the
+    piece is saved confirmed; the service's status badge is sent back
+    with it then, as it may have changed, just as toggle_confirm does.
     """
     role = get_object_or_404(own(ServiceRole, request).select_related("service"), pk=role_pk)
     is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
@@ -532,12 +534,17 @@ def add_piece(request, role_pk):
     if form.is_valid():
         piece = form.save(commit=False)
         piece.service_role = role
+        piece.is_confirmed = request.POST.get("confirm") == "1"
         piece.save()
         fragments = {
             f"piece-row-{piece.pk}": render_to_string(
                 "planning/_piece_row.html", {"piece": piece}, request=request
             ),
         }
+        if piece.is_confirmed:
+            fragments["service-status-badge"] = render_to_string(
+                "planning/_service_status_badge.html", {"service": role.service}, request=request
+            )
         return ajax_or_redirect(request, fragments, role.service.get_absolute_url())
 
     fragments = {
