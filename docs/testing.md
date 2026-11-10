@@ -303,7 +303,7 @@ To run them, see "Running it locally" in the README.
 | M30  | Delete your own account    | As a member, Change password, Delete your account, give the password                                          | Signed out, the account gone, their comments shown as "A former member"; the owner is told to hand over first | Pass: "Your account has been deleted"; their comment now reads "A former member"; signing in refused; the owner opening the page is told to hand over ownership first |
 | M31  | Delete the church          | As the owner, Settings, Delete this church, type its name                                                     | The page lists what will go; a wrong name is refused; the right one deletes everything and signs out | Pass: the page listed what goes; a wrong name was refused; the right name deleted the church, and Terms then led to the sign-in page |
 | M32  | Privacy page               | Follow Privacy in the footer, signed in and out                                                                | The page explains what's kept and how to leave                       | Pass: the Privacy link in the footer, signed in and signed out |
-| M33  | Import a spreadsheet       | Library, Import; download the template, fill in a few rows, choose the file, Import                           | The chosen file's name and size shown; then the result page with the count, any skipped rows and why, and how many have no voicing; a notice on the Library | Pass: the file's name and size shown on choosing it; the result page counted 2 imported, row 3 skipped for having no title, a likely duplicate noted, 1 with no voicing (Test figure 6); a notice on the Library |
+| M33  | Import a spreadsheet       | Library, Import; download the template, fill in a few rows, choose the file, Import                           | The chosen file's name and size shown; then the result page with the count, any skipped rows and why, how many have no voicing, and a list of the scores imported with their composer, voicing and language; a notice on the Library | Fail, then fixed (`f4e842b`): the result page asked "Happy with these?" without listing the scores. Since: the file's name and size shown on choosing it; the result page counts what was imported and skipped and how many have no voicing, then lists each score imported with its composer, voicing and language, "(unspecified)" where empty (Test figure 6); a notice on the Library |
 | M34  | Keep or remove an import   | From the notice, Review it; Keep these scores. Import again; Remove this import and confirm                    | Keeping closes the import; removing deletes its scores, keeping any already planned into a service | Pass: Keep closed the import and the notice went; Remove asked first and took its scores away. A score already planned being kept: by `test_a_score_already_planned_is_kept_and_the_page_says_so` |
 | M35  | A file that's too big      | Choose a file over 2 MB                                                                                       | Said at once, with the Import button disabled; without JavaScript the server refuses it        | Pass: with JavaScript, "big.csv is 2.0 MB, more than the 2.0 MB limit" and Import disabled; without, the server refused it: "The file is larger than 2 MB" |
 | M36  | Export the library         | Library, Export                                                                                               | A CSV named with the date, in the import's columns; it imports into an empty church unchanged  | Pass: `precentor-library-2026-11-10.csv` in the import's columns; imported into a new, empty church and exported again, the two files were identical |
@@ -356,9 +356,9 @@ _Test figure 4. M25: a Viewer refused, with the reason._
 
 _Test figure 5. M27: the 404 page, with DEBUG off as on the live site._
 
-![An import's result page: 1 score imported, one row skipped for having no title, 1 with no voicing yet, and buttons to keep or remove the import](screenshots/testing/m33-import-result.png)
+![An import's result page: 1 score imported, one row skipped for having no title, 1 with no voicing yet, a table listing Christus factus est by Anerio with no voicing, and buttons to keep or remove the import](screenshots/testing/m33-import-result.png)
 
-_Test figure 6. M33: what an import brought in and what it skipped._
+_Test figure 6. M33: what an import brought in, listed, and what it skipped._
 
 ![The pew sheet for the First Sunday of Advent, with the Ave Maria's Latin text beside its English translation](screenshots/testing/m44-pew-sheet.png)
 
@@ -517,6 +517,7 @@ testing, fixed, and covered by a test where it could be.
 | `945b43f` | An Ordinary Form weekday service with no occasion, borrowing the Sunday before's chants, was a server error when it had an Alleluia or Tract slot (row M58) |
 | `c5a8833` | A slot named Canticle was given the kind Other, so it was never offered the day's canticle (row M57) |
 | `89073e1`, `f15b70c` | The Library had no season, use or occasion filter, though the README and row M08 said it had; a season in its address only reordered the list |
+| `f4e842b` | An import's result page asked "Happy with these?" without listing the scores it had brought in (row M33); tests in `0398cc3` |
 
 The flake8 findings left at submission (16 long lines, a variable named
 `l` and a lambda) were cleared in `86ad9e8`. No fault found in the app is left unfixed;

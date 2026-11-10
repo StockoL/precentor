@@ -236,9 +236,9 @@ in a spreadsheet and brought back in.
 
 _Figure 8. Importing: the steps, an example of the columns, and the chosen file's size before it uploads._
 
-![The result of an import: 4 scores imported, one row skipped for having no title, two that look like scores already in the library, and a note that 2 have no voicing yet, with Keep and Remove buttons](docs/screenshots/25-import-result.png)
+![The result of an import: 4 scores imported, one row skipped for having no title, two that look like scores already in the library, a note that 2 have no voicing yet, a table of the four scores with their composer, voicing and language, and Keep and Remove buttons](docs/screenshots/25-import-result.png)
 
-_Figure 9. What an import brought in, what it skipped and why, and the choice to keep or remove it._
+_Figure 9. What an import brought in, listed score by score, what it skipped and why, and the choice to keep or remove it._
 
 **Texts.** A score can also hold the words it sets, a translation and
 who made the translation, for the pew sheet (§4). The score's page
@@ -1873,7 +1873,7 @@ again on 10 November 2026 on the code now live. In short:
   real server and drive Chromium through Playwright, so the JavaScript
   is tested too.
 - **Manual tests:** 58 rows covering every feature, each carried out in
-  Google Chrome with its result, and screenshots beside them. Four
+  Google Chrome with its result, and screenshots beside them. Five
   failed and were fixed, each with its commit.
 - **Widths and browsers:** 25 pages at 320, 375, 768, 1024 and 1280
   pixels in Chromium, Firefox and WebKit, with nothing wider than the
