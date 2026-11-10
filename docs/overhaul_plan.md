@@ -2,6 +2,12 @@
 
 Written 19 October 2026, after a gap of several months. This is the one place I track the overhaul: I tick items off as they land and record decisions in section 8 as I make them.
 
+> **Status: a record.** The overhaul is finished: Step 0 and Phases 0
+> to 6, item 1 ran from 19 to 21 October 2026, as the progress log in
+> section 9 shows. Its one open question, the CSV import, was settled
+> by building it after my first submission ([README §3.1](../README.md#31-score)).
+> The README describes the app as it is now.
+
 ## 1. Where things stand
 
 I went back through the live repo (templates, CSS, tokens, models, views, settings, JS) instead of relying on my older notes. Three corrections to what the README and my earlier audits say:

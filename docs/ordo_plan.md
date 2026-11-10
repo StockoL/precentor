@@ -5,6 +5,13 @@ writing the code. It covers two related but separable features that
 put the computus algorithm and the `ordo` app to real use, instead of
 leaving them as correct machinery that hardly anything calls.
 
+> **Status: a record.** Both features are built: the occasion
+> suggested from a service's date, and the scores' "suitable for"
+> tags that rank the library for a service. The README describes them
+> as they are now ([§3.2](../README.md#32-term-service-and-slots) and
+> [§3.4](../README.md#34-ordo-the-liturgical-calendar)). I've kept this
+> document as the reasoning behind them.
+
 > **Update, 19 October 2026: Catholic only.** Both features were first
 > designed for two traditions (Catholic and Church of England), chosen
 > per term. I've since narrowed Precentor to the Roman calendar: the

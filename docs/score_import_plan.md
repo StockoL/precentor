@@ -9,7 +9,7 @@ need it.
 > than any of the designs below: a CSV in Precentor's own fixed
 > columns, checked row by row by the same rules as the score form,
 > saved as one batch that can be kept or removed, and an export in the
-> same columns. The README (§3.1) describes it, and
+> same columns. The README ([§3.1](../README.md#31-score)) describes it, and
 > [`models_plan.md`](models_plan.md) covers `ScoreImport` and the
 > reasoning. Matching any spreadsheet's own columns, and the compilation
 > tools, are not built. I've kept this document as a record of how the
