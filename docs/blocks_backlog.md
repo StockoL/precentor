@@ -34,9 +34,18 @@ one-off.
 | Music list                          | `blocks/music-list.css`   | The printable list, including the Public / Draft toggle and the unlayered print rules.                                                                                                            |
 | Score combobox                      | `blocks/score-combobox.css` | The search box for proposing a piece in each slot, reading one list of scores the service page sends once. |
 | Crest crop                          | `blocks/crest-crop.css`   | The crop frame for the crest upload on Settings.                                                                                                                                                   |
+| Callout                             | `blocks/callout.css`      | A calm notice in the flow of a page asking for something to be done: an import waiting to be kept or removed on the Library and on a hymnal's page, and the "same hymn as…?" question on a hymn's page. |
+| Copy link                           | `blocks/copy-link.css`    | A link to pass on by hand in a read-only box, selectable without JavaScript, with a Copy link button added by `copy-link.js`: the invitation link and the owner's reset link. |
+| Parallel text                       | `blocks/parallel-text.css` | A sung text beside its translation, stacked when there's no room for two columns, with the credit under both: on a score's page and on the pew sheet, through one shared partial. |
+| Pew sheet                           | `blocks/pew-sheet.css`    | A service's music for the congregation. It sits inside the music list's block, which gives it the printed type and print rules, and adds only what one service needs. |
+| Site footer                         | `blocks/site-footer.css`  | The quiet line under every page for links that belong to the site, not a church (the privacy page), hidden when printing. |
+| Template slot                       | `blocks/template-slot.css` | One slot's fields on a template's edit page, side by side where there's room, with a rule between slots. |
 | `[hidden]`                          | `utilities/utilities.css` | Makes the `hidden` attribute win over any block that sets `display`.                                                                                                                               |
 | `.visually-hidden`                  | `utilities/utilities.css` | The rest of the original "action link group" utility (`.text-danger`) was superseded by the `.btn-primary`/`.btn-ghost`/`.btn-danger` variants in `blocks/button.css`, since a proper button reads better than a recoloured link. |
 
 ## Outstanding
 
-Nothing at the moment. The page-by-page pass in Phase 4 of [`overhaul_plan.md`](overhaul_plan.md) may turn up more.
+Nothing at the moment. The six from Callout to Template slot came with
+features built after the overhaul in [`overhaul_plan.md`](overhaul_plan.md):
+imports, invitations, texts, the pew sheet, the privacy page and the
+template editor. A new Block gets its row here when it's built.
