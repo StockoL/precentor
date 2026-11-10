@@ -2,24 +2,33 @@
 
 This covers the automated tests, the checks I ran on the code, the
 manual tests, and the bugs found along the way. Each check says what I
-used, what it found and whether that's resolved. The manual tests were
-carried out on 23 October 2026, in Chromium through Playwright on a
-local copy of the site with an invented demo church, or by the
-automated test named. Anything I didn't get to before submission says so.
+used, what it found and whether that's resolved.
+
+Everything here was run again on 10 November 2026 on the code that
+became the live site, between commits `61f3790` and `b500e3f`, on a
+local copy of the site with the invented demo church. The manual tests
+were carried out in Google Chrome 157 on Windows 11, driven by
+Playwright and checked by me row by row, or by the automated test
+named. Playwright's own Chromium 149 hangs on cross-document page
+transitions, which real Chrome and Edge don't, so it was used only for
+the automated browser tests, where every page is opened by its address.
 
 ## 1. Checks run, findings and how each was resolved
 
-| Check                       | What I used                                                                                     | What it found                                                                                                               | Resolved?                                                                                                                                         |
-| --------------------------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Automated tests             | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 881 tests, all passing (2 November 2026, at `195dac2`)                                                                | Nothing to resolve                                                                                                                                |
-| Deployment settings         | `python manage.py check --deploy` with `DEBUG` off                                              | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve                                                                                                                                |
-| Python style                | `flake8` with a line length of 120, excluding `venv` and migrations                             | 22 findings: two unused imports, one extra blank line, one invalid escape (`\W` in a test string), 16 long lines, a variable named `l`, a lambda assigned to a name | Resolved the unused imports, the blank line and the escape in `1f2e618`. Left the 16 long lines (121 to 139 characters, mostly test data), the `l` in `ordo/utils.py` and the lambda in a test, as they don't affect behaviour. Rerun on 31 October with flake8 7.5: two files in `accounts` ended in a blank line and one import there had grown too long, all fixed in `722ffc4`; the rest as before |
-| Leftover debugging          | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app. The two scripts in `tools/` print what they've done, on purpose                                     | Nothing to resolve                                                                                                                                |
-| Files that shouldn't be tracked | `git ls-files`, searched for `.env`, database files, keys, `venv` and uploaded media; `git grep` for literal secret keys and passwords | None tracked. The only passwords in the code are test values and the demo church's password in `tools/`, used only for the screenshots | `*.sqlite3` added to `.gitignore` in `442ef09`, so the screenshots database can't be committed                                                    |
-| HTML validation             | [W3C Nu HTML Checker](https://validator.w3.org/nu/), sent the rendered HTML of 13 pages (section 2) | 4 errors on 3 pages and 18 warnings. Two errors on Settings were real: `maxlength` and `required` on the colour picker. Two were `@view-transition`, a CSS rule the checker doesn't know yet. The warnings are all "the list role is unnecessary" | Fixed the colour picker in `7abd14c`. `@view-transition` is valid CSS, newer than the checker. The `role="list"` is deliberate: Safari stops announcing a list as a list when its bullets are removed, so the role puts that back. Rerun on 31 October over 26 pages, the 13 above and 13 added since: no new errors, and only more of the same `role="list"` warning |
-| CSS validation              | [W3C CSS Validator](https://jigsaw.w3.org/css-validator/), every one of the 41 files in `static/src/`, CSS level 3 profile | 38 files with no errors. 6 errors in 3 files, all newer CSS the validator doesn't recognise yet: `@container` and `container-type` (music list), `view-transition-name` (navigation) and `@view-transition` (global styles) | Nothing to fix: each is supported by current browsers; the validator lags behind them. Rerun on 31 October for the 11 files changed or added since: no errors apart from the same two in the music list |
-| JavaScript                  | [ESLint](https://eslint.org/) 8.57 with its recommended rules, for browser ES modules, over all 14 files in `static/src/js/` | No errors and no warnings                                                                                                    | Nothing to resolve. Rerun on 31 October over the same 14 files, four of them changed since: still none. The JavaScript is also exercised by the browser tests                                                                      |
-| Lighthouse                  | [Lighthouse](https://developer.chrome.com/docs/lighthouse/) 12.2 in Chromium, five pages, desktop and mobile (section 3) | Accessibility 100 on every page. Best practices 96: a console error for the missing `/favicon.ico`. SEO 90: no meta description | Added a favicon in `0b642e4` and a meta description in `7b6fab4`. Performance on mobile (69 to 92) is measured on a slowed-down simulated phone; the lower scores are the longer pages, the service page and the library. Rerun on 31 October on five new or changed pages: 100 for accessibility, best practices and SEO on all of them |
+| Check | What I used | What it found on 10 November | Resolved? |
+| ----- | ----------- | ---------------------------- | --------- |
+| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 895 tests, all passing, at `b500e3f` (section 4) | Nothing to resolve. There were 553 at submission |
+| Deployment settings | `python manage.py check --deploy` with `DEBUG` off | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve |
+| Migrations | `python manage.py makemigrations --check --dry-run`, and a rehearsal of the merge on a copy of the live database ([`after_assessment.md`](after_assessment.md)) | No missing migrations. On the copy, all 28 new migrations ran, `check_copied_data` found everything copied, and all 177 pages opened for every church | Nothing to resolve |
+| Python style | flake8 7.4.1 with the settings in `.flake8` (line length 120, `venv` and migrations left out) | No findings | At submission: two unused imports, a blank line and an escape, fixed in `1f2e618`; more in `722ffc4`; the 16 long lines, the variable `l` and the lambda left then were cleared in `86ad9e8` |
+| Leftover debugging | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app. The scripts in `tools/` print what they've done, on purpose | Nothing to resolve |
+| Files that shouldn't be tracked | `git ls-files`, searched for `.env`, database files, keys, `venv` and uploaded media; `git grep` for literal secret keys and passwords | None tracked. The only passwords in the code are test values and the demo church's, used for screenshots | `*.sqlite3` added to `.gitignore` in `442ef09` |
+| HTML validation | The W3C's Nu HTML Checker 26.11.9 through [`tools/validate_html.py`](../tools/validate_html.py), every page (section 2) | 74 pages, no errors. 30 warnings, all `role="list"` | The `role="list"` is deliberate (README §16). Errors fixed earlier: the Settings colour picker (`7abd14c`) and a form inside a `<span>` on the service page (`5866886`) |
+| CSS validation | [W3C CSS Validator](https://jigsaw.w3.org/css-validator/), CSS level 3 profile, each of the 47 source files in `static/src/` | 42 files with no errors. 8 errors in 5 files, all CSS the validator doesn't know yet: `@container` and `container-type` (music list), `@view-transition` and its pseudo-elements (global styles and the sign-in pages' stylesheet), `view-transition-name` (navigation), and `pointer-events`, which is outside the CSS3 profile | Nothing to fix: each is supported by current browsers |
+| JavaScript | [ESLint](https://eslint.org/) 8.57 with its recommended rules, for browser ES modules, over all 14 files in `static/src/js/` | No errors and no warnings | Nothing to resolve. The JavaScript is also exercised by the browser tests |
+| Lighthouse | Lighthouse 12.2.1 in Chrome 157, nine pages, desktop and mobile (section 3) | Accessibility, best practices and SEO 100 on every page; performance 100 on desktop, 95 to 99 on mobile | At submission a missing favicon and meta description cost points: fixed in `0b642e4` and `7b6fab4`. Mobile speed improved in `49ec234`, `e55fd08`, `094f805` and `791158d` |
+| Widths and browsers | [`tools/check_viewports.py`](../tools/check_viewports.py): 25 pages at 320, 375, 768, 1024 and 1280 pixels in Chromium, Firefox and WebKit (section 6) | 375 page loads, nothing wider than the window, no console errors | At submission the score form was 3 pixels too wide at 320, fixed in `6bf1062` |
+| Text contrast | Every visible piece of text on the 25 pages, measured against its background in light and dark (row R05) | All 1,403 meet WCAG AA in both; the lowest ratios are 4.83 in light and 5.7 in dark | Nothing to resolve |
 
 ## 2. HTML validation by page
 
@@ -211,49 +220,50 @@ they're the slowest to fill a simulated phone's screen.
 
 ## 4. Automated tests
 
-The suite has 881 tests, run on 3 November 2026 at commit `c68cb19`;
+The suite has 895 tests, run on 10 November 2026 at commit `b500e3f`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
 | File                                      | Tests | What it covers                                                                                                     |
 | ----------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | `accounts/tests.py`                       | 141   | Users, the database rules on accounts, the roles table, sign-in, sign-up, invitations, the members page, roles, removing and restoring people, ownership, reset links, changing your own password, the limits on wrong passwords and on registering, deleting your own account and deleting the church |
-| `accounts/test_browser.py`                | 2     | The Copy link button, and what happens when the browser refuses the clipboard                                    |
-| `comments/tests.py`                       | 33    | Adding, replying to, closing and deleting comments; the Inbox; each church's own comments, and comments kept as "A former member"                          |
-| `comments/test_browser.py`                | 3     | Comment threads, deleting a comment, and closed threads as a Viewer sees them, in the browser                     |
+| `accounts/test_browser.py`                | 2     | The Copy link button, and what happens when the browser refuses the clipboard |
+| `comments/tests.py`                       | 34    | Adding, replying to, closing and deleting comments; the Inbox; each church's own comments, and comments kept as "A former member" |
+| `comments/test_browser.py`                | 3     | Comment threads, deleting a comment, and closed threads as a Viewer sees them, in the browser |
 | `core/tests.py`                           | 34    | Settings, the crest upload and processing, the crest's address, the music list arrangement and the repeat window, each church's own settings |
-| `library/tests.py`                        | 116   | Scores, the library's search, filters and sorting, suitability ranking, "last sung", texts, the completeness page, returning after an edit, hymnals, hymns and their pages, joining the same hymn, hymn last sung, tunes and a tune's number in a book, each church's own library |
+| `library/tests.py`                        | 123   | Scores, the library's search, filters and sorting, the ranking the piece picker uses, "last sung", texts, the completeness page, returning after an edit, hymnals, hymns and their pages, joining the same hymn, hymn last sung, tunes and a tune's number in a book, each church's own library, the Suitable-for filters and their menus, and a score planned for a service being kept when deleted |
 | `library/test_metre.py`                   | 5     | Writing a metre one way: short names, doubled verses, lines of ten or more, anything else kept as typed |
 | `library/test_browser.py`                 | 11    | The score form's tag input, the library as a Viewer sees it, and the import page's file size check and disabled button, in the browser |
 | `library/test_importing.py`               | 52    | Importing from a Google Sheets link, or refusing neither or both; reading a spreadsheet (encodings, separators, headers, limits), checking each row, saving an import all at once, keeping and removing it, who may remove it, the Imports list, the export and its round trip |
 | `library/test_sheets.py`                  | 8     | A Google Sheets link: the export address built from its ID and tab, every other address refused, and with Google's answer faked, CSV kept, the size limit, a sign-in page, a refusal and no connection |
 | `library/test_hymn_import.py`             | 17    | A hymnal's list: reading it (a number needed, a repeated number skipped), new numbers added with their details, only blanks filled for known ones, tunes matched or added, a list that changes nothing; removing an import (sung entries and hymns in other books kept, blanks emptied unless changed since, unused tunes gone); the import, result, keep and remove pages |
 | `ordo/tests.py`                           | 19    | Easter, the seeded data, occasion lookup by date and its endpoint, occasion keys, colours and each church's use types |
-| `ordo/test_calendar.py`                   | 18    | Working out the Ordinary Form calendar, with precedence and transfers                                              |
-| `ordo/test_calendar_1962.py`              | 23    | Working out the 1962 calendar                                                                                      |
-| `ordo/test_calendar_data.py`              | 22    | Loading the calendar files with `load_calendar`                                                                    |
-| `ordo/test_dates.py`                      | 29    | Easter and the other date rules, and the Sunday cycle                                                                                    |
-| `ordo/test_reference.py`                  | 3     | Every day from 2020 to 2040 against the reference data                                                             |
+| `ordo/test_calendar.py`                   | 18    | Working out the Ordinary Form calendar, with precedence and transfers |
+| `ordo/test_calendar_1962.py`              | 23    | Working out the 1962 calendar |
+| `ordo/test_calendar_data.py`              | 22    | Loading the calendar files with `load_calendar` |
+| `ordo/test_dates.py`                      | 29    | Easter and the other date rules, and the Sunday cycle |
+| `ordo/test_reference.py`                  | 3     | Every day from 2020 to 2040 against the reference data |
 | `ordo/test_propers.py`                    | 21    | The chants of both forms: one per part, season and year, several of a part in the order sung, loading them with the calendar, every one belonging to a day of its form, the 1962 seasons' edges and a saint's form by date, and an Ordinary Form Sunday's chant for its year, each year's own Lent Communion and each of the four Christmas Masses; the Sunday an Ordinary Form weekday borrows from, and none in Lent, late Advent, Christmas or the Easter octave |
-| `planning/tests.py`                       | 81    | Terms, services, notices, slots, pieces, status, the music list, each church's own planning                        |
+| `planning/tests.py`                       | 81    | Terms, services, notices, slots, pieces, status, the music list, each church's own planning |
 | `planning/test_templates.py`              | 26    | Slot templates as rows with kinds, editing them as a formset (order, remove, each name once), splitting old templates into rows, and applying them |
-| `planning/test_slot_order.py`             | 8     | Moving slots and reordering them                                                                                   |
-| `planning/test_remove_slot.py`            | 6     | Removing slots, asking first when they have pieces                                                                 |
-| `planning/test_service_form.py`           | 3     | The service form's calendar choice                                                                                 |
+| `planning/test_slot_order.py`             | 8     | Moving slots and reordering them |
+| `planning/test_remove_slot.py`            | 6     | Removing slots, asking first when they have pieces |
+| `planning/test_service_form.py`           | 3     | The service form's calendar choice |
 | `planning/test_browser.py`                | 27    | The service page in the browser: the score picker and its suggestion groups, a hymn by book and number, a suggested hymn filling them in, the day's chant proposed in one click, a typed reference, confirming, dragging slots, changing a slot's kind, dialogs |
-| `planning/test_slot_kinds.py`             | 22    | Classifying slot names, kinds on save and from templates, the migrations that classified existing slots (and later Sequences and Responsories), the badge, choosing and changing a kind |
-| `planning/test_reference_pieces.py`       | 33    | A piece as a score, a hymn or a reference and the rule between them, proposing each, showing them everywhere, copying hymns and the psalm into slots, the music list arrangement, a hymn's tune and its choices, the pew sheet's tune number, the first-line prompt |
+| `planning/test_slot_kinds.py`             | 23    | Classifying slot names, kinds on save and from templates, the migrations that classified existing slots (and later Sequences and Responsories), the badge, choosing and changing a kind, and a slot named Canticle |
+| `planning/test_reference_pieces.py`       | 34    | A piece as a score, a hymn or a reference and the rule between them, proposing each, showing them everywhere, copying hymns and the psalm into slots, the music list arrangement, a hymn's tune and its choices, the pew sheet's tune number, the first-line prompt |
 | `planning/test_suggestions.py`            | 20    | What each suggestion rests on, in a fixed number of queries; groups, strength and reasons; a slot's use type; the propose page's groups; the service page's data; the voicing prompt; suggested hymns and their book |
-| `planning/test_propers.py`                | 14    | The day's chants on a slot: which part, Alleluia or Tract by date, not once proposed, not for other slots; several in order, each going once proposed in a slot of the same kind; Sequence slots; Palm Sunday's antiphons, the Vigil's Alleluia and Tracts in each form's order, and an Ember Saturday's graduals from the loaded data; an Ordinary Form weekday offered the Sunday before's chants, a 1962 one with no occasion nothing; the propose page's own form |
+| `planning/test_propers.py`                | 15    | The day's chants on a slot: which part, Alleluia or Tract by date, not once proposed, not for other slots; several in order, each going once proposed in a slot of the same kind; Sequence slots; Palm Sunday's antiphons, the Vigil's Alleluia and Tracts in each form's order, and an Ember Saturday's graduals from the loaded data; an Ordinary Form weekday offered the Sunday before's chants, a 1962 one with no occasion nothing; the propose page's own form, and an Alleluia or Tract slot on a weekday with no occasion |
 | `planning/test_pew_sheet.py`              | 6     | Which slots a pew sheet prints, its texts and composers and the options to leave them off, and each church's own |
-| `precentor_project/tests.py`              | 27    | The base template, the navigation and its wording, the Inbox count, the user menu, the 403 page, never storing signed-in pages,, the privacy page and footer, and the check on return addresses                |
+| `planning/test_check_copied_data.py`     | 5     | The check run after the merge: it passes when hymns, the psalm and template slots were copied, fails on a missing hymn or psalm or a template whose rows differ, names churches that had hidden hymns, and changes nothing |
+| `precentor_project/tests.py`              | 28    | The base template, the navigation and its wording, the Inbox count, the user menu, the 403 page, never storing signed-in pages, the 500 page, the privacy page and footer, and the check on return addresses |
 | `precentor_project/test_scripts.py`       | 2     | Every module a page's scripts import is on the page or preloaded |
-| `precentor_project/test_css.py`           | 4     | The one stylesheet: built from every CSS source as it is now, the layers declared first, and the only one pages link |
+| `precentor_project/test_css.py`           | 6     | The one stylesheet: built from every CSS source as it is now, the layers declared first, and the only one pages link, and printing hiding the navigation, the controls and the footer |
 | `precentor_project/test_browser.py`       | 15    | Signing in, type and control sizes, checkboxes, Settings, the user menu, page transitions and the skip link, in the browser |
-| `precentor_project/test_delete_pages.py`  | 5     | Going Back to a delete page after deleting                                                                         |
+| `precentor_project/test_delete_pages.py`  | 5     | Going Back to a delete page after deleting |
 | `precentor_project/test_isolation.py`     | 7     | Two complete churches: every address with an id tried as the other church, every page checked for the other church's text, and every model and route covered |
-| `precentor_project/test_settings.py`      | 11    | Production settings: the secret key check, hosts, HTTPS, the cookies and the cache                                                            |
-| `precentor_project/test_testing.py`       | 2     | The shared test helpers                                                                                            |
+| `precentor_project/test_settings.py`      | 11    | Production settings: the secret key check, hosts, HTTPS, the cookies and the cache |
+| `precentor_project/test_testing.py`       | 2     | The shared test helpers |
 
 To run them, see "Running it locally" in the README.
 
