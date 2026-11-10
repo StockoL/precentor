@@ -1864,21 +1864,28 @@ each change before it was committed.
 
 ## 22. Testing
 
-[`docs/testing.md`](docs/testing.md) has the full record. In short:
+[`docs/testing.md`](docs/testing.md) has the full record, all of it run
+again on 10 November 2026 on the code now live. In short:
 
-- **801 automated tests** cover the models, views, forms, permissions,
-  each church's own data, the import and export, and the liturgical calendar. 57 of them are
-  browser tests, which start a real server and drive Chromium through
-  Playwright, so the JavaScript is tested too.
-- **Validation:** the W3C HTML and CSS validators, ESLint for the
-  JavaScript and flake8 for the Python. The one real HTML error, on the
-  Settings colour picker, is fixed; what remains is newer CSS the
-  validators don't know yet, explained there.
-- **Lighthouse:** accessibility scores 100 on every page checked, on
-  desktop and mobile.
-- **Manual tests** of every feature, at phone and desktop widths, with
-  the keyboard and in dark mode, with their results.
-- **Bugs found and fixed,** each with its commit.
+- **895 automated tests** cover the models, views, forms, permissions,
+  each church's own data, the import and export, and the liturgical
+  calendar and its chants. 58 of them are browser tests, which start a
+  real server and drive Chromium through Playwright, so the JavaScript
+  is tested too.
+- **Manual tests:** 58 rows covering every feature, each carried out in
+  Google Chrome with its result, and screenshots beside them. Four
+  failed and were fixed, each with its commit.
+- **Widths and browsers:** 25 pages at 320, 375, 768, 1024 and 1280
+  pixels in Chromium, Firefox and WebKit, with nothing wider than the
+  window and no console errors; the keyboard alone; dark mode, with
+  every piece of text meeting WCAG AA contrast; and without JavaScript.
+- **Validation:** every page's HTML, 74 in all, with no errors; the CSS,
+  where the only errors are newer CSS the validator doesn't know yet;
+  ESLint and flake8 with no findings.
+- **Lighthouse:** accessibility, best practices and SEO 100 on every
+  page checked, on desktop and mobile.
+- **Bugs found and fixed,** each with its commit, and the two known
+  issues, neither in the app itself.
 
 ---
 
