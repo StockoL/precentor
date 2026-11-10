@@ -1639,8 +1639,9 @@ need Python 3.14 and git.
    ```
 
    The browser tests use Playwright, which isn't in `requirements.txt`
-   because the site doesn't need it to run. Install it once with
-   `pip install playwright` and `playwright install chromium`.
+   because the site doesn't need it to run. Install it, with flake8,
+   once with `pip install -r requirements-dev.txt`, then
+   `playwright install chromium`.
 
 ## 18. Environment variables
 
