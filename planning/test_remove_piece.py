@@ -116,3 +116,57 @@ class RemovePieceTests(TestCase):
             with self.subTest(method=method):
                 self.assertEqual(getattr(self.client, method)(self.url(piece)).status_code, 403)
         self.assertTrue(RolePiece.objects.exists())
+
+
+class RemoveButtonTests(TestCase):
+    def setUp(self):
+        self.church = make_organisation()
+        self.conductor = make_user("conductor", organisation=self.church)
+        term = make_term(organisation=self.church, start_date=date(2027, 2, 17), end_date=date(2027, 4, 3))
+        self.service = Service.objects.create(term=term, date=date(2027, 2, 21), service_type="Sung Mass")
+        self.slot = ServiceRole.objects.create(service=self.service, role_name="Credo")
+        score = make_score(organisation=self.church, title="Credo III", composer_surname="Plainchant")
+        self.proposed = RolePiece.objects.create(service_role=self.slot, reference="Credo I")
+        self.confirmed = RolePiece.objects.create(service_role=self.slot, score=score, is_confirmed=True)
+
+    def page(self, user):
+        self.client.force_login(user)
+        return self.client.get(self.service.get_absolute_url())
+
+    def test_each_piece_has_a_remove_button_named_with_it_and_its_slot(self):
+        response = self.page(self.conductor)
+        for piece in (self.proposed, self.confirmed):
+            with self.subTest(piece=piece.title):
+                self.assertContains(response, f'action="/pieces/{piece.pk}/remove/"')
+                self.assertContains(
+                    response, f'Remove<span class="visually-hidden"> {piece.title} from the Credo</span>', html=False
+                )
+        self.assertContains(response, f'name="next" value="{self.service.get_absolute_url()}"', count=2)
+
+    def test_only_a_piece_that_would_lose_something_asks_first(self):
+        response = self.page(self.conductor).content.decode()
+        self.assertIn('data-confirm-title="Remove Credo III (Plainchant)?"', response)
+        self.assertIn("data-confirm-message=\"It&#x27;s confirmed, so it will leave the music list. "
+                      "This can't be undone.\"", response)
+        self.assertNotIn('data-confirm-title="Remove Credo I?"', response)
+
+    def test_a_viewer_sees_no_remove_button(self):
+        response = self.page(make_user("viewer", organisation=self.church))
+        self.assertContains(response, "Credo III")
+        self.assertNotContains(response, "/remove/\"")
+        self.assertNotContains(response, "ajax-remove-piece")
+
+    def test_the_wording_costs_no_query_per_piece(self):
+        self.client.force_login(self.conductor)
+        url = self.service.get_absolute_url()
+        self.client.get(url)
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        with CaptureQueriesContext(connection) as before:
+            self.client.get(url)
+        for n in range(4):
+            piece = RolePiece.objects.create(service_role=self.slot, reference=f"Extra {n}")
+            Comment.objects.create(author=self.conductor, body="Hmm", target=piece)
+        with self.assertNumQueries(len(before)):
+            self.client.get(url)
