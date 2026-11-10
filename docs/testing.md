@@ -509,15 +509,25 @@ testing, fixed, and covered by a test where it could be.
 | `49ec234` | The fallback fonts were about a third too wide, so the page jumped as the web fonts loaded |
 | `e55fd08` | Each page made 46 requests for its CSS before it could be drawn; now one stylesheet |
 | `5c8e834` | Deleting a church that had sung any hymns failed with a server error, as each hymn's entry protected its hymnal |
+| `8ba3c31` | Good Friday and the Easter Vigil were offered Palm Sunday's chants, Palm Sunday's Tract was missing, and All Souls had no Dies irae |
+| `af995ac` | The sign-in pages each showed an HTML validation error, from a `<style>` block the checker couldn't read |
+| `2fda28f` | A server error showed Django's bare "Server Error (500)", with no stylesheet and no way back |
+| `5866886` | On the service page a hymn's tune form sat inside a `<span>`, which the HTML validator refused |
+| `61f3790` | The footer's Privacy link printed at the end of the music list and the pew sheet (row M19) |
+| `945b43f` | An Ordinary Form weekday service with no occasion, borrowing the Sunday before's chants, was a server error when it had an Alleluia or Tract slot (row M58) |
+| `c5a8833` | A slot named Canticle was given the kind Other, so it was never offered the day's canticle (row M57) |
+| `89073e1`, `f15b70c` | The Library had no season, use or occasion filter, though the README and row M08 said it had; a season in its address only reordered the list |
 
-**Left unfixed:** the 16 long lines, the variable `l` and the lambda
-found by flake8 (see section 1). None affects how the app works.
+The flake8 findings left at submission (16 long lines, a variable named
+`l` and a lambda) were cleared in `86ad9e8`. No fault found in the app is left unfixed;
+the two known issues below are in a test and in the testing browser.
 
 ### Known bugs
 
 | Bug                                                                                                                                            | Effect                                                                                                         | Why it's not fixed yet                                                                  |
 | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| The browser test for confirming a piece failed once in a full run of the planning tests on 30 October | None for people using the site; a test can fail without a real fault | Not reproduced: on 1 November it passed 20 runs on its own and 6 runs of all the planning browser tests, as it has in every full run since. If it fails again, the traceback names the line |
+| The browser test for confirming a piece failed once in a full run of the planning tests on 30 October | None for people using the site; a test can fail without a real fault | Not reproduced: on 1 November it passed 20 runs on its own and 6 runs of all the planning browser tests, as it has in every full run since. It passed again in the full run of 10 November. If it fails again, the traceback names the line |
+| Playwright's own Chromium (149) stops drawing after any cross-document page transition, so a click from one page to the next leaves the old page on screen | None for people using the site: Chrome 157 and Edge 157 cross-fade and draw normally | A fault in the testing browser, not the site, so the manual tests were run in Google Chrome. The automated browser tests, which mostly work within one page, pass in it |
 
 ## 8. Deployment check
 
