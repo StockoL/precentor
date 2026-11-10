@@ -225,6 +225,41 @@ class ImportPagesTests(TestCase):
         self.assertContains(response, "1 of them has no voicing yet")
         self.assertContains(response, "?voicing=unspecified")
 
+    def test_the_result_page_lists_every_imported_score(self):
+        response = self.upload(
+            "Title,Composer surname,Composer other names,Voicing,Language",
+            "Locus iste,Bruckner,Anton,SATB,",
+            "Ave verum,Byrd,William,,Latin",
+            "Sicut cervus,Palestrina,Giovanni Pierluigi da,SATB,Latin",
+        )
+        listed = [(score.title, score.composer_catalogue) for score in response.context["imported_scores"]]
+        # In the library's order: by composer, then title.
+        self.assertEqual(listed, [("Locus iste", "Bruckner, Anton"), ("Ave verum", "Byrd, William"),
+                                  ("Sicut cervus", "Palestrina, Giovanni Pierluigi da")])
+        for title, composer in listed:
+            with self.subTest(title=title):
+                self.assertContains(response, f">{title}</a>")
+                self.assertContains(response, composer)
+        self.assertContains(response, "<td>(unspecified)</td>", count=2, html=True)
+
+    def test_the_result_page_lists_only_this_churchs_import(self):
+        from accounts.testing import make_organisation
+
+        from .models import Score, ScoreImport
+
+        theirs = ScoreImport.objects.create(organisation=make_organisation("St Elsewhere"), original_filename="t.csv")
+        Score.objects.create(organisation=theirs.organisation, title="Their motet", composer_surname="Other",
+                             import_batch=theirs)
+        self.assertEqual(self.client.get(f"/library/import/{theirs.pk}/").status_code, 404)
+        response = self.upload("Title,Composer surname", "Our motet,Ours")
+        self.assertContains(response, ">Our motet</a>")
+        self.assertNotContains(response, "Their motet")
+
+    def test_a_long_import_lists_the_first_hundred_and_says_so(self):
+        response = self.upload("Title,Composer surname", *[f"Motet {n:03},Composer {n:03}" for n in range(150)])
+        self.assertEqual(len(response.context["imported_scores"]), 100)
+        self.assertContains(response, "The first 100 of 150, in library order.")
+
     def test_a_file_that_cant_work_comes_back_with_the_reason(self):
         from .models import ScoreImport
 
