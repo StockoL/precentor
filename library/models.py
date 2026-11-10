@@ -94,7 +94,7 @@ class ScoreQuerySet(OrganisationQuerySet):
 
     def ranked_by_suitability(self, occasion=None, season=None, use_type=None):
         """
-        Ranking, not filtering — every score stays in the results;
+        Ranking, not filtering: every score stays in the results;
         scores matching any of the three suitability tiers (occasion,
         season, use-type) for the given context are bubbled to the top.
         Untagged scores are never hidden, since they might still be
@@ -239,7 +239,7 @@ class Score(models.Model):
     class Meta:
         # As a library catalogue orders them: by composer, then title.
         # Other names split composers who share a surname (the Bachs).
-        ordering = ["composer_surname", "composer_other_names", "title"]  # noqa (Django Meta, not a normal class — no shared-state risk)
+        ordering = ["composer_surname", "composer_other_names", "title"]  # noqa (Django Meta, not a normal class, so no shared-state risk)
 
     def __str__(self):
         return f"{self.title} ({self.composer})"

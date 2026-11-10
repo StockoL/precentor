@@ -33,7 +33,7 @@ class ConfirmToggleBrowserTest(PlaywrightTestCase):
         self.page.wait_for_selector(button)
         assert self.page.inner_text(button) == "Confirm"
 
-        # A full page reload would clear this — the clearest available
+        # A full page reload would clear this, the clearest available
         # signal that the click only triggered a fetch(), not a navigation.
         self.page.evaluate("window.__browser_test_marker = true")
 
@@ -43,7 +43,7 @@ class ConfirmToggleBrowserTest(PlaywrightTestCase):
         )
 
         assert self.page.evaluate("window.__browser_test_marker") is True, (
-            "marker was cleared — page reloaded instead of using fetch()"
+            "marker was cleared: the page reloaded instead of using fetch()"
         )
 
         self.piece.refresh_from_db()
@@ -99,7 +99,7 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
         self.page.wait_for_selector(f"#role-{self.role.pk}-pieces li.list-row")
 
         assert self.page.evaluate("window.__browser_test_marker") is True, (
-            "marker was cleared — page reloaded instead of using fetch()"
+            "marker was cleared: the page reloaded instead of using fetch()"
         )
 
         piece = RolePiece.objects.get(service_role=self.role)
@@ -248,7 +248,7 @@ class AddRoleBrowserTest(PlaywrightTestCase):
         self.page.wait_for_selector("#roles-list .role-block")
 
         assert self.page.evaluate("window.__browser_test_marker") is True, (
-            "marker was cleared — page reloaded instead of using fetch()"
+            "marker was cleared: the page reloaded instead of using fetch()"
         )
 
         role = ServiceRole.objects.get(service=self.service)
@@ -298,7 +298,7 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
 
         # Typing filters down to only the matching result. Polled via a
         # plain JS predicate (wait_for_function) rather than a selector-
-        # based wait — the listbox rebuilds its <li>s from scratch on every
+        # based wait, as the listbox rebuilds its <li>s from scratch on every
         # keystroke (innerHTML = "" then re-append), and Playwright's
         # node-identity-based selector waits are flaky against that kind of
         # rapid wholesale replacement even though the DOM state itself,
@@ -311,7 +311,7 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
         assert "Locus Iste" in items[0]
 
         # Clear back to the full list, then choose the second result with
-        # the keyboard alone — never clicking a result directly.
+        # the keyboard alone, never clicking a result directly.
         self.page.fill(input_sel, "")
         self.page.click(input_sel)
         self.page.wait_for_function(f"{count_js} === 2")

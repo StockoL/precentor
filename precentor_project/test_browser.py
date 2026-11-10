@@ -23,13 +23,13 @@ except ImportError:
 
 @unittest.skipUnless(
     PLAYWRIGHT_AVAILABLE,
-    "playwright not installed — see requirements-dev.txt (pip install -r "
+    "playwright not installed; see requirements-dev.txt (pip install -r "
     "requirements-dev.txt && playwright install chromium)",
 )
 class PlaywrightTestCase(StaticLiveServerTestCase):
     """
     Base class for tests that need a real, JS-executing browser against
-    a real server — the one thing unit tests and Django's plain test
+    a real server: the one thing unit tests and Django's plain test
     client can't exercise: DOM updates from fetch(), focus retention
     across a DOM swap, toast rendering/timing. StaticLiveServerTestCase
     (not plain LiveServerTestCase) is required so static/src/js/*.css

@@ -82,7 +82,7 @@ def add_comment(request, content_type_id, object_id):
         # Card context shared by both success branches below.
         ctx = {"content_type_id": content_type_id, "object_id": object_id}
         if parent_id:
-            # Re-render the whole parent card — comment--{{ state }} is a
+            # Re-render the whole parent card: comment--{{ state }} is a
             # class on its outer <div>, so only a full swap can flip it
             # (open -> open_with_replies). This already contains the new
             # reply, so no separate reply fragment is needed or returned.
@@ -120,7 +120,7 @@ def toggle_close(request, comment_pk):
     comment.save()
     comment = attach_reply_form(comment)
 
-    # content_type_id/object_id are already stored fields on Comment — no
+    # content_type_id/object_id are already stored fields on Comment, so there's no
     # need for ContentType.objects.get_for_model(), a redundant query.
     fragments = {
         f"comment-{comment.pk}": render_to_string(
@@ -142,7 +142,7 @@ def delete_comment(request, comment_pk):
     comment = get_object_or_404(own(Comment, request), pk=comment_pk)
     redirect_url = request.META.get("HTTP_REFERER", "/")
 
-    # Only closed comments can be deleted — the conductor has already
+    # Only closed comments can be deleted: the conductor has already
     # marked the discussion resolved, so this is a tidy-up action, not
     # a way to silently discard an open query. Enforced server-side,
     # not just by hiding the button when open.
@@ -156,7 +156,7 @@ def delete_comment(request, comment_pk):
     comment.delete()
 
     # Empty string as the fragment content: applyFragments() sets this
-    # element's outerHTML to "", which removes it from the DOM — reuses
+    # element's outerHTML to "", which removes it from the DOM. It reuses
     # the existing fragment-swap mechanism rather than adding a new one.
     return ajax_or_redirect(request, {comment_id: ""}, redirect_url)
 

@@ -23,13 +23,13 @@ class CommentThreadBrowserTest(PlaywrightTestCase):
 
         self.page.evaluate("window.__browser_test_marker = true")
 
-        # Post a top-level comment — appended into #comment-list.
+        # Post a top-level comment, appended into #comment-list.
         self.page.fill("#add-comment-form textarea", "A query")
         self.page.click("#add-comment-form button[type=submit]")
         self.page.wait_for_selector("#comment-list .comment")
 
         assert self.page.evaluate("window.__browser_test_marker") is True, (
-            "marker was cleared — page reloaded instead of using fetch()"
+            "marker was cleared: the page reloaded instead of using fetch()"
         )
 
         comment = Comment.objects.get()
@@ -39,7 +39,7 @@ class CommentThreadBrowserTest(PlaywrightTestCase):
         self.page.wait_for_selector(".toast--success")
         assert "Comment posted" in self.page.inner_text(".toast--success")
 
-        # Reply to it — the parent card is re-rendered in place, flipping
+        # Reply to it. The parent card is re-rendered in place, flipping
         # its state from open to open_with_replies (comment--{{ state }}
         # is a class on the card's own outer element, so this can only be
         # observed via a full card swap, not a partial DOM patch).
@@ -50,7 +50,7 @@ class CommentThreadBrowserTest(PlaywrightTestCase):
         )
         assert "A reply" in self.page.inner_text(card)
 
-        # Close it — card re-renders again, button label flips to Re-open.
+        # Close it. The card re-renders again and its button reads Re-open.
         self.page.click(f"{card} button:has-text('Close')")
         self.page.wait_for_function(
             f"document.querySelector('{card}')?.className.includes('comment--closed')"
