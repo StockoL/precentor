@@ -843,3 +843,64 @@ class ServicePageForViewersBrowserTest(PlaywrightTestCase):
         self.page.goto(f"/services/{self.service.pk}/")
         assert self.planning_controls().count() > 0
         assert self.page.locator(".ajax-toggle-confirm").count() == 1
+
+
+class RemovePieceBrowserTest(PlaywrightTestCase):
+    def setUp(self):
+        super().setUp()
+        self.login_as_conductor()
+        term = make_term(name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31))
+        self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        self.role = ServiceRole.objects.create(service=self.service, role_name="Credo")
+        score = make_score(title="Credo III", composer_surname="Plainchant")
+        self.proposed = RolePiece.objects.create(service_role=self.role, reference="Credo I")
+        self.confirmed = RolePiece.objects.create(service_role=self.role, score=score, is_confirmed=True)
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.wait_for_selector(f"#add-piece-form-{self.role.pk} .score-combobox__input")
+        self.page.evaluate("window.__marker = true")
+
+    def test_a_proposed_piece_goes_at_once_from_the_keyboard(self):
+        self.page.focus(f"#remove-piece-{self.proposed.pk}")
+        self.page.keyboard.press("Enter")
+        self.page.wait_for_selector(f"#piece-row-{self.proposed.pk}", state="detached")
+        assert self.page.evaluate("window.__marker") is True, "the page reloaded"
+        assert self.page.evaluate("document.activeElement.closest('form')?.id") == f"add-piece-form-{self.role.pk}"
+        assert "Removed Credo I from the Credo." in self.page.inner_text(".toast--success")
+        assert not RolePiece.objects.filter(pk=self.proposed.pk).exists()
+
+    def test_a_confirmed_piece_asks_first_and_the_status_follows(self):
+        assert self.page.inner_text("#service-status-badge") == "Complete"
+        self.page.focus(f"#remove-piece-{self.confirmed.pk}")
+        self.page.keyboard.press("Enter")
+        self.page.wait_for_selector("dialog[open]")
+        assert "It's confirmed, so it will leave the music list." in self.page.inner_text("dialog[open]")
+        # Focus starts on Cancel, and Cancel keeps the piece.
+        self.page.keyboard.press("Enter")
+        self.page.wait_for_selector("dialog[open]", state="detached")
+        assert RolePiece.objects.filter(pk=self.confirmed.pk).exists()
+        self.page.focus(f"#remove-piece-{self.confirmed.pk}")
+        self.page.keyboard.press("Enter")
+        self.page.wait_for_selector("dialog[open]")
+        self.page.keyboard.press("Tab")
+        self.page.keyboard.press("Enter")
+        self.page.wait_for_selector(f"#piece-row-{self.confirmed.pk}", state="detached")
+        assert self.page.inner_text("#service-status-badge") == "In progress"
+        assert not RolePiece.objects.filter(pk=self.confirmed.pk).exists()
+
+    def test_the_last_piece_leaves_the_slots_empty_line(self):
+        self.proposed.delete()
+        self.page.reload()
+        self.page.wait_for_selector(f"#add-piece-form-{self.role.pk} .score-combobox__input")
+        self.page.click(f"#remove-piece-{self.confirmed.pk}")
+        self.page.click("dialog[open] .btn-danger")
+        self.page.wait_for_selector(f"#role-{self.role.pk}-pieces-empty")
+        assert self.page.inner_text("#service-status-badge") == "Not started"
+
+    def test_a_piece_already_gone_reloads_with_a_message(self):
+        pk = self.proposed.pk
+        self.proposed.delete()
+        self.page.click(f"#remove-piece-{pk}")
+        self.page.wait_for_function("window.__marker === undefined")
+        self.page.wait_for_selector(".toast")
+        assert "That piece has already been removed." in self.page.inner_text("#toast-region")
+        assert self.page.locator(f"#piece-row-{pk}").count() == 0
