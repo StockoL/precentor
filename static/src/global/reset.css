@@ -1,5 +1,7 @@
 /* ==========================================================================
    GLOBAL RESET
+   Adapted from Andy Bell's "A (more) Modern CSS Reset"
+   (https://piccalil.li/blog/a-more-modern-css-reset/).
    ========================================================================== */
 
 @layer reset {

@@ -1,5 +1,7 @@
 /* ==========================================================================
    COMPOSITION: FLOW
+   Spaces siblings with Heydon Pickering's "lobotomised owl" selector
+   (* + *), as Every Layout's Stack does (https://every-layout.dev).
    ========================================================================== */
 
 @layer compositions {

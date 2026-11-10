@@ -50,7 +50,7 @@
  *   blocks/template-slot.css
  *   utilities/utilities.css
  *
- * Fingerprint: 83a7e80eab2c174521a3816bce704c6bb17a95d1f5eafb13dc5db02b4d106007
+ * Fingerprint: 54030173b77332b329eb2ecac96f18bcffed4a2d050b2c14357d744283990409
  */
 
 /* ---- global/layers.css ---- */
@@ -313,6 +313,8 @@
 /* ---- global/reset.css ---- */
 /* ==========================================================================
    GLOBAL RESET
+   Adapted from Andy Bell's "A (more) Modern CSS Reset"
+   (https://piccalil.li/blog/a-more-modern-css-reset/).
    ========================================================================== */
 
 @layer reset {
@@ -516,6 +518,8 @@
 /* ---- compositions/center.css ---- */
 /* ==========================================================================
    COMPOSITION: CENTER
+   Based on the layout primitives in Every Layout, by Heydon Pickering
+   and Andy Bell (https://every-layout.dev).
    ========================================================================== */
 
 @layer compositions {
@@ -553,6 +557,8 @@
 /* ---- compositions/cluster.css ---- */
 /* ==========================================================================
    COMPOSITION: CLUSTER
+   Based on the layout primitives in Every Layout, by Heydon Pickering
+   and Andy Bell (https://every-layout.dev).
    ========================================================================== */
 
 @layer compositions {
@@ -572,6 +578,8 @@
 /* ---- compositions/flow.css ---- */
 /* ==========================================================================
    COMPOSITION: FLOW
+   Spaces siblings with Heydon Pickering's "lobotomised owl" selector
+   (* + *), as Every Layout's Stack does (https://every-layout.dev).
    ========================================================================== */
 
 @layer compositions {
@@ -588,6 +596,8 @@
 /* ---- compositions/grid.css ---- */
 /* ==========================================================================
    COMPOSITION: GRID
+   Based on the layout primitives in Every Layout, by Heydon Pickering
+   and Andy Bell (https://every-layout.dev).
    ========================================================================== */
 
 @layer compositions {
@@ -608,6 +618,8 @@
 /* ---- compositions/reel.css ---- */
 /* ==========================================================================
    COMPOSITION: REEL
+   Based on the layout primitives in Every Layout, by Heydon Pickering
+   and Andy Bell (https://every-layout.dev).
    ========================================================================== */
 
 @layer compositions {
@@ -633,6 +645,8 @@
 /* ---- compositions/sidebar.css ---- */
 /* ==========================================================================
    COMPOSITION: SIDEBAR
+   Based on the layout primitives in Every Layout, by Heydon Pickering
+   and Andy Bell (https://every-layout.dev).
    ========================================================================== */
 
 @layer compositions {
@@ -662,6 +676,8 @@
 /* ---- compositions/switcher.css ---- */
 /* ==========================================================================
    COMPOSITION: SWITCHER
+   Based on the layout primitives in Every Layout, by Heydon Pickering
+   and Andy Bell (https://every-layout.dev).
    ========================================================================== */
 
 @layer compositions {
@@ -684,6 +700,8 @@
 /* ---- compositions/wrapper.css ---- */
 /* ==========================================================================
    COMPOSITION: WRAPPER
+   Based on the layout primitives in Every Layout, by Heydon Pickering
+   and Andy Bell (https://every-layout.dev).
    ========================================================================== */
 
 @layer compositions {
@@ -716,6 +734,8 @@
 /* ---- compositions/cover.css ---- */
 /* ==========================================================================
    COMPOSITION: COVER
+   After Every Layout's Cover, by Heydon Pickering and Andy Bell
+   (https://every-layout.dev).
    ========================================================================== */
 
 @layer compositions {
