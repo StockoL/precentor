@@ -1,5 +1,4 @@
 from django import forms
-from django.template.defaultfilters import pluralize
 from django.utils.formats import date_format
 
 from core.models import SiteConfig
@@ -45,12 +44,15 @@ class TermForm(forms.ModelForm):
             return
         outside = self.instance.services.exclude(date__range=(start, end)).order_by("date")
         count = outside.count()
-        if count:
-            self.add_error(
-                changed[0] if len(changed) == 1 else None,
-                f"{count} of this term's service{pluralize(count)} would fall outside these dates, the first on "
-                f"{date_format(outside.first().date)}. Move or delete {pluralize(count, 'it,them')} first.",
-            )
+        if not count:
+            return
+        first = date_format(outside.first().date)
+        if count == 1:
+            message = f"A service on {first} would fall outside these dates. Move or delete it first."
+        else:
+            message = (f"{count} services would fall outside these dates, the first on {first}. "
+                       "Move or delete them first.")
+        self.add_error(changed[0] if len(changed) == 1 else None, message)
 
 
 class ServiceForm(forms.ModelForm):
