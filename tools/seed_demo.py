@@ -1,8 +1,10 @@
 """
 Demo data for the README screenshots only. It makes an invented church,
-St Aelred's, Ripon, with three people, a library, a past term and an
-Advent term, using the app's own models and create_organisation(). No
-real church or person is used.
+St Aelred's, Ripon, with three people, a library, a hymn book of its
+own, a past term, an Advent term and a 1962 Mass, using the app's own
+models and create_organisation(). No real church, person or hymnal is
+used: the hymn book's numbers are made up, and its first lines and the
+one motet text are long out of copyright.
 
 It writes to its own SQLite file, screenshots.sqlite3, not my
 development database. settings.py reads the database from DATABASE_URL,
@@ -36,7 +38,7 @@ from accounts.models import Organisation, User  # noqa: E402
 from accounts.organisations import create_organisation  # noqa: E402
 from comments.models import Comment  # noqa: E402
 from core.models import SiteConfig  # noqa: E402
-from library.models import Score  # noqa: E402
+from library.models import Hymnal, HymnEntry, Score  # noqa: E402
 from ordo.models import LiturgicalSeason, UseType, occasion_for_date  # noqa: E402
 from planning.models import RolePiece, Service, SlotTemplate, Term, TermMarker  # noqa: E402
 
@@ -72,6 +74,27 @@ SCORES = [
     ("Tantum ergo", "Séverac", "Déodat de", "SATB", "Latin", []),
 ]
 
+# The church's own invented hymn book: a made-up number and a first line
+# from a hymn long out of copyright. The last has no first line yet, so
+# the completeness page has a hymn line to show.
+HYMNS = [
+    ("11", "Creator of the stars of night"),
+    ("12", "O come, O come, Emmanuel"),
+    ("14", "Lo, he comes with clouds descending"),
+    ("16", "Hark the glad sound! the Saviour comes"),
+    ("18", ""),
+]
+
+# The Ave Maria's words, with the prayer's usual English.
+AVE_TEXT = (
+    "Ave Maria, gratia plena,\nDominus tecum,\nbenedicta tu in mulieribus,\n"
+    "et benedictus fructus ventris tui. Amen."
+)
+AVE_TRANSLATION = (
+    "Hail Mary, full of grace,\nthe Lord is with thee;\nblessed art thou among women,\n"
+    "and blessed is the fruit of thy womb. Amen."
+)
+
 
 def crest_png():
     """A plain invented emblem, drawn here so no real crest is used."""
@@ -100,16 +123,16 @@ def service(term, day, service_type, template):
     return new
 
 
-def fill(new_service, scores, confirmed=True, not_applicable=()):
-    """Give each slot a piece, in turn, except those marked N/A."""
+def fill(new_service, scores, confirmed=True, not_applicable=(), hymn=None):
+    """Give each slot a piece, in turn, except those marked N/A. A Hymn
+    slot takes the hymn entry, if one is given."""
     for number, slot in enumerate(new_service.roles.order_by("position")):
         if slot.role_name in not_applicable:
             slot.is_not_applicable = True
             slot.save()
             continue
-        RolePiece.objects.create(
-            service_role=slot, score=scores[number % len(scores)], is_confirmed=confirmed or number % 2 == 0
-        )
+        piece = {"hymn_entry": hymn} if hymn and slot.kind == "hymn" else {"score": scores[number % len(scores)]}
+        RolePiece.objects.create(service_role=slot, is_confirmed=confirmed or number % 2 == 0, **piece)
 
 
 def main():
@@ -147,6 +170,21 @@ def main():
             score.suited_use_types.add(mass_use)
         scores.append(score)
     by_title = {score.title: score for score in scores}
+    ave = by_title["Ave Maria"]
+    ave.text, ave.translation = AVE_TEXT, AVE_TRANSLATION
+    ave.translation_credit = "Traditional English"
+    ave.save()
+
+    hymnal = Hymnal.objects.create(
+        organisation=church, name="St Aelred's Hymn Book", short_name="SAH",
+        copies_owned=60, filing_location="Choir vestry",
+    )
+    hymns = []
+    for number, first_line in HYMNS:
+        entry = HymnEntry.find_or_make(hymnal, number)
+        entry.hymn.first_line = first_line
+        entry.hymn.save()
+        hymns.append(entry)
 
     mass = SlotTemplate.objects.get(organisation=church, name="Mass")
     vespers = SlotTemplate.objects.get(organisation=church, name="Vespers")
@@ -177,10 +215,18 @@ def main():
 
     for new_service, week in planned:
         if week < 2:
-            fill(new_service, advent_music, confirmed=True, not_applicable=("Gloria", "Credo"))
+            fill(new_service, advent_music, confirmed=True, not_applicable=("Gloria", "Credo"), hymn=hymns[week])
         elif week == 2:
-            fill(new_service, advent_music, confirmed=False, not_applicable=("Gloria",))
+            fill(new_service, advent_music, confirmed=False, not_applicable=("Gloria",), hymn=hymns[week])
     fill(feast, advent_music[1:], confirmed=True)
+
+    # A Mass in the 1962 form, left empty, so its Proper slots offer the
+    # day's chants from the 1962 Missal.
+    extraordinary = Term.objects.create(
+        organisation=church, name="Advent 2026, 1962 Missal", start_date=date(2026, 11, 29),
+        end_date=date(2026, 12, 20), calendar_use="historic",
+    )
+    service(extraordinary, date(2026, 11, 29), "Missa cantata", mass)
 
     TermMarker.objects.create(term=advent, date=date(2026, 12, 1), text="Extra rehearsal for the carol service")
     TermMarker.objects.create(term=advent, date=date(2026, 12, 15), text="Copies of the Christmas music handed out")
