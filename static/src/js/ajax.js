@@ -31,6 +31,30 @@ export async function postForm(url, formData) {
   return data;
 }
 
+// Runs one AJAX submit with its button disabled and marked busy, so a
+// quick double-click can't send it twice. Both are put back in finally,
+// whatever happens, so an error never leaves a form that can't be sent.
+// This runs before the caller applies the response, so a button the
+// response then replaces is replaced by a fresh one, enabled as served.
+// A form sent without a button (a chant's, by
+// requestSubmit) uses its first submit button. A disabled button loses
+// focus, so a button that had it gets it back, before the caller moves
+// focus anywhere else.
+export async function whileBusy(form, submitter, work) {
+  const button = submitter ?? form.querySelector("button[type=submit], button:not([type])");
+  if (!button) return work();
+  const hadFocus = document.activeElement === button;
+  button.disabled = true;
+  button.setAttribute("aria-busy", "true");
+  try {
+    return await work();
+  } finally {
+    button.disabled = false;
+    button.removeAttribute("aria-busy");
+    if (hadFocus) button.focus();
+  }
+}
+
 // Swaps each fragment into the DOM by id. IDs with no matching element
 // are returned in `unmatched` for the caller to append (feature-specific
 // knowledge, kept out of this generic function). If focusId is given,

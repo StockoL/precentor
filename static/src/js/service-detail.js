@@ -1,4 +1,4 @@
-import { postForm, applyFragments, fragmentToElement, AjaxError } from "./ajax.js";
+import { postForm, applyFragments, fragmentToElement, AjaxError, whileBusy } from "./ajax.js";
 import { showToast } from "./toast.js";
 import { initScorePickers } from "./score-picker.js";
 import { confirmAction } from "./confirm-dialog.js";
@@ -163,7 +163,7 @@ function initServiceDetail() {
       event.preventDefault();
       const button = form.querySelector("button[id^='confirm-toggle-']");
       try {
-        const data = await postForm(form.action, new FormData(form));
+        const data = await whileBusy(form, event.submitter, () => postForm(form.action, new FormData(form)));
         applyFragments(data.fragments, button.id);
         showToast("Piece updated.", "success");
       } catch (err) {
@@ -179,7 +179,7 @@ function initServiceDetail() {
       // sends confirm=1. Enter in a field and a chant's button don't.
       const fields = new FormData(form, event.submitter);
       try {
-        const data = await postForm(form.action, fields);
+        const data = await whileBusy(form, event.submitter, () => postForm(form.action, fields));
         const unmatched = applyFragments(data.fragments);
         const ul = document.getElementById(`role-${rolePk}-pieces`);
         Object.values(unmatched).forEach((html) => {
@@ -217,7 +217,7 @@ function initServiceDetail() {
       event.preventDefault();
       const kind = form.querySelector("select").selectedOptions[0].textContent;
       try {
-        const data = await postForm(form.action, new FormData(form));
+        const data = await whileBusy(form, event.submitter, () => postForm(form.action, new FormData(form)));
         applyFragments(data.fragments);
         showToast(`Now shown as ${kind}.`, "success");
       } catch (err) {
@@ -231,7 +231,7 @@ function initServiceDetail() {
       const { slotName, direction } = form.dataset;
       const buttonId = form.querySelector("button").id;
       try {
-        const data = await postForm(form.action, new FormData(form));
+        const data = await whileBusy(form, event.submitter, () => postForm(form.action, new FormData(form)));
         afterSlotsMoved(data.fragments);
         focusMoveButton(buttonId);
         showToast(`Moved ${slotName} ${direction}.`, "success");
@@ -261,7 +261,7 @@ function initServiceDetail() {
       const data = new FormData(form);
       data.set("confirm", "1");
       try {
-        afterSlotsMoved((await postForm(form.action, data)).fragments);
+        afterSlotsMoved((await whileBusy(form, event.submitter, () => postForm(form.action, data))).fragments);
         const next = neighbourId && document.querySelector(`#${neighbourId} summary`);
         (next || document.getElementById("id_role_name"))?.focus();
         showToast(`Removed ${slotName}.`, "success");
@@ -294,7 +294,7 @@ function initServiceDetail() {
     if (form.matches(".ajax-add-role")) {
       event.preventDefault();
       try {
-        const data = await postForm(form.action, new FormData(form));
+        const data = await whileBusy(form, event.submitter, () => postForm(form.action, new FormData(form)));
         const unmatched = applyFragments(data.fragments);
         const list = document.getElementById("roles-list");
         Object.values(unmatched).forEach((html) => {

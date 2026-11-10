@@ -1,4 +1,4 @@
-import { postForm, applyFragments, fragmentToElement, AjaxError } from "./ajax.js";
+import { postForm, applyFragments, fragmentToElement, AjaxError, whileBusy } from "./ajax.js";
 import { showToast } from "./toast.js";
 import { confirmAction } from "./confirm-dialog.js";
 
@@ -17,7 +17,7 @@ function initComments() {
       event.preventDefault();
       const isReply = Boolean(form.querySelector('input[name="parent_id"]'));
       try {
-        const data = await postForm(form.action, new FormData(form));
+        const data = await whileBusy(form, event.submitter, () => postForm(form.action, new FormData(form)));
         const unmatched = applyFragments(data.fragments);
         Object.values(unmatched).forEach((html) => {
           document.getElementById("comment-list-empty")?.remove();
@@ -35,7 +35,7 @@ function initComments() {
     if (form.matches(".ajax-toggle-close")) {
       event.preventDefault();
       try {
-        const data = await postForm(form.action, new FormData(form));
+        const data = await whileBusy(form, event.submitter, () => postForm(form.action, new FormData(form)));
         applyFragments(data.fragments);
       } catch (err) {
         showToast("Couldn't update that comment. Try again.", "danger");
@@ -52,7 +52,7 @@ function initComments() {
       });
       if (!confirmed) return;
       try {
-        const data = await postForm(form.action, new FormData(form));
+        const data = await whileBusy(form, event.submitter, () => postForm(form.action, new FormData(form)));
         applyFragments(data.fragments);
         if (!document.querySelector("#comment-list .comment")) {
           const empty = document.createElement("p");
