@@ -752,8 +752,9 @@ aren't.
   common case.
 - Ordo as a liturgical reference tool. Ordo's job is to name, date and
   colour occasions, for ranking repertoire and labelling services. It
-  doesn't model readings, psalms, propers or rubrical detail (e.g.
-  whether the Gloria is said), even if it later covers other calendars.
+  doesn't model readings, psalms or rubrical detail (e.g. whether the
+  Gloria is said), and of the propers it holds only the chants' opening
+  words (the next item), even if it later covers other calendars.
   That's a separate, mature domain with authoritative tools already
   serving it well, and duplicating it would mean building a different
   application inside Precentor.
@@ -763,8 +764,9 @@ aren't.
   feasts.
 - Hymnal contents. Precentor ships no hymn numbers, first lines, tunes
   or metres. A church's hymns build up as it types a book and number
-  into a slot, so nothing is copied from a published hymnal's index,
-  whose copyright I'm not in a position to judge.
+  into a slot, or as it imports its own list for a book, so I copy
+  nothing from a published hymnal's index, whose copyright I'm not in a
+  position to judge.
 - Fully customisable music list layouts (drag-and-drop design, arbitrary
   field order or typography). Precentor ships one default layout and a
   small set of high-value settings (column style, house accent colour,
