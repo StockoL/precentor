@@ -51,7 +51,7 @@ days.
   test and its result, the widths and browsers I checked, the automated
   tests, the validators, Lighthouse, and the bugs I fixed or left.
 - **Trying it:** open the [live site](https://precentor.onrender.com),
-  choose Sign up and register a church of your own. You're its owner,
+  choose Register and set up a church of your own. You're its owner,
   so every page is open to you, and nobody else's data is in reach.
 - **Design:** [`docs/design_system.md`](docs/design_system.md) covers
   the CSS method, the cascade layers, the tokens, the type and the
