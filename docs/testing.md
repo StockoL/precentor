@@ -189,6 +189,26 @@ service page gained only 32 ms. With both:
 These were measured on the development server, which doesn't compress
 files; the live site sends the compressed copy whitenoise makes.
 
+Measured again on 10 November 2026 at `b500e3f`, with Lighthouse 12.2.1
+in Google Chrome 157, on the nine pages above and signed in where the page
+needs it, one run each on desktop and on mobile:
+
+| Page                 | Performance (desktop / mobile) | Accessibility | Best practices | SEO | First paint (mobile) | Layout shift |
+| -------------------- | ------------------------------ | ------------- | -------------- | --- | -------------------- | ------------ |
+| Sign in              | 100 / 99                       | 100           | 100            | 100 | 1.5 s                | 0            |
+| Terms                | 100 / 99                       | 100           | 100            | 100 | 1.5 s                | 0            |
+| A service            | 100 / 95                       | 100           | 100            | 100 | 2.0 s                | 0            |
+| Library              | 100 / 99                       | 100           | 100            | 100 | 1.5 s                | 0            |
+| Music list           | 100 / 96                       | 100           | 100            | 100 | 1.8 s                | 0            |
+| Pew sheet            | 100 / 98                       | 100           | 100            | 100 | 1.7 s                | 0            |
+| Library completeness | 100 / 99                       | 100           | 100            | 100 | 1.5 s                | 0            |
+| A hymnal             | 100 / 99                       | 100           | 100            | 100 | 1.5 s                | 0            |
+| Import               | 100 / 99                       | 100           | 100            | 100 | 1.5 s                | 0            |
+
+Accessibility, best practices and SEO are 100 on every page, on both.
+The service page and the music list are the longest pages, which is why
+they're the slowest to fill a simulated phone's screen.
+
 ## 4. Automated tests
 
 The suite has 881 tests, run on 3 November 2026 at commit `c68cb19`;
