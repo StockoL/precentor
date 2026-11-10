@@ -1594,6 +1594,14 @@ What's designed or wanted but not built yet:
   from Drive after signing in to Google. It needs a Google Cloud
   project, keys and a consent screen, and the Sheets link already
   covers most of what it would do, so I left it out.
+- **A public link to a term's music list.** The list needs a login, so
+  a church prints it or passes on a copy. A link anyone could open
+  would let it go on a church's website.
+- **Backup and restore.** A church can export its library, but not
+  everything it holds as one file to keep or bring back.
+- **One text for many settings.** A score's text and translation belong
+  to that score, so the Ave verum is typed again for each composer who
+  set it. A shared text would be entered once.
 
 ## 20. Technologies used
 
