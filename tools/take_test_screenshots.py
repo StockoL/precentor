@@ -113,8 +113,10 @@ def main():
                 context.close()
 
         context, page = open_page(chromium, 1280)
-        # M04: a score form sent empty.
+        # M04: a score form sent empty. The browser's own check would stop
+        # it first, so it's turned off to show what the server says.
         page.goto(BASE + "/library/add/")
+        page.evaluate("document.querySelector('main form').noValidate = true")
         page.click("main button.btn-primary")
         page.wait_for_load_state("networkidle")
         save(page.screenshot(), "m04-score-form-errors.png")
