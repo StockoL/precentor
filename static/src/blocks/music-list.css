@@ -170,7 +170,8 @@
  */
 @media print {
   .site-nav,
-  .music-list-controls {
+  .music-list-controls,
+  .site-footer {
     display: none;
   }
 

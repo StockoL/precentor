@@ -70,3 +70,14 @@ class OneStylesheetTests(SimpleTestCase):
         for path in templates:
             with self.subTest(template=path.name):
                 self.assertNotIn("<style", path.read_text(encoding="utf-8"))
+
+
+class PrintTests(SimpleTestCase):
+    def test_printing_hides_the_navigation_controls_and_footer(self):
+        """The music list and pew sheet print as the list alone: the
+        footer's Privacy link once printed at the end of the last page."""
+        css = (SOURCE_DIR / "blocks" / "music-list.css").read_text(encoding="utf-8")
+        hidden = re.search(r"@media print \{\s*([^{]+)\{\s*display: none;", css)
+        self.assertIsNotNone(hidden, "The print block should start by hiding what isn't the list.")
+        selectors = {part.strip() for part in hidden.group(1).split(",")}
+        self.assertEqual(selectors, {".site-nav", ".music-list-controls", ".site-footer"})

@@ -50,7 +50,7 @@
  *   blocks/template-slot.css
  *   utilities/utilities.css
  *
- * Fingerprint: 54030173b77332b329eb2ecac96f18bcffed4a2d050b2c14357d744283990409
+ * Fingerprint: 69fef10c688c32f183d4696f9bcdc682ed3efbbf5ea28e4948ed26080e877fc0
  */
 
 /* ---- global/layers.css ---- */
@@ -2457,7 +2457,8 @@
  */
 @media print {
   .site-nav,
-  .music-list-controls {
+  .music-list-controls,
+  .site-footer {
     display: none;
   }
 
