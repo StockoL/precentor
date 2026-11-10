@@ -232,7 +232,23 @@ class RolePieceForm(forms.ModelForm):
         given = [bool(cleaned.get("score")), bool(number), bool(cleaned.get("reference"))]
         if given.count(True) != 1:
             raise forms.ValidationError(ONE_PIECE_MESSAGE)
+        if self.already_proposed(cleaned, number):
+            raise forms.ValidationError("That's already proposed for this slot.")
         return cleaned
+
+    def already_proposed(self, cleaned, number):
+        """
+        Whether the slot already has this piece: the same score, the same
+        number in the same book, or the same reference whatever its
+        capitals. Checked here only, not by the database, as slots on the
+        live site may already hold repeats from before.
+        """
+        pieces = self.role.pieces.all()
+        if cleaned.get("score"):
+            return pieces.filter(score=cleaned["score"]).exists()
+        if number:
+            return pieces.filter(hymn_entry__hymnal=cleaned.get("hymnal"), hymn_entry__number__iexact=number).exists()
+        return pieces.filter(reference__iexact=cleaned["reference"]).exists()
 
     def save(self, commit=True):
         """A hymn's entry is found, or made with its hymn the first time
