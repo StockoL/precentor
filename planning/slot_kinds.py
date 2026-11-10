@@ -99,6 +99,11 @@ def classify(name):
 # in the library, so the add-piece form offers a reference box first.
 REFERENCE_FIRST = {"hymn", "psalm", "antiphon", "responsory"}
 
+# Kinds whose music is usually a score, so a typed reference in one is a
+# piece the library doesn't hold yet. Propers are left out with the kinds
+# above: they're chant, typed or chosen from the day's.
+LIBRARY_KINDS = {"ordinary", "motet", "organ", "canticle", "other"}
+
 # Kinds a day can have several chants of, outside the Mass's propers:
 # Palm Sunday's antiphons, hymn and responsory, the Easter Vigil's
 # canticles. A slot of one of these kinds is offered the day's chants of it.

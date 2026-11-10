@@ -370,6 +370,35 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
         self.page.click("h1")
         self.page.wait_for_function(f"!({open_js})")
 
+    def test_text_matching_no_score_can_be_used_as_typed(self):
+        form = f"#add-piece-form-{self.role.pk}"
+        input_sel = f"{form} .score-combobox__input"
+        option_sel = f"{form} .score-combobox__listbox li[role=option]"
+
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.wait_for_selector(input_sel)
+        self.page.fill(input_sel, "Missa brevis")
+        self.page.wait_for_function(f"document.querySelectorAll('{option_sel}').length === 1")
+        assert self.page.inner_text(option_sel) == 'Use "Missa brevis" as typed (not in the library)'
+
+        # Reached and chosen with the keyboard, and named to a screen reader
+        # as the active option, like any other.
+        self.page.keyboard.press("ArrowDown")
+        option_id = self.page.get_attribute(option_sel, "id")
+        assert self.page.get_attribute(input_sel, "aria-activedescendant") == option_id
+        assert self.page.get_attribute(option_sel, "aria-selected") == "true"
+        self.page.keyboard.press("Enter")
+
+        assert self.page.input_value(f"{form} input[name=reference]") == "Missa brevis"
+        assert self.page.input_value(f"{form} input[name=score]") == ""
+        assert self.page.input_value(input_sel) == ""
+
+        # Enter again, now in the reference box, proposes it.
+        self.page.keyboard.press("Enter")
+        self.page.wait_for_selector(f"#role-{self.role.pk}-pieces li:has-text('Not in the library.')")
+        piece = RolePiece.objects.get(service_role=self.role)
+        assert (piece.reference, piece.score) == ("Missa brevis", None)
+
 
 class OccasionAutoSuggestBrowserTest(PlaywrightTestCase):
     def setUp(self):

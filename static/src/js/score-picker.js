@@ -106,7 +106,7 @@ function buildCombobox(container) {
     listbox.innerHTML = "";
     let group = null;
     filtered.forEach((option, index) => {
-      if (option.group !== group) {
+      if (option.group !== group && GROUP_LABELS[option.group]) {
         group = option.group;
         const heading = document.createElement("li");
         heading.id = `${listboxId}-${group}`;
@@ -119,7 +119,7 @@ function buildCombobox(container) {
       const li = document.createElement("li");
       li.id = `${listboxId}-option-${index}`;
       li.setAttribute("role", "option");
-      li.setAttribute("aria-describedby", `${listboxId}-${group}`);
+      if (!option.typed) li.setAttribute("aria-describedby", `${listboxId}-${group}`);
       li.textContent = option.label;
       if (option.reasons.length) {
         const reasons = document.createElement("span");
@@ -127,7 +127,7 @@ function buildCombobox(container) {
         reasons.textContent = option.reasons.join("; ");
         li.append(" ", reasons);
       }
-      li.dataset.value = option.value;
+      li.dataset.index = index;
       if (index === activeIndex) li.setAttribute("aria-selected", "true");
       listbox.appendChild(li);
     });
@@ -145,7 +145,18 @@ function buildCombobox(container) {
     activeIndex = -1;
   }
 
+  // The "as typed" option moves the text to the reference box, where it
+  // would have gone without the search, and leaves no score chosen.
   function choose(option) {
+    if (option.typed) {
+      valueInput.value = "";
+      input.value = "";
+      closeList();
+      const reference = form.querySelector("input[name='reference']");
+      reference.value = option.text;
+      reference.focus();
+      return;
+    }
     valueInput.value = option.value;
     input.value = option.label;
     closeList();
@@ -153,8 +164,14 @@ function buildCombobox(container) {
 
   input.addEventListener("input", () => {
     options = arrange(getScoreOptions(), slotUseType(container));
-    const query = input.value.trim().toLowerCase();
+    const text = input.value.trim();
+    const query = text.toLowerCase();
     filtered = query ? options.filter((option) => option.label.toLowerCase().includes(query)) : options;
+    // Nothing matches: offer the text as a reference instead, as an option
+    // like the others, so the arrow keys, Enter and a screen reader reach it.
+    if (query && !filtered.length) {
+      filtered = [{ typed: true, text, group: "typed", reasons: [], label: `Use "${text}" as typed (not in the library)` }];
+    }
     activeIndex = -1;
     renderOptions();
     openList();
@@ -203,9 +220,9 @@ function buildCombobox(container) {
   });
 
   listbox.addEventListener("mousedown", (event) => {
-    const li = event.target.closest("li");
+    const li = event.target.closest("li[role=option]");
     if (!li) return;
-    const option = filtered.find((o) => o.value === li.dataset.value);
+    const option = filtered[Number(li.dataset.index)];
     if (option) choose(option);
   });
 

@@ -9,6 +9,10 @@
         {% if can.edit_library and piece.score and not piece.score.voicing %}
         <span class="list-row__meta">No voicing recorded yet. <a href="{% url 'library:score_update' piece.score.pk %}?next={{ piece.get_absolute_url|urlencode }}">Add it<span class="visually-hidden"> for {{ piece.score.title }}</span></a></span>
         {% endif %}
+        {# Everyone sees the note; only those who can edit the library are offered the score form, with the title filled in. #}
+        {% if piece.is_outside_library %}
+        <span class="list-row__meta">Not in the library.{% if can.edit_library %} <a href="{% url 'library:score_create' %}?title={{ piece.reference|urlencode }}&amp;next={{ piece.get_absolute_url|urlencode }}">Add to library<span class="visually-hidden">: {{ piece.reference }}</span></a>{% endif %}</span>
+        {% endif %}
         {% if can.edit_library and piece.hymn_entry and not piece.hymn_entry.hymn.first_line %}
         <span class="list-row__meta">No first line recorded yet. <a href="{% url 'library:hymn_update' piece.hymn_entry.hymn_id %}?next={{ piece.get_absolute_url|urlencode }}">Add it<span class="visually-hidden"> for {{ piece.hymn_entry }}</span></a></span>
         {% endif %}

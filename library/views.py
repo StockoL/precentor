@@ -224,10 +224,18 @@ class LibraryEditRequiredMixin(RoleRequiredMixin):
 
 
 class ScoreFormMixin:
-    """What the score form page needs beyond the form itself."""
+    """What the score form page needs beyond the form itself. Opened from
+    elsewhere with ?next=, such as a service asking for a voicing, it goes
+    back there after saving."""
+
+    def next_url(self):
+        return safe_next(self.request, self.request.POST.get("next") or self.request.GET.get("next"))
+
+    def get_success_url(self):
+        return self.next_url() or super().get_success_url()
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super().get_context_data(next=self.next_url(), **kwargs)
         # For the voicing field's <datalist> of suggestions.
         context["existing_voicings"] = (
             Score.objects.for_organisation(self.request.organisation)
@@ -240,25 +248,19 @@ class ScoreFormMixin:
 
 
 class ScoreCreateView(LibraryEditRequiredMixin, OrganisationCreateMixin, ScoreFormMixin, CreateView):
+    """A new score. A service's "Add to library" link fills in the title
+    with ?title=, from the reference typed there."""
+
     model = Score
     form_class = ScoreForm
+
+    def get_initial(self):
+        return {**super().get_initial(), "title": self.request.GET.get("title", "")}
 
 
 class ScoreUpdateView(LibraryEditRequiredMixin, OrganisationScopedMixin, ScoreFormMixin, UpdateView):
-    """Editing a score. Opened from elsewhere with ?next=, such as a service
-    asking for a voicing, it goes back there after saving."""
-
     model = Score
     form_class = ScoreForm
-
-    def next_url(self):
-        return safe_next(self.request, self.request.POST.get("next") or self.request.GET.get("next"))
-
-    def get_success_url(self):
-        return self.next_url() or super().get_success_url()
-
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(next=self.next_url(), **kwargs)
 
 
 class ScoreDeleteView(LibraryEditRequiredMixin, OrganisationScopedMixin, DeletePageMixin, DeleteView):

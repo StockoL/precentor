@@ -205,13 +205,14 @@ class RolePieceForm(forms.ModelForm):
         else:
             self.fields["score"].label = "Score"
             self.fields["reference"].label = "Or type a reference"
+        self.fields["reference"].help_text = 'Anything not in the library can be typed here, e.g. "Psalm 150, tone 4"'
         if role.hymnals_on_offer:
             self.fields["hymnal"].queryset = Hymnal.objects.filter(pk__in=[h.pk for h in role.hymnals_on_offer])
             self.fields["hymnal"].initial = role.default_hymnal
             self.order_fields(["hymnal", "number", "reference", "score"])
             self.fields["reference"].label = "Or type a reference"
             # Typed as text, a hymn number couldn't be counted as that hymn.
-            self.fields["reference"].help_text = 'For anything not in a hymnal, e.g. "Psalm 150, tone 4"'
+            self.fields["reference"].help_text = 'For anything not in a hymnal or the library, e.g. "Psalm 150, tone 4"'
         else:
             del self.fields["hymnal"], self.fields["number"]
 

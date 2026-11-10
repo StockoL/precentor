@@ -11,7 +11,7 @@ from accounts.querysets import OrganisationQuerySet
 from library.models import Hymnal, HymnEntry, Score, Tune
 from ordo.models import CALENDAR_USE_CHOICES, proper_chants, weekday_sunday
 
-from .slot_kinds import KIND_CHOICES, MANY_CHANT_KINDS, PROPER_PART_CHOICES, REFERENCE_FIRST, classify
+from .slot_kinds import KIND_CHOICES, LIBRARY_KINDS, MANY_CHANT_KINDS, PROPER_PART_CHOICES, REFERENCE_FIRST, classify
 
 
 def comment_count_on(model, pks):
@@ -713,6 +713,16 @@ class RolePiece(models.Model):
         if self.hymn_entry_id:
             return str(self.hymn_entry)
         return self.reference
+
+    @property
+    def is_outside_library(self):
+        """
+        A reference typed into a slot whose music is usually a score, such
+        as a motet the library doesn't hold yet. The service page says so
+        quietly and offers to add it. A score added later doesn't change
+        the piece: it stays a reference unless it's proposed again.
+        """
+        return not self.score_id and not self.hymn_entry_id and self.service_role.kind in LIBRARY_KINDS
 
     def __str__(self):
         return f"{self.title} ({'confirmed' if self.is_confirmed else 'proposed'})"
