@@ -335,7 +335,7 @@ class KeepImportTests(TestCase):
 
         self.assertEqual(self.client.get(self.url).status_code, 405)
         self.client.post(self.url)
-        self.assertEqual(self.client.post(self.url).status_code, 404)
+        self.assertRedirects(self.client.post(self.url), "/library/", fetch_redirect_response=False)
         self.client.force_login(make_user("viewer", organisation=self.church))
         self.assertEqual(self.client.post(self.url).status_code, 403)
 

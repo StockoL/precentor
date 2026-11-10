@@ -406,16 +406,20 @@ class ScoreImportDetailView(LibraryEditRequiredMixin, OrganisationScopedMixin, D
 @role_required(can_edit_library)
 @require_POST
 def keep_import(request, pk):
-    """Keep a pending import's scores for good. Only a pending import of
-    the church's own can be found, so keeping twice is a 404, not an error."""
-    score_import = get_object_or_404(own(ScoreImport, request), pk=pk, status=ScoreImport.PENDING)
+    """Keep a pending import's scores for good. If it has already been
+    kept or removed (Back, or a second click), the person goes to the
+    library with a message, as when removing, rather than "not found"."""
+    score_import = own(ScoreImport, request).filter(pk=pk, status=ScoreImport.PENDING).first()
+    if score_import is None:
+        messages.info(request, "That import has already been removed or kept.")
+        return redirect("library:score_list")
     score_import.keep()
     count = score_import.scores.count()
     messages.success(request, f"Kept {count} score{pluralize(count)} from {score_import.original_filename}.")
     return redirect("library:score_list")
 
 
-@login_required
+@role_required(can_edit_library)
 def remove_import(request, pk):
     """
     Remove a pending import: its scores are deleted, except any already
@@ -701,14 +705,18 @@ class HymnImportDetailView(LibraryEditRequiredMixin, OrganisationScopedMixin, De
 @role_required(can_edit_library)
 @require_POST
 def keep_hymn_import(request, pk):
-    """Keep a pending hymnal import for good, as for scores."""
-    hymn_import = get_object_or_404(own(HymnImport, request), pk=pk, status=HymnImport.PENDING)
+    """Keep a pending hymnal import for good, as for scores, with the
+    same message if it's already been kept or removed."""
+    hymn_import = own(HymnImport, request).filter(pk=pk, status=HymnImport.PENDING).first()
+    if hymn_import is None:
+        messages.info(request, "That import has already been removed or kept.")
+        return redirect("library:hymnal_list")
     hymn_import.keep()
     messages.success(request, f"Kept the import into {hymn_import.hymnal.short_name}.")
     return redirect(hymn_import.hymnal)
 
 
-@login_required
+@role_required(can_edit_library)
 def remove_hymn_import(request, pk):
     """Undo a pending hymnal import, after asking; Back or a second click
     goes to the hymnals with a message, as for scores."""
