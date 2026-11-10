@@ -4,10 +4,14 @@ This covers the automated tests, the checks I ran on the code, the
 manual tests, and the bugs found along the way. Each check says what I
 used, what it found and whether that's resolved.
 
-Everything here was run again on 10 November 2026 on the code that
-became the live site, between commits `61f3790` and `b500e3f`, on a
-local copy of the site with the invented demo church. Rows M59 and M60
-were added later the same day, at `4746a58`, M61 to M64 at `59e3469`, and M65 at `b0fafbf`. The manual tests
+Everything here was run again on 10 November 2026, on a local copy of
+the site with the invented demo church. The manual tests were run
+between commits `61f3790` and `b500e3f`, with rows M59 and M60 added
+later the same day at `4746a58`, M61 to M64 at `59e3469`, and M65 at
+`b0fafbf`. The checks in sections 1 to 3, the widths and browsers, and
+the contrast were all run again at `8908668`, with the checkers' own
+screenshots; the commits after it change only the documentation, the
+ESLint settings and a screenshot tool. The manual tests
 were carried out in Google Chrome 157 on Windows 11, driven by
 Playwright and checked by me row by row, or by the automated test
 named. Playwright's own Chromium 149 hangs on cross-document page
@@ -18,22 +22,39 @@ the automated browser tests, where every page is opened by its address.
 
 | Check | What I used | What it found on 10 November | Resolved? |
 | ----- | ----------- | ---------------------------- | --------- |
-| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 954 tests, all passing, at `a410aaa` (section 4) | Nothing to resolve. There were 553 at submission |
-| Deployment settings | `python manage.py check --deploy` with `DEBUG` off | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve |
-| Migrations | `python manage.py makemigrations --check --dry-run`, and a rehearsal of the merge on a copy of the live database ([`merge_record.md`](merge_record.md)) | No missing migrations. On the copy, all 28 new migrations ran, `check_copied_data` found everything copied, and all 177 pages opened for every church | Nothing to resolve |
-| Python style | flake8 7.4.1 with the settings in `.flake8` (line length 120, `venv` and migrations left out) | No findings | At submission: two unused imports, a blank line and an escape, fixed in `1f2e618`; more in `722ffc4`; the 16 long lines, the variable `l` and the lambda left then were cleared in `86ad9e8` |
+| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 954 tests, all passing, at `8908668` (section 4), and again in my own terminal (Check figure 1) | Nothing to resolve. There were 553 at submission |
+| Deployment settings | `python manage.py check --deploy` with `DEBUG` off and the host name Render sets | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for (Check figure 2) | Nothing to resolve |
+| Migrations | `python manage.py makemigrations --check --dry-run`, and a rehearsal of the merge on a copy of the live database ([`merge_record.md`](merge_record.md)) | No missing migrations (Check figure 2). On the copy, all 28 new migrations ran, `check_copied_data` found everything copied, and all 177 pages opened for every church | Nothing to resolve |
+| Python style | flake8 7.4.1 with the settings in `.flake8` (line length 120, `venv` and migrations left out) | No findings (Check figure 2) | At submission: two unused imports, a blank line and an escape, fixed in `1f2e618`; more in `722ffc4`; the 16 long lines, the variable `l` and the lambda left then were cleared in `86ad9e8` |
 | Leftover debugging | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app. The scripts in `tools/` print what they've done, on purpose | Nothing to resolve |
 | Files that shouldn't be tracked | `git ls-files`, searched for `.env`, database files, keys, `venv` and uploaded media; `git grep` for literal secret keys and passwords | None tracked. The only passwords in the code are test values and the demo church's, used for screenshots | `*.sqlite3` added to `.gitignore` in `442ef09` |
-| HTML validation | The W3C's Nu HTML Checker 26.11.9 through [`tools/validate_html.py`](../tools/validate_html.py), every page (section 2) | 74 pages, no errors. 30 warnings, all `role="list"` | The `role="list"` is deliberate (README §16). Errors fixed earlier: the Settings colour picker (`7abd14c`) and a form inside a `<span>` on the service page (`5866886`) |
-| CSS validation | [W3C CSS Validator](https://jigsaw.w3.org/css-validator/), CSS level 3 profile, each of the 47 source files in `static/src/` | 42 files with no errors. 8 errors in 5 files, all CSS the validator doesn't know yet: `@container` and `container-type` (music list), `@view-transition` and its pseudo-elements (global styles and the sign-in pages' stylesheet), `view-transition-name` (navigation), and `pointer-events`, which is outside the CSS3 profile | Nothing to fix: each is supported by current browsers |
-| JavaScript | [ESLint](https://eslint.org/) 8.57 with its recommended rules, for browser ES modules, over all 14 files in `static/src/js/` | No errors and no warnings | Nothing to resolve. The JavaScript is also exercised by the browser tests |
-| Lighthouse | Lighthouse 12.2.1 in Chrome 157, nine pages, desktop and mobile (section 3) | Accessibility, best practices and SEO 100 on every page; performance 100 on desktop, 95 to 99 on mobile | At submission a missing favicon and meta description cost points: fixed in `0b642e4` and `7b6fab4`. Mobile speed improved in `49ec234`, `e55fd08`, `094f805` and `791158d` |
+| HTML validation | The W3C's Nu HTML Checker 26.11.9 on my computer through [`tools/validate_html.py`](../tools/validate_html.py), every page; then the 25 main pages on the W3C's online checker, 26.11.10 (section 2) | 75 pages, no errors. 30 warnings, all `role="list"`. Online, no errors on any of the 25, and 27 warnings, all `role="list"` | The `role="list"` is deliberate (README §16). Errors fixed earlier: the Settings colour picker (`7abd14c`) and a form inside a `<span>` on the service page (`5866886`) |
+| CSS validation | [W3C CSS Validator](https://jigsaw.w3.org/css-validator/), CSS level 3 profile, on the two stylesheets the site serves, which hold all 47 source files in `static/src/` (section 2) | 8 errors, all CSS the validator doesn't know yet: `@container` and `container-type` (music list), `@view-transition` and its pseudo-elements (global styles and the sign-in pages' stylesheet), `view-transition-name` (navigation), and `pointer-events`, which is outside the CSS3 profile. 13 warnings, on vendor prefixes, custom properties it doesn't check, and `clip` | Nothing to fix: each is supported by current browsers, and the warnings are explained in section 2 |
+| JavaScript | [ESLint](https://eslint.org/) 8.57 with its recommended rules, for browser ES modules (the settings in `.eslintrc.json`), over all 14 files in `static/src/js/` | No errors and no warnings (Check figure 2) | Nothing to resolve. The JavaScript is also exercised by the browser tests |
+| Lighthouse | Lighthouse 12.2.1 in Chrome 157, nine pages, desktop and mobile (section 3) | Accessibility, best practices and SEO 100 on every page; performance 100 on desktop, 94 to 99 on mobile | At submission a missing favicon and meta description cost points: fixed in `0b642e4` and `7b6fab4`. Mobile speed improved in `49ec234`, `e55fd08`, `094f805` and `791158d` |
 | Widths and browsers | [`tools/check_viewports.py`](../tools/check_viewports.py): 25 pages at 320, 375, 768, 1024 and 1280 pixels in Chromium, Firefox and WebKit (section 6) | 375 page loads, nothing wider than the window, no console errors | At submission the score form was 3 pixels too wide at 320, fixed in `6bf1062` |
-| Text contrast | Every visible piece of text on the 25 pages, measured against its background in light and dark (row R05) | All 1,403 meet WCAG AA in both; the lowest ratios are 4.83 in light and 5.7 in dark | Nothing to resolve |
+| Text contrast | Every visible piece of text on the 25 pages, measured against its background in light and dark (row R05) | All 1,424 meet WCAG AA in both; the lowest ratios are 4.83 in light and 5.7 in dark | Nothing to resolve |
 
-## 2. HTML validation by page
+Every check above was run again on 10 November 2026 at `8908668`. The
+checks that print to a terminal I ran once more in my own terminal in
+VS Code, and the screenshots are of that. flake8 and ESLint print
+nothing when they find nothing, so each command adds a line saying so.
+The last command sets `DEBUG` off and the host name as Render does,
+then clears both.
 
-Checked on 10 November 2026 at `b500e3f`, with
+![The VS Code terminal: python manage.py test found 954 tests, the system check found no issues, then a row of dots, Ran 954 tests in 510.070s, and OK](screenshots/testing/checks/terminal-tests.png)
+
+_Check figure 1. The whole suite in my terminal: 954 tests, all passing._
+
+![The VS Code terminal: flake8: no findings; ESLint: no findings; makemigrations --check --dry-run: No changes detected; check --deploy: System check identified no issues (1 silenced)](screenshots/testing/checks/terminal-linters-and-deploy.png)
+
+_Check figure 2. flake8, ESLint, the migrations check and the deployment check, one after another._
+
+## 2. HTML and CSS validation
+
+### HTML, every page
+
+Checked on 10 November 2026 at `8908668`, with
 [`tools/validate_html.py`](../tools/validate_html.py). It renders every
 page the project's routes give, signed in as a church's owner (or signed
 out, for the pages before signing in), with `DEBUG` off as on the live
@@ -44,7 +65,7 @@ download: the [online copy](https://validator.w3.org/nu/) sits behind
 Cloudflare, which kept turning the script away even at one request every
 ten minutes. A new page is checked without being added to a list.
 
-74 pages, **no errors**. The 30 warnings are all the same: "the list role
+75 pages, **no errors**. The 30 warnings are all the same: "the list role
 is unnecessary", on lists that keep `role="list"` on purpose (Safari stops
 announcing a list as a list once its bullets are removed; README §16).
 Routes that aren't HTML pages weren't sent: the crest image, three CSV
@@ -97,6 +118,7 @@ hymn's row on the service page (`5866886`).
 | Password saved (`password_reset_complete`) | 0 | 0 |  |
 | Choose a new password (reset link) (`password_reset_confirm`) | 0 | 0 |  |
 | Propose a piece (without JavaScript) (`planning:add_piece`) | 0 | 0 |  |
+| Remove a piece (without JavaScript) (`planning:remove_piece`) | 0 | 0 |  |
 | New notice (`planning:marker_create`) | 0 | 0 |  |
 | Delete a notice (`planning:marker_delete`) | 0 | 0 |  |
 | Edit a notice (`planning:marker_update`) | 0 | 0 |  |
@@ -130,6 +152,93 @@ hymn's row on the service page (`5866886`).
 | Terms, a new church's first steps | 0 | 0 |  |
 | Account deleted | 0 | 0 |  |
 | Church deleted | 0 | 0 |  |
+
+### HTML on the W3C's online checker
+
+So that the result isn't only my own copy's word, the 25 main pages
+went to the [online checker](https://validator.w3.org/nu/) as well, on
+10 November 2026 at `8908668`, by
+[`tools/take_validation_screenshots.py`](../tools/take_validation_screenshots.py)
+in Google Chrome. The online checker can't sign in to fetch a page
+itself, so each page's HTML, as the server sends it for the demo
+church, went in through its text box. Each screenshot shows the
+checker's own result, with the page's heading outline turned on, so
+the page it checked is named by its own headings.
+
+The online checker was 26.11.10, one release newer than my copy, and
+agreed with it: **no errors on any page**, and 27 warnings, every one
+"the list role is unnecessary" on the same deliberate lists.
+
+![The Nu HTML Checker online, checking the sign-in page by text input: Document checking completed. No errors or warnings to show, with the page's outline below](screenshots/testing/checks/html-sign-in.png)
+
+_Check figure 3. The sign-in page on the W3C's online checker: no errors or warnings._
+
+![The Nu HTML Checker online, checking a service page: eleven warnings, each The list role is unnecessary for element ul, then Document checking completed, and the outline headed Sung Mass, Sun 29 Nov 2026](screenshots/testing/checks/html-a-service.png)
+
+_Check figure 4. A service, the longest page: no errors, and only the deliberate `role="list"` warnings._
+
+<details>
+<summary>All 25 pages on the online checker</summary>
+
+| Page | Errors | Warnings, all `role="list"` | The checker's result |
+| ---- | ------ | ---------------------------- | -------------------- |
+| Sign in | 0 | 0 | [Screenshot](screenshots/testing/checks/html-sign-in.png) |
+| Register | 0 | 0 | [Screenshot](screenshots/testing/checks/html-register.png) |
+| Privacy | 0 | 0 | [Screenshot](screenshots/testing/checks/html-privacy.png) |
+| Terms | 0 | 1 | [Screenshot](screenshots/testing/checks/html-terms.png) |
+| A term | 0 | 3 | [Screenshot](screenshots/testing/checks/html-a-term.png) |
+| A service | 0 | 11 | [Screenshot](screenshots/testing/checks/html-a-service.png) |
+| Propose a piece | 0 | 0 | [Screenshot](screenshots/testing/checks/html-propose-a-piece.png) |
+| Pew sheet | 0 | 0 | [Screenshot](screenshots/testing/checks/html-pew-sheet.png) |
+| Music list | 0 | 0 | [Screenshot](screenshots/testing/checks/html-music-list.png) |
+| Library | 0 | 0 | [Screenshot](screenshots/testing/checks/html-library.png) |
+| A score | 0 | 0 | [Screenshot](screenshots/testing/checks/html-a-score.png) |
+| Add a score | 0 | 0 | [Screenshot](screenshots/testing/checks/html-add-a-score.png) |
+| Completeness | 0 | 2 | [Screenshot](screenshots/testing/checks/html-completeness.png) |
+| Import | 0 | 0 | [Screenshot](screenshots/testing/checks/html-import.png) |
+| Imports | 0 | 1 | [Screenshot](screenshots/testing/checks/html-imports.png) |
+| Hymnals | 0 | 1 | [Screenshot](screenshots/testing/checks/html-hymnals.png) |
+| A hymnal | 0 | 1 | [Screenshot](screenshots/testing/checks/html-a-hymnal.png) |
+| A hymn | 0 | 1 | [Screenshot](screenshots/testing/checks/html-a-hymn.png) |
+| Tunes | 0 | 1 | [Screenshot](screenshots/testing/checks/html-tunes.png) |
+| Templates | 0 | 1 | [Screenshot](screenshots/testing/checks/html-templates.png) |
+| Edit a template | 0 | 1 | [Screenshot](screenshots/testing/checks/html-edit-a-template.png) |
+| Inbox | 0 | 1 | [Screenshot](screenshots/testing/checks/html-inbox.png) |
+| Settings | 0 | 0 | [Screenshot](screenshots/testing/checks/html-settings.png) |
+| Members | 0 | 2 | [Screenshot](screenshots/testing/checks/html-members.png) |
+| Not found (404) | 0 | 0 | [Screenshot](screenshots/testing/checks/html-not-found--404.png) |
+
+</details>
+
+### CSS
+
+The site serves two stylesheets: `precentor.css`, built from 46 of the
+source files by `build-css.js`, and `no-page-transition.css`, which only
+the sign-in pages add (README §16). On 10 November 2026 I sent both to
+the [W3C CSS Validator](https://jigsaw.w3.org/css-validator/) as files,
+with the CSS level 3 profile, and the screenshots are its own results.
+
+The 8 errors are all CSS that browsers support and the validator
+doesn't know yet: `@view-transition` and its two pseudo-elements, which
+it can't parse, `view-transition-name`, `@container` and
+`container-type`, and `pointer-events`, which is outside the level 3
+profile. Seven are in `precentor.css`, one in `no-page-transition.css`.
+
+The 13 warnings are about choices made on purpose. Two are the
+`text-size-adjust` prefixes that stop a phone enlarging text on its own,
+and two the `::-webkit-details-marker` that hides the disclosure arrow
+in Safari. Eight say the validator can't check custom properties, which
+hold every colour and size in the design system. The last is `clip`,
+deprecated in favour of `clip-path` but still honoured by every
+browser, in the usual pattern for text that only screen readers read.
+
+![The W3C CSS Validator's results for precentor.css at CSS level 3: seven errors listed by line, then thirteen warnings](screenshots/testing/checks/css-precentor.png)
+
+_Check figure 5. The main stylesheet: seven errors, all newer CSS the validator doesn't know, and the warnings above._
+
+![The W3C CSS Validator's results for no-page-transition.css: one error, Unrecognized at-rule @view-transition](screenshots/testing/checks/css-no-page-transition.png)
+
+_Check figure 6. The sign-in pages' stylesheet: its one rule, `@view-transition`. As that's all it holds, the validator then says it found no style sheet._
 
 ## 3. Lighthouse scores
 
@@ -199,25 +308,36 @@ service page gained only 32 ms. With both:
 These were measured on the development server, which doesn't compress
 files; the live site sends the compressed copy whitenoise makes.
 
-Measured again on 10 November 2026 at `b500e3f`, with Lighthouse 12.2.1
+Measured again on 10 November 2026 at `8908668`, with Lighthouse 12.2.1
 in Google Chrome 157, on the nine pages above and signed in where the page
-needs it, one run each on desktop and on mobile:
+needs it, one run each on desktop and on mobile, by
+[`tools/take_validation_screenshots.py`](../tools/take_validation_screenshots.py).
+Each screenshot is the top of Lighthouse's own report, with the address
+it measured, and the report's note of when, the device it emulated and
+its version.
 
-| Page                 | Performance (desktop / mobile) | Accessibility | Best practices | SEO | First paint (mobile) | Layout shift |
-| -------------------- | ------------------------------ | ------------- | -------------- | --- | -------------------- | ------------ |
-| Sign in              | 100 / 99                       | 100           | 100            | 100 | 1.5 s                | 0            |
-| Terms                | 100 / 99                       | 100           | 100            | 100 | 1.5 s                | 0            |
-| A service            | 100 / 95                       | 100           | 100            | 100 | 2.0 s                | 0            |
-| Library              | 100 / 99                       | 100           | 100            | 100 | 1.5 s                | 0            |
-| Music list           | 100 / 96                       | 100           | 100            | 100 | 1.8 s                | 0            |
-| Pew sheet            | 100 / 98                       | 100           | 100            | 100 | 1.7 s                | 0            |
-| Library completeness | 100 / 99                       | 100           | 100            | 100 | 1.5 s                | 0            |
-| A hymnal             | 100 / 99                       | 100           | 100            | 100 | 1.5 s                | 0            |
-| Import               | 100 / 99                       | 100           | 100            | 100 | 1.5 s                | 0            |
+| Page | Performance (desktop / mobile) | Accessibility | Best practices | SEO | Lighthouse's report |
+| ---- | ------------------------------ | ------------- | -------------- | --- | ------------------- |
+| Sign in | 100 / 98 | 100 | 100 | 100 | [Desktop](screenshots/testing/checks/lighthouse-sign-in-desktop.png), [mobile](screenshots/testing/checks/lighthouse-sign-in-mobile.png) |
+| Terms | 100 / 99 | 100 | 100 | 100 | [Desktop](screenshots/testing/checks/lighthouse-terms-desktop.png), [mobile](screenshots/testing/checks/lighthouse-terms-mobile.png) |
+| A service | 100 / 94 | 100 | 100 | 100 | [Desktop](screenshots/testing/checks/lighthouse-a-service-desktop.png), [mobile](screenshots/testing/checks/lighthouse-a-service-mobile.png) |
+| Library | 100 / 98 | 100 | 100 | 100 | [Desktop](screenshots/testing/checks/lighthouse-library-desktop.png), [mobile](screenshots/testing/checks/lighthouse-library-mobile.png) |
+| Music list | 100 / 95 | 100 | 100 | 100 | [Desktop](screenshots/testing/checks/lighthouse-music-list-desktop.png), [mobile](screenshots/testing/checks/lighthouse-music-list-mobile.png) |
+| Pew sheet | 100 / 97 | 100 | 100 | 100 | [Desktop](screenshots/testing/checks/lighthouse-pew-sheet-desktop.png), [mobile](screenshots/testing/checks/lighthouse-pew-sheet-mobile.png) |
+| Completeness | 100 / 99 | 100 | 100 | 100 | [Desktop](screenshots/testing/checks/lighthouse-completeness-desktop.png), [mobile](screenshots/testing/checks/lighthouse-completeness-mobile.png) |
+| A hymnal | 100 / 99 | 100 | 100 | 100 | [Desktop](screenshots/testing/checks/lighthouse-a-hymnal-desktop.png), [mobile](screenshots/testing/checks/lighthouse-a-hymnal-mobile.png) |
+| Import | 100 / 98 | 100 | 100 | 100 | [Desktop](screenshots/testing/checks/lighthouse-import-desktop.png), [mobile](screenshots/testing/checks/lighthouse-import-mobile.png) |
 
 Accessibility, best practices and SEO are 100 on every page, on both.
 The service page and the music list are the longest pages, which is why
-they're the slowest to fill a simulated phone's screen.
+they're the slowest to fill a simulated phone's screen. A run measured
+a moment earlier gave the service 95 on mobile; one run can differ from
+the next by a point or two, so the table keeps the run the screenshots
+show.
+
+![Lighthouse's report for the service page on mobile: Performance 94, Accessibility, Best Practices and SEO 100, emulating a Moto G Power on slow 4G with Lighthouse 12.2.1](screenshots/testing/checks/lighthouse-a-service-mobile.png)
+
+_Check figure 7. The lowest score: a service on a simulated phone._
 
 ## 4. Automated tests
 
@@ -396,7 +516,8 @@ _Test figure 11. M65: without JavaScript the same question is a page of its own.
 
 Run on 10 November 2026 between `f15b70c` and `b500e3f`. R01 to R03 by
 [`tools/check_viewports.py`](../tools/check_viewports.py), the rest in
-Google Chrome 157.
+Google Chrome 157. R01 to R03 and R05's measurements were run again at
+`8908668`, with the same results apart from R05's count of text.
 
 | ID   | Check | Steps | Expected | Result |
 | ---- | ----- | ----- | -------- | ------ |
@@ -404,7 +525,7 @@ Google Chrome 157.
 | R02  | Tablets: 768 and 1024 pixels | The same pages at each width | The layout fills the width without gaps or overlaps; no console errors | Pass: all 25 pages in all three engines (Test figure 16) |
 | R03  | Laptop: 1280 pixels | The same pages | The layout as in the README's screenshots; no console errors | Pass: all 25 pages in all three engines (Test figure 17); the README's figures were taken again on the same code |
 | R04  | Keyboard alone | Sign in, open a service, propose and confirm a piece, using only the keyboard | Every step reachable with Tab, Enter and the arrow keys, with a visible outline on each control | Pass: signed in, opened Advent 2026 and its Midnight Mass, chose Mozart's Ave verum corpus with the arrow keys, proposed and confirmed it, using only Tab, typing, the arrow keys and Enter. Every control showed an outline (a term's card is outlined as a whole), and after Confirm the focus stayed on the button, now reading Unconfirm (Test figure 18) |
-| R05  | Dark mode | Switch the device to dark, then choose Dark in the user menu | Every page readable, with the same contrast as in light | Pass: every visible piece of text on the 25 pages measured against its background, 1,403 in each theme: all meet WCAG AA, the lowest ratio 4.83 in light and 5.7 in dark. Dark chosen in the user menu on a light device applied at once and carried to the next page (Test figures 19 to 21) |
+| R05  | Dark mode | Switch the device to dark, then choose Dark in the user menu | Every page readable, with the same contrast as in light | Pass: every visible piece of text on the 25 pages measured against its background, 1,424 in each theme: all meet WCAG AA, the lowest ratio 4.83 in light and 5.7 in dark. Dark chosen in the user menu on a light device applied at once and carried to the next page (Test figures 19 to 21) |
 | R06  | Without JavaScript | Turn JavaScript off; propose a piece, confirm it, remove a slot | Each works through ordinary pages | Pass: Sicut cervus proposed from the propose page; after Confirm and a fresh load it read Confirmed; Remove asked first on a page of its own, and the slot went |
 
 ### Widths and browsers
