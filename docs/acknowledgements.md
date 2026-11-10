@@ -185,6 +185,28 @@ How I used it:
 Divinum Officium's licence notice is in
 [`ordo/DIVINUM_OFFICIUM_LICENSE.txt`](../ordo/DIVINUM_OFFICIUM_LICENSE.txt).
 
+### Propers of the Mass for the Church Year, Church Music Association of America
+
+The Church Music Association of America publishes
+[*Propers of the Mass for the Church Year*](https://media.churchmusicassociation.org/publications/pdf/propers1974.pdf),
+a six-page table of the chants the Graduale Romanum (1974) gives each
+Sunday and major feast. The table carries no copyright or licence
+notice, and the chant texts themselves are in the public domain. I
+took only each chant's opening words, as the Graduale names them. My
+thanks to the CMAA for setting the whole year out in one place.
+
+How I used it:
+
+- **The Ordinary Form chants.** A one-off script,
+  [`tools/calendar_export/export_graduale_1974.py`](../tools/calendar_export/export_graduale_1974.py),
+  reads the table with each piece of text's position on the page, so a
+  year's alternative stays in its column, and writes the opening words
+  of each day's Introit, Gradual, Alleluia, Tract, Sequence, Offertory
+  and Communion into `ordo/data/graduale_1974/propers_current.json`,
+  which `manage.py load_calendar` loads. Each row's day must match the
+  one expected next, or the script stops. A few chants the table leaves
+  out were added from the Graduale itself.
+
 ### The date of Easter
 
 [`ordo/utils.py`](../ordo/utils.py) calculates Easter Sunday with the

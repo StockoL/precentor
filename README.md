@@ -280,8 +280,9 @@ Alleluia or Tract slot offers both, in the order of the form: the
 Tracts first in the Ordinary Form, the Alleluia first in 1962.
 
 For the Ordinary Form the chants are the Graduale Romanum's (1974) for
-Sundays and the major feasts, read from a table of them (see the same
-README), with a few the table leaves out added from the Graduale
+Sundays and the major feasts, read from the Church Music Association
+of America's table of them (see
+[`tools/calendar_export/README.md`](tools/calendar_export/README.md)), with a few the table leaves out added from the Graduale
 itself. Holy Week is included, read from the same table as the
 Sundays. Christmas has four Masses, each with its own propers (the Vigil
 Mass, and the Masses during the Night, at Dawn and during the Day), so
@@ -841,8 +842,9 @@ Church's General Norms for the Liturgical Year and the Calendar. The
 licence), and its days for England and Wales come from the Latin Mass
 Society's Ordo. The 1962 Mass chants' names come from
 [Divinum Officium](https://github.com/DivinumOfficium/divinum-officium)
-(MIT licence; the liturgical texts are in the public domain). The
-stylesheets follow Andy Bell's CUBE CSS, with layouts based on Every
+(MIT licence; the liturgical texts are in the public domain), and the
+Ordinary Form's from the Church Music Association of America's table
+of the 1974 Graduale Romanum. The stylesheets follow Andy Bell's CUBE CSS, with layouts based on Every
 Layout by Heydon Pickering and Andy Bell, and fluid scales from
 Utopia. The typefaces are EB Garamond and Inter, both under the SIL
 Open Font License. [`docs/acknowledgements.md`](docs/acknowledgements.md)
