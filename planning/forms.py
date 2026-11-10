@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.formats import date_format
 
 from core.models import SiteConfig
 from library.models import Hymnal, HymnEntry
@@ -65,6 +66,16 @@ class ServiceForm(forms.ModelForm):
         if term:
             field = self.fields["calendar_use"]
             field.choices = [("", f"As the term: {term.get_calendar_use_display()}"), *field.choices[1:]]
+
+    def clean(self):
+        """A service falls within its term, both ends included. The term is
+        the one the service already belongs to, never one from the form."""
+        cleaned = super().clean()
+        day, term = cleaned.get("date"), self.instance.term
+        if day and not term.start_date <= day <= term.end_date:
+            self.add_error("date", f"{term} runs from {date_format(term.start_date)} to {date_format(term.end_date)}, "
+                                   "so the service needs a date in between.")
+        return cleaned
 
 
 class TermMarkerForm(forms.ModelForm):
