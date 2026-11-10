@@ -96,13 +96,13 @@ The other documents are listed in §9.
   - [Relationships](#relationships)
   - [Fields](#fields)
   - [Rules the database enforces](#rules-the-database-enforces)
-- [14. Screenshots: phones, dark mode and the keyboard](#14-screenshots-phones-dark-mode-and-the-keyboard)
-  - [How the screenshots were made](#how-the-screenshots-were-made)
+- [14. Phones, dark mode and the keyboard](#14-phones-dark-mode-and-the-keyboard)
 - [15. Features and CRUD](#15-features-and-crud)
   - [Validation and feedback](#validation-and-feedback)
 - [16. Design decisions that depart from convention](#16-design-decisions-that-depart-from-convention)
 - [17. Security](#17-security)
 - [18. Running it locally](#18-running-it-locally)
+  - [Making the screenshots](#making-the-screenshots)
 - [19. Environment variables](#19-environment-variables)
 - [20. Future work](#20-future-work)
 - [21. Technologies used](#21-technologies-used)
@@ -1511,9 +1511,14 @@ max 50), such as Mass, Vespers or General. Each church has its own.
   form.
 - An invitation's stored fingerprint is unique.
 
-## 14. Screenshots: phones, dark mode and the keyboard
+## 14. Phones, dark mode and the keyboard
 
-The figures above sit in the sections they illustrate. These show the same app on a phone, in dark mode, and used from the keyboard.
+Every page works from 320 pixels wide upwards, and none makes the page
+scroll sideways. Rows of buttons wrap under what they belong to, the
+library's filters stack above its table, and the table scrolls inside
+its own box rather than widening the page. I checked 25 pages at five
+widths in three browser engines, and on my own iPhone and iPad
+([the testing record, section 6](docs/testing.md#6-responsiveness-usability-and-the-keyboard)).
 
 ![The Terms page on a phone 390 pixels wide, with the term cards stacked in one column](docs/screenshots/19-mobile-terms.png)
 
@@ -1527,43 +1532,25 @@ _Figure 29. A service on a phone._
 
 _Figure 30. The library on a phone; the table scrolls within its own box rather than widening the page._
 
+Dark mode follows the device's own setting, and Appearance in the user
+menu can choose System, Light or Dark, remembered on that device. The
+colours are design tokens, each given a dark value where it needs one,
+so the whole app changes together, and every piece of text keeps WCAG
+AA contrast in both ([row R05](docs/testing.md#r05)).
+
 ![The First Sunday of Advent service page in dark colours](docs/screenshots/22-dark-service.png)
 
 _Figure 31. A service in dark mode, which follows the device's setting or the choice in the user menu._
 
+Everything can be done from the keyboard. Links, buttons and fields
+show an outline when reached with Tab, a skip link jumps past the
+navigation, the score search box works with the arrow keys, and slots
+move with Move up and Move down as well as by dragging
+([row R04](docs/testing.md#r04)).
+
 ![The Terms page with a visible outline round the Terms link after pressing Tab](docs/screenshots/23-keyboard-focus.png)
 
 _Figure 32. Keyboard focus: links and buttons show an outline when reached with Tab._
-
-### How the screenshots were made
-
-Every image comes from an invented church, St Aelred's, Ripon, with
-invented people, so no real church or person appears. I made them with
-two scripts in `tools/`, against a separate SQLite file rather than my
-development database:
-
-1. `settings.py` reads the database from `DATABASE_URL`, so I set it for
-   one PowerShell session:
-   `$env:DATABASE_URL = "sqlite:///screenshots.sqlite3"`. Everything run
-   in that session uses `screenshots.sqlite3`, which git ignores.
-2. `python tools/seed_demo.py` migrates that file, loads the liturgical
-   calendar into it and builds the church through the app's own
-   `create_organisation()` and models: three people, 25 scores, a hymn
-   book of its own with made-up numbers, a past term, an Advent term
-   with services in every state, a 1962 Mass, notices, comments and a
-   crest drawn in code.
-3. `python manage.py runserver 8766` serves it.
-4. `python tools/take_screenshots.py`, in a second terminal with the same
-   `DATABASE_URL`, drives Chromium through Playwright (already used for
-   the browser tests). It registers a new church for Figures 1 to 3,
-   signs in as the demo Conductor and Viewer for the rest, and saves
-   each page at 1280 by 800 or, for the phone figures, 390 by 844. For
-   Figures 8 and 9 it imports a small file, then removes the import
-   through its own page, so the demo church is left as it was.
-   Images over 300 KB are reduced to 256 colours.
-5. My local `.env` turns `DEBUG` on, which shows Django's debug page in
-   place of the 404 page, so for Figure 26 the script renders the page
-   with `DEBUG` off through Django's test client and photographs that.
 
 ## 15. Features and CRUD
 
@@ -1813,6 +1800,36 @@ need Python 3.14 and git.
    because the site doesn't need it to run. Install it, with flake8,
    once with `pip install -r requirements-dev.txt`, then
    `playwright install chromium`.
+
+### Making the screenshots
+
+Every image comes from an invented church, St Aelred's, Ripon, with
+invented people, so no real church or person appears. I made them with
+two scripts in `tools/`, against a separate SQLite file rather than my
+development database:
+
+1. `settings.py` reads the database from `DATABASE_URL`, so I set it for
+   one PowerShell session:
+   `$env:DATABASE_URL = "sqlite:///screenshots.sqlite3"`. Everything run
+   in that session uses `screenshots.sqlite3`, which git ignores.
+2. `python tools/seed_demo.py` migrates that file, loads the liturgical
+   calendar into it and builds the church through the app's own
+   `create_organisation()` and models: three people, 25 scores, a hymn
+   book of its own with made-up numbers, a past term, an Advent term
+   with services in every state, a 1962 Mass, notices, comments and a
+   crest drawn in code.
+3. `python manage.py runserver 8766` serves it.
+4. `python tools/take_screenshots.py`, in a second terminal with the same
+   `DATABASE_URL`, drives Chromium through Playwright (already used for
+   the browser tests). It registers a new church for Figures 1 to 3,
+   signs in as the demo Conductor and Viewer for the rest, and saves
+   each page at 1280 by 800 or, for the phone figures, 390 by 844. For
+   Figures 8 and 9 it imports a small file, then removes the import
+   through its own page, so the demo church is left as it was.
+   Images over 300 KB are reduced to 256 colours.
+5. My local `.env` turns `DEBUG` on, which shows Django's debug page in
+   place of the 404 page, so for Figure 26 the script renders the page
+   with `DEBUG` off through Django's test client and photographs that.
 
 ## 19. Environment variables
 
