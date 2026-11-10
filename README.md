@@ -912,32 +912,37 @@ sends you to `https://`, and that the crest still shows on Settings.
 ## 13. Data model
 
 Six apps hold the data: `accounts` (organisations, people,
-invitations), `library` (scores), `planning` (terms, services, slots,
-pieces, templates, notices), `ordo` (the liturgical calendar and use
-types), `comments` and `core` (each church's settings). The reasoning
+invitations), `library` (scores, hymnals, hymns, tunes and the imports
+that added them), `planning` (terms, services, slots, pieces,
+templates, notices), `ordo` (the liturgical calendar, its chants and
+use types), `comments` and `core` (each church's settings). The reasoning
 behind each choice is in [`docs/models_plan.md`](docs/models_plan.md).
 
 ### Relationships
 
 - An **organisation** (a church, school or music department) has many
-  users, invitations, scores, terms, slot templates and use types, and
-  one settings row.
+  users, invitations, scores, hymnals, hymns, tunes, terms, slot
+  templates, use types and imports, and one settings row.
 - A **term** has many services and notices. A **service** has many
   slots (`ServiceRole`), and a **slot** has many proposed pieces
-  (`RolePiece`), each pointing at one score.
+  (`RolePiece`). Each piece is a score, a hymn entry (a hymn as one
+  hymnal numbers it) or a typed reference, and a hymn can be sung to a
+  tune other than its book's own.
+- A **template** has many template slots, copied into a service's
+  slots when it's applied.
 - A service has one main **liturgical occasion** and any number of
   additional ones. Occasions belong to a **liturgical season**. A score
-  can be tagged as suited to occasions, seasons and use types, which
-  ranks it higher when a piece is proposed.
+  or a hymn can be tagged as suited to occasions, seasons and use
+  types, which ranks it higher when a piece is proposed.
 - **Comments** attach to a term, a service or a piece through one
   generic relation (`content_type` and `object_id`), and a reply points
   at the comment it answers.
-- The **liturgical calendar** (occasions and seasons) is shared by every
-  church and loaded by `manage.py load_calendar`. Everything else
-  belongs to one organisation. Services, notices, slots, pieces and
-  comments copy their organisation from what they belong to when
-  they're saved, so every query can be limited to one church the same
-  way.
+- The **liturgical calendar** (occasions, seasons and the day's chants)
+  is shared by every church and loaded by `manage.py load_calendar`.
+  Everything else belongs to one organisation. Services, notices,
+  slots, pieces, template slots, hymn entries and comments copy their
+  organisation from what they belong to, so every query can be limited
+  to one church the same way.
 - A service's status and a score's "last sung" date are worked out when
   they're needed, never stored.
 
@@ -1169,7 +1174,7 @@ Every model also has an automatic `id` primary key.
 
 | Field          | Type         | Constraints                    | Purpose                                       |
 | -------------- | ------------ | ------------------------------ | --------------------------------------------- |
-| `email`        | CharField    | unique, stored lowercase       | Sign-in name                                  |
+| `email`        | EmailField   | unique, stored lowercase       | Sign-in name                                  |
 | `name`         | CharField    | optional, max 150              | Shown in the app                              |
 | `organisation` | ForeignKey   | optional, to Organisation      | Their church; empty only for a site superuser |
 | `role`         | CharField    | Conductor, Librarian or Viewer | What they may do                              |
@@ -1201,9 +1206,9 @@ It also has Django's own `password`, `last_login`, `is_staff`,
 | `composer_surname`                                          | CharField                 | max 100               | Used for sorting                     |
 | `composer_other_names`                                      | CharField                 | optional, max 100     | Forenames and any particle           |
 | `arranger`, `editor`                                        | CharField                 | optional, max 200     | Arranger, and editor of this edition |
-| `voicing`                                                   | CharField                 | max 50                | As printed, e.g. SATB or SSATB       |
+| `voicing`                                                   | CharField                 | optional, max 50      | As printed, e.g. SATB or SSATB       |
 | `soprano_parts`, `alto_parts`, `tenor_parts`, `bass_parts`  | PositiveSmallIntegerField | default 0             | How many parts of each voice         |
-| `language`                                                  | CharField                 | max 50                | e.g. Latin, English                  |
+| `language`                                                  | CharField                 | optional, max 50      | e.g. Latin, English                  |
 | `copies_owned`                                              | PositiveIntegerField      | default 0             | How many copies the church has       |
 | `filing_location`                                           | CharField                 | optional, max 100     | Where the copies are kept            |
 | `duration_minutes`                                          | PositiveIntegerField      | optional              | Length                               |
@@ -1211,9 +1216,21 @@ It also has Django's own `password`, `last_login`, `is_staff`,
 | `text`, `translation`, `translation_credit`                 | TextField, CharField      | optional              | The words, for the pew sheet         |
 | `range_soprano`, `range_alto`, `range_tenor`, `range_bass`  | CharField                 | optional, max 20      | Lowest to highest note               |
 | `last_sung_manual`                                          | DateField                 | optional              | History from before Precentor        |
+| `import_batch`                                              | ForeignKey                | optional, to ScoreImport | The import that added it          |
 | `suited_use_types`                                          | ManyToMany                | to UseType            | Kinds of service it suits            |
 | `suited_seasons`                                            | ManyToMany                | to LiturgicalSeason   | Seasons it suits                     |
 | `suited_occasions`                                          | ManyToMany                | to LiturgicalOccasion | Particular days it suits             |
+
+**library.ScoreImport** (a spreadsheet imported into the library)
+
+| Field               | Type          | Constraints                 | Purpose                                         |
+| ------------------- | ------------- | --------------------------- | ----------------------------------------------- |
+| `organisation`      | ForeignKey    | to Organisation             | Whose library                                   |
+| `created_by`        | ForeignKey    | to User, set null on delete | Who imported it                                 |
+| `created_at`        | DateTimeField | set on save                 | When                                            |
+| `original_filename` | CharField     | max 255                     | The file's name, or "a Google Sheet"            |
+| `status`            | CharField     | pending or kept             | While pending, the whole import can be removed  |
+| `report`            | JSONField     | optional                    | Rows skipped and why, and likely duplicates     |
 
 **planning.Term**
 
@@ -1275,6 +1292,7 @@ It also has Django's own `password`, `last_login`, `is_staff`,
 
 | Model and field                         | Type                 | Constraints                       | Purpose                                   |
 | --------------------------------------- | -------------------- | --------------------------------- | ----------------------------------------- |
+| Each model's `organisation`              | ForeignKey           | to Organisation; an entry takes its hymnal's | Whose hymns                    |
 | Hymnal `name`, `short_name`             | CharField            | the code unique in the church     | e.g. New English Hymnal, NEH              |
 | Hymnal `copies_owned`, `filing_location`, `archived` | as for scores | archived rather than deleted once used | A library entry like a score     |
 | Hymn `first_line`, `metre`, `text`, `text_credit` | CharField, TextField | all optional, metre normalised | The text, whichever books print it    |
@@ -1334,7 +1352,7 @@ together.
 | `occasion_key` | CharField | max 100                                    | The occasion's key, e.g. `tempora:Adv2-0`   |
 | `calendar_use` | CharField | choices                                    | Which form of the Mass                      |
 | `part`         | CharField | choices: Introit to Communion, Antiphon, Responsory, Hymn, Canticle | Which chant              |
-| `season`       | CharField | blank, Septuagesima or Eastertide          | A saint's day's form for that season        |
+| `season`       | CharField | blank, Septuagesima to Easter, or Eastertide | A saint's day's form for that season      |
 | `cycle`        | CharField | blank, A, B or C                           | An Ordinary Form Sunday's chant for one year |
 | `position`     | PositiveSmallIntegerField | default 0                  | Its place among the day's chants of a part  |
 | `incipit`      | CharField | max 100                                    | The opening words, e.g. Populus Sion        |
@@ -1374,8 +1392,8 @@ max 50), such as Mass, Vespers or General. Each church has its own.
 | `national_calendar`                    | CharField              | general, England or Wales          | Which national days are added           |
 | `layout_style`                         | CharField              | columns or simple                  | Music list layout                       |
 | `music_list_arrangement`               | CharField              | service order or propers beside    | How each service's music is arranged    |
-| `hymn_repeat_window_weeks`             | PositiveSmallIntegerField | 1 to 104, default 6             | The same, for hymns                     |
 | `repeat_window_weeks`                  | PositiveSmallIntegerField | 1 to 104, default 8             | How recent counts as "sung recently"    |
+| `hymn_repeat_window_weeks`             | PositiveSmallIntegerField | 1 to 104, default 6             | The same, for hymns                     |
 | `show_hymns_psalm`                     | BooleanField           | default True                       | No longer used; to be dropped           |
 
 ### Rules the database enforces
@@ -1392,7 +1410,11 @@ max 50), such as Mass, Vespers or General. Each church has its own.
 - A hymnal's code is unique within each church, and a number appears
   once in a hymnal. A hymnal with hymns recorded from it can't be
   deleted.
+- A score or a hymn entry chosen for a service can't be deleted while
+  the piece remains.
 - An occasion's key is unique within its calendar.
+- A day has one chant for each part, season, year and position in each
+  form.
 - An invitation's stored fingerprint is unique.
 
 ## 14. Screenshots: phones, dark mode and the keyboard
