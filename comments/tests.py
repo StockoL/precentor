@@ -59,7 +59,8 @@ class CommentTests(TestCase):
         nested = Comment(
             author=self.user, body="A nested reply", target=self.term, parent=reply
         )
-        with self.assertRaises(ValidationError):
+        message = "A reply can't itself be replied to. Comments go one level deep."
+        with self.assertRaisesMessage(ValidationError, message):
             nested.full_clean()
 
 
@@ -271,7 +272,7 @@ class AddCommentViewTests(TestCase):
         self.assertEqual(Comment.objects.count(), 0)
         messages = list(response.context["messages"])
         self.assertEqual(len(messages), 1)
-        self.assertIn("Couldn't add that comment", str(messages[0]))
+        self.assertEqual(str(messages[0]), "Couldn't add that comment. Please check the form.")
 
     def test_toggle_close_ajax_returns_updated_card(self):
         comment = Comment.objects.create(

@@ -27,7 +27,7 @@ function initComments() {
         showToast(isReply ? "Reply posted." : "Comment posted.", "success");
       } catch (err) {
         if (err instanceof AjaxError) applyFragments(err.data.fragments);
-        else showToast("Couldn't post that comment — try again.", "danger");
+        else showToast("Couldn't post that comment. Try again.", "danger");
       }
       return;
     }
@@ -38,7 +38,7 @@ function initComments() {
         const data = await postForm(form.action, new FormData(form));
         applyFragments(data.fragments);
       } catch (err) {
-        showToast("Couldn't update that comment — try again.", "danger");
+        showToast("Couldn't update that comment. Try again.", "danger");
       }
       return;
     }
@@ -62,7 +62,7 @@ function initComments() {
         }
         showToast("Comment deleted.", "success");
       } catch (err) {
-        showToast("Couldn't delete that comment — try again.", "danger");
+        showToast("Couldn't delete that comment. Try again.", "danger");
       }
     }
   });

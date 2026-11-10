@@ -260,7 +260,7 @@ class ScoreDeleteView(LibraryEditRequiredMixin, OrganisationScopedMixin, DeleteP
         except ProtectedError:
             messages.error(
                 request,
-                f'"{self.object}" can\'t be deleted — it has been proposed or '
+                f'"{self.object}" can\'t be deleted: it has been proposed or '
                 "confirmed in at least one service, and that history is "
                 "preserved deliberately.",
             )

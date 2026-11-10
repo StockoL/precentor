@@ -1315,3 +1315,29 @@ class EntryTuneTests(TestCase):
         self.client.post(url, {"tune": theirs.pk})
         self.entry.refresh_from_db()
         self.assertEqual(self.entry.tune, self.repton)
+
+
+class ScoreInUseDeleteTests(TestCase):
+    """A score chosen for a service stays, with a plain message saying why."""
+
+    def test_a_score_in_use_is_kept_with_a_message(self):
+        from planning.models import RolePiece, Service, ServiceRole
+
+        librarian = make_user("librarian")
+        score = make_score(organisation=librarian.organisation, title="Ave verum", composer_surname="Byrd")
+        service = Service.objects.create(
+            term=make_term(organisation=librarian.organisation), date="2026-01-11", service_type="Sung Mass"
+        )
+        slot = ServiceRole.objects.create(service=service, role_name="Motet")
+        RolePiece.objects.create(service_role=slot, score=score)
+        self.client.force_login(librarian)
+
+        response = self.client.post(f"/library/{score.pk}/delete/", follow=True)
+
+        self.assertTrue(Score.objects.filter(pk=score.pk).exists())
+        self.assertRedirects(response, score.get_absolute_url())
+        self.assertEqual(
+            [str(message) for message in response.context["messages"]],
+            [f'"{score}" can\'t be deleted: it has been proposed or confirmed in at least one '
+             "service, and that history is preserved deliberately."],
+        )

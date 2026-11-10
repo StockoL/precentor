@@ -167,7 +167,7 @@ function initServiceDetail() {
         applyFragments(data.fragments, button.id);
         showToast("Piece updated.", "success");
       } catch (err) {
-        showToast("Couldn't update that piece — try again.", "danger");
+        showToast("Couldn't update that piece. Try again.", "danger");
       }
       return;
     }
@@ -201,7 +201,7 @@ function initServiceDetail() {
           applyFragments(err.data.fragments);
           initScorePickers(document.getElementById(`add-piece-form-${rolePk}`));
         } else {
-          showToast("Couldn't add that piece — try again.", "danger");
+          showToast("Couldn't add that piece. Try again.", "danger");
         }
       }
       return;
@@ -303,7 +303,7 @@ function initServiceDetail() {
         showToast("Slot added.", "success");
       } catch (err) {
         if (err instanceof AjaxError) applyFragments(err.data.fragments);
-        else showToast("Couldn't add that slot — try again.", "danger");
+        else showToast("Couldn't add that slot. Try again.", "danger");
       }
     }
   });

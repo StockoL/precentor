@@ -108,7 +108,7 @@ def add_comment(request, content_type_id, object_id):
     }
     return ajax_or_redirect(
         request, fragments, redirect_url,
-        error_message="Couldn't add that comment — please check the form.", status=400,
+        error_message="Couldn't add that comment. Please check the form.", status=400,
     )
 
 

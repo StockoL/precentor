@@ -260,7 +260,7 @@ class RolePieceWorkflowTests(TestCase):
         self.assertEqual(self.service.roles.count(), 0)
         messages = list(response.context["messages"])
         self.assertEqual(len(messages), 1)
-        self.assertIn("Couldn't add that slot", str(messages[0]))
+        self.assertEqual(str(messages[0]), "Couldn't add that slot. Please check the form.")
 
 
 class ServiceSuggestedScoresTests(TestCase):

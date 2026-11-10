@@ -47,7 +47,7 @@ class Comment(models.Model):
         """Enforce flat threading: a reply cannot itself be replied to."""
         if self.parent_id and self.parent.parent_id:
             raise ValidationError(
-                "Replies cannot themselves be replied to — comments are flat, one level deep."
+                "A reply can't itself be replied to. Comments go one level deep."
             )
 
     @property
