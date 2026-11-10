@@ -190,6 +190,35 @@ class HymnImportPagesTests(TestCase):
         batch.refresh_from_db()
         self.assertFalse(batch.is_pending)
 
+    def test_the_result_page_lists_what_it_added_and_filled(self):
+        HymnEntry.find_or_make(self.neh, "2")
+        response = self.upload("10,Words ten,,", '2,"Words two, filled",,', "1,Words one,LM,Repton")
+        rows = [(entry.number, entry.hymn.first_line, entry.change) for entry in response.context["changed_entries"]]
+        # In the book's number order: 10 comes after 2.
+        self.assertEqual(rows, [("1", "Words one", "Added"), ("2", "Words two, filled", "Filled in: first line"),
+                                ("10", "Words ten", "Added")])
+        for number, first_line, change in rows:
+            with self.subTest(number=number):
+                self.assertContains(response, f">NEH {number}</a>")
+                self.assertContains(response, first_line)
+        self.assertContains(response, "New tune: Repton.")
+
+    def test_the_result_page_lists_only_this_churchs_import(self):
+        elsewhere = make_organisation("St Elsewhere")
+        their_book = Hymnal.objects.create(organisation=elsewhere, name="Their Book", short_name="TB")
+        theirs = HymnImport.objects.create(organisation=elsewhere, hymnal=their_book, original_filename="t.csv")
+        HymnEntry.objects.create(organisation=elsewhere, hymnal=their_book, number="7", import_batch=theirs,
+                                 hymn=Hymn.objects.create(organisation=elsewhere, first_line="Their hymn"))
+        self.assertEqual(self.client.get(f"/library/hymn-imports/{theirs.pk}/").status_code, 404)
+        response = self.upload("1,Our hymn,,")
+        self.assertContains(response, "Our hymn")
+        self.assertNotContains(response, "Their hymn")
+
+    def test_a_long_import_lists_the_first_hundred_and_says_so(self):
+        response = self.upload(*[f"{n},Hymn {n},," for n in range(1, 151)])
+        self.assertEqual(len(response.context["changed_entries"]), 100)
+        self.assertContains(response, "The first 100 of 150, in number order.")
+
     def test_removing_asks_first_then_undoes_it(self):
         self.upload("1,Words,,")
         batch = HymnImport.objects.get()
