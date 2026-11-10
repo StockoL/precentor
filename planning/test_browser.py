@@ -904,3 +904,23 @@ class RemovePieceBrowserTest(PlaywrightTestCase):
         self.page.wait_for_selector(".toast")
         assert "That piece has already been removed." in self.page.inner_text("#toast-region")
         assert self.page.locator(f"#piece-row-{pk}").count() == 0
+
+
+class NarrowSlotBrowserTest(PlaywrightTestCase):
+    def test_the_reference_box_stays_inside_its_slot_at_320_pixels(self):
+        self.login_as_conductor()
+        term = make_term(name="Browser Term", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31))
+        service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
+        # One slot with the score search first, one with the reference box first.
+        for name in ("Kyrie", "Psalm"):
+            ServiceRole.objects.create(service=service, role_name=name)
+        self.page.set_viewport_size({"width": 320, "height": 800})
+        self.page.goto(f"/services/{service.pk}/")
+        self.page.wait_for_selector(".role-block__reference")
+        overflows = self.page.evaluate("""() => [...document.querySelectorAll('.role-block__reference')].map(box => {
+            const card = box.closest('.role-block');
+            const inner = card.getBoundingClientRect().right - parseFloat(getComputedStyle(card).paddingInlineEnd);
+            return box.getBoundingClientRect().right - inner;
+        })""")
+        assert len(overflows) == 2
+        assert all(px <= 0.5 for px in overflows), f"past the card's edge by {overflows} pixels"
