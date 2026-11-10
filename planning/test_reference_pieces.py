@@ -356,3 +356,42 @@ class TuneChoiceTests(ReferencePieceTestMixin, TestCase):
         self.client.force_login(self.conductor)
         response = self.client.get(f"/services/{self.service.pk}/sheet/")
         self.assertContains(response, '<p class="pew-sheet__piece">NEH 53, tune Elsewhere</p>', html=True)
+
+
+class AlreadyProposedTests(ReferencePieceTestMixin, TestCase):
+    MESSAGE = "That&#x27;s already proposed for this slot."
+
+    def setUp(self):
+        super().setUp()
+        from library.models import Hymnal
+
+        self.neh = Hymnal.objects.create(organisation=self.church, name="New English Hymnal", short_name="NEH")
+        self.client.force_login(self.conductor)
+        self.url = f"/roles/{self.slot.pk}/pieces/add/"
+
+    def propose(self, url=None, **data):
+        return self.client.post(url or self.url, {"hymnal": self.neh.pk, "number": "", "reference": "", "score": "",
+                                                  **data}, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+
+    def test_the_same_score_hymn_or_reference_twice_is_refused(self):
+        for first, again in [({"score": self.score.pk}, {"score": self.score.pk}),
+                             ({"number": "53"}, {"number": " 53 "}),
+                             ({"reference": "Psalm 23"}, {"reference": "psalm 23"})]:
+            with self.subTest(first=first):
+                self.assertEqual(self.propose(**first).status_code, 200)
+                response = self.propose(**again)
+                self.assertEqual(response.status_code, 400)
+                self.assertIn(self.MESSAGE, response.json()["fragments"][f"add-piece-form-{self.slot.pk}"])
+        self.assertEqual(RolePiece.objects.count(), 3)
+
+    def test_the_same_piece_in_another_slot_is_fine(self):
+        other = ServiceRole.objects.create(service=self.service, role_name="Offertory motet")
+        self.propose(reference="Psalm 23")
+        self.assertEqual(self.propose(url=f"/roles/{other.pk}/pieces/add/", reference="Psalm 23").status_code, 200)
+        self.assertEqual(RolePiece.objects.filter(reference="Psalm 23").count(), 2)
+
+    def test_without_javascript_the_propose_page_says_so(self):
+        RolePiece.objects.create(service_role=self.slot, reference="Psalm 23")
+        response = self.client.post(self.url, {"hymnal": self.neh.pk, "reference": "Psalm 23"})
+        self.assertContains(response, self.MESSAGE, count=1)
+        self.assertEqual(RolePiece.objects.count(), 1)
