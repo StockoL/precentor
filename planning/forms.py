@@ -1,4 +1,5 @@
 from django import forms
+from django.template.defaultfilters import pluralize
 from django.utils.formats import date_format
 
 from core.models import SiteConfig
@@ -28,7 +29,28 @@ class TermForm(forms.ModelForm):
         start, end = cleaned.get("start_date"), cleaned.get("end_date")
         if start and end and end < start:
             self.add_error("end_date", "A term can't end before it starts.")
+        elif start and end:
+            self.refuse_stranding(start, end)
         return cleaned
+
+    def refuse_stranding(self, start, end):
+        """
+        New dates mustn't leave any of the term's services outside it. Only
+        checked when a date has changed, so a term whose services are
+        already outside it, from before this check, can still be renamed.
+        The error goes beside the date that changed, or above both.
+        """
+        changed = [name for name in ("start_date", "end_date") if name in self.changed_data]
+        if not self.instance.pk or not changed:
+            return
+        outside = self.instance.services.exclude(date__range=(start, end)).order_by("date")
+        count = outside.count()
+        if count:
+            self.add_error(
+                changed[0] if len(changed) == 1 else None,
+                f"{count} of this term's service{pluralize(count)} would fall outside these dates, the first on "
+                f"{date_format(outside.first().date)}. Move or delete {pluralize(count, 'it,them')} first.",
+            )
 
 
 class ServiceForm(forms.ModelForm):
