@@ -46,6 +46,32 @@ out a church's calendar of observances for the year; in this project
 the name covers the feature that tracks liturgical seasons and feast
 days.
 
+## Where to look
+
+- **Testing:** [`docs/testing.md`](docs/testing.md) has every manual
+  test and its result, the widths and browsers I checked, the automated
+  tests, the validators, Lighthouse, and the bugs I fixed or left.
+- **Trying it:** open the [live site](https://precentor.onrender.com),
+  choose Sign up and register a church of your own. You're its owner,
+  so every page is open to you, and nobody else's data is in reach.
+- **Design:** [`docs/design_system.md`](docs/design_system.md) covers
+  the CSS method, the cascade layers, the tokens, the type and the
+  liturgical accent.
+- **Data model:** [`docs/models_plan.md`](docs/models_plan.md) has each
+  app's models field by field, and [`docs/erd.mmd`](docs/erd.mmd) is the
+  diagram, which GitHub draws.
+- **User stories:** [`docs/user_stories.md`](docs/user_stories.md) has
+  the stories I checked the finished build against.
+- **Calendar:** [`docs/calendar_plan.md`](docs/calendar_plan.md) explains
+  how I built and checked Ordo's two calendars and their precedence.
+- **Sources:** [`docs/acknowledgements.md`](docs/acknowledgements.md)
+  lists every outside source, what I took from it and its licence.
+- **Importing:** [`docs/score_import_plan.md`](docs/score_import_plan.md)
+  keeps my earlier import designs as a record; the import I built is in
+  §3.1.
+
+The other documents are listed in §9.
+
 ---
 
 ## 1. The Problem
