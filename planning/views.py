@@ -228,7 +228,7 @@ class ServiceDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView)
     # many slots there are.
     queryset = Service.objects.select_related("term", "occasion__season").prefetch_related(
         "roles__pieces__score", "roles__pieces__tune", "roles__pieces__hymn_entry__hymnal",
-        "roles__pieces__hymn_entry__hymn", "roles__pieces__hymn_entry__tune",
+        "roles__pieces__hymn_entry__hymn", "roles__pieces__hymn_entry__tune", "roles__pieces__comments",
     )
 
     def get_context_data(self, **kwargs):
@@ -437,7 +437,7 @@ def _slots_fragment(request, service):
     """The service's slot list, redrawn after a slot moves or goes."""
     roles = service.roles.prefetch_related(
         "pieces__score", "pieces__tune", "pieces__hymn_entry__hymnal", "pieces__hymn_entry__hymn",
-        "pieces__hymn_entry__tune",
+        "pieces__hymn_entry__tune", "pieces__comments",
     )
     return {
         "roles-list": render_to_string(
