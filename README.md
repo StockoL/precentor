@@ -215,6 +215,10 @@ Library's own filter so the numbers agree, and lists the scores planned
 as a motet or antiphon that have no text yet. None of it is required,
 and a count of nothing reads as done.
 
+![The Library completeness page: every score has a voicing and a language, and the hymns section lists one hymn with no first line and five with no words](docs/screenshots/29-completeness.png)
+
+_Figure 10. Library completeness: what's missing, with nothing required. The demo's scores are all complete, so only its hymns are listed._
+
 ### 3.2 Term, Service, and Slots
 
 A **Term** is a named container with a date range (e.g. "Lent 2027").
@@ -299,6 +303,14 @@ and most saints' days have Masses of their own that the table doesn't
 cover, so they offer nothing rather than the wrong chants. In the Ordinary Form the Graduale's chants are one choice among
 several, so a suggestion is only ever a suggestion.
 
+![A 1962 Missa cantata's Introit slot, empty, with a button reading Ad te levavi animam meam under For this day](docs/screenshots/31-chants-1962.png)
+
+_Figure 11. The 1962 Missal's Introit for the First Sunday of Advent, offered in one click on an empty Proper slot._
+
+![An Ordinary Form Sung Mass's Introit slot, with Rorate caeli confirmed and a button reading Ad te levavi under For this day](docs/screenshots/32-chants-ordinary-form.png)
+
+_Figure 12. The same Sunday in the Ordinary Form: the Graduale's Introit is still offered beside the piece already chosen._
+
 A piece in a slot is one of three things: a score from the library, a
 **hymn** by its book and number, or a short **reference** typed in, such
 as "Psalm 150, tone 4", because psalms and chant are rarely in a
@@ -339,6 +351,14 @@ church knows. Metres are written one way whatever is typed, so "LM" and
 from elsewhere in the same book by that tune's number, "NEH 53, tune
 NEH 115", so someone can keep a finger in the music.
 
+![The Hymnals page listing St Aelred's Hymn Book, code SAH, with 60 copies in the choir vestry, and buttons for Tunes and New hymnal](docs/screenshots/26-hymnals.png)
+
+_Figure 13. Hymnals: the church's hymn books, as library entries with their copies and where they're kept._
+
+![St Aelred's Hymn Book's page, with Import a list and Edit hymnal, and five hymns by number, one marked No first line yet](docs/screenshots/27-hymnal.png)
+
+_Figure 14. A hymnal's page: its hymns in number order, added as they're planned or imported as a list._
+
 Each slot has its own **Remove** button. An empty slot goes straight
 away; one with pieces proposed asks first, saying how many pieces go
 with it, because those pieces and their comments are deleted too.
@@ -367,19 +387,23 @@ is kept, so no planning is lost. Applying the same template twice
 changes nothing, and afterwards the slots are ordinary slots, to move,
 mark N/A or remove like any other.
 
+![The Mass template's edit form, each slot a row with its name, kind, proper part, order and a Remove box, and three blank rows at the end](docs/screenshots/30-template-editor.png)
+
+_Figure 15. Editing a template: each slot keeps its kind and proper part, and the blank rows add new ones._
+
 **In the app.** The conductor plans a term on the Terms page, opens it to see every service and its status, and opens a service to fill its slots.
 
 ![The Terms page with Michaelmas 2026, current and complete, and Advent 2026, upcoming, each with a progress bar](docs/screenshots/04-terms.png)
 
-_Figure 10. The Terms page: each term's progress at a glance._
+_Figure 16. The Terms page: each term's progress at a glance._
 
 ![The Advent 2026 term page listing ten services, each marked Complete, In progress or Not started, followed by notices and a comment](docs/screenshots/05-term.png)
 
-_Figure 11. A term: its services in date order with their status, its notices and its comments._
+_Figure 17. A term: its services in date order with their status, its notices and its comments._
 
 ![The Sung Mass for the First Sunday of Advent, with slots from the Mass template holding confirmed pieces, the Gloria and Credo marked N/A, the template buttons and a comment](docs/screenshots/06-service.png)
 
-_Figure 12. A service: the occasion worked out from its date, slots added from the Mass template with each one's kind, confirmed pieces and two slots marked N/A._
+_Figure 18. A service: the occasion worked out from its date, slots added from the Mass template with each one's kind, confirmed pieces and two slots marked N/A._
 
 ### 3.3 Proposing and Confirming
 
@@ -422,7 +446,7 @@ term and see at once which services still need attention.
 
 ![A service page with a slot's score search box open and a list of matching scores beneath it](docs/screenshots/07-propose-a-piece.png)
 
-_Figure 13. Proposing a piece from the slot's search box: on an Advent Sunday the season's scores are suggested first, each with its reasons._
+_Figure 19. Proposing a piece from the slot's search box: on an Advent Sunday the season's scores are suggested first, each with its reasons._
 
 ### 3.4 Ordo (the Liturgical Calendar)
 
@@ -556,11 +580,11 @@ state:
 
 ![The Advent 2026 music list in three columns, headed by the church's crest and name, with each service's pieces and the notices between services](docs/screenshots/12-music-list.png)
 
-_Figure 14. The public music list for Advent, with Public, Draft and Print at the foot._
+_Figure 20. The public music list for Advent, with Public, Draft and Print at the foot._
 
 ![The Settings page with the church's name, national calendar, crest style, the current crest, accent colour and music list layout](docs/screenshots/14-settings.png)
 
-_Figure 15. Settings: the church's name, calendar and crest, how the music list is laid out, and how recent counts as sung recently for suggestions._
+_Figure 21. Settings: the church's name, calendar and crest, how the music list is laid out, and how recent counts as sung recently for suggestions._
 
 **The pew sheet.** Each service also has a sheet for the congregation,
 linked from its page for every role. It prints the service's confirmed
@@ -570,6 +594,10 @@ the credit beneath. Texts and composers can be left off with a plain
 form whose choices go in the address, so it needs no JavaScript. It
 uses the music list's styles, so it prints the same way: white, with
 the controls hidden, whichever theme is on.
+
+![The pew sheet for the First Sunday of Advent, with each slot's music in order and the Ave Maria's Latin beside its English](docs/screenshots/28-pew-sheet.png)
+
+_Figure 22. The pew sheet: the service's confirmed music in order, with a motet's text beside its translation._
 
 ## 5. Roles and Permissions, Revisited
 
@@ -635,19 +663,19 @@ it stays true as pages are added.
 
 ![An invitation link for Anne, alto, in a read-only box, with the role, the expiry date and a note that it is only shown once](docs/screenshots/15-invitation-link.png)
 
-_Figure 16. An invitation link, shown once for the owner to pass on._
+_Figure 23. An invitation link, shown once for the owner to pass on._
 
 ![The Members page listing the conductor, librarian and viewer with their roles, the owner badge and the owner's controls, and an invitation waiting to be used](docs/screenshots/16-members.png)
 
-_Figure 17. The Members page as the owner sees it._
+_Figure 24. The Members page as the owner sees it._
 
 ![A Not available to you page shown to a Viewer who tried to create a term](docs/screenshots/17-forbidden.png)
 
-_Figure 18. A Viewer trying to create a term gets a 403 page that says why._
+_Figure 25. A Viewer trying to create a term gets a 403 page that says why._
 
 ![A Page not found page shown to another church's member who opened this church's score by its address](docs/screenshots/18-not-found.png)
 
-_Figure 19. Someone from another church opening this church's score by its address gets a 404, as if it didn't exist._
+_Figure 26. Someone from another church opening this church's score by its address gets a 404, as if it didn't exist._
 
 ## 6. Comment Threads
 
@@ -685,7 +713,7 @@ This remains a **"should have"**, not core to the MVP.
 
 ![The Inbox listing open comment threads with who wrote them and which term or service they are about](docs/screenshots/13-inbox.png)
 
-_Figure 20. The Inbox of open threads._
+_Figure 27. The Inbox of open threads._
 
 ## 7. Scope Discipline (MoSCoW)
 
@@ -1424,23 +1452,23 @@ The figures above sit in the sections they illustrate. These show the same app o
 
 ![The Terms page on a phone 390 pixels wide, with the term cards stacked in one column](docs/screenshots/19-mobile-terms.png)
 
-_Figure 21. The Terms page on a phone._
+_Figure 28. The Terms page on a phone._
 
 ![A service page on a phone, with each slot's buttons wrapping under its name](docs/screenshots/20-mobile-service.png)
 
-_Figure 22. A service on a phone._
+_Figure 29. A service on a phone._
 
 ![The library on a phone, with the filters above the table](docs/screenshots/21-mobile-library.png)
 
-_Figure 23. The library on a phone; the table scrolls within its own box rather than widening the page._
+_Figure 30. The library on a phone; the table scrolls within its own box rather than widening the page._
 
 ![The First Sunday of Advent service page in dark colours](docs/screenshots/22-dark-service.png)
 
-_Figure 24. A service in dark mode, which follows the device's setting or the choice in the user menu._
+_Figure 31. A service in dark mode, which follows the device's setting or the choice in the user menu._
 
 ![The Terms page with a visible outline round the Terms link after pressing Tab](docs/screenshots/23-keyboard-focus.png)
 
-_Figure 25. Keyboard focus: links and buttons show an outline when reached with Tab._
+_Figure 32. Keyboard focus: links and buttons show an outline when reached with Tab._
 
 ### How the screenshots were made
 
@@ -1455,9 +1483,10 @@ development database:
    in that session uses `screenshots.sqlite3`, which git ignores.
 2. `python tools/seed_demo.py` migrates that file, loads the liturgical
    calendar into it and builds the church through the app's own
-   `create_organisation()` and models: three people, 25 scores, a past
-   term and an Advent term with services in every state, notices,
-   comments and a crest drawn in code.
+   `create_organisation()` and models: three people, 25 scores, a hymn
+   book of its own with made-up numbers, a past term, an Advent term
+   with services in every state, a 1962 Mass, notices, comments and a
+   crest drawn in code.
 3. `python manage.py runserver 8766` serves it.
 4. `python tools/take_screenshots.py`, in a second terminal with the same
    `DATABASE_URL`, drives Chromium through Playwright (already used for
@@ -1468,7 +1497,7 @@ development database:
    through its own page, so the demo church is left as it was.
    Images over 300 KB are reduced to 256 colours.
 5. My local `.env` turns `DEBUG` on, which shows Django's debug page in
-   place of the 404 page, so for Figure 19 the script renders the page
+   place of the 404 page, so for Figure 26 the script renders the page
    with `DEBUG` off through Django's test client and photographs that.
 
 ## 15. Features and CRUD
