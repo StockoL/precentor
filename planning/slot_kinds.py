@@ -72,6 +72,8 @@ LAST_WORDS = {
     "antiphon": "antiphon",
     "responsory": "responsory",
     "responsories": "responsory",
+    "canticle": "canticle",
+    "canticles": "canticle",
     "motet": "motet",
     "anthem": "motet",
     "voluntary": "organ",

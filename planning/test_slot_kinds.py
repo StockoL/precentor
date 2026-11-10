@@ -36,6 +36,12 @@ class ClassifyTests(SimpleTestCase):
         self.assertEqual(classify("Palm Sunday responsory"), ("responsory", ""))
         self.assertEqual(classify("Responsories"), ("responsory", ""))
 
+    def test_a_canticle_by_that_name(self):
+        # Antiphons, hymns and responsories were known by their name; a
+        # slot called Canticle was Other, so it missed the day's canticle.
+        self.assertEqual(classify("Canticle"), ("canticle", ""))
+        self.assertEqual(classify("Gospel canticle"), ("canticle", ""))
+
     def test_a_name_it_doesnt_know_is_other(self):
         self.assertEqual(classify("Procession"), ("other", ""))
         self.assertEqual(classify(""), ("other", ""))
