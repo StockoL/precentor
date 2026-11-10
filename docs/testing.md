@@ -370,34 +370,116 @@ _Test figure 8. M47: the Hymnals page._
 
 ## 6. Responsiveness, usability and the keyboard
 
-| ID   | Check                         | Steps                                                                       | Expected                                                             | Result   |
-| ---- | ----------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------- | -------- |
-| R01  | 320 pixels wide               | Every main page at 320 pixels                                               | Nothing wider than the screen except the library table, which scrolls in its own box | Fail, then fixed: the score form was 3 pixels too wide (`6bf1062`). After the fix, all 19 pages passed in Chromium, Firefox and WebKit on 31 October |
-| R02  | 768 pixels wide               | The same pages at 768 pixels                                                | The layout fills the width without gaps or overlaps                  | Pass: all 19 pages in all three engines on 31 October, with no console errors |
-| R03  | 1280 pixels wide              | The same pages at 1280 pixels                                               | The layout as in the README's screenshots                            | Pass: every page in the README's figures at 1280 pixels |
-| R04  | Keyboard alone                | Sign in, open a service, propose and confirm a piece, using only the keyboard | Every step reachable with Tab, Enter and the arrow keys, with a visible outline on each control | Pass on 31 October, in Chromium: every step done with Tab, typing, the arrow keys and Enter. Each control had a focus outline; a term's link rings its whole card instead (Figure 32 shows the outline) |
-| R05  | Dark mode                     | Switch the device to dark, then choose Dark in the user menu                | Every page readable, with the same contrast as in light              | Pass: the service page (Figure 31) and by browser tests; every other page checked by hand on 23 October |
-| R06  | Without JavaScript            | Turn JavaScript off; propose a piece, confirm it, remove a slot             | Each works through ordinary pages                                    | Pass: each is an ordinary form post, covered by automated tests without JavaScript |
+Run on 10 November 2026 between `f15b70c` and `b500e3f`. R01 to R03 by
+[`tools/check_viewports.py`](../tools/check_viewports.py), the rest in
+Google Chrome 157.
 
-### Browsers and devices
+| ID   | Check | Steps | Expected | Result |
+| ---- | ----- | ----- | -------- | ------ |
+| R01  | Phones: 320 and 375 pixels | Every main page at each width, in Chromium, Firefox and WebKit | Nothing wider than the screen except the library table, which scrolls in its own box; no console errors | Pass: all 25 pages at both widths in all three engines (Test figures 9 to 12). At submission the score form was 3 pixels too wide at 320, fixed in `6bf1062` |
+| R02  | Tablets: 768 and 1024 pixels | The same pages at each width | The layout fills the width without gaps or overlaps; no console errors | Pass: all 25 pages in all three engines (Test figure 13) |
+| R03  | Laptop: 1280 pixels | The same pages | The layout as in the README's screenshots; no console errors | Pass: all 25 pages in all three engines (Test figure 14); the README's figures were taken again on the same code |
+| R04  | Keyboard alone | Sign in, open a service, propose and confirm a piece, using only the keyboard | Every step reachable with Tab, Enter and the arrow keys, with a visible outline on each control | Pass: signed in, opened Advent 2026 and its Midnight Mass, chose Mozart's Ave verum corpus with the arrow keys, proposed and confirmed it, using only Tab, typing, the arrow keys and Enter. Every control showed an outline (a term's card is outlined as a whole), and after Confirm the focus stayed on the button, now reading Unconfirm (Test figure 15) |
+| R05  | Dark mode | Switch the device to dark, then choose Dark in the user menu | Every page readable, with the same contrast as in light | Pass: every visible piece of text on the 25 pages measured against its background, 1,403 in each theme: all meet WCAG AA, the lowest ratio 4.83 in light and 5.7 in dark. Dark chosen in the user menu on a light device applied at once and carried to the next page (Test figures 16 to 18) |
+| R06  | Without JavaScript | Turn JavaScript off; propose a piece, confirm it, remove a slot | Each works through ordinary pages | Pass: Sicut cervus proposed from the propose page; after Confirm and a fresh load it read Confirmed; Remove asked first on a page of its own, and the slot went |
 
-On 31 October I loaded the 19 main pages (signing in, registering,
-terms, a term, a service, the library, the score form, the music list,
-the pew sheet, the inbox, Settings, Members, completeness, hymnals, a
-hymnal, tunes, templates, import and privacy) in each browser engine
-Playwright provides, at 320, 768 and 1280 pixels wide. A script looked
-for anything wider than the window and for errors in the console.
+### Widths and browsers
 
-| Engine   | Version tested | Stands in for                        | 320 px | 768 px | 1280 px |
-| -------- | -------------- | ------------------------------------ | ------ | ------ | ------- |
-| Chromium | 149            | Chrome, Edge, Samsung Internet       | Pass after `6bf1062` | Pass | Pass |
-| Firefox  | 151            | Firefox                              | Pass after `6bf1062` | Pass | Pass |
-| WebKit   | 26.5           | Safari on a Mac, iPhone and iPad     | Pass after `6bf1062` | Pass | Pass |
+[`tools/check_viewports.py`](../tools/check_viewports.py) opened each of
+the 25 main pages at five widths in each of Playwright's three browser
+engines, 375 loads in all, and looked for anything that made the page
+scroll sideways and for errors in the console. The 404 page was rendered
+with `DEBUG` off, as on the live site.
+
+| Engine   | Version       | Stands in for                    |
+| -------- | ------------- | -------------------------------- |
+| Chromium | 149.0.7827.55 | Chrome, Edge, Samsung Internet   |
+| Firefox  | 151.0         | Firefox                          |
+| WebKit   | 26.5          | Safari on a Mac, iPhone and iPad |
+
+Every page passed at every width in all three engines:
+
+| Page | 320 px | 375 px | 768 px | 1024 px | 1280 px |
+| ---- | ------ | ------ | ------ | ------- | ------- |
+| Sign in | Pass | Pass | Pass | Pass | Pass |
+| Register | Pass | Pass | Pass | Pass | Pass |
+| Privacy | Pass | Pass | Pass | Pass | Pass |
+| Terms | Pass | Pass | Pass | Pass | Pass |
+| A term | Pass | Pass | Pass | Pass | Pass |
+| A service | Pass | Pass | Pass | Pass | Pass |
+| Propose a piece | Pass | Pass | Pass | Pass | Pass |
+| Pew sheet | Pass | Pass | Pass | Pass | Pass |
+| Music list | Pass | Pass | Pass | Pass | Pass |
+| Library | Pass | Pass | Pass | Pass | Pass |
+| A score | Pass | Pass | Pass | Pass | Pass |
+| Add a score | Pass | Pass | Pass | Pass | Pass |
+| Completeness | Pass | Pass | Pass | Pass | Pass |
+| Import | Pass | Pass | Pass | Pass | Pass |
+| Imports | Pass | Pass | Pass | Pass | Pass |
+| Hymnals | Pass | Pass | Pass | Pass | Pass |
+| A hymnal | Pass | Pass | Pass | Pass | Pass |
+| A hymn | Pass | Pass | Pass | Pass | Pass |
+| Tunes | Pass | Pass | Pass | Pass | Pass |
+| Templates | Pass | Pass | Pass | Pass | Pass |
+| Edit a template | Pass | Pass | Pass | Pass | Pass |
+| Inbox | Pass | Pass | Pass | Pass | Pass |
+| Settings | Pass | Pass | Pass | Pass | Pass |
+| Members | Pass | Pass | Pass | Pass | Pass |
+| Not found (404) | Pass | Pass | Pass | Pass | Pass |
 
 Playwright's WebKit is the engine Safari is built on, run on Windows,
-not Safari itself, and none of this was on a real phone. I haven't
-tested on an iPhone or an Android phone, so those rows say what the
-engine does, not what a particular device does.
+not Safari itself. The manual tests used Google Chrome 157.
+
+![A service page at 320 pixels in Chromium: the heading, its buttons and the first slot fitting the width](screenshots/testing/r01-320-service-chromium.png)
+
+_Test figure 9. R01: a service at 320 pixels in Chromium._
+
+![The same service page at 320 pixels in Firefox](screenshots/testing/r01-320-service-firefox.png)
+
+_Test figure 10. R01: the same in Firefox._
+
+![The same service page at 320 pixels in WebKit](screenshots/testing/r01-320-service-webkit.png)
+
+_Test figure 11. R01: the same in WebKit, the engine Safari uses._
+
+![The library at 320 pixels, its filters stacked and the table scrolling inside its own box](screenshots/testing/r01-320-library-chromium.png)
+
+_Test figure 12. R01: the library at 320 pixels; only the table scrolls sideways._
+
+![A service page at 768 pixels](screenshots/testing/r02-768-service-chromium.png)
+
+_Test figure 13. R02: a service at 768 pixels._
+
+![The library at 1280 pixels, with the search box and the Language, Voicing, Season and Use menus in one row above the table](screenshots/testing/r03-1280-library-chromium.png)
+
+_Test figure 14. R03: the library at 1280 pixels._
+
+![The Terms page after pressing Tab three times, with an outline round the Terms link and round the first term's card](screenshots/testing/r04-keyboard-focus.png)
+
+_Test figure 15. R04: keyboard focus, shown round the link and the card it's in._
+
+![A service page in dark colours](screenshots/testing/r05-dark-service.png)
+
+_Test figure 16. R05: a service in dark mode._
+
+![The music list in dark colours, with the liturgical colours lightened](screenshots/testing/r05-dark-music-list.png)
+
+_Test figure 17. R05: the music list in dark mode._
+
+![The Settings page in dark colours](screenshots/testing/r05-dark-settings.png)
+
+_Test figure 18. R05: Settings in dark mode._
+
+### Real devices
+
+These are checked by me on the live site after the deploy, on my own
+phone and tablet: signing in, Terms, a service, the library, the music
+list and the pew sheet.
+
+| Device | Browser | Width | What was checked | Result | Screenshot |
+| ------ | ------- | ----- | ---------------- | ------ | ---------- |
+|        |         |       |                  |        |            |
+|        |         |       |                  |        |            |
 
 ## 7. Bugs found and fixed
 
