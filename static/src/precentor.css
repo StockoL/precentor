@@ -50,7 +50,7 @@
  *   blocks/template-slot.css
  *   utilities/utilities.css
  *
- * Fingerprint: 69fef10c688c32f183d4696f9bcdc682ed3efbbf5ea28e4948ed26080e877fc0
+ * Fingerprint: 9db40e3fd8897a3230425b1d4a25d798b05e4d206ecc4dcf5bf4caf4567e0eea
  */
 
 /* ---- global/layers.css ---- */
@@ -2085,10 +2085,12 @@
     display: none;
   }
 
-  /* The reference box sits beside the score search box at the same,
-     natural width, instead of stretching across the row as form inputs do. */
+  /* The reference box sits beside the score search box at its own
+     width, instead of stretching across the row as form inputs do,
+     but shrinks to fit on a narrow phone. */
   form .role-block__reference {
     width: auto;
+    max-inline-size: 100%;
   }
 
   /* A hymn's book is a short code and its number a few characters, so

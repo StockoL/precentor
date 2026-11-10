@@ -68,10 +68,12 @@
     display: none;
   }
 
-  /* The reference box sits beside the score search box at the same,
-     natural width, instead of stretching across the row as form inputs do. */
+  /* The reference box sits beside the score search box at its own
+     width, instead of stretching across the row as form inputs do,
+     but shrinks to fit on a narrow phone. */
   form .role-block__reference {
     width: auto;
+    max-inline-size: 100%;
   }
 
   /* A hymn's book is a short code and its number a few characters, so
