@@ -599,8 +599,8 @@ swap user models once they exist. The database itself refuses accounts
 that make no sense: someone in an organisation without a role, an
 owner outside one or who is only a viewer, or a second account for the
 same address typed in different capitals. Addresses are stored in
-lowercase and sign-in ignores case, so Anne@Example.com and
-anne@example.com are one person. A site superuser belongs to no
+lowercase and sign-in ignores case, so `Anne@Example.com` and
+`anne@example.com` are one person. A site superuser belongs to no
 organisation and gets no powers inside the app; the admin pages are
 theirs.
 
@@ -848,7 +848,6 @@ Utopia. The typefaces are EB Garamond and Inter, both under the SIL
 Open Font License. [`docs/acknowledgements.md`](docs/acknowledgements.md)
 lists every source in full, with what I took from each and how, and
 my thanks to each.
-
 
 ## 12. Deployment
 
@@ -1607,7 +1606,7 @@ need Python 3.14 and git.
 3. Create a file called `.env` in the repository's root folder with a
    secret key of your own and `DEBUG` switched on:
 
-   ```
+   ```text
    SECRET_KEY=any-long-random-string
    DEBUG=True
    ```
@@ -1629,7 +1628,7 @@ need Python 3.14 and git.
    python manage.py runserver
    ```
 
-   Open http://127.0.0.1:8000/, choose **Register** and register a
+   Open <http://127.0.0.1:8000/>, choose **Register** and register a
    church to start using it.
 
 6. Run the tests:

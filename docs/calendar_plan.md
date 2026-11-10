@@ -278,6 +278,7 @@ Every difference is one of three kinds:
   day, not a day of the calendar.
 
 Also:
+
 - **The rows are written by hand**, so unlike the romcal and
   Missalemeum data they have no export script; `manage.py
   load_calendar` loads them with the rest, and removes any row that has

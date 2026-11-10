@@ -302,7 +302,7 @@ found by flake8 (see section 1). None affects how the app works.
 
 ## 8. Deployment check
 
-On the live site, https://precentor.onrender.com, after each deploy.
+On the [live site](https://precentor.onrender.com), after each deploy.
 
 | ID   | Check                         | Expected                                                                 | Result   |
 | ---- | ----------------------------- | ------------------------------------------------------------------------ | -------- |
