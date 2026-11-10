@@ -23,34 +23,103 @@ automated test named. Anything I didn't get to before submission says so.
 
 ## 2. HTML validation by page
 
-| Page                    | Errors | Warnings | Notes                                                        |
-| ----------------------- | ------ | -------- | ------------------------------------------------------------ |
-| Sign in                 | 1      | 0        | `@view-transition` (see section 1)                           |
-| Register                | 1      | 0        | `@view-transition`                                           |
-| Terms                   | 0      | 1        | `role="list"`                                                |
-| A term                  | 0      | 3        | `role="list"`                                                |
-| A service               | 0      | 11       | `role="list"`                                                |
-| Library                 | 0      | 0        |                                                              |
-| A score                 | 0      | 0        |                                                              |
-| Add a score             | 0      | 0        |                                                              |
-| Music list              | 0      | 0        |                                                              |
-| Inbox                   | 0      | 1        | `role="list"`                                                |
-| Settings                | 2      | 0        | The colour picker's `maxlength` and `required`; fixed in `7abd14c` |
-| Members                 | 0      | 2        | `role="list"`                                                |
-| Page not found          | 0      | 0        |                                                              |
-| Privacy                 | 0      | 0        | Checked 31 October, like every row below                     |
-| Import                  | 0      | 0        |                                                              |
-| Imports                 | 0      | 1        | `role="list"`                                                |
-| Library completeness    | 0      | 2        | `role="list"`                                                |
-| Hymnals                 | 0      | 2        | `role="list"`                                                |
-| A hymnal                | 0      | 1        | `role="list"`                                                |
-| A hymn                  | 0      | 1        | `role="list"`                                                |
-| Edit a hymn             | 0      | 0        |                                                              |
-| Tunes                   | 0      | 1        | `role="list"`                                                |
-| Pew sheet               | 0      | 0        |                                                              |
-| Templates               | 0      | 1        | `role="list"`                                                |
-| Edit a template         | 0      | 1        | `role="list"` on its `<ol>`                                  |
-| Propose a piece         | 0      | 0        |                                                              |
+Checked on 10 November 2026 at `b500e3f`, with
+[`tools/validate_html.py`](../tools/validate_html.py). It renders every
+page the project's routes give, signed in as a church's owner (or signed
+out, for the pages before signing in), with `DEBUG` off as on the live
+site, and 13 pages that only appear after an action, such as a form with
+mistakes or a deleted account. Each page went to the Nu HTML Checker
+26.11.9, the W3C's own checker, run on my computer from its published
+download: the [online copy](https://validator.w3.org/nu/) sits behind
+Cloudflare, which kept turning the script away even at one request every
+ten minutes. A new page is checked without being added to a list.
+
+74 pages, **no errors**. The 30 warnings are all the same: "the list role
+is unnecessary", on lists that keep `role="list"` on purpose (Safari stops
+announcing a list as a list once its bullets are removed; README §16).
+Routes that aren't HTML pages weren't sent: the crest image, three CSV
+downloads, and six actions that only accept a form being posted.
+
+Errors found by earlier runs, all fixed: the Settings colour picker's
+`maxlength` and `required` (`7abd14c`), and a `<span>` holding a form in a
+hymn's row on the service page (`5866886`).
+
+| Page | Errors | Warnings | Notes |
+| ---- | ------ | -------- | ----- |
+| Inbox (`comments:inbox`) | 0 | 1 | `role="list"` |
+| Settings (`core:site_config_update`) | 0 | 0 |  |
+| Delete your account (`delete_account`) | 0 | 0 |  |
+| Delete the church (`delete_church`) | 0 | 0 |  |
+| Join by invitation (`join`) | 0 | 0 |  |
+| Library completeness (`library:completeness`) | 0 | 2 | `role="list"` |
+| A hymn (`library:hymn_detail`) | 0 | 1 | `role="list"` |
+| A hymn's tune in a book (`library:hymn_entry_update`) | 0 | 0 |  |
+| Import a hymnal's list (`library:hymn_import`) | 0 | 0 |  |
+| A hymnal import's result (`library:hymn_import_detail`) | 0 | 0 |  |
+| Edit a hymn (`library:hymn_update`) | 0 | 0 |  |
+| New hymnal (`library:hymnal_create`) | 0 | 0 |  |
+| Delete a hymnal (`library:hymnal_delete`) | 0 | 0 |  |
+| A hymnal (`library:hymnal_detail`) | 0 | 1 | `role="list"` |
+| Hymnals (`library:hymnal_list`) | 0 | 1 | `role="list"` |
+| Edit a hymnal (`library:hymnal_update`) | 0 | 0 |  |
+| Remove a hymnal import (`library:remove_hymn_import`) | 0 | 0 |  |
+| Remove an import (`library:remove_import`) | 0 | 0 |  |
+| Add a score (`library:score_create`) | 0 | 0 |  |
+| Delete a score (`library:score_delete`) | 0 | 0 |  |
+| A score (`library:score_detail`) | 0 | 0 |  |
+| Import (`library:score_import`) | 0 | 0 |  |
+| An import's result (`library:score_import_detail`) | 0 | 0 |  |
+| Imports (`library:score_import_list`) | 0 | 1 | `role="list"` |
+| Library (`library:score_list`) | 0 | 0 |  |
+| Edit a score (`library:score_update`) | 0 | 0 |  |
+| New tune (`library:tune_create`) | 0 | 0 |  |
+| Tunes (`library:tune_list`) | 0 | 1 | `role="list"` |
+| Edit a tune (`library:tune_update`) | 0 | 0 |  |
+| Sign in (`login`) | 0 | 0 |  |
+| Cancel an invitation (`members:invitation_cancel`) | 0 | 0 |  |
+| An invitation's link (`members:invitation_link`) | 0 | 0 |  |
+| Invite someone (`members:invite`) | 0 | 0 |  |
+| Make someone the owner (`members:make_owner`) | 0 | 0 |  |
+| Members (`members:member_list`) | 0 | 3 | `role="list"` |
+| Remove a member (`members:remove`) | 0 | 0 |  |
+| Change password (`password_change`) | 0 | 0 |  |
+| Password changed (`password_change_done`) | 0 | 0 |  |
+| Password saved (`password_reset_complete`) | 0 | 0 |  |
+| Choose a new password (reset link) (`password_reset_confirm`) | 0 | 0 |  |
+| Propose a piece (without JavaScript) (`planning:add_piece`) | 0 | 0 |  |
+| New notice (`planning:marker_create`) | 0 | 0 |  |
+| Delete a notice (`planning:marker_delete`) | 0 | 0 |  |
+| Edit a notice (`planning:marker_update`) | 0 | 0 |  |
+| New service (`planning:service_create`) | 0 | 0 |  |
+| Delete a service (`planning:service_delete`) | 0 | 0 |  |
+| A service (`planning:service_detail`) | 0 | 13 | `role="list"` |
+| Pew sheet (`planning:service_pew_sheet`) | 0 | 0 |  |
+| Edit a service (`planning:service_update`) | 0 | 0 |  |
+| New template (`planning:slot_template_create`) | 0 | 1 | `role="list"` |
+| Delete a template (`planning:slot_template_delete`) | 0 | 0 |  |
+| Templates (`planning:slot_template_list`) | 0 | 1 | `role="list"` |
+| Edit a template (`planning:slot_template_update`) | 0 | 1 | `role="list"` |
+| New term (`planning:term_create`) | 0 | 0 |  |
+| Delete a term (`planning:term_delete`) | 0 | 0 |  |
+| A term (`planning:term_detail`) | 0 | 2 | `role="list"` |
+| Terms (`planning:term_list`) | 0 | 1 | `role="list"` |
+| Music list (`planning:term_music_list`) | 0 | 0 |  |
+| Edit a term (`planning:term_update`) | 0 | 0 |  |
+| Privacy (`privacy`) | 0 | 0 |  |
+| Register (`signup`) | 0 | 0 |  |
+| 404 page | 0 | 0 |  |
+| 500 page | 0 | 0 |  |
+| 403 page (a Viewer adding a term) | 0 | 0 |  |
+| Log in, wrong password | 0 | 0 |  |
+| Score form with mistakes | 0 | 0 |  |
+| Join, link no longer valid | 0 | 0 |  |
+| Join, already signed in | 0 | 0 |  |
+| Delete my account, as a member | 0 | 0 |  |
+| Reset link for a member | 0 | 0 |  |
+| Use another template, asked first | 0 | 0 |  |
+| Terms, a new church's first steps | 0 | 0 |  |
+| Account deleted | 0 | 0 |  |
+| Church deleted | 0 | 0 |  |
 
 ## 3. Lighthouse scores
 
