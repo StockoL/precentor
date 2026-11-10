@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count, F, ProtectedError
+from django.db.models import Count, F, ProtectedError, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.defaultfilters import pluralize
@@ -657,9 +657,43 @@ class HymnImportDetailView(LibraryEditRequiredMixin, OrganisationScopedMixin, De
     model = HymnImport
     context_object_name = "hymn_import"
     template_name = "library/hymn_import_detail.html"
+    # The most rows listed on the page; a longer import says how many.
+    LISTED = 100
+    FILLED_LABELS = {"first_line": "first line", "metre": "metre", "tune_id": "tune"}
+
+    def changed_entries(self):
+        """The entries this import added or filled in, in the book's
+        number order, each with what happened to it. Two queries: what
+        it filled is recorded in its changes, as removing it needs."""
+        batch = self.object
+        filled = {}  # entry pk or ("hymn", pk): the labels of what was filled
+        for model, pk, attribute, _ in batch.changes.get("filled", []):
+            key = pk if model == "HymnEntry" else ("hymn", pk)
+            filled.setdefault(key, []).append(self.FILLED_LABELS.get(attribute, attribute))
+        hymn_pks = [key[1] for key in filled if isinstance(key, tuple)]
+        entry_pks = [key for key in filled if not isinstance(key, tuple)]
+        entries = batch.hymnal.entries.filter(
+            Q(import_batch=batch) | Q(hymn_id__in=hymn_pks) | Q(pk__in=entry_pks)
+        ).select_related("hymn", "tune")
+        rows = []
+        for entry in sorted(entries, key=HymnEntry.number_order):
+            if entry.import_batch_id == batch.pk:
+                entry.change = "Added"
+            else:
+                labels = filled.get(("hymn", entry.hymn_id), []) + filled.get(entry.pk, [])
+                entry.change = "Filled in: " + ", ".join(labels)
+            rows.append(entry)
+        return rows
 
     def get_context_data(self, **kwargs):
-        return super().get_context_data(can_remove=can_remove_import(self.request.user, self.object), **kwargs)
+        rows = self.changed_entries()
+        return super().get_context_data(
+            can_remove=can_remove_import(self.request.user, self.object),
+            changed_entries=rows[: self.LISTED],
+            changed_count=len(rows),
+            new_tunes=Tune.objects.filter(pk__in=self.object.changes.get("tunes", [])).order_by("name"),
+            **kwargs,
+        )
 
 
 @role_required(can_edit_library)

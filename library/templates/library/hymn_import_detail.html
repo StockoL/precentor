@@ -22,8 +22,43 @@
     {% if report.ignored_columns %}
     <p>These columns weren't recognised and were left out: {{ report.ignored_columns|join:", " }}.</p>
     {% endif %}
-    <p><a href="{{ hymnal.get_absolute_url }}">See {{ hymnal.short_name }}</a></p>
     {% endwith %}
+
+    {% if changed_entries %}
+    <h2 id="changed-heading">What it changed</h2>
+    {% if changed_count > changed_entries|length %}
+    <p>The first {{ changed_entries|length }} of {{ changed_count }}, in number order.</p>
+    {% endif %}
+    {# As the library's table: scrolls sideways in its own box on a narrow screen. #}
+    <div class="table-scroll" role="region" aria-labelledby="changed-heading" tabindex="0">
+        <table class="data-table data-table--narrow">
+            <thead>
+                <tr>
+                    <th scope="col">Number</th>
+                    <th scope="col">First line</th>
+                    <th scope="col">Metre</th>
+                    <th scope="col">Tune</th>
+                    <th scope="col">What happened</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in changed_entries %}
+                <tr>
+                    <td><a href="{{ entry.hymn.get_absolute_url }}">{{ hymn_import.hymnal.short_name }} {{ entry.number }}</a></td>
+                    <td>{{ entry.hymn.first_line|default:"No first line yet" }}</td>
+                    <td>{{ entry.hymn.metre|default:"(unspecified)" }}</td>
+                    <td>{{ entry.tune.name|default:"(unspecified)" }}</td>
+                    <td>{{ entry.change }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% if new_tunes %}
+    <p>New tune{{ new_tunes|length|pluralize }}: {{ new_tunes|join:", " }}.</p>
+    {% endif %}
+    <p><a href="{{ hymn_import.hymnal.get_absolute_url }}">See {{ hymn_import.hymnal.short_name }}</a></p>
 
     {% if hymn_import.is_pending %}
     <form method="post" action="{% url 'library:keep_hymn_import' hymn_import.pk %}" class="flow">
