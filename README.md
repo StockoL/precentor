@@ -1544,7 +1544,7 @@ the role column in §2 says who may use each one.
   from their account, never from the address or a form. Opening another
   church's record by its address gives a 404, not a 403, so its
   existence isn't confirmed. Forms only offer, and only accept, the
-  church's own scores, use types and templates.
+  church's own scores, hymnals, tunes, use types and templates.
 - **Passwords** are stored with Django's password hashers and checked
   against its validators: at least eight characters, not all numbers,
   not a common password and not too like the person's name or email.
