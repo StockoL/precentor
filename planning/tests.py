@@ -164,6 +164,25 @@ class RolePieceWorkflowTests(TestCase):
         self.assertIn("service-status-badge", fragments)
         self.assertIn("Unconfirm", fragments[f"piece-row-{piece.pk}"])
 
+    def test_two_quick_confirms_leave_the_piece_confirmed(self):
+        role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
+        piece = RolePiece.objects.create(service_role=role, score=self.score)
+        url = f"/pieces/{piece.pk}/toggle-confirm/"
+        self.assertContains(self.client.get(self.service.get_absolute_url()), 'name="confirmed" value="1"')
+        for wanted, expected in (("1", True), ("0", False)):
+            with self.subTest(wanted=wanted):
+                for _ in range(2):
+                    response = self.client.post(url, {"confirmed": wanted}, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+                    piece.refresh_from_db()
+                    self.assertIs(piece.is_confirmed, expected)
+                # The row sent back asks for the other state next time.
+                row = response.json()["fragments"][f"piece-row-{piece.pk}"]
+                self.assertIn(f'value="{"0" if expected else "1"}"', row)
+        # A page from before the button sent a state still toggles.
+        self.client.post(url)
+        piece.refresh_from_db()
+        self.assertTrue(piece.is_confirmed)
+
     def test_add_piece_ajax_success_returns_new_piece_fragment(self):
         role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
 
