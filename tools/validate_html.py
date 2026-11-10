@@ -8,7 +8,8 @@ the calendar into it and builds a church with one of everything, using
 build_church() from the isolation test. Each page is rendered with
 Django's test client, with DEBUG off as on the live site, and the HTML is
 posted to the checker with curl (part of Windows 10 and later). My
-development database isn't touched and no server needs to be running.
+development database isn't touched and no server needs to be running;
+collectstatic fills staticfiles/, as the live build does.
 Run it from the repository root, online:
 
     python tools/validate_html.py > validation.md
@@ -43,6 +44,9 @@ import django
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "precentor_project.settings")
+# As on the live site, whatever .env says: the 404 and 500 pages are the
+# real ones, not Django's debug pages.
+os.environ["DEBUG"] = "False"
 django.setup()
 
 from django.contrib.auth.tokens import default_token_generator  # noqa: E402
@@ -161,7 +165,9 @@ def build():
 
 
 def client_for(user=None):
-    client = Client()
+    # Marked as HTTPS the way Render's proxy marks it, so it isn't
+    # redirected there.
+    client = Client(HTTP_X_FORWARDED_PROTO="https")
     if user:
         client.force_login(user)
     return client
@@ -232,6 +238,9 @@ def main():
     setup_test_environment()
     test_db = connection.creation.create_test_db(verbosity=0, autoclobber=True)
     try:
+        # With DEBUG off the pages name the hashed files collectstatic
+        # makes, as Render's build does (into staticfiles/, ignored by git).
+        call_command("collectstatic", interactive=False, verbosity=0)
         call_command("load_calendar", stdout=io.StringIO())
         rows, join_token = build()
         wanted = set(sys.argv[1:])
