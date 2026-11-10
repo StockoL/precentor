@@ -1873,7 +1873,7 @@ again on 10 November 2026 on the code now live. In short:
   real server and drive Chromium through Playwright, so the JavaScript
   is tested too.
 - **Manual tests:** 58 rows covering every feature, each carried out in
-  Google Chrome with its result, and screenshots beside them. Five
+  Google Chrome with its result, and screenshots beside them. Six
   failed and were fixed, each with its commit.
 - **Widths and browsers:** 25 pages at 320, 375, 768, 1024 and 1280
   pixels in Chromium, Firefox and WebKit, with nothing wider than the
