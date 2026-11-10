@@ -434,7 +434,11 @@ calendar, a specific named day), not one generic tag.
 `ScoreQuerySet.ranked_by_suitability(occasion=, season=, use_type=)`
 annotates an `is_suited` flag and sorts matching scores to the top. It
 never filters, because an untagged score might still be the right
-choice and the app has no way to know otherwise. Each condition is a
+choice and the app has no way to know otherwise. That holds for the
+piece picker, which ranks. The Library, from 10 November, filters by
+the same tags instead, through its Season, Use and Occasion menus,
+because there someone is looking for what's tagged for a day rather
+than choosing one piece for a slot. Each condition is a
 `pk__in` subquery ("is this score among those tagged X?"); an earlier
 version joined through the tags, which listed a score with several
 tags once per tag. Each field has `help_text` with examples ("Mass,

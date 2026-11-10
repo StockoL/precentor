@@ -13,7 +13,7 @@ These user stories drive the design and functionality of Precentor.
 - As a conductor, I want to filter the score library by voicing,
   language, and liturgical occasion, so I can find pieces my choir can
   actually sing right now.
-  - Met by: The Library (`score_list`): Voicing, Language and Suitable-for filters, the last by occasion or season.
+  - Met by: The Library (`score_list`): Voicing and Language filters, and Season, Use and Occasion filters for what a score suits.
 - As a conductor, I want to see how long it's been since a piece was
   last sung (with full history available on demand), so I can avoid
   repeating it too often, or repeat it on purpose.
