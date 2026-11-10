@@ -22,6 +22,13 @@ class TermForm(forms.ModelForm):
             "end_date": NativeDateInput(),
         }
 
+    def clean(self):
+        cleaned = super().clean()
+        start, end = cleaned.get("start_date"), cleaned.get("end_date")
+        if start and end and end < start:
+            self.add_error("end_date", "A term can't end before it starts.")
+        return cleaned
+
 
 class ServiceForm(forms.ModelForm):
     class Meta:
