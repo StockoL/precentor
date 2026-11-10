@@ -20,7 +20,7 @@ the automated browser tests, where every page is opened by its address.
 | ----- | ----------- | ---------------------------- | --------- |
 | Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 954 tests, all passing, at `a410aaa` (section 4) | Nothing to resolve. There were 553 at submission |
 | Deployment settings | `python manage.py check --deploy` with `DEBUG` off | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve |
-| Migrations | `python manage.py makemigrations --check --dry-run`, and a rehearsal of the merge on a copy of the live database ([`after_assessment.md`](after_assessment.md)) | No missing migrations. On the copy, all 28 new migrations ran, `check_copied_data` found everything copied, and all 177 pages opened for every church | Nothing to resolve |
+| Migrations | `python manage.py makemigrations --check --dry-run`, and a rehearsal of the merge on a copy of the live database ([`merge_record.md`](merge_record.md)) | No missing migrations. On the copy, all 28 new migrations ran, `check_copied_data` found everything copied, and all 177 pages opened for every church | Nothing to resolve |
 | Python style | flake8 7.4.1 with the settings in `.flake8` (line length 120, `venv` and migrations left out) | No findings | At submission: two unused imports, a blank line and an escape, fixed in `1f2e618`; more in `722ffc4`; the 16 long lines, the variable `l` and the lambda left then were cleared in `86ad9e8` |
 | Leftover debugging | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app. The scripts in `tools/` print what they've done, on purpose | Nothing to resolve |
 | Files that shouldn't be tracked | `git ls-files`, searched for `.env`, database files, keys, `venv` and uploaded media; `git grep` for literal secret keys and passwords | None tracked. The only passwords in the code are test values and the demo church's, used for screenshots | `*.sqlite3` added to `.gitignore` in `442ef09` |
@@ -588,9 +588,9 @@ the three known issues below are in a test and in the testing tools.
 ## 8. Deployment check
 
 On the [live site](https://precentor.onrender.com), after each deploy.
-The merge of the work since submission is rehearsed in
-[`after_assessment.md`](after_assessment.md); its last column is filled
-in once that deploy is done.
+The merge of the work since submission was rehearsed and carried out
+as set down in [`merge_record.md`](merge_record.md); the last column is
+the checks after that deploy, on 10 November 2026.
 
 | ID | Check | Expected | At the first deploy, 23 October | After the merge |
 | -- | ----- | -------- | ------------------------------- | --------------- |
