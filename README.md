@@ -14,7 +14,7 @@ details are needed.
 > **Status:** Precentor is built. Churches register themselves and
 > each works only in its own data. Inside a church there are accounts
 > with email sign-in, three roles and an owner, who invites people by
-> link, changes their roles, removes them and makes reset links (§5).
+> link, changes their roles, removes them and makes reset links.
 > The library of scores, term and service planning with slots and
 > pieces, the Ordo liturgical calendar for both forms of the Roman Rite,
 > comment threads, per-church settings with a crest, and the printable
@@ -22,15 +22,14 @@ details are needed.
 > the whole app, phase by phase, as recorded in
 > [`docs/overhaul_plan.md`](docs/overhaul_plan.md).
 >
-> Since then I've added importing and exporting the library as a
-> spreadsheet or straight from a Google Sheets link (§3.1), slots that know their kind (§3.2), grouped
-> suggestions with reasons (§3.3), hymnals and hymns built up by number
-> or imported as a list,
-> score texts with a pew sheet (§4), templates whose slots keep
-> their kinds, and the day's chants from the 1962 Missal offered on
-> Proper slots (§3.2). The live site is still the version I submitted on 23
-> October 2026, so these newer parts can be run locally (§17) but aren't
-> on it yet.
+> Since my first submission on 23 October 2026 I've added importing
+> and exporting the library as a spreadsheet or straight from a Google
+> Sheets link, slots that know their kind, grouped suggestions with
+> reasons, hymnals and hymns built up by number or imported as a list,
+> score texts with a pew sheet, templates whose slots keep their kinds,
+> and the day's chants offered on Proper slots, from the 1962 Missal
+> and the 1974 Graduale Romanum. All of it is on the live site, which
+> runs the code on `main`.
 >
 > The rest of this document keeps its original concept-and-reasoning
 > framing, because that reasoning is what the build followed. Where the
