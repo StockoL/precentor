@@ -947,24 +947,37 @@ erDiagram
   %% - COMMENT's link to TERM/SERVICE/ROLE_PIECE is one polymorphic
   %%   GenericForeignKey in Django, shown here as three edges since
   %%   erDiagram syntax can't express "one FK, any of three tables"
-  %% - applying a SLOT_TEMPLATE copies its slot names into new
-  %%   SERVICE_ROLE rows, which keep no link to it; the SERVICE only
-  %%   records which template it uses now
+  %% - applying a SLOT_TEMPLATE copies its slots into new SERVICE_ROLE
+  %%   rows, which keep no link to it; the SERVICE only records which
+  %%   template it uses now
   %% - every church's own data belongs to an ORGANISATION; services,
-  %%   slots, pieces, notices and comments copy theirs from what they
-  %%   belong to, so only the directly owned ones are drawn here
+  %%   slots, pieces, notices, template slots, hymn entries and comments
+  %%   copy theirs from what they belong to, so only the directly owned
+  %%   ones are drawn here
   %% - a service's status and a score's "last sung" are worked out when
   %%   needed, never stored, so they don't appear as columns
-  %% - LITURGICAL_OCCASION and LITURGICAL_SEASON are shared by every
-  %%   church and loaded by manage.py load_calendar
+  %% - LITURGICAL_OCCASION, LITURGICAL_SEASON and PROPER_CHANT are
+  %%   shared by every church and loaded by manage.py load_calendar; a
+  %%   chant is matched to its occasion by key, not a foreign key
+  %% - the four columns kept only until after assessment (a service's
+  %%   hymns and psalm, a template's slot_names and the settings'
+  %%   show_hymns_psalm) are left out
   ORGANISATION ||--o{ USER : has
   ORGANISATION ||--o{ INVITATION : sends
   ORGANISATION ||--|| SITE_CONFIG : has
   ORGANISATION ||--o{ TERM : owns
   ORGANISATION ||--o{ SCORE : owns
+  ORGANISATION ||--o{ HYMNAL : owns
+  ORGANISATION ||--o{ HYMN : owns
+  ORGANISATION ||--o{ TUNE : owns
   ORGANISATION ||--o{ SLOT_TEMPLATE : owns
   ORGANISATION ||--o{ USE_TYPE : owns
-  USER ||--o{ COMMENT : writes
+  ORGANISATION ||--o{ SCORE_IMPORT : owns
+  ORGANISATION ||--o{ HYMN_IMPORT : owns
+  USER |o--o{ INVITATION : makes
+  USER |o--o{ SCORE_IMPORT : makes
+  USER |o--o{ HYMN_IMPORT : makes
+  USER |o--o{ COMMENT : writes
   TERM ||--o{ SERVICE : contains
   TERM ||--o{ TERM_MARKER : has
   LITURGICAL_OCCASION |o--o{ SERVICE : occurs_on
@@ -973,15 +986,22 @@ erDiagram
   SLOT_TEMPLATE |o--o{ SERVICE : used_by
   SLOT_TEMPLATE ||--o{ TEMPLATE_SLOT : lists
   SERVICE_ROLE ||--o{ ROLE_PIECE : holds
-  SCORE ||--o{ ROLE_PIECE : referenced_by
+  SCORE |o--o{ ROLE_PIECE : chosen_as
+  HYMN_ENTRY |o--o{ ROLE_PIECE : chosen_as
+  TUNE |o--o{ ROLE_PIECE : sung_to
   HYMNAL ||--o{ HYMN_ENTRY : prints
   HYMN ||--o{ HYMN_ENTRY : printed_as
-  HYMN_ENTRY ||--o{ ROLE_PIECE : chosen_as
   TUNE |o--o{ HYMN_ENTRY : usual_tune
-  TUNE |o--o{ ROLE_PIECE : sung_to
+  HYMN }o--o{ HYMN : not_same_as
+  SCORE_IMPORT |o--o{ SCORE : added
+  HYMNAL ||--o{ HYMN_IMPORT : imported_into
+  HYMN_IMPORT |o--o{ HYMN_ENTRY : added
   SCORE }o--o{ LITURGICAL_OCCASION : suits
   SCORE }o--o{ LITURGICAL_SEASON : suits
   SCORE }o--o{ USE_TYPE : suits
+  HYMN }o--o{ LITURGICAL_OCCASION : suits
+  HYMN }o--o{ LITURGICAL_SEASON : suits
+  HYMN }o--o{ USE_TYPE : suits
   TERM ||--o{ COMMENT : about
   SERVICE ||--o{ COMMENT : about
   ROLE_PIECE ||--o{ COMMENT : about
@@ -1012,6 +1032,9 @@ erDiagram
     string house_accent_colour
     string national_calendar
     string layout_style
+    string music_list_arrangement
+    int repeat_window_weeks
+    int hymn_repeat_window_weeks
   }
   TERM {
     string name
@@ -1048,16 +1071,39 @@ erDiagram
     string reference
     bool is_confirmed
   }
+  SCORE {
+    string title
+    string composer_surname
+    string composer_other_names
+    string arranger
+    string editor
+    string voicing
+    string language
+    int copies_owned
+    string filing_location
+    int duration_minutes
+    date last_sung_manual
+    text text
+    text translation
+  }
+  SCORE_IMPORT {
+    string original_filename
+    string status
+    json report
+    datetime created_at
+  }
   HYMNAL {
     string name
     string short_name
     int copies_owned
+    string filing_location
     bool archived
   }
   HYMN {
     string first_line
     string metre
     text text
+    string text_credit
   }
   HYMN_ENTRY {
     string number
@@ -1066,17 +1112,12 @@ erDiagram
     string name
     string metre
   }
-  SCORE {
-    string title
-    string composer_surname
-    string composer_other_names
-    string voicing
-    string language
-    int copies_owned
-    string filing_location
-    date last_sung_manual
-    text text
-    text translation
+  HYMN_IMPORT {
+    string original_filename
+    string status
+    json report
+    json changes
+    datetime created_at
   }
   USE_TYPE {
     string name
@@ -1090,8 +1131,19 @@ erDiagram
     string calendar_use
     string calendar
     string rank
+    string precedence
     string colour
     string date_rule
+  }
+  PROPER_CHANT {
+    string occasion_key
+    string calendar_use
+    string part
+    string season
+    string cycle
+    int position
+    string incipit
+    string source
   }
   COMMENT {
     text body
