@@ -185,6 +185,9 @@ function initServiceDetail() {
           ul.appendChild(fragmentToElement(html));
         });
         form.reset();
+        // reset() leaves a hidden input's value alone, so the score chosen
+        // last would go with the next piece and have it refused.
+        form.querySelector("input[name='score']").value = "";
         // Once the day's chant is proposed, it's no longer offered.
         const chants = form.querySelectorAll("[data-propose-reference]");
         const chant = [...chants].find((button) => button.dataset.proposeReference === fields.get("reference"));

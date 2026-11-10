@@ -109,6 +109,22 @@ class ProposePieceBrowserTest(PlaywrightTestCase):
         self.page.wait_for_selector(".toast--success")
         assert "Piece proposed" in self.page.inner_text(".toast--success")
 
+    def test_a_second_piece_can_be_typed_after_a_score(self):
+        form = f"#add-piece-form-{self.role.pk}"
+        rows = f"#role-{self.role.pk}-pieces li.list-row"
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.wait_for_selector(f"{form} .score-combobox__input")
+        self.page.fill(f"{form} .score-combobox__input", "Browser Anthem")
+        self.page.click(f"{form} .score-combobox__listbox li[role=option]")
+        self.page.click(f"{form} button[type=submit]")
+        self.page.wait_for_selector(rows)
+        assert self.page.input_value(f"{form} input[name=score]") == ""
+
+        self.page.fill(f"{form} input[name=reference]", "Psalm 23")
+        self.page.click(f"{form} button[type=submit]")
+        self.page.wait_for_function(f"document.querySelectorAll('{rows}').length === 2")
+        assert RolePiece.objects.filter(service_role=self.role, reference="Psalm 23").exists()
+
     def submit_and_wait_for_the_new_form(self, form):
         # A refused submit swaps in a new form; mark the old one to know.
         self.page.evaluate(f"document.querySelector('{form}').dataset.old = 'yes'")
