@@ -1,9 +1,10 @@
 # Merging the work since submission
 
-The live site and `main` are as I submitted them on 23 October 2026.
-Everything since is on the `post-submission` branch. This is how I mean
-to bring it onto the live site once assessment is over, with the risky
-part, the migrations meeting real data, tried on a copy first.
+After I submitted on 23 October 2026, everything new went on the
+`post-submission` branch, and `main` and the live site stayed as
+submitted. On 10 November I brought the branch onto `main` and the live
+site. This is how I planned it, with the risky part, the migrations
+meeting real data, tried on a copy first, and what happened on the day.
 
 ## What the merge does to the data
 
@@ -84,32 +85,43 @@ church had hidden them.
   and 68 MB, `check_copied_data` 0.5 seconds and 58 MB. Render's free
   web service allows 512 MB.
 
-Nothing failed, so the merge can go ahead as below.
+Nothing failed, so the merge went ahead.
 
-## On the day
+## On the day, 10 November 2026
+
+The plan had six steps. Here is each, with what happened.
 
 1. **Copy the live data.** Take a backup of the Render database and
    restore it into a local Postgres. The database accepts no outside
    connections (`ipAllowList` is empty in `render.yaml`), so the copy
    comes from Render's backups, or from allowing my own address for a
-   moment in the dashboard. The plan offers an export from the
-   dashboard, which is how the rehearsal above was done.
+   moment in the dashboard. *Done:* I used the dashboard's export, as
+   described above.
 2. **Rehearse on the copy.** With `DATABASE_URL` pointing at it:
    `python manage.py migrate`, `python manage.py load_calendar`, then
    `python manage.py check_copied_data`. Stop if it reports a problem.
+   *Done:* no problems, as above.
 3. **Decide about hidden hymns.** For any church the check names, tell
    its owner the hymns will now print, or remove those pieces after the
-   merge.
+   merge. *Nothing to decide:* no church had hidden them.
 4. **Merge and deploy.** Merge `post-submission` into `main` and push.
-   Render's build runs `migrate` and `load_calendar` itself.
+   Render's build runs `migrate` and `load_calendar` itself. *Done:*
+   `main` had nothing of its own since submission, so the merge was a
+   fast-forward to `dbc70a7`. I pushed it, and Render reported the
+   deploy successful. Later the same day `main` moved on to `5daa862`
+   and was pushed again.
 5. **Check the live site.** Run `check_copied_data` against the live
    database, then the deployment checks in `testing.md` (section 8) and
    a look at the pages added since submission. The free web service has
    no shell, so the check runs from my own computer, with `DATABASE_URL`
    set to the live database's external address while my address is
    allowed in the database's settings, and removed again afterwards.
+   *Done:* the check reported no difference, and checks D01 to D09
+   passed, D09 on my own iPhone, iPad and PC.
 6. **Drop the old columns.** Only once the check is clean on the live
    data: a migration removing the four old columns, and the code that
    still reads them (the template's text and the settings admin), as a
    commit and deploy of its own. It's ready, and rehearsed, on the
-   `drop-old-columns` branch.
+   `drop-old-columns` branch. *Not done yet:* the check was clean, so
+   this is the next step. The four columns are still in the live
+   database.
