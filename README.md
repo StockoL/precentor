@@ -1900,9 +1900,9 @@ each change before it was committed.
 [`docs/testing.md`](docs/testing.md) has the full record, all of it run
 again on 10 November 2026 on the code now live. In short:
 
-- **953 automated tests** cover the models, views, forms, permissions,
+- **954 automated tests** cover the models, views, forms, permissions,
   each church's own data, the import and export, and the liturgical
-  calendar and its chants. 67 of them are browser tests, which start a
+  calendar and its chants. 68 of them are browser tests, which start a
   real server and drive Chromium through Playwright, so the JavaScript
   is tested too.
 - **Manual tests:** 65 rows covering every feature, each carried out in

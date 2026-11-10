@@ -18,7 +18,7 @@ the automated browser tests, where every page is opened by its address.
 
 | Check | What I used | What it found on 10 November | Resolved? |
 | ----- | ----------- | ---------------------------- | --------- |
-| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 953 tests, all passing, at `b0fafbf` (section 4) | Nothing to resolve. There were 553 at submission |
+| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 954 tests, all passing, at `a410aaa` (section 4) | Nothing to resolve. There were 553 at submission |
 | Deployment settings | `python manage.py check --deploy` with `DEBUG` off | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve |
 | Migrations | `python manage.py makemigrations --check --dry-run`, and a rehearsal of the merge on a copy of the live database ([`after_assessment.md`](after_assessment.md)) | No missing migrations. On the copy, all 28 new migrations ran, `check_copied_data` found everything copied, and all 177 pages opened for every church | Nothing to resolve |
 | Python style | flake8 7.4.1 with the settings in `.flake8` (line length 120, `venv` and migrations left out) | No findings | At submission: two unused imports, a blank line and an escape, fixed in `1f2e618`; more in `722ffc4`; the 16 long lines, the variable `l` and the lambda left then were cleared in `86ad9e8` |
@@ -221,7 +221,7 @@ they're the slowest to fill a simulated phone's screen.
 
 ## 4. Automated tests
 
-The suite has 953 tests, run on 10 November 2026 at commit `b0fafbf`;
+The suite has 954 tests, run on 10 November 2026 at commit `a410aaa`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
@@ -252,7 +252,7 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | `planning/test_remove_piece.py`           | 13    | Removing one piece: at once when it's proposed with no comments, asking first when it's confirmed or has comments, what the page is sent back, a removed chant offered again, without JavaScript, a second removal, another church's piece, Viewers, and no extra query per piece |
 | `planning/test_service_form.py`           | 3     | The service form's calendar choice |
 | `planning/test_date_checks.py`            | 10    | A term ending before it starts, a service outside its term, and new term dates that would leave services outside it, at both ends, with a rename still allowed |
-| `planning/test_browser.py`                | 36    | The service page in the browser: the score picker and its suggestion groups, a search that finds nothing used as typed, a hymn by book and number, a suggested hymn filling them in, the day's chant proposed in one click, a typed reference, a refused proposal, a second piece after a score, proposing and confirming at once, confirming, dragging slots, changing a slot's kind, dialogs, a button kept busy during its request and usable after an error, taking a piece out from the keyboard |
+| `planning/test_browser.py`                | 37    | The service page in the browser: the score picker and its suggestion groups, a search that finds nothing used as typed, a hymn by book and number, a suggested hymn filling them in, the day's chant proposed in one click, a typed reference, a refused proposal, a second piece after a score, proposing and confirming at once, confirming, dragging slots, changing a slot's kind, dialogs, a button kept busy during its request and usable after an error, taking a piece out from the keyboard, the reference box at 320 pixels |
 | `planning/test_slot_kinds.py`             | 23    | Classifying slot names, kinds on save and from templates, the migrations that classified existing slots (and later Sequences and Responsories), the badge, choosing and changing a kind, and a slot named Canticle |
 | `planning/test_reference_pieces.py`       | 37    | A piece as a score, a hymn or a reference and the rule between them, proposing each, showing them everywhere, copying hymns and the psalm into slots, the music list arrangement, a hymn's tune and its choices, the pew sheet's tune number, the first-line prompt, the same piece twice in a slot |
 | `planning/test_outside_library.py`        | 5     | A typed piece in a slot for scores marked as not in the library, with a link to add it for those who may, the score form filled in from it and coming back, and the propose page without JavaScript |
@@ -553,10 +553,11 @@ testing, fixed, and covered by a test where it could be.
 | `c56b704` | A service could be dated outside its term (row M63); tests in `f494aed` |
 | `a00e7b7`, `68721ad` | Changing a term's dates could leave its services outside it (row M63); tests in `ed0e69f` |
 | `f3353c6`, `954347d`, `606aaf0` | A piece could only go with its whole slot, so a wrong or replaced proposal stayed listed until the slot was removed and rebuilt. Each piece now has its own Remove (row M65); tests in `68961ec`, `7d5638b` and `b0fafbf` |
+| `c5e13b1` | At 320 pixels a slot's "Or type a reference" box was 18 pixels wider than its card and ran over the card's edge. The page itself was no wider than the screen, so row R01's check didn't catch it; tests in `a410aaa` |
 
 The flake8 findings left at submission (16 long lines, a variable named
 `l` and a lambda) were cleared in `86ad9e8`. No fault found in the app is left unfixed;
-the two known issues below are in a test and in the testing browser.
+the three known issues below are in a test and in the testing tools.
 
 ### Known bugs
 
@@ -564,6 +565,7 @@ the two known issues below are in a test and in the testing browser.
 | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | The browser test for confirming a piece failed once in a full run of the planning tests on 30 October | None for people using the site; a test can fail without a real fault | Not reproduced: on 1 November it passed 20 runs on its own and 6 runs of all the planning browser tests, as it has in every full run since. It passed again in the full run of 10 November. If it fails again, the traceback names the line |
 | Playwright's own Chromium (149) stops drawing after any cross-document page transition, so a click from one page to the next leaves the old page on screen | None for people using the site: Chrome 157 and Edge 157 cross-fade and draw normally | A fault in the testing browser, not the site, so the manual tests were run in Google Chrome. The automated browser tests, which mostly work within one page, pass in it |
+| With JavaScript turned off in Playwright, its check before each click says any page reached by a click can't be clicked, as if the whole page were covering the button | None for people using the site: on the same pages a real mouse click works in Chrome 157, with or without a window | A fault in the testing tool, not the site, so row M65's steps without JavaScript used real mouse clicks after the page had settled |
 
 ## 8. Deployment check
 
