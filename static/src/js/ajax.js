@@ -13,7 +13,7 @@ export class AjaxError extends Error {
   }
 }
 
-// Every fetch() in this project MUST go through postForm() — it's the
+// Every fetch() in this project MUST go through postForm(): it's the
 // only place X-Requested-With is set (fetch() does not send it by
 // default, unlike jQuery's $.ajax), so no call site can forget it and
 // silently fall back to a full-page redirect.
@@ -35,7 +35,7 @@ export async function postForm(url, formData) {
 // are returned in `unmatched` for the caller to append (feature-specific
 // knowledge, kept out of this generic function). If focusId is given,
 // re-queries (never the stale pre-swap reference) and focuses it after
-// all swaps land — the element must keep the same id across every
+// all swaps land. The element must keep the same id across every
 // state it can render as for this to find the right node.
 export function applyFragments(fragments, focusId) {
   const unmatched = {};

@@ -10,7 +10,7 @@ export function showToast(message, tag = "info") {
   toast.setAttribute("role", tag === "danger" ? "alert" : "status");
 
   const text = document.createElement("span");
-  text.textContent = message; // never innerHTML — message may originate from user-editable data (e.g. a Score title)
+  text.textContent = message; // never innerHTML: the message may come from user-editable data (e.g. a Score title)
 
   const dismiss = document.createElement("button");
   dismiss.type = "button";

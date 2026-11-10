@@ -6,7 +6,7 @@
     <meta name="color-scheme" content="light dark">
     <meta name="description" content="{% block description %}Precentor plans a church choir's music: a library of scores, terms of services and a printable music list.{% endblock %}">
     <script>
-      // Blocking, NOT deferred — must run before first paint to avoid a
+      // Blocking, NOT deferred: it must run before first paint to avoid a
       // flash of the wrong theme. Only restores a saved choice; the
       // Appearance radios in the user menu live in theme-choice.js.
       (function () {

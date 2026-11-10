@@ -131,7 +131,7 @@ function initSlotDragging(main) {
 function initServiceDetail() {
   const main = document.querySelector("main");
   // #roles-list is always rendered on service_detail.html, even with zero
-  // roles yet — unlike .role-block, which only exists once a role does.
+  // roles yet, unlike .role-block, which only exists once a role does.
   if (!document.getElementById("roles-list")) return;
   initSlotDragging(main);
 
@@ -197,7 +197,7 @@ function initServiceDetail() {
         if (err instanceof AjaxError) {
           // The swapped-in form fragment carries a brand-new .score-combobox
           // wrapper (previously enhanced one was just destroyed by the
-          // outerHTML swap) — re-init scoped to just this form.
+          // outerHTML swap), so re-init only this form.
           applyFragments(err.data.fragments);
           initScorePickers(document.getElementById(`add-piece-form-${rolePk}`));
         } else {

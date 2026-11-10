@@ -4,7 +4,7 @@ import { confirmAction } from "./confirm-dialog.js";
 
 // Generic by design: works off whatever content_type_id/object_id are
 // already in the DOM (via _comment_form.html's action URL), not
-// hardcoded to one page — _thread.html renders identically whether
+// hardcoded to one page, as _thread.html renders identically whether
 // included from service_detail.html or term_detail.html.
 function initComments() {
   const thread = document.querySelector(".comment-thread");

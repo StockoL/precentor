@@ -1,4 +1,4 @@
-// Progressive enhancement over a plain <input type="file"> — the input
+// Progressive enhancement over a plain <input type="file">: the input
 // stays the real, submitted form field throughout. If cropping isn't
 // possible (no DataTransfer/canvas support) this simply never builds the
 // crop UI, and the raw file the user picked submits as-is; the server-side
