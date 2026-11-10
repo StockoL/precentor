@@ -936,6 +936,9 @@ not oversights, when an assessor reads this document.
 
 ## 9. Supporting Documents
 
+[`docs/README.md`](docs/README.md) indexes these, and says which
+describe the app as built and which are plans kept as a record.
+
 - [`docs/user_stories.md`](docs/user_stories.md): user stories for the
   conductor, the librarian and the site owner (the church), used to
   check the finished application against its original intent.
