@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * STYLESHEET BUILDER (build-css.js) — Precentor
+ * STYLESHEET BUILDER (build-css.js) for Precentor
  * ============================================================================
  * Joins the CSS source files under static/src/ into one stylesheet,
  * static/src/precentor.css, which is the only one base.html links. A page
@@ -24,7 +24,7 @@
  * precentor_project/test_css.py fails if a source has changed, been added
  * or gone without the file being built again.
  *
- * No npm dependencies required — only Node's built-in modules.
+ * No npm dependencies required, only Node's built-in modules.
  * ============================================================================
  */
 
