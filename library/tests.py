@@ -515,6 +515,28 @@ class ScoreSuitedForFilterTests(TestCase):
     def test_a_value_that_isnt_a_number_is_ignored(self):
         self.assertEqual(len(self.titles(suited_occasion="advent")), 3)
 
+    def test_the_menus_list_this_churchs_tags_with_counts(self):
+        elsewhere = make_score(title="Theirs", composer_surname="Other", organisation=make_organisation("Elsewhere"))
+        elsewhere.suited_occasions.add(LiturgicalOccasion.objects.create(name="Their feast"))
+        self.untagged.suited_occasions.add(self.occasion)
+        menus = self.client.get("/library/").context["suited_for"]
+        self.assertEqual([menu["label"] for menu in menus], ["Occasion"])
+        self.assertEqual(
+            [(name, count) for _, name, count in menus[0]["options"]],
+            [("Advent Sunday 4", 2), ("Ordinary Time 7", 1)],
+        )
+
+    def test_the_choice_stays_selected_and_clear_appears(self):
+        response = self.client.get("/library/", {"suited_occasion": self.occasion.pk})
+        option = f'<option value="{self.occasion.pk}" selected>Advent Sunday 4 (1)</option>'
+        self.assertContains(response, option, html=True)
+        self.assertContains(response, ">Clear</a>")
+
+    def test_no_menu_when_nothing_is_tagged(self):
+        Score.objects.all().delete()
+        make_score(title="Plain", composer_surname="Plain")
+        self.assertNotContains(self.client.get("/library/"), 'name="suited_occasion"')
+
     def test_ranking_for_the_picker_keeps_every_score_once(self):
         # Ranking used to join through the tags, so a score tagged with
         # two occasions came back twice: once suited, once not.

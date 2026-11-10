@@ -56,6 +56,18 @@
                 {% endfor %}
             </select>
         </div>
+        {# Season, Use and Occasion: what the scores are tagged as suiting. #}
+        {% for menu in suited_for %}
+        <div>
+            <label for="{{ menu.param }}">{{ menu.label }}</label>
+            <select name="{{ menu.param }}" id="{{ menu.param }}">
+                <option value="">Any</option>
+                {% for value, name, count in menu.options %}
+                <option value="{{ value }}"{% if value == menu.selected %} selected{% endif %}>{{ name }} ({{ count }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endfor %}
         <button type="submit">Filter</button>
         {% if filters_active %}
         <a class="btn-ghost" href="{% url 'library:score_list' %}">Clear</a>

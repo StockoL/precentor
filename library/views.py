@@ -24,6 +24,7 @@ from accounts.decorators import role_required
 from accounts.mixins import OrganisationCreateMixin, OrganisationScopedMixin, RoleRequiredMixin
 from accounts.permissions import can_edit_library, can_remove_import
 from accounts.querysets import own
+from ordo.models import LiturgicalOccasion, LiturgicalSeason, UseType
 from precentor_project.mixins import DeletePageMixin
 from precentor_project.utils import safe_next
 
@@ -75,6 +76,32 @@ class ScoreListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
         ("suited_use_type", "suited_use_types"),
         ("suited_occasion", "suited_occasions"),
     )
+
+    def suited_for_menus(self):
+        """A menu for each Suitable-for filter, listing only what this
+        church's scores are tagged with, and how many scores each, as the
+        Voicing menu does. A menu with nothing in it is left out."""
+        church = self.request.organisation
+        kinds = (
+            ("suited_season", "Season", LiturgicalSeason, ("name",)),
+            ("suited_use_type", "Use", UseType, ("name",)),
+            ("suited_occasion", "Occasion", LiturgicalOccasion, ("calendar_use", "name")),
+        )
+        menus = []
+        for param, label, model, order in kinds:
+            # Filtering before counting counts only this church's scores.
+            tagged = (
+                model.objects.filter(suited_scores__organisation=church)
+                .annotate(count=Count("suited_scores", distinct=True))
+                .order_by(*order)
+            )
+            options = [
+                (str(tag.pk), getattr(tag, "choice_label", tag.name), tag.count) for tag in tagged
+            ]
+            if options:
+                menus.append({"param": param, "label": label, "options": options,
+                              "selected": self.request.GET.get(param, "")})
+        return menus
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -147,9 +174,10 @@ class ScoreListView(LoginRequiredMixin, OrganisationScopedMixin, ListView):
         context["query"] = self.request.GET.get("q", "").strip()
         context["selected_language"] = self.request.GET.get("language", "")
         context["selected_voicing"] = self.request.GET.get("voicing", "")
+        context["suited_for"] = self.suited_for_menus()
         context["filters_active"] = any(
             (context["query"], context["selected_language"], context["selected_voicing"])
-        )
+        ) or any(menu["selected"] for menu in context["suited_for"])
 
         # Each heading's sort state, worked out here because a template
         # can't do this logic cleanly: aria-sort for the sorted column,
