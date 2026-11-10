@@ -505,7 +505,9 @@ class ServiceRole(models.Model):
             # come after the readings, before the Alleluia; in 1962 the
             # Alleluia comes first, then the Tract.
             tracts, alleluias = chants.get("tract", []), chants.get("alleluia", [])
-            historic = self.service.occasion.calendar_use == "historic"
+            # The service's form, not its occasion's: a weekday singing the
+            # Sunday before's chants has no occasion.
+            historic = self.service.effective_calendar_use() == "historic"
             offered = alleluias + tracts if historic else tracts + alleluias
         elif self.kind == "proper":
             offered = chants.get(self.proper_part, [])

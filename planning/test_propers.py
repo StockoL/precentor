@@ -191,3 +191,15 @@ class WeekdaySlotTests(TestCase):
 
     def test_not_for_a_1962_service_without_an_occasion(self):
         self.assertEqual(self.introit("historic", date(2027, 2, 9)), [])
+
+    def test_an_alleluia_or_tract_slot_on_a_weekday_and_its_page(self):
+        # Ordering an Alleluia or Tract slot's chants read the occasion's
+        # form, and a weekday has no occasion: the page was a server error.
+        term = make_term(start_date=date(2027, 1, 1), end_date=date(2027, 3, 31), calendar_use="current")
+        service = Service.objects.create(term=term, date=date(2027, 2, 9), service_type="Said Mass")
+        slot = ServiceRole.objects.create(service=service, role_name="Alleluia or Tract")
+        sunday = LiturgicalOccasion.objects.get(key="ordinary_time_5_sunday", calendar_use="current")
+        alleluia = ProperChant.objects.get(occasion_key=sunday.key, calendar_use="current", part="alleluia")
+        self.assertEqual(slot.proper_suggestions, [alleluia.incipit])
+        self.client.force_login(make_user("conductor", organisation=term.organisation))
+        self.assertEqual(self.client.get(f"/services/{service.pk}/").status_code, 200)
