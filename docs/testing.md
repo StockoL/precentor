@@ -6,7 +6,8 @@ used, what it found and whether that's resolved.
 
 Everything here was run again on 10 November 2026 on the code that
 became the live site, between commits `61f3790` and `b500e3f`, on a
-local copy of the site with the invented demo church. The manual tests
+local copy of the site with the invented demo church. Rows M59 and M60
+were added later the same day, at `4746a58`. The manual tests
 were carried out in Google Chrome 157 on Windows 11, driven by
 Playwright and checked by me row by row, or by the automated test
 named. Playwright's own Chromium 149 hangs on cross-document page
@@ -17,7 +18,7 @@ the automated browser tests, where every page is opened by its address.
 
 | Check | What I used | What it found on 10 November | Resolved? |
 | ----- | ----------- | ---------------------------- | --------- |
-| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 895 tests, all passing, at `b500e3f` (section 4) | Nothing to resolve. There were 553 at submission |
+| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 913 tests, all passing, at `4746a58` (section 4) | Nothing to resolve. There were 553 at submission |
 | Deployment settings | `python manage.py check --deploy` with `DEBUG` off | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for | Nothing to resolve |
 | Migrations | `python manage.py makemigrations --check --dry-run`, and a rehearsal of the merge on a copy of the live database ([`after_assessment.md`](after_assessment.md)) | No missing migrations. On the copy, all 28 new migrations ran, `check_copied_data` found everything copied, and all 177 pages opened for every church | Nothing to resolve |
 | Python style | flake8 7.4.1 with the settings in `.flake8` (line length 120, `venv` and migrations left out) | No findings | At submission: two unused imports, a blank line and an escape, fixed in `1f2e618`; more in `722ffc4`; the 16 long lines, the variable `l` and the lambda left then were cleared in `86ad9e8` |
@@ -220,7 +221,7 @@ they're the slowest to fill a simulated phone's screen.
 
 ## 4. Automated tests
 
-The suite has 895 tests, run on 10 November 2026 at commit `b500e3f`;
+The suite has 913 tests, run on 10 November 2026 at commit `4746a58`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
@@ -234,9 +235,9 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | `library/tests.py`                        | 123   | Scores, the library's search, filters and sorting, the ranking the piece picker uses, "last sung", texts, the completeness page, returning after an edit, hymnals, hymns and their pages, joining the same hymn, hymn last sung, tunes and a tune's number in a book, each church's own library, the Suitable-for filters and their menus, and a score planned for a service being kept when deleted |
 | `library/test_metre.py`                   | 5     | Writing a metre one way: short names, doubled verses, lines of ten or more, anything else kept as typed |
 | `library/test_browser.py`                 | 11    | The score form's tag input, the library as a Viewer sees it, and the import page's file size check and disabled button, in the browser |
-| `library/test_importing.py`               | 52    | Importing from a Google Sheets link, or refusing neither or both; reading a spreadsheet (encodings, separators, headers, limits), checking each row, saving an import all at once, keeping and removing it, who may remove it, the Imports list, the export and its round trip |
+| `library/test_importing.py`               | 55    | Importing from a Google Sheets link, or refusing neither or both; reading a spreadsheet (encodings, separators, headers, limits), checking each row, saving an import all at once, keeping and removing it, who may remove it, the Imports list, the export and its round trip |
 | `library/test_sheets.py`                  | 8     | A Google Sheets link: the export address built from its ID and tab, every other address refused, and with Google's answer faked, CSV kept, the size limit, a sign-in page, a refusal and no connection |
-| `library/test_hymn_import.py`             | 17    | A hymnal's list: reading it (a number needed, a repeated number skipped), new numbers added with their details, only blanks filled for known ones, tunes matched or added, a list that changes nothing; removing an import (sung entries and hymns in other books kept, blanks emptied unless changed since, unused tunes gone); the import, result, keep and remove pages |
+| `library/test_hymn_import.py`             | 20    | A hymnal's list: reading it (a number needed, a repeated number skipped), new numbers added with their details, only blanks filled for known ones, tunes matched or added, a list that changes nothing; removing an import (sung entries and hymns in other books kept, blanks emptied unless changed since, unused tunes gone); the import, result, keep and remove pages |
 | `ordo/tests.py`                           | 19    | Easter, the seeded data, occasion lookup by date and its endpoint, occasion keys, colours and each church's use types |
 | `ordo/test_calendar.py`                   | 18    | Working out the Ordinary Form calendar, with precedence and transfers |
 | `ordo/test_calendar_1962.py`              | 23    | Working out the 1962 calendar |
@@ -244,14 +245,15 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | `ordo/test_dates.py`                      | 29    | Easter and the other date rules, and the Sunday cycle |
 | `ordo/test_reference.py`                  | 3     | Every day from 2020 to 2040 against the reference data |
 | `ordo/test_propers.py`                    | 21    | The chants of both forms: one per part, season and year, several of a part in the order sung, loading them with the calendar, every one belonging to a day of its form, the 1962 seasons' edges and a saint's form by date, and an Ordinary Form Sunday's chant for its year, each year's own Lent Communion and each of the four Christmas Masses; the Sunday an Ordinary Form weekday borrows from, and none in Lent, late Advent, Christmas or the Easter octave |
-| `planning/tests.py`                       | 81    | Terms, services, notices, slots, pieces, status, the music list, each church's own planning |
+| `planning/tests.py`                       | 84    | Terms, services, notices, slots, pieces, proposing and confirming at once, status, the music list, each church's own planning |
 | `planning/test_templates.py`              | 26    | Slot templates as rows with kinds, editing them as a formset (order, remove, each name once), splitting old templates into rows, and applying them |
 | `planning/test_slot_order.py`             | 8     | Moving slots and reordering them |
 | `planning/test_remove_slot.py`            | 6     | Removing slots, asking first when they have pieces |
 | `planning/test_service_form.py`           | 3     | The service form's calendar choice |
-| `planning/test_browser.py`                | 27    | The service page in the browser: the score picker and its suggestion groups, a hymn by book and number, a suggested hymn filling them in, the day's chant proposed in one click, a typed reference, confirming, dragging slots, changing a slot's kind, dialogs |
+| `planning/test_browser.py`                | 31    | The service page in the browser: the score picker and its suggestion groups, a search that finds nothing used as typed, a hymn by book and number, a suggested hymn filling them in, the day's chant proposed in one click, a typed reference, a refused proposal, a second piece after a score, proposing and confirming at once, confirming, dragging slots, changing a slot's kind, dialogs |
 | `planning/test_slot_kinds.py`             | 23    | Classifying slot names, kinds on save and from templates, the migrations that classified existing slots (and later Sequences and Responsories), the badge, choosing and changing a kind, and a slot named Canticle |
 | `planning/test_reference_pieces.py`       | 34    | A piece as a score, a hymn or a reference and the rule between them, proposing each, showing them everywhere, copying hymns and the psalm into slots, the music list arrangement, a hymn's tune and its choices, the pew sheet's tune number, the first-line prompt |
+| `planning/test_outside_library.py`        | 5     | A typed piece in a slot for scores marked as not in the library, with a link to add it for those who may, the score form filled in from it and coming back, and the propose page without JavaScript |
 | `planning/test_suggestions.py`            | 20    | What each suggestion rests on, in a fixed number of queries; groups, strength and reasons; a slot's use type; the propose page's groups; the service page's data; the voicing prompt; suggested hymns and their book |
 | `planning/test_propers.py`                | 15    | The day's chants on a slot: which part, Alleluia or Tract by date, not once proposed, not for other slots; several in order, each going once proposed in a slot of the same kind; Sequence slots; Palm Sunday's antiphons, the Vigil's Alleluia and Tracts in each form's order, and an Ember Saturday's graduals from the loaded data; an Ordinary Form weekday offered the Sunday before's chants, a 1962 one with no occasion nothing; the propose page's own form, and an Alleluia or Tract slot on a weekday with no occasion |
 | `planning/test_pew_sheet.py`              | 6     | Which slots a pew sheet prints, its texts and composers and the options to leave them off, and each church's own |
@@ -329,6 +331,8 @@ To run them, see "Running it locally" in the README.
 | M56  | The day's chant, Ordinary Form | On the demo church's Sung Mass for the First Sunday of Advent 2026, look at each slot | The Introit, Gradual, Alleluia, Offertory and Communion offer Ad te levavi, Universi, Ostende nobis, Ad te Domine levavi and Dominus dabit benignitatem; the Ordinary's slots offer nothing | Pass: Ad te levavi, Universi, qui te exspectant, Ostende nobis, Ad te Domine levavi and Dominus dabit benignitatem; nothing on the Ordinary's slots |
 | M57  | Days with more to sing     | On 1962 services for Palm Sunday, Good Friday, the Easter Vigil, the Ember Saturday of Lent, Candlemas and All Souls, and an Ordinary Form Good Friday, add Antiphon, Hymn, Responsory, Canticle and Proper slots | Each slot offers the day's chants of its kind in the order sung: Palm Sunday's ten antiphons, the Vigil's Alleluia before its Tract in 1962, the Ember Saturday's four graduals, then Benedictus es and the Tract; no Introit on Good Friday; Dies irae on All Souls | Fail, then fixed (`c5a8833`): a slot named Canticle became Other and missed the Ember Saturday's Benedictus es. Since: Palm Sunday's ten antiphons in order, the Vigil's Confitemini Domino before Laudate Dominum, the four graduals, Benedictus es and the Tract, no Introit on Good Friday in either form, Dies irae on All Souls |
 | M58  | A weekday, Ordinary Form   | Services with no occasion on Wednesday 9 December 2026, Friday 18 December 2026, Tuesday 9 February 2027, Tuesday 2 March 2027 and Tuesday 6 April 2027; look at the Introit and Communion | The Sunday before's chants (Populus Sion; Venite, adoremus; Quasi modo), and nothing on 18 December or in Lent | Fail, then fixed (`945b43f`): the services on 9 December, 9 February and 6 April were server errors. Since: Populus Sion; Venite, adoremus; Quasi modo; and nothing on 18 December or 2 March |
+| M59  | A piece not in the library | In a Kyrie slot, type Messe solennelle in the search box, choose what it offers and propose it; follow Add to library and save the score with a composer; type Psalm 150 into a Hymn slot; open the service as a Viewer; with JavaScript off, open the Kyrie's propose page | The list offers the text as typed, which goes into the reference box; the row says "Not in the library." with an Add to library link; the score form has the title filled in and goes back to the service; no note on the Hymn slot; the Viewer sees the note but no link; the propose page says anything not in the library can be typed in the reference box | Pass: the only option was `Use "Messe solennelle" as typed (not in the library)`; the arrow key and Enter put the text in the reference box and emptied the search box; the row read "Messe solennelle, Proposed, Not in the library. Add to library"; the form's Title was Messe solennelle, and saving went back to the piece's row on the service, where the piece still says Not in the library, as it stays a reference; nothing under Psalm 150; the Viewer saw the note and no link; the propose page said "Anything not in the library can be typed here" |
+| M60  | Propose and confirm        | On a service In progress, type Mass in G minor in the Kyrie's reference box and press Propose and confirm; type another and press Enter; with JavaScript off, propose a third from the Kyrie's propose page with Propose and confirm | The first listed as Confirmed, the service's status changing with it, and "Piece proposed and confirmed."; Enter only proposes; without JavaScript the same, back on the service page | Pass: Mass in G minor listed as Confirmed, the status went from In progress to Complete as the Kyrie was the last slot unsettled, and the message read "Piece proposed and confirmed."; Enter listed Missa Aeterna Christi munera as Proposed; the propose page had Propose piece then Propose and confirm, and Missa de Angelis came back on the service page as Confirmed |
 
 ### Screenshots for the manual tests
 
@@ -519,6 +523,8 @@ testing, fixed, and covered by a test where it could be.
 | `89073e1`, `f15b70c` | The Library had no season, use or occasion filter, though the README and row M08 said it had; a season in its address only reordered the list |
 | `f4e842b` | An import's result page asked "Happy with these?" without listing the scores it had brought in (row M33); tests in `0398cc3` |
 | `a79ddab` | A hymnal import's result page had the same gap: it counted the hymns added and filled without listing them (row M55); tests in `60f7d08` |
+| `5398c9e` | Each time a proposal was refused on the service page, another "Propose a piece" link appeared under the slot, as the form sent back carried the link with it, and only the first was hidden |
+| `511ea00` | After a score was proposed from a slot's search box, a hymn number or reference typed next in the same slot was refused with "Choose one", as the reset form kept the score in its hidden field |
 
 The flake8 findings left at submission (16 long lines, a variable named
 `l` and a lambda) were cleared in `86ad9e8`. No fault found in the app is left unfixed;

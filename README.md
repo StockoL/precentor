@@ -448,7 +448,8 @@ Each slot holds a **shortlist of proposed pieces** (e.g. two motets
 still being weighed up). Confirmation happens **per piece**, not per
 slot or per service, which allows cases like two motets in one service,
 or a mixed setting. A confirmed piece can always be **unconfirmed**
-again; nothing is a one-way door.
+again; nothing is a one-way door. Where there's nothing to weigh up,
+**Propose and confirm** does both in one step.
 
 Pieces are proposed from a search box in each slot, which lists the
 whole library in groups: **Suggested**, then **Suggested, sung
@@ -466,6 +467,15 @@ page with the same groups and reasons in one list. That keeps the
 service page small: it carries the library once, not once for every
 slot.
 
+Music the library doesn't hold, such as a setting borrowed for one
+Sunday, can still be proposed. When a search finds nothing, the list
+offers the text as typed, and it goes in as a reference. In a slot
+that usually holds a score (an Ordinary, Motet, Organ, Canticle or
+Other slot) the piece then says quietly "Not in the library", and
+anyone who can edit the library gets a link to the score form with the
+title filled in. Adding the score doesn't change the piece already
+proposed: it stays a reference unless it's proposed again.
+
 Marking a slot **N/A** counts as a planning decision, just as
 confirming does. It means "I've considered this and there's nothing
 here on purpose", not "nothing has happened yet".
@@ -479,7 +489,7 @@ A service's overall status is **derived**, not stored:
 This status powers the Terms page's overview, so a conductor can scan a
 term and see at once which services still need attention.
 
-**In the app.** Typing in a slot's search box lists the library in its groups, each score with its reasons. Choosing one proposes it; Confirm settles it. A score with no voicing says so quietly on its row, with a link to add one that comes back to the service afterwards.
+**In the app.** Typing in a slot's search box lists the library in its groups, each score with its reasons. Choosing one proposes it; Confirm settles it, or Propose and confirm does both at once. A score with no voicing says so quietly on its row, with a link to add one that comes back to the service afterwards.
 
 ![A service page with a slot's score search box open and a list of matching scores beneath it](docs/screenshots/07-propose-a-piece.png)
 
@@ -1549,7 +1559,7 @@ the role column in §2 says who may use each one.
 | Organisation                | Sign-up page (`signup`)                                   | Its name on every page and the music list          | Church name on Settings (`site_config_update`)                                                  | The owner, after typing its name (`delete_church`)           | not needed: everyone sees only their own                                   |
 | User                        | Joining by invitation (`join`); sign-up for the owner     | Members page (`member_list`)                       | Role (`change_role`), owner (`make_owner`), own password (`password_change`) or by a reset link the owner makes (`reset_link`), opened at `password_reset_confirm` | Removed, not deleted (`remove`), and brought back (`restore`); their own account, after their password (`delete_account`) | Members page                                                               |
 | Invitation                  | Invite someone (`invite`)                                 | Link shown once (`invitation_link`); Members page  | not available (cancel and make another)                                                         | Cancel (`invitation_cancel`)                                  | Members page, "Waiting to join"                                            |
-| Score                       | Add score (`score_create`), or many at once by importing   | Library (`score_list`), score page (`score_detail`), or all as a CSV (`export_library`) | Edit (`score_update`)                                                                          | Delete, after a confirmation (`score_delete`)                 | Search box; Language, Voicing, Season, Use and Occasion filters; sortable columns; the completeness page (`completeness`) |
+| Score                       | Add score (`score_create`), also from a piece not in the library, or many at once by importing | Library (`score_list`), score page (`score_detail`), or all as a CSV (`export_library`) | Edit (`score_update`)                                                                          | Delete, after a confirmation (`score_delete`)                 | Search box; Language, Voicing, Season, Use and Occasion filters; sortable columns; the completeness page (`completeness`) |
 | Import (`ScoreImport`)      | Import a spreadsheet or a Google Sheets link (`score_import`), from the template (`import_template`) | Result page (`score_import_detail`), Imports list (`score_import_list`) | Keep it (`keep_import`)                                                                          | Remove it and its scores, after a confirmation (`remove_import`) | Imports list, waiting ones first; a notice on the Library while one waits |
 | Hymnal                      | New hymnal (`hymnal_create`)                              | Hymnals (`hymnal_list`), its page (`hymnal_detail`) | Edit, archive (`hymnal_update`) | Delete, after a confirmation, unless hymns were sung from it (`hymnal_delete`) | Hymnals page, linked from the Library |
 | A hymnal's import (`HymnImport`) | Import a list or a Google Sheets link from the hymnal's page (`hymn_import`), from the template (`hymn_import_template`) | Result page (`hymn_import_detail`) | Keep it (`keep_hymn_import`) | Remove it after a confirmation, taking away the entries and tunes it added and emptying the blanks it filled, unless they're in use (`remove_hymn_import`) | The hymnal's page, with a notice while one waits |
@@ -1559,7 +1569,7 @@ the role column in §2 says who may use each one.
 | Service                     | New service (`service_create`), occasion suggested from the date | Service page (`service_detail`), term page, pew sheet (`service_pew_sheet`) | Edit (`service_update`)                                                                         | Delete, after a confirmation (`service_delete`)               | Term page in date order; previous and next links on each service           |
 | Notice (`TermMarker`)       | New notice (`marker_create`)                              | Term page and music list                           | Edit (`marker_update`)                                                                          | Delete (`marker_delete`)                                      | Term page                                                                  |
 | Slot (`ServiceRole`)        | Add a slot (`add_role`) or from a template (`apply_template`) | Service page                                   | Move (`move_slot`), drag to reorder (`reorder_slots`), change kind (`change_kind`), mark N/A when adding | Remove (`remove_slot`), asking first if it has pieces         | Service page                                                               |
-| Piece (`RolePiece`)         | Propose a score, a hymn by book and number, or a reference (`add_piece`) | Service page, score page history, music list       | Confirm and unconfirm (`toggle_confirm`); a hymn's tune (`set_tune`)                                                        | not available on its own (removed with its slot)              | Service page; the score page lists where each score was used               |
+| Piece (`RolePiece`)         | Propose a score, a hymn by book and number, or a reference, or propose and confirm at once (`add_piece`) | Service page, score page history, music list       | Confirm and unconfirm (`toggle_confirm`); a hymn's tune (`set_tune`)                                                        | not available on its own (removed with its slot)              | Service page; the score page lists where each score was used               |
 | Slot template               | New template (`slot_template_create`)                     | Templates page (`slot_template_list`)              | Edit (`slot_template_update`)                                                                   | Delete (`slot_template_delete`)                               | Templates page; buttons on each service                                    |
 | Template slot (`TemplateSlot`) | A blank row on the template form (`slot_template_create`, `slot_template_update`) | Templates page, listed under each template; the template form | Name, kind, proper part and order on the template form | The row's Remove box on the template form | The template form, in order |
 | Use type                    | Typed on the score form                                   | Score page; the Library's Use filter               | not available                                                                                   | not available                                                 | Library filter                                                             |
@@ -1867,12 +1877,12 @@ each change before it was committed.
 [`docs/testing.md`](docs/testing.md) has the full record, all of it run
 again on 10 November 2026 on the code now live. In short:
 
-- **895 automated tests** cover the models, views, forms, permissions,
+- **913 automated tests** cover the models, views, forms, permissions,
   each church's own data, the import and export, and the liturgical
-  calendar and its chants. 58 of them are browser tests, which start a
+  calendar and its chants. 62 of them are browser tests, which start a
   real server and drive Chromium through Playwright, so the JavaScript
   is tested too.
-- **Manual tests:** 58 rows covering every feature, each carried out in
+- **Manual tests:** 60 rows covering every feature, each carried out in
   Google Chrome with its result, and screenshots beside them. Six
   failed and were fixed, each with its commit.
 - **Widths and browsers:** 25 pages at 320, 375, 768, 1024 and 1280
