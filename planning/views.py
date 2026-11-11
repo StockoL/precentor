@@ -6,7 +6,7 @@ from collections import Counter
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models import Prefetch
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -43,7 +43,7 @@ from .forms import (
     TermMarkerForm,
 )
 from .models import RolePiece, Service, ServiceRole, SlotTemplate, Term, TermMarker
-from .suggestions import page_options
+from .suggestions import page_options, slot_use_type
 
 
 class PlanningRequiredMixin(RoleRequiredMixin):
@@ -644,18 +644,56 @@ def upcoming_services(request, score):
     return services
 
 
+def slot_choice(service, score):
+    """
+    The service's slots for the second step, empty ones first and each
+    with what it holds, and the slot to start on with the reason shown
+    beside it: the one slot named for a use the score is marked for, if
+    only one is, or else the first empty slot, or else a new slot.
+    """
+    slots = list(service.roles.all())
+    for slot in slots:
+        slot.holds = ", ".join(piece.title for piece in slot.pieces.all()) or "empty"
+    empty = [slot for slot in slots if slot.holds == "empty"]
+    use_types = UseType.objects.for_organisation(service.organisation_id)
+    suited = set(score.suited_use_types.values_list("pk", flat=True))
+    matches = [(slot, use) for slot in slots if (use := slot_use_type(slot, use_types)) and use.pk in suited]
+    if len(matches) == 1:
+        chosen, why = matches[0][0], f"Chosen because this score is marked for {matches[0][1].name}."
+    elif empty:
+        chosen, why = empty[0], "The first empty slot" + (
+            ", as the score is marked for more than one of these slots." if matches else ".")
+    else:
+        chosen, why = None, "Every slot has something in it; choose one, or add a new slot."
+    return empty + [slot for slot in slots if slot not in empty], chosen, why
+
+
+def proposing_into(request, service_pk):
+    """The service chosen in the first step: this church's, or not found."""
+    if not str(service_pk).isdigit():
+        raise Http404
+    return get_object_or_404(
+        own(Service, request).select_related("term").prefetch_related(
+            "roles__pieces__score", "roles__pieces__hymn_entry__hymnal"),
+        pk=service_pk,
+    )
+
+
 @role_required(can_plan)
 def propose_score(request, score_pk):
     """
     Propose a score from the library rather than from a service: first
     the service, then the slot. Each step is a page of its own without
-    JavaScript. The score is this church's, or not found.
+    JavaScript. The score is this church's, or not found, and so is the
+    service chosen.
     """
     score = get_object_or_404(own(Score, request), pk=score_pk)
-    return render(request, "planning/propose_score.html", {
-        "score": score,
-        "services": upcoming_services(request, score),
-    })
+    context = {"score": score, "services": upcoming_services(request, score)}
+    if request.GET.get("service"):
+        service = proposing_into(request, request.GET["service"])
+        slots, chosen, why = slot_choice(service, score)
+        context.update(service=service, slots=slots, chosen=chosen, why=why)
+    return render(request, "planning/propose_score.html", context)
 
 
 @role_required(can_plan)

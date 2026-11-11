@@ -11,12 +11,13 @@
             <select id="propose-service" name="service" required>
                 <option value="">Choose a service</option>
                 {% for option in services %}
-                <option value="{{ option.pk }}"{% if option.has_score %} disabled{% endif %}>{{ option.date|date:"D j M Y" }}, {{ option.service_type }}: {{ option.term.name }} ({{ option.status_label }}){% if option.has_score %}, already proposed{% endif %}</option>
+                <option value="{{ option.pk }}"{% if option.has_score %} disabled{% endif %}{% if option == service %} selected{% endif %}>{{ option.date|date:"D j M Y" }}, {{ option.service_type }}: {{ option.term.name }} ({{ option.status_label }}){% if option.has_score %}, already proposed{% endif %}</option>
                 {% endfor %}
             </select>
         </p>
         <button type="submit">Show its slots</button>
     </form>
+    {% if service %}{% include "planning/_propose_slot.html" %}{% endif %}
     {% else %}
     <p>There are no services from today on to propose it for. Add one to a term first.</p>
     {% endif %}

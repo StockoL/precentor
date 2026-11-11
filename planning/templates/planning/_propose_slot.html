@@ -1,0 +1,18 @@
+{# Step two: a slot in the chosen service, sent back on its own when the service changes. #}
+<section id="propose-slot" class="flow" aria-labelledby="propose-slot-heading">
+    <h2 id="propose-slot-heading">Slot in {{ service }}</h2>
+    <form method="post" action="{% url 'planning:propose_score' score.pk %}" id="propose-form" class="flow">
+        {% csrf_token %}
+        <input type="hidden" name="service" value="{{ service.pk }}">
+        <p>
+            <label for="propose-slot-select">Slot</label>
+            <select id="propose-slot-select" name="slot" aria-describedby="propose-slot-why">
+                {% for slot in slots %}
+                <option value="{{ slot.pk }}"{% if slot == chosen %} selected{% endif %}>{{ slot.role_name }}: {{ slot.holds }}</option>
+                {% endfor %}
+                <option value="new"{% if not chosen %} selected{% endif %}>New slot…</option>
+            </select>
+        </p>
+        <p id="propose-slot-why" class="list-row__meta">{{ why }}</p>
+    </form>
+</section>

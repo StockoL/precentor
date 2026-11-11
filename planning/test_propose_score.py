@@ -1,3 +1,4 @@
+import re
 from datetime import timedelta
 
 from django.db import connection
@@ -6,6 +7,7 @@ from django.test.utils import CaptureQueriesContext
 from django.utils import timezone
 
 from accounts.testing import make_organisation, make_user
+from ordo.models import UseType
 from precentor_project.testing import make_score, make_term
 
 from .models import RolePiece, Service, ServiceRole
@@ -73,3 +75,59 @@ class ChooseAServiceTests(ProposeFromLibraryTestCase):
             RolePiece.objects.create(service_role=slot, reference="Something", is_confirmed=True)
         with self.assertNumQueries(len(before)):
             self.client.get(self.url)
+
+
+class ChooseASlotTests(ProposeFromLibraryTestCase):
+    def setUp(self):
+        super().setUp()
+        self.mass = self.service(7)
+        self.introit = ServiceRole.objects.create(service=self.mass, role_name="Introit")
+        RolePiece.objects.create(service_role=self.introit, reference="Ad te levavi")
+        self.offertory = ServiceRole.objects.create(service=self.mass, role_name="Offertory")
+        self.communion = ServiceRole.objects.create(service=self.mass, role_name="Communion")
+
+    def step_two(self, service_pk=None):
+        return self.client.get(self.url, {"service": service_pk or self.mass.pk})
+
+    def mark_for(self, *names):
+        for name in names:
+            use, _ = UseType.objects.get_or_create(organisation=self.church, name=name)
+            self.score.suited_use_types.add(use)
+
+    def test_another_churchs_service_or_a_bad_id_is_not_found(self):
+        theirs = make_term(organisation=make_organisation("St Elsewhere"), start_date=self.today,
+                           end_date=self.today + timedelta(days=30))
+        their_service = Service.objects.create(term=theirs, date=self.today, service_type="Sung Mass")
+        for value in (their_service.pk, 999999, "abc"):
+            with self.subTest(service=value):
+                self.assertEqual(self.client.get(self.url, {"service": value}).status_code, 404)
+
+    def test_empty_slots_come_first_each_saying_what_it_holds(self):
+        page = self.step_two().content.decode()
+        select = page.split('id="propose-slot-select"')[1]
+        options = re.findall(r'<option value="(\d+|new)"[^>]*>([^<]*)</option>', select)
+        self.assertEqual([label for _, label in options],
+                         ["Offertory: empty", "Communion: empty", "Introit: Ad te levavi", "New slot…"])
+        self.assertContains(self.step_two(), f'<option value="{self.mass.pk}" selected>', html=False)
+
+    def test_a_clean_match_is_chosen_and_says_why(self):
+        self.mark_for("Communion")
+        response = self.step_two()
+        self.assertEqual(response.context["chosen"], self.communion)
+        self.assertContains(response, "Chosen because this score is marked for Communion.")
+
+    def test_otherwise_the_first_empty_slot(self):
+        response = self.step_two()
+        self.assertEqual(response.context["chosen"], self.offertory)
+        self.assertContains(response, "The first empty slot.")
+        self.mark_for("Communion", "Offertory")
+        response = self.step_two()
+        self.assertEqual(response.context["chosen"], self.offertory)
+        self.assertContains(response, "The first empty slot, as the score is marked for more than one of these slots.")
+
+    def test_with_no_empty_slot_and_no_match_a_new_slot_is_offered(self):
+        for slot in (self.offertory, self.communion):
+            RolePiece.objects.create(service_role=slot, reference="Something")
+        response = self.step_two()
+        self.assertIsNone(response.context["chosen"])
+        self.assertContains(response, '<option value="new" selected>New slot…</option>', html=True)
