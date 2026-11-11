@@ -429,5 +429,12 @@ script and one more choice on Settings.
 - **Optional memorials:** left out, as future development.
 - **1962 in England and Wales:** taken from the Latin Mass Society's
   Ordo ([section 2](#2-sources)), not left universal.
+- **Which days are solemnities** (11 Nov 2026), for adding several
+  services at once: known by the rank of the day's kept celebration,
+  not its precedence level. In the Ordinary Form, level 2 also holds
+  the Sundays of Advent, Lent and Easter and Ash Wednesday, and level 1
+  the weekdays of the Triduum, so a level can't say. 1962 rows have no
+  precedence stored, and the 1962 calendar has no solemnities, so its
+  first-class days stand in, and the pattern is named for them.
 
 [↑ Back to contents](#contents)

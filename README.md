@@ -1659,7 +1659,7 @@ the role column in [§2](#2-who-this-is-for) says who may use each one.
 | Hymn and its entries        | Made by typing a book and number into a Hymn slot           | Its page (`hymn_detail`), its hymnal's page          | Edit details (`hymn_update`), its tune in a book (`hymn_entry_update`), join with the same hymn (`same_hymn`) | not available: a hymn is part of the history | Each hymnal's page, in number order; the completeness page |
 | Tune                        | New tune (`tune_create`)                                  | Tunes (`tune_list`)                                  | Edit (`tune_update`) | not available | Tunes page, linked from Hymnals |
 | Term                        | New term (`term_create`)                                  | Terms page (`term_list`), term page (`term_detail`), music list (`term_music_list`) | Edit (`term_update`)                                                                           | Delete, after a confirmation (`term_delete`)                  | Terms page, current and upcoming first, past folded away                   |
-| Service                     | New service (`service_create`), occasion suggested from the date | Service page (`service_detail`), term page, pew sheet (`service_pew_sheet`) | Edit (`service_update`)                                                                         | Delete, after a confirmation (`service_delete`)               | Term page in date order; previous and next links on each service           |
+| Service                     | New service (`service_create`), occasion suggested from the date; or several at once, each with its celebration and a template's slots, after a preview of the dates (`service_batch`) | Service page (`service_detail`), term page, pew sheet (`service_pew_sheet`) | Edit (`service_update`)                                                                         | Delete, after a confirmation (`service_delete`)               | Term page in date order; previous and next links on each service           |
 | Notice (`TermMarker`)       | New notice (`marker_create`)                              | Term page and music list                           | Edit (`marker_update`)                                                                          | Delete (`marker_delete`)                                      | Term page                                                                  |
 | Slot (`ServiceRole`)        | Add a slot (`add_role`) or from a template (`apply_template`) | Service page                                   | Move (`move_slot`), drag to reorder (`reorder_slots`), change kind (`change_kind`), mark N/A when adding | Remove (`remove_slot`), asking first if it has pieces         | Service page                                                               |
 | Piece (`RolePiece`)         | Propose a score, a hymn by book and number, or a reference, or propose and confirm at once (`add_piece`); or propose a score from its own page, into a coming service's slot or a new one (`propose_score`) | Service page, score page history, music list; each title links to its score or hymn, whose page then says where it sits in that service | Confirm and unconfirm (`toggle_confirm`); a hymn's tune (`set_tune`)                                                        | Remove (`remove_piece`), asking first if it's confirmed or has comments | Service page; the score page lists where each score was used               |
@@ -2028,12 +2028,12 @@ each change before it was committed.
 tests were run on 10 November 2026, and every check again the same day
 at `8908668`, each with the checker's own screenshots. In short:
 
-- **[983 automated tests](docs/testing.md#4-automated-tests)** cover the models, views, forms, permissions,
+- **[1,013 automated tests](docs/testing.md#4-automated-tests)** cover the models, views, forms, permissions,
   each church's own data, the import and export, and the liturgical
-  calendar and its chants. 70 of them are browser tests, which start a
+  calendar and its chants. 71 of them are browser tests, which start a
   real server and drive Chromium through Playwright, so the JavaScript
   is tested too.
-- **[Manual tests](docs/testing.md#5-manual-tests):** 68 rows covering every
+- **[Manual tests](docs/testing.md#5-manual-tests):** 69 rows covering every
   feature, grouped by feature, each carried out in Google Chrome with
   its result and screenshots beside them. Six failed and were fixed,
   each with its commit.

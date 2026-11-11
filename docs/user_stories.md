@@ -54,6 +54,11 @@ These user stories drive the design and functionality of Precentor.
   service (e.g. no setting on Good Friday), so the system doesn't treat
   an intended gap as unfinished work.
   - Met by: "Not needed (N/A)" when adding a slot (`add_role`); an N/A slot needs no piece.
+- As a conductor, I want to add a term's Sunday services, and its solemnities, in one go, each with its
+  celebration and the slots it needs, unticking any we won't sing, so setting up a term isn't the same form
+  a dozen times.
+  - Met by: Add several services on the term page (`service_batch`): a template, a range and a pattern,
+    then the dates to tick before anything is made; dates already holding the service are left alone.
 - As a conductor, I want to add or remove slots on a specific service,
   so I can handle exceptions (an extra motet, a hymn sung in place of a
   Proper) without fighting a fixed template.
