@@ -124,3 +124,7 @@ The plan had six steps. Here is each, with what happened.
    them, and the check itself, then deploy again. I rehearsed it on the
    migrated rehearsal database: both migrations applied, the typed
    hymns stayed as pieces in their Hymns slots, and every page opened.
+   *Done:* merged into `main` as `7fd2e74` and deployed on its own on
+   11 November 2026, once the main deploy was live. All 944 tests
+   passed on the merge, and the checks after the deploy are in
+   [`testing.md`, section 8](testing.md#8-deployment-check).

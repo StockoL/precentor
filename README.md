@@ -1139,10 +1139,6 @@ erDiagram
   %% - LITURGICAL_OCCASION, LITURGICAL_SEASON and PROPER_CHANT are
   %%   shared by every church and loaded by manage.py load_calendar; a
   %%   chant is matched to its occasion by key, not a foreign key
-  %% - the four old columns (a service's hymns and psalm, a template's
-  %%   slot_names and the settings' show_hymns_psalm) are left out: their
-  %%   contents were copied into slots and rows, checked on the live
-  %%   data, and a migration that drops them is the next step
   ORGANISATION ||--o{ USER : has
   ORGANISATION ||--o{ INVITATION : sends
   ORGANISATION ||--|| SITE_CONFIG : has
@@ -1952,13 +1948,6 @@ Everything below is read in `precentor_project/settings.py`.
 
 What's designed or wanted but not built yet:
 
-- **Dropping the four old columns.** Before slots had kinds, a
-  service's hymns and psalm and a template's slots were kept as text.
-  The merge copied them into slots and rows, and the copy was checked
-  on the live data. A migration removing the old columns, with the
-  little code that still reads them, is ready on the
-  `drop-old-columns` branch and goes out as a deploy of its own
-  ([`docs/merge_record.md`](docs/merge_record.md), step 6).
 - **A rebuilt music list,** with a choice of paper sizes and columns.
 - **Email.** Invitations and reset links are passed on by hand because
   Precentor sends no email. With a mail provider they could be sent
@@ -2039,7 +2028,7 @@ each change before it was committed.
 tests were run on 10 November 2026, and every check again the same day
 at `8908668`, each with the checker's own screenshots. In short:
 
-- **[954 automated tests](docs/testing.md#4-automated-tests)** cover the models, views, forms, permissions,
+- **[944 automated tests](docs/testing.md#4-automated-tests)** cover the models, views, forms, permissions,
   each church's own data, the import and export, and the liturgical
   calendar and its chants. 68 of them are browser tests, which start a
   real server and drive Chromium through Playwright, so the JavaScript

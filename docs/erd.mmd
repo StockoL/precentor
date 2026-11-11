@@ -15,10 +15,6 @@ erDiagram
   %% - LITURGICAL_OCCASION, LITURGICAL_SEASON and PROPER_CHANT are
   %%   shared by every church and loaded by manage.py load_calendar; a
   %%   chant is matched to its occasion by key, not a foreign key
-  %% - the four old columns (a service's hymns and psalm, a template's
-  %%   slot_names and the settings' show_hymns_psalm) are left out: their
-  %%   contents were copied into slots and rows, checked on the live
-  %%   data, and a migration that drops them is the next step
   ORGANISATION ||--o{ USER : has
   ORGANISATION ||--o{ INVITATION : sends
   ORGANISATION ||--|| SITE_CONFIG : has
