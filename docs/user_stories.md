@@ -63,6 +63,13 @@ These user stories drive the design and functionality of Precentor.
   the slot, and be asked first if it's confirmed or has comments, so
   the plan shows only what's still in play.
   - Met by: Remove on each piece (`remove_piece`), which asks first when the piece is confirmed or has comments, and works without JavaScript.
+- As a conductor, I want to propose a score for a service while I'm looking at it in the library, without
+  first finding the service, so a good idea isn't lost on the way.
+  - Met by: Propose on the score's page (`propose_score`): a coming service, then a slot, or a new one, with
+    the slot the score is marked for chosen first; it works without JavaScript.
+- As a conductor, I want to confirm or take out a piece from the score's page when I've followed it from a
+  service, so I can settle it there and carry on looking at the score.
+  - Met by: Confirm and Remove on the score page's service bar, which come back to the score.
 - As a conductor, I want to type a hymn or psalm into its slot as a
   number from the book, so hymns are planned and confirmed alongside
   everything else without each one being a score in the library.
