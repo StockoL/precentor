@@ -13,8 +13,8 @@ export class AjaxError extends Error {
   }
 }
 
-// Every fetch() in this project MUST go through postForm(): it's the
-// only place X-Requested-With is set (fetch() does not send it by
+// Every fetch() in this project MUST go through postForm() or
+// getFragments(): they're the only places X-Requested-With is set (fetch() does not send it by
 // default, unlike jQuery's $.ajax), so no call site can forget it and
 // silently fall back to a full-page redirect.
 export async function postForm(url, formData) {
@@ -26,6 +26,16 @@ export async function postForm(url, formData) {
     },
     body: formData,
   });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new AjaxError(response.status, data);
+  return data;
+}
+
+// The GET counterpart, for fragments a page asks for without changing
+// anything (the slots of the service chosen when proposing a score).
+// The same header, so the view answers in JSON rather than a page.
+export async function getFragments(url) {
+  const response = await fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new AjaxError(response.status, data);
   return data;

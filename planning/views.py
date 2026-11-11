@@ -717,6 +717,10 @@ def propose_score(request, score_pk):
         service = proposing_into(request, request.GET["service"])
         slots, chosen, why = slot_choice(service, score)
         context.update(service=service, slots=slots, chosen=chosen, why=why, new_slot_form=new_slot_form())
+        # With JavaScript, changing the service asks for the second step alone.
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            html = render_to_string("planning/_propose_slot.html", context, request=request)
+            return JsonResponse({"fragments": {"propose-slot": html}})
     return render(request, "planning/propose_score.html", context)
 
 

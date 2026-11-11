@@ -8,6 +8,7 @@ from django.utils import timezone
 
 from accounts.testing import make_organisation, make_user
 from ordo.models import UseType
+from precentor_project.test_browser import PlaywrightTestCase
 from precentor_project.testing import make_score, make_term
 
 from .models import RolePiece, Service, ServiceRole
@@ -210,3 +211,35 @@ class ProposeTests(WithAMassTestCase):
         piece = RolePiece.objects.get(score=self.score)
         self.assertRedirects(response, f"{self.mass.get_absolute_url()}#piece-row-{piece.pk}",
                              fetch_redirect_response=False)
+
+    def test_with_javascript_the_second_step_comes_as_a_fragment(self):
+        response = self.client.get(self.url, {"service": self.mass.pk}, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        fragment = response.json()["fragments"]["propose-slot"]
+        self.assertIn('<section id="propose-slot"', fragment)
+        self.assertIn('id="propose-slot-select"', fragment)
+        self.assertNotIn("<html", fragment)
+
+
+class ProposeFromLibraryBrowserTest(PlaywrightTestCase):
+    def test_choosing_a_service_brings_its_slots_and_a_new_slot_can_be_made(self):
+        self.login_as_conductor()
+        today = timezone.localdate()
+        term = make_term(name="Browser Term", start_date=today, end_date=today + timedelta(days=30))
+        service = Service.objects.create(term=term, date=today + timedelta(days=3), service_type="Sung Mass")
+        ServiceRole.objects.create(service=service, role_name="Communion")
+        score = make_score(title="Ave verum corpus", composer_surname="Mozart")
+        self.page.goto(f"/scores/{score.pk}/propose/")
+        self.page.evaluate("window.__marker = true")
+        self.page.select_option("#propose-service", str(service.pk))
+        self.page.wait_for_selector("#propose-slot-select")
+        assert self.page.evaluate("window.__marker") is True, "the page reloaded"
+        assert self.page.is_hidden("#propose-new-slot"), "the new slot's fields showed before New slot… was chosen"
+        self.page.select_option("#propose-slot-select", "new")
+        assert self.page.is_visible("#propose-new-slot")
+        self.page.fill("#id_new-role_name", "After Communion")
+        self.page.select_option("#id_new-kind", "motet")
+        self.page.click("#propose-form button.btn-primary")
+        self.page.wait_for_url(f"**/services/{service.pk}/**")
+        slot = ServiceRole.objects.get(service=service, role_name="After Communion")
+        assert slot.kind == "motet" and slot.pieces.get().score == score
+        assert "Proposed Ave verum corpus (Mozart) for the After Communion." in self.page.inner_text("#toast-region")
