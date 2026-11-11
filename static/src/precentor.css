@@ -50,7 +50,7 @@
  *   blocks/template-slot.css
  *   utilities/utilities.css
  *
- * Fingerprint: 9db40e3fd8897a3230425b1d4a25d798b05e4d206ecc4dcf5bf4caf4567e0eea
+ * Fingerprint: 199062d2e4ce8502c46bf3eed94bd7cee6b031b3823d6b033f880b0d6322777d
  */
 
 /* ---- global/layers.css ---- */
@@ -2491,6 +2491,13 @@
 
   .music-list .occasion-secondary {
     font-size: 9.5pt;
+  }
+
+  /* A piece's title links to its score on screen; on paper it's only
+     its words, in the text's colour and with no underline. */
+  .music-list a {
+    color: inherit;
+    text-decoration: none;
   }
 }
 

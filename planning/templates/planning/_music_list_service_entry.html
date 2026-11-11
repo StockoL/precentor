@@ -12,7 +12,8 @@
                 <dt data-kind="{{ row.kind }}">{{ row.role_name }}</dt>
                 <dd data-kind="{{ row.kind }}">
                     {% if row.pieces %}
-                        {% for title in row.pieces %}{{ title }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {# On screen each links to its score or hymn; on paper the print rules make it plain text. #}
+                        {% for piece in row.pieces %}{% if piece.url %}<a href="{{ piece.url }}">{{ piece.title }}</a>{% else %}{{ piece.title }}{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}
                     {% else %}
                         <span class="tbc">TBC</span>
                     {% endif %}

@@ -57,7 +57,8 @@ class ReferenceShownTests(ReferencePieceTestMixin, TestCase):
 
     def test_the_music_list_gives_references_and_scores_alike(self):
         rows = self.service.music_list_rows()
-        self.assertEqual([(row["role_name"], row["kind"], row["proper_part"], row["pieces"]) for row in rows], [
+        self.assertEqual([(row["role_name"], row["kind"], row["proper_part"], [p["title"] for p in row["pieces"]])
+                          for row in rows], [
             ("Entrance hymn", "hymn", "", ["NEH 123"]),
             ("Offertory motet", "motet", "", [str(self.score)]),
         ])
@@ -148,7 +149,7 @@ class HymnPieceTests(ReferencePieceTestMixin, TestCase):
     def test_a_hymn_piece_is_titled_by_book_and_number(self):
         piece = RolePiece.objects.create(service_role=self.slot, hymn_entry=self.entry, is_confirmed=True)
         self.assertEqual((piece.title, str(piece)), ("NEH 53", "NEH 53 (confirmed)"))
-        self.assertEqual(self.service.music_list_rows()[0]["pieces"], ["NEH 53"])
+        self.assertEqual([p["title"] for p in self.service.music_list_rows()[0]["pieces"]], ["NEH 53"])
 
     def test_only_one_of_the_three(self):
         both = ({"hymn_entry": self.entry, "reference": "NEH 53"}, {"hymn_entry": self.entry, "score": self.score})

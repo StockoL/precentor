@@ -335,13 +335,15 @@ class Service(models.Model):
 
     def music_list_rows(self, draft=False):
         """The slots to print, in order, with their kind and proper part so
-        the music list can arrange and style them, and the titles of their
-        confirmed pieces. A draft also lists slots with nothing confirmed."""
+        the music list can arrange and style them, and their confirmed
+        pieces, each as its title and the address its title links to on
+        screen (empty for a typed reference). A draft also lists slots with
+        nothing confirmed."""
         rows = []
         for role in self.roles.all():
             if role.is_not_applicable:
                 continue
-            confirmed = [p.title for p in role.pieces.all() if p.is_confirmed]
+            confirmed = [{"title": p.title, "url": p.link_url} for p in role.pieces.all() if p.is_confirmed]
             if not confirmed and not draft:
                 continue
             rows.append({
