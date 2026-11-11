@@ -44,6 +44,7 @@ the automated browser tests, where every page is opened by its address.
 - [7. Bugs found and fixed](#7-bugs-found-and-fixed)
   - [Known bugs](#known-bugs)
 - [8. Deployment check](#8-deployment-check)
+  - [After v2.0.0 (11 November 2026)](#after-v200-11-november-2026)
 
 ## 1. Checks run, findings and how each was resolved
 
@@ -958,5 +959,27 @@ after the old columns were dropped, in a deploy of its own on 11 November.
 | <a id="d07"></a>D07 | The copied data | `python manage.py check_copied_data`, run from my computer against the live database, ends "Everything was copied" | Not part of the first deploy | Pass: run from my computer against the live database, with no difference reported | Not repeated: it was the evidence that the columns could go, and the check went with them |
 | <a id="d08"></a>D08 | The pages added since | Hymnals, a hymnal, the pew sheet, the completeness page, the template editor, the Library's Season and Use menus, and a Proper slot offering the day's chant all open and work | Not part of the first deploy | Pass: the Introit offered Ad te levavi; the pew sheet listed the piece; a hymnal was created and its page opened; the completeness page and the template editor opened; the Library's Season and Use menus listed Advent (1) and Mass (1), and Advent filtered it to 1 score | Pass: a new church's template editor showed its slots as rows with their kinds; the Introit offered Ad te levavi, which was proposed and then taken out with Remove ("Removed Ad te levavi from the Introit."); the pew sheet listed the confirmed piece; a hymnal was created; the completeness page opened; Advent (1) filtered the Library to 1 score |
 | <a id="d09"></a>D09 | Real devices | The checks in the table at the end of [section 6](#6-responsiveness-usability-and-the-keyboard), on my phone and tablet | Not part of the first deploy | Pass: on an iPhone 14 Pro and a 12.9-inch iPad Pro in Safari, and on my PC in Chrome ([section 6, Real devices](#real-devices)) | Not repeated: nothing a page shows changed with this deploy |
+
+### After v2.0.0 (11 November 2026)
+
+`main` and the tag `v2.0.0` were pushed at `08cd1ec`, after the full
+suite (1,013 tests), the migrations check, flake8 and ESLint had all
+passed on that commit. The deploy had no migrations. It was live at
+23:30, when the new page for adding several services began to answer.
+The checks below were run from my computer against the live site, on
+a test church deleted afterwards.
+
+| ID | Result |
+| -- | ------ |
+| [D01](#d01) | Pass: the sign-in page answered 200, and `/` sent a signed-out visitor to it |
+| [D02](#d02) | Pass: 301, to the `https://` address |
+| [D03](#d03) | Pass: 404 with Precentor's own page, and no debug page |
+| [D04](#d04) | Pass: both stylesheets (the main one under its new hashed name), both preloaded fonts and the sign-in page's scripts answered 200; a crest uploaded to the test church showed on Settings |
+| [D05](#d05) | Pass: registered, added a score, a term and a service (the First Sunday of Advent, from the date), applied the Mass template (10 slots with their kinds), proposed and confirmed Missa de Angelis, and saw it on the music list |
+| [D06](#d06) | Build log not read; the new page answering from 23:30 shows the build finished, and this deploy had no migrations to apply |
+| [D07](#d07) | Not needed: nothing in this deploy touched the data's shape |
+| [D08](#d08) | Pass: the template editor with its slot rows and kinds, the Advent filter, the day's chant offered on the Introit, the pew sheet, a new hymnal and the completeness page |
+| [D09](#d09) | Not repeated on my own devices; the new pages were checked at 320 pixels in rows [M66](#m66) to [M69](#m69) |
+| New | Pass: adding several services offered the term's four Sundays, "Create 4 services", and made them ("Created 4 services."); Rorate caeli proposed from its own page went into the first empty slot ("Proposed Rorate caeli (Plainchant) for the Introit."); its link on the service led to the score's page, whose bar read "Proposed for the Introit, Sunday 29 November (First Sunday of Advent)", and Confirm there came back reading "Confirmed" |
 
 [↑ Back to contents](#contents)
