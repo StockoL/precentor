@@ -696,6 +696,19 @@ class RolePiece(models.Model):
         return self.reference
 
     @property
+    def link_url(self):
+        """Where the title links on screen: the score's page or the hymn's,
+        carrying the service, so that page can say where the piece is and
+        lead back. A typed reference has no page, so it links nowhere."""
+        if self.score_id:
+            url = reverse("library:score_detail", args=[self.score_id])
+        elif self.hymn_entry_id:
+            url = reverse("library:hymn_detail", args=[self.hymn_entry.hymn_id])
+        else:
+            return ""
+        return f"{url}?service={self.service_role.service_id}"
+
+    @property
     def is_outside_library(self):
         """
         A reference typed into a slot whose music is usually a score, such

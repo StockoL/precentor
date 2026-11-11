@@ -277,7 +277,7 @@ class TuneChoiceTests(ReferencePieceTestMixin, TestCase):
         self.assertRedirects(self.choose(self.printed), self.service.get_absolute_url())
         self.piece.refresh_from_db()
         self.assertEqual((self.piece.tune, self.piece.sung_tune), (self.printed, self.printed))
-        self.assertContains(self.client.get(self.service.get_absolute_url()), "NEH 53, to Printed")
+        self.assertContains(self.client.get(self.service.get_absolute_url()), "NEH 53</a>, to Printed")
         self.choose(self.usual)
         self.piece.refresh_from_db()
         self.assertEqual((self.piece.tune, self.piece.sung_tune), (None, self.usual))
@@ -289,7 +289,7 @@ class TuneChoiceTests(ReferencePieceTestMixin, TestCase):
         page = self.client.get(self.service.get_absolute_url()).content.decode()
         row = re.search(rf'<li id="piece-row-{self.piece.pk}".*?</li>', page, re.S).group(0)
         self.assertIn('action="/pieces/', row)
-        self.assertRegex(row, r"^<li [^>]*>\s*<div>\s*NEH 53")
+        self.assertRegex(row, r"^<li [^>]*>\s*<div>\s*<a [^>]*>NEH 53")
 
     def test_another_churchs_tune_or_a_librarian_is_refused(self):
         from library.models import Tune

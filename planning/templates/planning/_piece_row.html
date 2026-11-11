@@ -1,7 +1,7 @@
 <li id="piece-row-{{ piece.pk }}" class="list-row list-row--wrap">
     {# A div, not a span: it can hold the tune's form. #}
     <div>
-        {{ piece.title }}{% if piece.sung_tune %}, to {{ piece.sung_tune }}{% endif %}
+        {% if piece.link_url %}<a href="{{ piece.link_url }}">{{ piece.title }}</a>{% else %}{{ piece.title }}{% endif %}{% if piece.sung_tune %}, to {{ piece.sung_tune }}{% endif %}
         <span class="badge badge--{% if piece.is_confirmed %}confirmed{% else %}proposed{% endif %}">
             {% if piece.is_confirmed %}Confirmed{% else %}Proposed{% endif %}
         </span>
