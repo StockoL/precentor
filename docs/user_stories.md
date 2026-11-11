@@ -58,6 +58,11 @@ These user stories drive the design and functionality of Precentor.
   so I can handle exceptions (an extra motet, a hymn sung in place of a
   Proper) without fighting a fixed template.
   - Met by: Add a slot (`add_role`) and Remove (`remove_slot`) on the service page.
+- As a conductor, I want to take a piece out of its slot when the
+  proposal was wrong or has been replaced, without losing the rest of
+  the slot, and be asked first if it's confirmed or has comments, so
+  the plan shows only what's still in play.
+  - Met by: Remove on each piece (`remove_piece`), which asks first when the piece is confirmed or has comments, and works without JavaScript.
 - As a conductor, I want to type a hymn or psalm into its slot as a
   number from the book, so hymns are planned and confirmed alongside
   everything else without each one being a score in the library.
