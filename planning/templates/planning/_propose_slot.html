@@ -4,6 +4,7 @@
     <form method="post" action="{% url 'planning:propose_score' score.pk %}" id="propose-form" class="flow">
         {% csrf_token %}
         <input type="hidden" name="service" value="{{ service.pk }}">
+        {{ piece_form.non_field_errors }}
         <p>
             <label for="propose-slot-select">Slot</label>
             <select id="propose-slot-select" name="slot" aria-describedby="propose-slot-why">
@@ -18,5 +19,10 @@
             <legend>New slot (only if you chose New slot…)</legend>
             {{ new_slot_form.as_p }}
         </fieldset>
+        {# Propose comes first, so Enter in a field proposes without confirming. #}
+        <div class="cluster">
+            <button type="submit" class="btn-primary">Propose</button>
+            <button type="submit" name="confirm" value="1">Propose and confirm</button>
+        </div>
     </form>
 </section>

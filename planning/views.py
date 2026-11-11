@@ -700,11 +700,57 @@ def propose_score(request, score_pk):
     """
     score = get_object_or_404(own(Score, request), pk=score_pk)
     context = {"score": score, "services": upcoming_services(request, score)}
-    if request.GET.get("service"):
+    if request.method == "POST":
+        service = proposing_into(request, request.POST.get("service", ""))
+        piece, new_form, piece_form = save_proposal(request, score, service)
+        if piece:
+            done = "Proposed and confirmed" if piece.is_confirmed else "Proposed"
+            messages.success(request, f"{done} {score} for the {piece.service_role.role_name}.")
+            return redirect(piece.get_absolute_url())
+        # Refused: the second step again, with the reason and the slot chosen.
+        slots, _, _ = slot_choice(service, score)
+        posted = request.POST.get("slot")
+        chosen = next((slot for slot in slots if str(slot.pk) == posted), None)
+        context.update(service=service, slots=slots, chosen=chosen, why="", new_slot_form=new_form,
+                       piece_form=piece_form)
+    elif request.GET.get("service"):
         service = proposing_into(request, request.GET["service"])
         slots, chosen, why = slot_choice(service, score)
         context.update(service=service, slots=slots, chosen=chosen, why=why, new_slot_form=new_slot_form())
     return render(request, "planning/propose_score.html", context)
+
+
+def save_proposal(request, score, service):
+    """
+    Add the score to a slot of the service, or to a new slot made for it,
+    through RolePieceForm, so the duplicate guard applies. It only adds;
+    nothing is taken out. A new slot and its piece are saved together, so
+    a refused piece leaves no empty slot behind. Returns the piece, or
+    None with the forms carrying the reasons.
+    """
+    posted = request.POST.get("slot", "")
+    new_form = new_slot_form(request.POST) if posted == "new" else new_slot_form()
+    piece_form = None
+    with transaction.atomic():
+        if posted == "new":
+            if not new_form.is_valid():
+                return None, new_form, piece_form
+            slot = new_form.save(commit=False)
+            slot.service = service
+            slot.save()
+        else:
+            if not posted.isdigit():
+                raise Http404
+            slot = get_object_or_404(own(ServiceRole, request).filter(service=service), pk=posted)
+        piece_form = RolePieceForm({"score": score.pk}, role=slot)
+        if not piece_form.is_valid():
+            transaction.set_rollback(True)
+            return None, new_form, piece_form
+        piece = piece_form.save(commit=False)
+        piece.service_role = slot
+        piece.is_confirmed = request.POST.get("confirm") == "1"
+        piece.save()
+    return piece, new_form, piece_form
 
 
 @role_required(can_plan)
