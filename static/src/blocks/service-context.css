@@ -1,0 +1,23 @@
+/* ==========================================================================
+   BLOCK: SERVICE CONTEXT
+   A slim bar at the top of a score's page when it was opened from a
+   service: the slots the score has in that service, with their state,
+   and the way back. Quiet, as it's only orientation.
+   ========================================================================== */
+
+@layer blocks {
+  .service-context {
+    justify-content: space-between;
+    align-items: baseline;
+    max-width: none;
+    padding-block: var(--spacing-2xs);
+    border-block-end: 1px solid var(--colors-border-subtle);
+    font-size: var(--typography-step--1);
+  }
+
+  .service-context__slots {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}

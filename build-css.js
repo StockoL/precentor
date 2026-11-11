@@ -84,6 +84,7 @@ const SOURCES = [
   "blocks/parallel-text.css",
   "blocks/pew-sheet.css",
   "blocks/template-slot.css",
+  "blocks/service-context.css",
   "utilities/utilities.css",
 ];
 

@@ -2,6 +2,17 @@
 {% block title %}{{ score }} — Precentor{% endblock %}
 {% block content %}
 <div class="flow">
+    {# Opened from a service: where this score sits in it, and the way back. #}
+    {% if from_service %}
+    <aside class="service-context cluster" aria-label="In {{ from_service }}">
+        <ul role="list" class="service-context__slots">
+            {% for piece in service_pieces %}
+            <li>{% if piece.is_confirmed %}Confirmed{% else %}Proposed{% endif %} for the {{ piece.service_role.role_name }}, {{ from_service.date|date:"l j F" }}{% if from_service.occasion %} ({{ from_service.occasion }}){% endif %}</li>
+            {% endfor %}
+        </ul>
+        <a href="{{ from_service.get_absolute_url }}">Back to the service</a>
+    </aside>
+    {% endif %}
     <header class="page-header">
         <h1>{{ score }}</h1>
         {% if can.edit_library %}

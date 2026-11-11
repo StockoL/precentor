@@ -1,5 +1,6 @@
 import csv
 
+from django.apps import apps
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -214,7 +215,23 @@ class ScoreDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):
         context["history"] = self.object.role_pieces.select_related(
             "service_role__service__term"
         ).order_by("-service_role__service__date")
+        context.update(self.from_service())
         return context
+
+    def from_service(self):
+        """Opened from a service (?service=<pk>), the score's slots in it, for
+        the bar at the top. Service is looked up by name, as library doesn't
+        import planning; own() keeps it to this church, so another church's
+        id, or one that isn't a number, is ignored without a word."""
+        service_pk = self.request.GET.get("service", "")
+        if not service_pk.isdigit():
+            return {}
+        service = own(apps.get_model("planning", "Service"), self.request).select_related("occasion")
+        service = service.filter(pk=service_pk).first()
+        if service is None:
+            return {}
+        pieces = self.object.role_pieces.filter(service_role__service=service).select_related("service_role")
+        return {"from_service": service, "service_pieces": pieces.order_by("service_role__position", "pk")}
 
 
 class LibraryEditRequiredMixin(RoleRequiredMixin):

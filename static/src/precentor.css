@@ -48,9 +48,10 @@
  *   blocks/parallel-text.css
  *   blocks/pew-sheet.css
  *   blocks/template-slot.css
+ *   blocks/service-context.css
  *   utilities/utilities.css
  *
- * Fingerprint: 199062d2e4ce8502c46bf3eed94bd7cee6b031b3823d6b033f880b0d6322777d
+ * Fingerprint: 40bc8aa4a3ab93f47e2d670a1419c8ed885250958a5c1cba2ef75f8b5c938fc5
  */
 
 /* ---- global/layers.css ---- */
@@ -2717,6 +2718,31 @@
 
   .template-slot__remove label {
     margin-block-end: 0;
+  }
+}
+
+/* ---- blocks/service-context.css ---- */
+/* ==========================================================================
+   BLOCK: SERVICE CONTEXT
+   A slim bar at the top of a score's page when it was opened from a
+   service: the slots the score has in that service, with their state,
+   and the way back. Quiet, as it's only orientation.
+   ========================================================================== */
+
+@layer blocks {
+  .service-context {
+    justify-content: space-between;
+    align-items: baseline;
+    max-width: none;
+    padding-block: var(--spacing-2xs);
+    border-block-end: 1px solid var(--colors-border-subtle);
+    font-size: var(--typography-step--1);
+  }
+
+  .service-context__slots {
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 }
 
