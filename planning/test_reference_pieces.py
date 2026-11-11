@@ -99,49 +99,6 @@ class ProposeReferenceTests(ReferencePieceTestMixin, TestCase):
         self.assertEqual(form.fields["reference"].label, "Or type a reference")
 
 
-class HymnsAndPsalmIntoSlotsTests(ReferencePieceTestMixin, TestCase):
-    def run_migration(self):
-        import importlib
-
-        from django.apps import apps
-
-        importlib.import_module("planning.migrations.0023_hymns_and_psalm_into_slots").copy_into_slots(apps, None)
-
-    def pieces(self, service):
-        return [
-            (piece.service_role.role_name, piece.service_role.kind, piece.reference, piece.is_confirmed)
-            for piece in RolePiece.objects.filter(service_role__service=service).order_by(
-                "service_role__position", "id"
-            )
-        ]
-
-    def test_hymns_become_one_slot_and_the_psalm_another(self):
-        self.service.hymns = "NEH 1, NEH 33,, NEH 271 "
-        self.service.psalm = "150"
-        self.service.save()
-        self.run_migration()
-        self.assertEqual(self.pieces(self.service), [
-            ("Hymns", "hymn", "NEH 1", True),
-            ("Hymns", "hymn", "NEH 33", True),
-            ("Hymns", "hymn", "NEH 271", True),
-            ("Psalm", "psalm", "150", True),
-        ])
-        hymns = self.service.roles.get(role_name="Hymns")
-        self.assertEqual((hymns.organisation, hymns.position), (self.church, 2))
-
-    def test_a_slot_already_named_psalm_takes_the_piece(self):
-        psalm = ServiceRole.objects.create(service=self.service, role_name="psalm")
-        self.service.psalm = "Psalm 24"
-        self.service.save()
-        self.run_migration()
-        self.assertEqual(list(psalm.pieces.values_list("reference", flat=True)), ["Psalm 24"])
-        self.assertEqual(self.service.roles.count(), 2)
-
-    def test_a_service_with_neither_is_left_alone(self):
-        self.run_migration()
-        self.assertEqual(list(self.service.roles.values_list("role_name", flat=True)), ["Entrance hymn"])
-
-
 class MusicListArrangementTests(ReferencePieceTestMixin, TestCase):
     def setUp(self):
         super().setUp()

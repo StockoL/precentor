@@ -28,7 +28,7 @@ class DeleteThenBackTests(TestCase):
                 self.assertContains(response, message)
 
     def test_template(self):
-        template = make_slot_template(name="Benediction", slot_names="O salutaris")
+        template = make_slot_template(name="Benediction", slots=["O salutaris"])
         self.delete_twice(f"/templates/{template.pk}/delete/", "/templates/", "That template has already been deleted.")
 
     def test_term_service_and_notice(self):
@@ -43,7 +43,7 @@ class DeleteThenBackTests(TestCase):
         self.delete_twice(f"/library/{score.pk}/delete/", "/library/", "That score has already been deleted.")
 
     def test_permissions_are_still_checked_first(self):
-        template = make_slot_template(name="Benediction", slot_names="O salutaris")
+        template = make_slot_template(name="Benediction", slots=["O salutaris"])
         self.client.force_login(make_user("librarian"))
         self.assertEqual(self.client.get(f"/templates/{template.pk}/delete/").status_code, 403)
 

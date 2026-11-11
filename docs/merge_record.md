@@ -119,9 +119,8 @@ The plan had six steps. Here is each, with what happened.
    *Done:* the check reported no difference, and checks D01 to D09
    passed, D09 on my own iPhone, iPad and PC.
 6. **Drop the old columns.** Only once the check is clean on the live
-   data: a migration removing the four old columns, and the code that
-   still reads them (the template's text and the settings admin), as a
-   commit and deploy of its own. It's ready, and rehearsed, on the
-   `drop-old-columns` branch. *Not done yet:* the check was clean, so
-   this is the next step. The four columns are still in the live
-   database.
+   data: merge the `drop-old-columns` branch, which removes the four
+   columns (`planning/0029`, `core/0015`), the code that still wrote
+   them, and the check itself, then deploy again. I rehearsed it on the
+   migrated rehearsal database: both migrations applied, the typed
+   hymns stayed as pieces in their Hymns slots, and every page opened.

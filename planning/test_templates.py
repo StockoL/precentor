@@ -22,17 +22,11 @@ class TemplateTestMixin:
         term = make_term(name="T", start_date=date(2026, 1, 1), end_date=date(2026, 3, 31), calendar_use="current")
         self.service = Service.objects.create(term=term, date=date(2026, 1, 11), service_type="Sung Mass")
         # The church's own Mass and Vespers, with the ready-made slots.
-        self.mass = make_slot_template(name="Mass", slot_names="\n".join(MASS))
-        self.vespers = make_slot_template(name="Vespers", slot_names="\n".join(VESPERS))
+        self.mass = make_slot_template(name="Mass", slots=MASS)
+        self.vespers = make_slot_template(name="Vespers", slots=VESPERS)
 
     def slot_names(self):
         return list(self.service.roles.values_list("role_name", flat=True))
-
-
-class SlotParsingTests(TestCase):
-    def test_lines_are_trimmed_blanks_dropped_and_each_name_kept_once(self):
-        names = SlotTemplate.names_from_text("  Introit \n\nKyrie\nkyrie\n  Offertory   motet  ")
-        self.assertEqual(names, ["Introit", "Kyrie", "Offertory motet"])
 
 
 class ApplyTemplateTests(TemplateTestMixin, TestCase):
@@ -148,19 +142,19 @@ class SlotTemplateFormTests(TestCase):
 
     def test_a_church_has_one_template_per_name_whatever_the_case(self):
         church = make_organisation("St Cecilia's")
-        make_slot_template(name="Mass", slot_names="Introit", organisation=church)
+        make_slot_template(name="Mass", slots=["Introit"], organisation=church)
         form = SlotTemplateForm(data={"name": "mass"}, instance=SlotTemplate(organisation=church))
         self.assertEqual(form.errors["name"], ["You already have a template called mass."])
 
     def test_another_church_can_use_the_same_name(self):
-        make_slot_template(name="Mass", slot_names="Introit", organisation=make_organisation("St Elsewhere"))
+        make_slot_template(name="Mass", slots=["Introit"], organisation=make_organisation("St Elsewhere"))
         church = make_organisation("St Cecilia's")
         form = SlotTemplateForm(data={"name": "Mass"}, instance=SlotTemplate(organisation=church))
         self.assertTrue(form.is_valid(), form.errors)
 
     def test_editing_a_template_keeps_its_own_name(self):
         church = make_organisation("St Cecilia's")
-        mass = make_slot_template(name="Mass", slot_names="Introit", organisation=church)
+        mass = make_slot_template(name="Mass", slots=["Introit"], organisation=church)
         form = SlotTemplateForm(data={"name": "Mass"}, instance=mass)
         self.assertTrue(form.is_valid(), form.errors)
 
@@ -228,21 +222,3 @@ class TemplateSlotTests(TemplateTestMixin, TestCase):
         slot.save()
         self.mass.apply_to(self.service)
         self.assertEqual(self.service.roles.get(role_name="Introit").kind, "hymn")
-
-    def test_existing_templates_are_split_into_rows(self):
-        import importlib
-
-        from django.apps import apps
-
-        from .models import TemplateSlot
-
-        migration = importlib.import_module("planning.migrations.0027_split_template_slots")
-        TemplateSlot.objects.all().delete()
-        self.vespers.slot_names = "Psalms\n\nhymn\nHymn\nMagnificat"
-        self.vespers.save()
-        migration.split_into_rows(apps, None)
-        self.assertEqual(
-            list(self.vespers.template_slots.values_list("name", "kind", "position")),
-            [("Psalms", "psalm", 1), ("hymn", "hymn", 2), ("Magnificat", "canticle", 3)],
-        )
-        self.assertEqual(self.vespers.template_slots.first().organisation, self.vespers.organisation)

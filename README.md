@@ -1428,7 +1428,6 @@ It also has Django's own `password`, `last_login`, `is_staff`,
 | `occasion`             | ForeignKey | optional, to LiturgicalOccasion | The main day; sets the colour    |
 | `additional_occasions` | ManyToMany | to LiturgicalOccasion           | Other days it also marks         |
 | `calendar_use`         | CharField  | optional                        | Overrides the term's calendar    |
-| `hymns`, `psalm`       | CharField  | optional                        | No longer shown; copied into slots, to be dropped |
 | `slot_template`        | ForeignKey | optional, to SlotTemplate       | The template its slots came from |
 
 **planning.TermMarker** (a "notice" in the app)
@@ -1491,7 +1490,6 @@ and each tune it added, so removing it can undo them.
 | -------------- | ---------- | -------------------------------- | --------------------------- |
 | `organisation` | ForeignKey | to Organisation                  | Whose template              |
 | `name`         | CharField  | max 50, unique within the church | e.g. Mass, Vespers          |
-| `slot_names`   | TextField  | no longer read                   | The slots' first form; to be dropped |
 
 **planning.TemplateSlot** (one slot of a template)
 
@@ -1570,7 +1568,6 @@ max 50), such as Mass, Vespers or General. Each church has its own.
 | `music_list_arrangement`               | CharField              | service order or propers beside    | How each service's music is arranged    |
 | `repeat_window_weeks`                  | PositiveSmallIntegerField | 1 to 104, default 8             | How recent counts as "sung recently"    |
 | `hymn_repeat_window_weeks`             | PositiveSmallIntegerField | 1 to 104, default 6             | The same, for hymns                     |
-| `show_hymns_psalm`                     | BooleanField           | default True                       | No longer used; to be dropped           |
 
 ### Rules the database enforces
 

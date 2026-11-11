@@ -986,9 +986,9 @@ no longer needs an aside for them. Migration `planning/0023` copied
 each service's hymns into one Hymns slot, a confirmed reference piece
 per comma-separated hymn in the order typed, and the psalm into a Psalm
 slot. Confirmed, because that text was what the music list already
-printed. The fields themselves stay, still holding the old text, until
-a later migration drops them along with `SiteConfig.show_hymns_psalm`,
-once the copied slots have been checked on real data.
+printed. The fields stayed, still holding the old text, until the
+copies had been checked on real data; `planning/0029` and
+`core/0015` then dropped them, with `SiteConfig.show_hymns_psalm`.
 
 **Status labels:** `status` returns a raw value, which templates use
 for CSS classes (`badge--not_started`) and comparisons. Because it's
@@ -1093,7 +1093,6 @@ the app has grown.
 ```python
 class SlotTemplate(models.Model):
     name = models.CharField(max_length=50)  # unique within the church
-    slot_names = models.TextField("slots")  # no longer read; dropped later
 
     @property
     def slots(self): ...  # the names of its TemplateSlot rows, in order
@@ -1124,8 +1123,8 @@ fields and a few blank rows for new ones, so it still needs no
 JavaScript. The formset refuses a template with no slots or the same
 slot twice, whatever its case, and the template and its rows are saved
 in one transaction. Migration `planning/0027` split existing templates
-into rows, with its own copy of the name table; the old text column is
-kept, unread, until it's dropped after a check on real data.
+into rows, with its own copy of the name table; the old text column was
+dropped by `planning/0029` once the rows had been checked on real data.
 
 Applying a template copies each row's name, kind and proper part into
 a new `ServiceRole`, skipping names the service already has (ignoring
@@ -1280,7 +1279,6 @@ class SiteConfig(models.Model):
     music_list_arrangement = models.CharField(max_length=20, choices=ARRANGEMENT_CHOICES, default="service_order")
     repeat_window_weeks = models.PositiveSmallIntegerField(default=8)  # 1 to 104
     hymn_repeat_window_weeks = models.PositiveSmallIntegerField(default=6)  # hymns come round more often
-    show_hymns_psalm = models.BooleanField(default=True)  # no longer used; to be dropped
 
     @classmethod
     def of(cls, organisation):

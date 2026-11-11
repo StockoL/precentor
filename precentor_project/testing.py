@@ -58,11 +58,11 @@ def template_form_data(name, new=(), template=None, remove=(), order=None):
     return data
 
 
-def make_slot_template(*, organisation=None, **fields):
-    """A template whose slots are written as lines of text, one each."""
-    fields = {"name": "Benediction", "slot_names": "O salutaris\nTantum ergo", **fields}
+def make_slot_template(*, organisation=None, slots=("O salutaris", "Tantum ergo"), **fields):
+    """A template with these slots, in order."""
+    fields = {"name": "Benediction", **fields}
     template = SlotTemplate.objects.create(organisation=organisation or make_organisation(), **fields)
-    template.set_slots(template.names_from_text(template.slot_names))
+    template.set_slots(list(slots))
     return template
 
 
