@@ -1662,7 +1662,7 @@ the role column in [§2](#2-who-this-is-for) says who may use each one.
 | Service                     | New service (`service_create`), occasion suggested from the date | Service page (`service_detail`), term page, pew sheet (`service_pew_sheet`) | Edit (`service_update`)                                                                         | Delete, after a confirmation (`service_delete`)               | Term page in date order; previous and next links on each service           |
 | Notice (`TermMarker`)       | New notice (`marker_create`)                              | Term page and music list                           | Edit (`marker_update`)                                                                          | Delete (`marker_delete`)                                      | Term page                                                                  |
 | Slot (`ServiceRole`)        | Add a slot (`add_role`) or from a template (`apply_template`) | Service page                                   | Move (`move_slot`), drag to reorder (`reorder_slots`), change kind (`change_kind`), mark N/A when adding | Remove (`remove_slot`), asking first if it has pieces         | Service page                                                               |
-| Piece (`RolePiece`)         | Propose a score, a hymn by book and number, or a reference, or propose and confirm at once (`add_piece`) | Service page, score page history, music list       | Confirm and unconfirm (`toggle_confirm`); a hymn's tune (`set_tune`)                                                        | Remove (`remove_piece`), asking first if it's confirmed or has comments | Service page; the score page lists where each score was used               |
+| Piece (`RolePiece`)         | Propose a score, a hymn by book and number, or a reference, or propose and confirm at once (`add_piece`) | Service page, score page history, music list; each title links to its score or hymn, whose page then says where it sits in that service | Confirm and unconfirm (`toggle_confirm`); a hymn's tune (`set_tune`)                                                        | Remove (`remove_piece`), asking first if it's confirmed or has comments | Service page; the score page lists where each score was used               |
 | Slot template               | New template (`slot_template_create`)                     | Templates page (`slot_template_list`)              | Edit (`slot_template_update`)                                                                   | Delete (`slot_template_delete`)                               | Templates page; buttons on each service                                    |
 | Template slot (`TemplateSlot`) | A blank row on the template form (`slot_template_create`, `slot_template_update`) | Templates page, listed under each template; the template form | Name, kind, proper part and order on the template form | The row's Remove box on the template form | The template form, in order |
 | Use type                    | Typed on the score form                                   | Score page; the Library's Use filter               | not available                                                                                   | not available                                                 | Library filter                                                             |
@@ -2028,12 +2028,12 @@ each change before it was committed.
 tests were run on 10 November 2026, and every check again the same day
 at `8908668`, each with the checker's own screenshots. In short:
 
-- **[944 automated tests](docs/testing.md#4-automated-tests)** cover the models, views, forms, permissions,
+- **[956 automated tests](docs/testing.md#4-automated-tests)** cover the models, views, forms, permissions,
   each church's own data, the import and export, and the liturgical
-  calendar and its chants. 68 of them are browser tests, which start a
+  calendar and its chants. 69 of them are browser tests, which start a
   real server and drive Chromium through Playwright, so the JavaScript
   is tested too.
-- **[Manual tests](docs/testing.md#5-manual-tests):** 65 rows covering every
+- **[Manual tests](docs/testing.md#5-manual-tests):** 66 rows covering every
   feature, grouped by feature, each carried out in Google Chrome with
   its result and screenshots beside them. Six failed and were fixed,
   each with its commit.

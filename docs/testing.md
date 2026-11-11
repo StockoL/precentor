@@ -7,8 +7,8 @@ used, what it found and whether that's resolved.
 Everything here was run again on 10 November 2026, on a local copy of
 the site with the invented demo church. The manual tests were run
 between commits `61f3790` and `b500e3f`, with rows [M59](#m59) and [M60](#m60) added
-later the same day at `4746a58`, M61 to M64 at `59e3469`, and M65 at
-`b0fafbf`. The checks in [sections 1 to 3](#1-checks-run-findings-and-how-each-was-resolved), the widths and browsers, and
+later the same day at `4746a58`, M61 to M64 at `59e3469`, M65 at
+`b0fafbf`, and M66 at `823ebe2`. The checks in [sections 1 to 3](#1-checks-run-findings-and-how-each-was-resolved), the widths and browsers, and
 the contrast were all run again at `8908668`, with the checkers' own
 screenshots; the commits after it change only the documentation, the
 ESLint settings and a screenshot tool. The manual tests
@@ -49,7 +49,7 @@ the automated browser tests, where every page is opened by its address.
 
 | Check | What I used | What it found on 10 November | Resolved? |
 | ----- | ----------- | ---------------------------- | --------- |
-| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 944 tests, all passing, at `7fd2e74`, after the ten that tested copying the old columns went with them ([section 4](#4-automated-tests)); 954 at `8908668`, the run in my own terminal ([Check figure 1](#check-figure-1)) | Nothing to resolve. There were 553 at submission |
+| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 956 tests, all passing, at `823ebe2`; 944 at `7fd2e74`, after the ten that tested copying the old columns went with them ([section 4](#4-automated-tests)); 954 at `8908668`, the run in my own terminal ([Check figure 1](#check-figure-1)) | Nothing to resolve. There were 553 at submission |
 | Deployment settings | `python manage.py check --deploy` with `DEBUG` off and the host name Render sets | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for ([Check figure 2](#check-figure-2)) | Nothing to resolve |
 | Migrations | `python manage.py makemigrations --check --dry-run`, and a rehearsal of the merge on a copy of the live database ([`merge_record.md`](merge_record.md)) | No missing migrations ([Check figure 2](#check-figure-2)). On the copy, all 28 new migrations ran, `check_copied_data` found everything copied, and all 177 pages opened for every church | Nothing to resolve |
 | Python style | flake8 7.4.1 with the settings in `.flake8` (line length 120, `venv` and migrations left out) | No findings ([Check figure 2](#check-figure-2)) | At submission: two unused imports, a blank line and an escape, fixed in `1f2e618`; more in `722ffc4`; the 16 long lines, the variable `l` and the lambda left then were cleared in `86ad9e8` |
@@ -388,7 +388,7 @@ _Check figure 7. The lowest score: a service on a simulated phone._
 
 ## 4. Automated tests
 
-The suite has 944 tests, run on 11 November 2026 on the merge that dropped the old columns, `7fd2e74`;
+The suite has 956 tests, run on 11 November 2026 at `823ebe2`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
@@ -400,6 +400,7 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | `comments/test_browser.py`                | 3     | Comment threads, deleting a comment, and closed threads as a Viewer sees them, in the browser |
 | `core/tests.py`                           | 34    | Settings, the crest upload and processing, the crest's address, the music list arrangement and the repeat window, each church's own settings |
 | `library/tests.py`                        | 123   | Scores, the library's search, filters and sorting, the ranking the piece picker uses, "last sung", texts, the completeness page, returning after an edit, hymnals, hymns and their pages, joining the same hymn, hymn last sung, tunes and a tune's number in a book, each church's own library, the Suitable-for filters and their menus, and a score planned for a service being kept when deleted |
+| `library/test_service_bar.py`             | 4     | A score opened from a service: its slots in that service with the day, occasion and state, and the way back; another church's service, or one that doesn't exist or isn't a number, ignored |
 | `library/test_metre.py`                   | 5     | Writing a metre one way: short names, doubled verses, lines of ten or more, anything else kept as typed |
 | `library/test_browser.py`                 | 11    | The score form's tag input, the library as a Viewer sees it, and the import page's file size check and disabled button, in the browser |
 | `library/test_importing.py`               | 58    | Importing from a Google Sheets link, or refusing neither or both; reading a spreadsheet (encodings, separators, headers, limits), checking each row, saving an import all at once, keeping and removing it, who may remove it, keeping or removing it a second time, the Imports list, the export and its round trip |
@@ -416,6 +417,7 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | `planning/test_templates.py`              | 24    | Slot templates as rows with kinds, editing them as a formset (order, remove, each name once), and applying them |
 | `planning/test_slot_order.py`             | 8     | Moving slots and reordering them |
 | `planning/test_remove_slot.py`            | 6     | Removing slots, asking first when they have pieces |
+| `planning/test_piece_links.py`            | 8     | A piece's title linking to its score or hymn with its service, on the service page and the music list, and a typed reference linking nowhere; the music list's words unchanged, with no query per piece; the pew sheet unlinked; and, in the browser, a printed title looking like the words around it |
 | `planning/test_remove_piece.py`           | 13    | Removing one piece: at once when it's proposed with no comments, asking first when it's confirmed or has comments, what the page is sent back, a removed chant offered again, without JavaScript, a second removal, another church's piece, Viewers, and no extra query per piece |
 | `planning/test_service_form.py`           | 3     | The service form's calendar choice |
 | `planning/test_date_checks.py`            | 10    | A term ending before it starts, a service outside its term, and new term dates that would leave services outside it, at both ends, with a rename still allowed |
@@ -542,6 +544,7 @@ Planning a service: its slots, and proposing, confirming and removing pieces.
 | <a id="m60"></a>M60  | Propose and confirm        | On a service In progress, type Mass in G minor in the Kyrie's reference box and press Propose and confirm; type another and press Enter; with JavaScript off, propose a third from the Kyrie's propose page with Propose and confirm | The first listed as Confirmed, the service's status changing with it, and "Piece proposed and confirmed."; Enter only proposes; without JavaScript the same, back on the service page | Pass: Mass in G minor listed as Confirmed, the status went from In progress to Complete as the Kyrie was the last slot unsettled, and the message read "Piece proposed and confirmed."; Enter listed Missa Aeterna Christi munera as Proposed; the propose page had Propose piece then Propose and confirm, and Missa de Angelis came back on the service page as Confirmed |
 | <a id="m61"></a>M61  | Double clicks and repeats  | On a Sung Mass with nothing planned, type Mass in G minor in the Kyrie's reference box and double-click Propose piece; double-click its Confirm; then type mass in g minor and propose it again | One request and one piece; one request and the piece Confirmed; the repeat refused with "That's already proposed for this slot." | Pass, since `eda6561`, `99e2b3a` and `8dfa229`: each double-click sent one request; one row, then Confirmed with Unconfirm on its button; the repeat was refused with that message and the slot still had one row |
 | <a id="m65"></a>M65  | Removing a piece           | On the Sung Mass of 13 December, Tab to Remove on the Kyrie's proposed Missa brevis and press Enter; Remove the Gradual's Ave Maria, which has a comment, first with Cancel; Remove the confirmed Agnus Dei; with the service open in two tabs, remove the Credo's piece in each; open the service as the Viewer; with JavaScript off, Remove the confirmed Offertory and the proposed Communion; at 320 pixels, Remove the Introit's | Each button named with its piece and slot; a proposed piece with no comments goes at once, focus moving to its slot's form, with a message; the others ask first, saying what goes with them; the second tab says it has already gone; no Remove for the Viewer; without JavaScript a confirmation page, then back on the service with a message; the button fits at 320 | Pass, since `f3353c6`, `954347d` and `606aaf0`: buttons named like "Remove Vigilate (William Byrd) from the Communion"; the Kyrie's row went without a reload, focus in the Kyrie's form, and "Removed Missa brevis (Giovanni Pierluigi da Palestrina) from the Kyrie."; the Gradual's dialog read "Its comment goes with it. This can't be undone." with focus on Cancel, which kept it (Test figures [4](#test-figure-4) and [5](#test-figure-5)); the Agnus Dei's read "It's confirmed, so it will leave the music list.", and the slot then showed "No pieces proposed yet." above its form; the second tab reloaded with "That piece has already been removed."; the Viewer saw 5 pieces and no Remove button; without JavaScript the Offertory's page said the same as the dialog ([Test figure 6](#test-figure-6)), and both came back to the service with "Removed Alma Redemptoris Mater (Plainchant) from the Offertory." and "Removed Vigilate (William Byrd) from the Communion."; at 320 the page was no wider than the window and the button sat between 172 and 261 pixels |
+| <a id="m66"></a>M66  | A piece's page from the service | On the Sung Mass of 13 December follow the Introit's Rorate caeli; then Back to the service; on Vespers of 6 December follow the hymn SAH 12; propose a typed reference in an empty Kyrie; open the Advent music list, then print it; open the pew sheet; open the score with `?service=999999` and `?service=abc`; repeat the first at 320 pixels | A score and a hymn link to their pages and a reference doesn't; the score's page says which slots it has in that service and their state, and leads back; the list's titles link on screen and print as plain words; the pew sheet has no links; a bad service is ignored; nothing wider than the screen | Pass, since `29ef886`, `24572bf` and `823ebe2`: the link was `/library/320/?service=164`, and the bar read "Confirmed for the Introit, Sunday 13 December (Third Sunday of Advent)" and "Proposed for the Sanctus, Sunday 13 December (Third Sunday of Advent)" ([Test figures 7 to 8](#test-figure-7)); Back to the service went to `/services/164/`; SAH 12 opened "O come, O come, Emmanuel"; the reference Missa de Angelis had no link, and was removed again; the music list had 40 links, which in print had no underline and the text's colour; the pew sheet had none; both bad values showed the score with no bar; at 320 the page was no wider than the window |
 
 <a id="test-figure-4"></a>
 
@@ -561,6 +564,18 @@ _Test figure 5. M65: a piece with a comment asks first, with focus on Cancel. Th
 
 _Test figure 6. M65: without JavaScript the same question is a page of its own._
 
+<a id="test-figure-7"></a>
+
+![A score's page opened from a service: above the title, a slim bar reading Confirmed for the Introit, Sunday 13 December (Third Sunday of Advent) and Proposed for the Sanctus, the same day, with Back to the service on the right](screenshots/testing/m66-score-from-service-1280.png)
+
+_Test figure 7. M66: a score opened from a service says where it sits in it, at 1280 pixels._
+
+<a id="test-figure-8"></a>
+
+![The same page at 320 pixels, the bar's two lines wrapped above Back to the service, then the title](screenshots/testing/m66-score-from-service-320.png)
+
+_Test figure 8. M66: the same at 320 pixels._
+
 ### 5.6 Suggestions and the day's chants
 
 | ID   | Feature                    | Steps                                                                                                         | Expected                                                                                        | Result   |
@@ -576,40 +591,40 @@ _Test figure 6. M65: without JavaScript the same question is a page of its own._
 
 | ID   | Feature                    | Steps                                                                                                         | Expected                                                                                        | Result   |
 | ---- | -------------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | -------- |
-| <a id="m47"></a>M47  | Hymnals                    | Library, Hymnals; add one, edit it, archive it; try to delete one with hymns sung from it | Listed with copies; archived ones apart; the delete refused with a note to archive instead | Pass: added, edited and archived (then listed under Archived); deleting the hymnal sung from was refused with "Archive it instead" ([Test figure 7](#test-figure-7)) |
+| <a id="m47"></a>M47  | Hymnals                    | Library, Hymnals; add one, edit it, archive it; try to delete one with hymns sung from it | Listed with copies; archived ones apart; the delete refused with a note to archive instead | Pass: added, edited and archived (then listed under Archived); deleting the hymnal sung from was refused with "Archive it instead" ([Test figure 9](#test-figure-9)) |
 | <a id="m48"></a>M48  | A hymn by book and number  | In a Hymn slot, choose the book, type a number, propose; then open the hymn from its hymnal's page and add a first line | NEH 53 on the row, a quiet line asking for its first line until it has one; the hymnal lists it by number | Pass: SAH 99 on the row with "No first line recorded yet" until one was added; the hymnal's page lists 99 with its line |
 | <a id="m49"></a>M49  | The same hymn in two books | Give two hymns the same first line; on one's page answer the question both ways | Yes joins them and keeps both numbers; no isn't asked again | Pass: the question was asked; after No it wasn't asked again on either hymn; after Yes the hymn's page lists both SAH 14 and SAH 16 |
 | <a id="m50"></a>M50  | Tunes                      | Add tunes; set a hymn's tune in its book; on a hymn in a service choose another tune; open the pew sheet | The row offers the book's tune, then same-metre tunes from the book, then the rest; the sheet prints "NEH 53, tune NEH 115" | Pass: the row offered Its usual tune, Same metre in SAH, then Other tunes, and "8.7.8.7" matched "87 87"; the pew sheet printed "SAH 12, tune SAH 11" |
 | <a id="m51"></a>M51  | Suggested hymns            | Tag a hymn for the season; open a Hymn slot on a service in that season; click the suggestion | The hymn listed with its reason; clicking fills in the book and number | Pass: with SAH 16 tagged for Advent, an Advent Vespers' Hymn slot suggested it; clicking filled in SAH and 16 |
 | <a id="m55"></a>M55  | Import a hymnal's list     | On a hymnal's page, Import a list; import a file of made-up rows with one row missing its number and an extra column | The result page counts what was added and the new tune, names the skipped row and the column left out, and lists each number added or filled in with what happened to it; the hymnal page shows the new numbers and a notice to review the import | Fail, then fixed (`a79ddab`): the result page asked "Happy with it?" without listing what had changed. Before the fix: 2 hymns added and 1 new tune; row 3 skipped for having no number; the Notes column left out; the hymnal's page lists 20 and 21 with a notice to review the import. Since: the page lists SAH 18 "Filled in: first line", SAH 20 and SAH 21 "Added", in number order with their first lines, and "New tune: Stuttgart" |
 
-<a id="test-figure-7"></a>
+<a id="test-figure-9"></a>
 
 ![The Hymnals page listing St Aelred's Hymn Book with its copies and filing location](screenshots/testing/m47-hymnals.png)
 
-_Test figure 7. M47: the Hymnals page._
+_Test figure 9. M47: the Hymnals page._
 
 ### 5.8 The music list, the pew sheet and Settings
 
 | ID   | Feature                    | Steps                                                                                                         | Expected                                                                                        | Result   |
 | ---- | -------------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | -------- |
 | <a id="m18"></a>M18  | The music list             | On a term, Music list; switch between Public and Draft                                                        | Public shows confirmed pieces; Draft marks undecided slots TBC                                  | Pass: the public list showed no TBC, and services with nothing decided "Nothing to display yet"; the draft had its banner and marked 31 slots TBC |
-| <a id="m19"></a>M19  | Print the music list       | Press Print                                                                                                   | A clean page without the navigation or buttons                                                  | Fail, then fixed (`61f3790`): the footer's Privacy link printed at the end. Since the fix, Chrome's printed PDF has no navigation, controls or footer ([Test figure 8](#test-figure-8)) |
+| <a id="m19"></a>M19  | Print the music list       | Press Print                                                                                                   | A clean page without the navigation or buttons                                                  | Fail, then fixed (`61f3790`): the footer's Privacy link printed at the end. Since the fix, Chrome's printed PDF has no navigation, controls or footer ([Test figure 10](#test-figure-10)). Run again at `823ebe2`, after the titles became links on screen: Chrome's PDF had the same four pages, word for word, with no underline, link colour or address on any title |
 | <a id="m24"></a>M24  | Settings and crest         | Settings, change the church's name, upload a crest as a logo, save                                            | The name and crest on the music list                                                            | Pass: the new name and the uploaded crest on the music list |
 | <a id="m40"></a>M40  | Music list arrangement     | Settings, Music list arrangement: Propers beside the rest; open a term's music list, then print it             | Each service's propers in one list and the rest in another, side by side when wide, stacked on paper | Pass: in the single-column layout the propers and the rest sit side by side on screen and stack when printed at A4 width; in newspaper columns, which are narrow, they stack |
-| <a id="m44"></a>M44  | The pew sheet              | From a service, Pew sheet; untick Composers and Update; Print                                                | Confirmed music in order, the motet's text beside its translation; composers gone after Update; prints white without the controls | Pass: the confirmed music in order, with the Ave Maria's Latin beside its English ([Test figure 9](#test-figure-9)); composers gone after unticking and Update, with the choices in the address; printing as in M19 |
+| <a id="m44"></a>M44  | The pew sheet              | From a service, Pew sheet; untick Composers and Update; Print                                                | Confirmed music in order, the motet's text beside its translation; composers gone after Update; prints white without the controls | Pass: the confirmed music in order, with the Ave Maria's Latin beside its English ([Test figure 11](#test-figure-11)); composers gone after unticking and Update, with the choices in the address; printing as in M19 |
 
-<a id="test-figure-8"></a>
+<a id="test-figure-10"></a>
 
 ![The Advent music list as printed: the church's crest and name, the services in three columns, and no navigation, buttons or footer](screenshots/testing/m19-music-list-print.png)
 
-_Test figure 8. M19: the music list with the print styles, after the fix. Chrome's own printout is the [PDF](screenshots/testing/m19-music-list.pdf), four A4 pages._
+_Test figure 10. M19: the music list with the print styles, after the fix. Chrome's own printout is the [PDF](screenshots/testing/m19-music-list.pdf), four A4 pages._
 
-<a id="test-figure-9"></a>
+<a id="test-figure-11"></a>
 
 ![The pew sheet for the First Sunday of Advent, with the Ave Maria's Latin text beside its English translation](screenshots/testing/m44-pew-sheet.png)
 
-_Test figure 9. M44: the pew sheet, with a motet's text beside its translation._
+_Test figure 11. M44: the pew sheet, with a motet's text beside its translation._
 
 ### 5.9 Comments
 
@@ -621,22 +636,22 @@ _Test figure 9. M44: the pew sheet, with a motet's text beside its translation._
 
 | ID   | Feature                    | Steps                                                                                                         | Expected                                                                                        | Result   |
 | ---- | -------------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | -------- |
-| <a id="m25"></a>M25  | A Viewer refused           | As a Viewer, open `/terms/add/`                                                                               | The "Not available to you" page (403)                                                           | Pass: "Not available to you", status 403 ([Test figure 10](#test-figure-10)) |
+| <a id="m25"></a>M25  | A Viewer refused           | As a Viewer, open `/terms/add/`                                                                               | The "Not available to you" page (403)                                                           | Pass: "Not available to you", status 403 ([Test figure 12](#test-figure-12)) |
 | <a id="m26"></a>M26  | Another church's record    | As one church, open the address of another church's score or service                                          | "Page not found" (404)                                                                          | Pass: status 404 for another church's score (the local server runs with `DEBUG` on, so the page itself is checked in M27) |
-| <a id="m27"></a>M27  | Error pages                | Open an address that doesn't exist                                                                            | Precentor's own 404 page                                                                        | Pass: Precentor's own 404 page with `DEBUG` off ([Test figure 11](#test-figure-11)) |
+| <a id="m27"></a>M27  | Error pages                | Open an address that doesn't exist                                                                            | Precentor's own 404 page                                                                        | Pass: Precentor's own 404 page with `DEBUG` off ([Test figure 13](#test-figure-13)) |
 | <a id="m64"></a>M64  | A Viewer sees drafts       | As the Viewer, open Advent 2026; Music list, then Draft; the Sung Mass of 13 December; its Pew sheet | Each service's status on the term; the draft with TBC for slots not yet settled; the proposed pieces marked Proposed with no Confirm buttons; the pew sheet | Pass: In progress and Not started on the term page; the draft's "DRAFT" banner with 30 TBC; 5 pieces marked Proposed and no Confirm button; the pew sheet for Sung Mass, Sun 13 Dec 2026 |
 
-<a id="test-figure-10"></a>
+<a id="test-figure-12"></a>
 
 ![The Not available to you page shown to a Viewer who opens New term, with a Go to Terms button](screenshots/testing/m25-forbidden.png)
 
-_Test figure 10. M25: a Viewer refused, with the reason._
+_Test figure 12. M25: a Viewer refused, with the reason._
 
-<a id="test-figure-11"></a>
+<a id="test-figure-13"></a>
 
 ![Precentor's Page not found page, with a Go to Terms button](screenshots/testing/m27-not-found.png)
 
-_Test figure 11. M27: the 404 page, with DEBUG off as on the live site._
+_Test figure 13. M27: the 404 page, with DEBUG off as on the live site._
 
 [↑ Back to contents](#contents)
 
@@ -649,11 +664,11 @@ Google Chrome 157. R01 to R03 and R05's measurements were run again at
 
 | ID   | Check | Steps | Expected | Result |
 | ---- | ----- | ----- | -------- | ------ |
-| <a id="r01"></a>R01  | Phones: 320 and 375 pixels | Every main page at each width, in Chromium, Firefox and WebKit | Nothing wider than the screen except the library table, which scrolls in its own box; no console errors | Pass: all 25 pages at both widths in all three engines ([Test figures 12 to 15](#test-figure-12)). At submission the score form was 3 pixels too wide at 320, fixed in `6bf1062` |
-| <a id="r02"></a>R02  | Tablets: 768 and 1024 pixels | The same pages at each width | The layout fills the width without gaps or overlaps; no console errors | Pass: all 25 pages in all three engines ([Test figure 16](#test-figure-16)) |
-| <a id="r03"></a>R03  | Laptop: 1280 pixels | The same pages | The layout as in the README's screenshots; no console errors | Pass: all 25 pages in all three engines ([Test figure 17](#test-figure-17)); the README's figures were taken again on the same code |
-| <a id="r04"></a>R04  | Keyboard alone | Sign in, open a service, propose and confirm a piece, using only the keyboard | Every step reachable with Tab, Enter and the arrow keys, with a visible outline on each control | Pass: signed in, opened Advent 2026 and its Midnight Mass, chose Mozart's Ave verum corpus with the arrow keys, proposed and confirmed it, using only Tab, typing, the arrow keys and Enter. Every control showed an outline (a term's card is outlined as a whole), and after Confirm the focus stayed on the button, now reading Unconfirm ([Test figure 18](#test-figure-18)) |
-| <a id="r05"></a>R05  | Dark mode | Switch the device to dark, then choose Dark in the user menu | Every page readable, with the same contrast as in light | Pass: every visible piece of text on the 25 pages measured against its background, 1,424 in each theme: all meet WCAG AA, the lowest ratio 4.83 in light and 5.7 in dark. Dark chosen in the user menu on a light device applied at once and carried to the next page ([Test figures 19 to 21](#test-figure-19)) |
+| <a id="r01"></a>R01  | Phones: 320 and 375 pixels | Every main page at each width, in Chromium, Firefox and WebKit | Nothing wider than the screen except the library table, which scrolls in its own box; no console errors | Pass: all 25 pages at both widths in all three engines ([Test figures 14 to 17](#test-figure-14)). At submission the score form was 3 pixels too wide at 320, fixed in `6bf1062` |
+| <a id="r02"></a>R02  | Tablets: 768 and 1024 pixels | The same pages at each width | The layout fills the width without gaps or overlaps; no console errors | Pass: all 25 pages in all three engines ([Test figure 18](#test-figure-18)) |
+| <a id="r03"></a>R03  | Laptop: 1280 pixels | The same pages | The layout as in the README's screenshots; no console errors | Pass: all 25 pages in all three engines ([Test figure 19](#test-figure-19)); the README's figures were taken again on the same code |
+| <a id="r04"></a>R04  | Keyboard alone | Sign in, open a service, propose and confirm a piece, using only the keyboard | Every step reachable with Tab, Enter and the arrow keys, with a visible outline on each control | Pass: signed in, opened Advent 2026 and its Midnight Mass, chose Mozart's Ave verum corpus with the arrow keys, proposed and confirmed it, using only Tab, typing, the arrow keys and Enter. Every control showed an outline (a term's card is outlined as a whole), and after Confirm the focus stayed on the button, now reading Unconfirm ([Test figure 20](#test-figure-20)) |
+| <a id="r05"></a>R05  | Dark mode | Switch the device to dark, then choose Dark in the user menu | Every page readable, with the same contrast as in light | Pass: every visible piece of text on the 25 pages measured against its background, 1,424 in each theme: all meet WCAG AA, the lowest ratio 4.83 in light and 5.7 in dark. Dark chosen in the user menu on a light device applied at once and carried to the next page ([Test figures 21 to 23](#test-figure-21)) |
 | <a id="r06"></a>R06  | Without JavaScript | Turn JavaScript off; propose a piece, confirm it, remove a slot | Each works through ordinary pages | Pass: Sicut cervus proposed from the propose page; after Confirm and a fresh load it read Confirmed; Remove asked first on a page of its own, and the slot went |
 
 ### Widths and browsers
@@ -703,65 +718,65 @@ Every page passed at every width in all three engines:
 Playwright's WebKit is the engine Safari is built on, run on Windows,
 not Safari itself. The manual tests used Google Chrome 157.
 
-<a id="test-figure-12"></a>
+<a id="test-figure-14"></a>
 
 ![A service page at 320 pixels in Chromium: the heading, its buttons and the first slot fitting the width](screenshots/testing/r01-320-service-chromium.png)
 
-_Test figure 12. R01: a service at 320 pixels in Chromium._
-
-<a id="test-figure-13"></a>
-
-![The same service page at 320 pixels in Firefox](screenshots/testing/r01-320-service-firefox.png)
-
-_Test figure 13. R01: the same in Firefox._
-
-<a id="test-figure-14"></a>
-
-![The same service page at 320 pixels in WebKit](screenshots/testing/r01-320-service-webkit.png)
-
-_Test figure 14. R01: the same in WebKit, the engine Safari uses._
+_Test figure 14. R01: a service at 320 pixels in Chromium._
 
 <a id="test-figure-15"></a>
 
-![The library at 320 pixels, its filters stacked and the table scrolling inside its own box](screenshots/testing/r01-320-library-chromium.png)
+![The same service page at 320 pixels in Firefox](screenshots/testing/r01-320-service-firefox.png)
 
-_Test figure 15. R01: the library at 320 pixels; only the table scrolls sideways._
+_Test figure 15. R01: the same in Firefox._
 
 <a id="test-figure-16"></a>
 
-![A service page at 768 pixels](screenshots/testing/r02-768-service-chromium.png)
+![The same service page at 320 pixels in WebKit](screenshots/testing/r01-320-service-webkit.png)
 
-_Test figure 16. R02: a service at 768 pixels._
+_Test figure 16. R01: the same in WebKit, the engine Safari uses._
 
 <a id="test-figure-17"></a>
 
-![The library at 1280 pixels, with the search box and the Language, Voicing, Season and Use menus in one row above the table](screenshots/testing/r03-1280-library-chromium.png)
+![The library at 320 pixels, its filters stacked and the table scrolling inside its own box](screenshots/testing/r01-320-library-chromium.png)
 
-_Test figure 17. R03: the library at 1280 pixels._
+_Test figure 17. R01: the library at 320 pixels; only the table scrolls sideways._
 
 <a id="test-figure-18"></a>
 
-![The Terms page after pressing Tab three times, with an outline round the Terms link and round the first term's card](screenshots/testing/r04-keyboard-focus.png)
+![A service page at 768 pixels](screenshots/testing/r02-768-service-chromium.png)
 
-_Test figure 18. R04: keyboard focus, shown round the link and the card it's in._
+_Test figure 18. R02: a service at 768 pixels._
 
 <a id="test-figure-19"></a>
 
-![A service page in dark colours](screenshots/testing/r05-dark-service.png)
+![The library at 1280 pixels, with the search box and the Language, Voicing, Season and Use menus in one row above the table](screenshots/testing/r03-1280-library-chromium.png)
 
-_Test figure 19. R05: a service in dark mode._
+_Test figure 19. R03: the library at 1280 pixels._
 
 <a id="test-figure-20"></a>
 
-![The music list in dark colours, with the liturgical colours lightened](screenshots/testing/r05-dark-music-list.png)
+![The Terms page after pressing Tab three times, with an outline round the Terms link and round the first term's card](screenshots/testing/r04-keyboard-focus.png)
 
-_Test figure 20. R05: the music list in dark mode._
+_Test figure 20. R04: keyboard focus, shown round the link and the card it's in._
 
 <a id="test-figure-21"></a>
 
+![A service page in dark colours](screenshots/testing/r05-dark-service.png)
+
+_Test figure 21. R05: a service in dark mode._
+
+<a id="test-figure-22"></a>
+
+![The music list in dark colours, with the liturgical colours lightened](screenshots/testing/r05-dark-music-list.png)
+
+_Test figure 22. R05: the music list in dark mode._
+
+<a id="test-figure-23"></a>
+
 ![The Settings page in dark colours](screenshots/testing/r05-dark-settings.png)
 
-_Test figure 21. R05: Settings in dark mode._
+_Test figure 23. R05: Settings in dark mode._
 
 ### Real devices
 
@@ -771,32 +786,32 @@ Terms, a service, the library, the music list and the pew sheet.
 
 | Device | Browser | Width | What was checked | Result | Screenshot |
 | ------ | ------- | ----- | ---------------- | ------ | ---------- |
-| iPhone 14 Pro, iOS 27.0.1 | Safari | 393 points | Signing in, Terms, a service, the library, the music list, the pew sheet | Pass | [Test figure 22](#test-figure-22) |
-| iPad Pro 12.9-inch (3rd generation), iPadOS 26.7.2 | Safari | 1024 points | The same | Pass | [Test figure 23](#test-figure-23) |
-| PC, Windows 11 Home 26H2 | Chrome | 1920 pixels | The same | Pass | [Test figure 24](#test-figure-24) |
+| iPhone 14 Pro, iOS 27.0.1 | Safari | 393 points | Signing in, Terms, a service, the library, the music list, the pew sheet | Pass | [Test figure 24](#test-figure-24) |
+| iPad Pro 12.9-inch (3rd generation), iPadOS 26.7.2 | Safari | 1024 points | The same | Pass | [Test figure 25](#test-figure-25) |
+| PC, Windows 11 Home 26H2 | Chrome | 1920 pixels | The same | Pass | [Test figure 26](#test-figure-26) |
 
 The screenshots aren't from the devices themselves. They show the demo
 church's Sung Mass at each device's size, taken with Playwright: in
 WebKit, the engine Safari uses, for the iPhone and the iPad, and in
 Chrome for the PC.
 
-<a id="test-figure-22"></a>
+<a id="test-figure-24"></a>
 
 ![A service page at the iPhone 14 Pro's size: the menu, the Third Sunday of Advent, Sung Mass on Sun 13 Dec 2026 with its buttons stacked, its term, status and occasion, and the first slot starting](screenshots/testing/d09-iphone-14-pro.png)
 
-_Test figure 22. D09: a service at the iPhone 14 Pro's size, 393 points wide._
+_Test figure 24. D09: a service at the iPhone 14 Pro's size, 393 points wide._
 
-<a id="test-figure-23"></a>
+<a id="test-figure-25"></a>
 
 ![The same service page at the 12.9-inch iPad Pro's size, with the heading and its buttons on one line and the Introit, Kyrie and Gradual slots below](screenshots/testing/d09-ipad-pro-12-9.png)
 
-_Test figure 23. D09: the same at the 12.9-inch iPad Pro's size, 1024 points wide._
+_Test figure 25. D09: the same at the 12.9-inch iPad Pro's size, 1024 points wide._
 
-<a id="test-figure-24"></a>
+<a id="test-figure-26"></a>
 
 ![The same service page on a 1920 by 1080 screen, the content centred with space either side](screenshots/testing/d09-pc-1920.png)
 
-_Test figure 24. D09: the same on a 1920 by 1080 screen._
+_Test figure 26. D09: the same on a 1920 by 1080 screen._
 
 [↑ Back to contents](#contents)
 
@@ -849,6 +864,7 @@ testing, fixed, and covered by a test where it could be.
 | `a00e7b7`, `68721ad` | Changing a term's dates could leave its services outside it ([row M63](#m63)); tests in `ed0e69f` |
 | `f3353c6`, `954347d`, `606aaf0` | A piece could only go with its whole slot, so a wrong or replaced proposal stayed listed until the slot was removed and rebuilt. Each piece now has its own Remove ([row M65](#m65)); tests in `68961ec`, `7d5638b` and `b0fafbf` |
 | `c5e13b1` | At 320 pixels a slot's "Or type a reference" box was 18 pixels wider than its card and ran over the card's edge. The page itself was no wider than the screen, so [row R01](#r01)'s check didn't catch it; tests in `a410aaa` |
+| `29ef886`, `24572bf`, `823ebe2` | A piece's title on the service page and the music list led nowhere, so checking a score meant finding it again in the library. Each title now links to its score or hymn, and a score opened that way says where it sits in the service, with a way back; printed, a title stays plain words ([row M66](#m66)); the tests are in the same commits |
 
 The flake8 findings left at submission (16 long lines, a variable named
 `l` and a lambda) were cleared in `86ad9e8`. No fault found in the app is left unfixed;
