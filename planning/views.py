@@ -44,6 +44,7 @@ from .forms import (
     TermMarkerForm,
 )
 from .models import RolePiece, Service, ServiceRole, SlotTemplate, Term, TermMarker
+from .batch import PICK, candidates
 from .suggestions import page_options, slot_use_type
 
 
@@ -231,7 +232,38 @@ def service_batch(request, term_pk):
     """
     term = get_object_or_404(own(Term, request), pk=term_pk)
     form = ServiceBatchForm(request.GET or None, term=term)
-    return render(request, "planning/service_batch.html", {"term": term, "form": form})
+    if "change" in request.GET or not form.is_valid():
+        return render(request, "planning/service_batch.html", {"term": term, "form": form})
+    return render(request, "planning/service_batch_preview.html", batch_preview(term, form.cleaned_data))
+
+
+BATCH_LIMIT = 60
+
+
+def batch_preview(term, choices):
+    """
+    Step two: the candidate dates for the choices, by month, each with
+    its celebration, ticked unless the conductor is picking, and shown
+    but not offered where the term already has a service of this type.
+    Nothing is made here.
+    """
+    taken = {
+        day for day, kind in term.services.values_list("date", "service_type")
+        if kind.casefold() == choices["service_type"].casefold()
+    }
+    national = SiteConfig.national_calendar_of(term.organisation_id)
+    months = {}
+    for day, occasion in candidates(choices["start_date"], choices["end_date"], choices["pattern"],
+                                    term.calendar_use, national):
+        months.setdefault(day.replace(day=1), []).append({
+            "date": day, "occasion": occasion, "taken": day in taken,
+            "ticked": choices["pattern"] != PICK and day not in taken,
+        })
+    ticked = sum(row["ticked"] for rows in months.values() for row in rows)
+    return {
+        "term": term, "choices": choices, "months": months.items(), "ticked": ticked, "limit": BATCH_LIMIT,
+        "pattern_label": dict(ServiceBatchForm(term=term).fields["pattern"].choices)[choices["pattern"]],
+    }
 
 
 class ServiceDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Add several services to {{ term }} — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Add several services to {{ term }}</h1>
+    <p>{{ choices.service_type }}, with the {{ choices.template }} template's slots, from {{ choices.start_date|date:"D j M Y" }} to {{ choices.end_date|date:"D j M Y" }}. Dates: {{ pattern_label }}.
+        <a href="?template={{ choices.template.pk }}&amp;service_type={{ choices.service_type|urlencode }}&amp;start_date={{ choices.start_date|date:"Y-m-d" }}&amp;end_date={{ choices.end_date|date:"Y-m-d" }}&amp;pattern={{ choices.pattern }}&amp;change=1">Change these choices</a></p>
+    {% if months %}
+    {# Nothing is made until this is sent; each date is a box to untick, or tick. #}
+    <form method="post" action="{% url 'planning:service_batch' term.pk %}" id="batch-form" class="flow">
+        {% csrf_token %}
+        <input type="hidden" name="template" value="{{ choices.template.pk }}">
+        <input type="hidden" name="service_type" value="{{ choices.service_type }}">
+        <input type="hidden" name="start_date" value="{{ choices.start_date|date:"Y-m-d" }}">
+        <input type="hidden" name="end_date" value="{{ choices.end_date|date:"Y-m-d" }}">
+        <input type="hidden" name="pattern" value="{{ choices.pattern }}">
+        {% for month, rows in months %}
+        <fieldset class="flow" style="--flow-space: var(--spacing-3xs);">
+            <legend>{{ month|date:"F Y" }}</legend>
+            {% for row in rows %}
+            <p>
+                <input type="checkbox" name="dates" value="{{ row.date|date:"Y-m-d" }}" id="batch-date-{{ row.date|date:"Y-m-d" }}"{% if row.ticked %} checked{% endif %}{% if row.taken %} disabled{% endif %}>
+                <label for="batch-date-{{ row.date|date:"Y-m-d" }}">{{ row.date|date:"D j M" }}: {{ row.occasion.name|default:"no celebration listed" }}{% if row.taken %} (already has a {{ choices.service_type }}){% endif %}</label>
+            </p>
+            {% endfor %}
+        </fieldset>
+        {% endfor %}
+        {% if ticked > limit %}<p class="list-row__meta">A batch can be up to {{ limit }} services; untick some first.</p>{% endif %}
+        <button type="submit" class="btn-primary" id="batch-create">Create {{ ticked }} service{{ ticked|pluralize }}</button>
+    </form>
+    {% else %}
+    <p>No dates in that range match. <a href="{% url 'planning:service_batch' term.pk %}">Choose again</a>.</p>
+    {% endif %}
+    <p><a href="{{ term.get_absolute_url }}">Back to {{ term }}</a></p>
+</div>
+{% endblock %}
