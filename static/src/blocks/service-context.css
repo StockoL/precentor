@@ -15,9 +15,28 @@
     font-size: var(--typography-step--1);
   }
 
+  /* The slots take the room the way back leaves, so each fits on one
+     line where it can. */
   .service-context__slots {
+    flex: 1 1 30rem;
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  /* A list item keeps the global 60ch measure; lifted, so a slot's line
+     and its buttons share a row where there's room. */
+  .service-context__slots li {
+    --gutter: var(--spacing-2xs);
+    align-items: baseline;
+    max-width: none;
+  }
+
+  /* Confirm and Remove: compact, like a slot's own controls, so the bar
+     stays a bar. */
+  .service-context button {
+    font-size: var(--typography-step--2);
+    min-block-size: auto;
+    padding-block: var(--spacing-3xs);
   }
 }

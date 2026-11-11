@@ -563,7 +563,8 @@ def toggle_confirm(request, piece_pk):
     Confirm or unconfirm a piece. The button sends the state it asks for,
     so the same request twice, from a double click, leaves the piece as
     asked rather than turning it back. A page opened before the button
-    sent it posts nothing, and toggles as it always did.
+    sent it posts nothing, and toggles as it always did. A checked next,
+    such as a score's page with its service bar, is where it goes back to.
     """
     piece = get_object_or_404(own(RolePiece, request), pk=piece_pk)
     wanted = request.POST.get("confirmed")
@@ -579,7 +580,8 @@ def toggle_confirm(request, piece_pk):
             "planning/_service_status_badge.html", {"service": service}, request=request
         ),
     }
-    return ajax_or_redirect(request, fragments, service.get_absolute_url())
+    back = safe_next(request, request.POST.get("next")) or service.get_absolute_url()
+    return ajax_or_redirect(request, fragments, back)
 
 
 @role_required(can_plan)
@@ -595,6 +597,8 @@ def remove_piece(request, piece_pk):
     it was on, so the form sends the service's address as next, and the
     person goes back there with a message rather than "not found". With
     JavaScript the message waits for the reload the script then does.
+    Once removed, it goes back to next too: the service page's own, or a
+    score's page when removed from its service bar.
     """
     next_url = safe_next(request, request.POST.get("next") or request.GET.get("next"))
     piece = own(RolePiece, request).select_related("service_role__service").filter(pk=piece_pk).first()
@@ -606,7 +610,9 @@ def remove_piece(request, piece_pk):
     role = piece.service_role
     service = role.service
     if request.method != "POST" or (piece.removal_warnings() and not request.POST.get("confirm")):
-        return render(request, "planning/remove_piece_confirm.html", {"piece": piece, "role": role, "service": service})
+        return render(request, "planning/remove_piece_confirm.html", {
+            "piece": piece, "role": role, "service": service, "back": next_url or service.get_absolute_url(),
+        })
     title = piece.title
     piece.delete()
     if request.headers.get("X-Requested-With") != "XMLHttpRequest":
@@ -623,7 +629,7 @@ def remove_piece(request, piece_pk):
             "planning/_add_piece_form.html", {"role": role, "form": RolePieceForm(role=role)}, request=request
         ),
     }
-    return ajax_or_redirect(request, fragments, service.get_absolute_url())
+    return ajax_or_redirect(request, fragments, next_url or service.get_absolute_url())
 
 
 def upcoming_services(request, score):

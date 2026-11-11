@@ -10,10 +10,10 @@
         <form method="post" action="{% url 'planning:remove_piece' piece.pk %}">
             {% csrf_token %}
             <input type="hidden" name="confirm" value="1">
-            <input type="hidden" name="next" value="{{ service.get_absolute_url }}">
+            <input type="hidden" name="next" value="{{ back }}">
             <button class="btn-danger" type="submit">Remove</button>
         </form>
-        <a class="btn-ghost" href="{{ service.get_absolute_url }}">Cancel</a>
+        <a class="btn-ghost" href="{{ back }}">Cancel</a>
     </div>
 </div>
 {% endblock %}

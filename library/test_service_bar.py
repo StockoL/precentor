@@ -8,8 +8,8 @@ from planning.models import RolePiece, Service, ServiceRole
 from precentor_project.testing import make_score, make_term
 
 
-class ServiceBarTests(TestCase):
-    """A score opened from a service says where it sits in that service."""
+class ServiceBarTestCase(TestCase):
+    """A Sung Mass on Michaelmas with a Credo, and Credo III in the library."""
 
     def setUp(self):
         self.church = make_organisation()
@@ -24,10 +24,14 @@ class ServiceBarTests(TestCase):
     def page(self, service_pk):
         return self.client.get(f"/library/{self.score.pk}/?service={service_pk}")
 
+
+class ServiceBarTests(ServiceBarTestCase):
+    """A score opened from a service says where it sits in that service."""
+
     def test_the_bar_names_the_slot_the_day_and_the_state(self):
         RolePiece.objects.create(service_role=self.credo, score=self.score)
         response = self.page(self.service.pk)
-        self.assertContains(response, "<li>Proposed for the Credo, Sunday 1 November (Michaelmas)</li>", html=True)
+        self.assertContains(response, "<span>Proposed for the Credo, Sunday 1 November (Michaelmas)</span>", html=True)
         self.assertContains(response, f'<a href="{self.service.get_absolute_url()}">Back to the service</a>', html=True)
 
     def test_each_slot_of_that_service_is_listed_in_order(self):
@@ -55,3 +59,52 @@ class ServiceBarTests(TestCase):
     def test_no_bar_without_a_service(self):
         RolePiece.objects.create(service_role=self.credo, score=self.score)
         self.assertNotContains(self.client.get(f"/library/{self.score.pk}/"), "service-context")
+
+
+class BarActionsTests(ServiceBarTestCase):
+    """Confirm and Remove on the bar, coming back to the score's page."""
+
+    def setUp(self):
+        super().setUp()
+        self.piece = RolePiece.objects.create(service_role=self.credo, score=self.score)
+        self.here = f"/library/{self.score.pk}/?service={self.service.pk}"
+
+    def test_those_who_plan_get_confirm_and_remove_that_come_back_here(self):
+        page = self.client.get(self.here)
+        self.assertContains(page, f'action="/pieces/{self.piece.pk}/toggle-confirm/"')
+        self.assertContains(page, f'action="/pieces/{self.piece.pk}/remove/"')
+        self.assertContains(page, f'name="next" value="{self.here}"', count=2)
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        page = self.client.get(self.here)
+        self.assertContains(page, "Proposed for the Credo")
+        self.assertNotContains(page, "/toggle-confirm/")
+        self.assertNotContains(page, f"/pieces/{self.piece.pk}/remove/")
+
+    def test_confirm_comes_back_to_the_score(self):
+        response = self.client.post(f"/pieces/{self.piece.pk}/toggle-confirm/", {"confirmed": "1", "next": self.here})
+        self.assertRedirects(response, self.here)
+        self.piece.refresh_from_db()
+        self.assertTrue(self.piece.is_confirmed)
+        self.assertContains(self.client.get(self.here), "Confirmed for the Credo")
+
+    def test_remove_comes_back_to_the_score_with_its_message(self):
+        response = self.client.post(f"/pieces/{self.piece.pk}/remove/", {"next": self.here}, follow=True)
+        self.assertRedirects(response, self.here)
+        self.assertContains(response, "Removed Credo III (Plainchant) from the Credo.")
+        self.assertFalse(RolePiece.objects.filter(pk=self.piece.pk).exists())
+
+    def test_a_confirmed_piece_asks_first_and_still_comes_back(self):
+        self.piece.is_confirmed = True
+        self.piece.save()
+        page = self.client.post(f"/pieces/{self.piece.pk}/remove/", {"next": self.here})
+        self.assertContains(page, f'name="next" value="{self.here}"')
+        self.assertContains(page, f'<a class="btn-ghost" href="{self.here}">Cancel</a>', html=True)
+        response = self.client.post(f"/pieces/{self.piece.pk}/remove/", {"next": self.here, "confirm": "1"})
+        self.assertRedirects(response, self.here)
+
+    def test_another_sites_address_goes_to_the_service_instead(self):
+        elsewhere = "https://example.com/"
+        response = self.client.post(f"/pieces/{self.piece.pk}/toggle-confirm/", {"confirmed": "1", "next": elsewhere})
+        self.assertRedirects(response, self.service.get_absolute_url())
+        response = self.client.post(f"/pieces/{self.piece.pk}/remove/", {"next": elsewhere, "confirm": "1"})
+        self.assertRedirects(response, self.service.get_absolute_url())

@@ -7,7 +7,23 @@
     <aside class="service-context cluster" aria-label="In {{ from_service }}">
         <ul role="list" class="service-context__slots">
             {% for piece in service_pieces %}
-            <li>{% if piece.is_confirmed %}Confirmed{% else %}Proposed{% endif %} for the {{ piece.service_role.role_name }}, {{ from_service.date|date:"l j F" }}{% if from_service.occasion %} ({{ from_service.occasion }}){% endif %}</li>
+            {# Those who plan can settle or take out the piece here, and come back to this page. #}
+            <li class="cluster">
+                <span>{% if piece.is_confirmed %}Confirmed{% else %}Proposed{% endif %} for the {{ piece.service_role.role_name }}, {{ from_service.date|date:"l j F" }}{% if from_service.occasion %} ({{ from_service.occasion }}){% endif %}</span>
+                {% if can.plan %}
+                <form method="post" action="{% url 'planning:toggle_confirm' piece.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="confirmed" value="{% if piece.is_confirmed %}0{% else %}1{% endif %}">
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" class="btn-ghost">{% if piece.is_confirmed %}Unconfirm{% else %}Confirm{% endif %}<span class="visually-hidden"> for the {{ piece.service_role.role_name }}</span></button>
+                </form>
+                <form method="post" action="{% url 'planning:remove_piece' piece.pk %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" class="btn-ghost">Remove<span class="visually-hidden"> from the {{ piece.service_role.role_name }}</span></button>
+                </form>
+                {% endif %}
+            </li>
             {% endfor %}
         </ul>
         <a href="{{ from_service.get_absolute_url }}">Back to the service</a>
