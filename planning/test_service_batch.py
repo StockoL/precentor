@@ -1,6 +1,7 @@
 import re
-from datetime import date
+from datetime import date, timedelta
 from io import StringIO
+from unittest.mock import patch
 
 from django.core.management import call_command
 from django.db import connection
@@ -82,7 +83,9 @@ class StepOneTests(BatchTestCase):
         self.assertEqual(form.cleaned_data["service_type"], "Sung Mass")
 
 
-class PreviewTests(BatchTestCase):
+class WithCalendarTestCase(BatchTestCase):
+    """The real calendar loaded, for the dates' celebrations."""
+
     @classmethod
     def setUpTestData(cls):
         call_command("load_calendar", stdout=StringIO())
@@ -93,6 +96,9 @@ class PreviewTests(BatchTestCase):
         found = re.findall(r'<input type="checkbox" name="dates" value="([\d-]+)"[^>]*?( checked)?( disabled)?>\s*'
                            r'<label[^>]*>([^<]*)</label>', page)
         return [(day, bool(ticked), bool(disabled), label) for day, ticked, disabled, label in found]
+
+
+class PreviewTests(WithCalendarTestCase):
 
     def test_every_sunday_ticked_with_its_name_and_the_count(self):
         response = self.step_one()
@@ -137,3 +143,87 @@ class PreviewTests(BatchTestCase):
         with CaptureQueriesContext(connection) as term:
             self.step_one(pattern="pick")
         self.assertEqual(len(term), len(week))
+
+
+class CreateTests(WithCalendarTestCase):
+    SUNDAYS = ["2026-11-29", "2026-12-06", "2026-12-13", "2026-12-20"]
+
+    def create(self, dates, **values):
+        return self.client.post(self.url, {**self.data(**values), "dates": dates})
+
+    def test_each_ticked_date_gets_a_service_with_its_occasion_type_and_slots(self):
+        response = self.create(self.SUNDAYS)
+        self.assertRedirects(response, self.term.get_absolute_url(), fetch_redirect_response=False)
+        services = list(Service.objects.order_by("date"))
+        self.assertEqual([s.date.isoformat() for s in services], self.SUNDAYS)
+        first = services[0]
+        self.assertEqual((first.service_type, first.occasion.name, first.slot_template, first.calendar_use),
+                         ("Mass", "First Sunday of Advent", self.mass, None))
+        for service in services:
+            self.assertEqual([r.role_name for r in service.roles.all()], ["Introit", "Kyrie", "Gloria", "Communion"])
+        self.assertContains(self.client.get(self.term.get_absolute_url()), "Created 4 services.")
+
+    def test_an_unticked_date_is_left_out(self):
+        self.create(self.SUNDAYS[:2] + self.SUNDAYS[3:])
+        self.assertFalse(Service.objects.filter(date=date(2026, 12, 13)).exists())
+        self.assertEqual(Service.objects.count(), 3)
+
+    def test_running_it_twice_makes_no_duplicates(self):
+        self.create(self.SUNDAYS)
+        Service.objects.filter(date=date(2026, 12, 20)).delete()
+        response = self.create(self.SUNDAYS, service_type="mass")
+        self.assertEqual(Service.objects.count(), 4)
+        self.assertContains(self.client.get(response.url), "Created 1 service; skipped 3 that already exist.")
+
+    def test_a_date_from_outside_the_choices_is_ignored(self):
+        self.create(self.SUNDAYS[:1] + ["2026-12-25", "2027-01-03"])
+        self.assertEqual([s.date for s in Service.objects.all()], [date(2026, 11, 29)])
+
+    def test_more_than_sixty_is_refused_and_nothing_made(self):
+        self.term.end_date = date(2027, 2, 28)
+        self.term.save()
+        start = date(2026, 11, 29)
+        days = [(start + timedelta(days=n)).isoformat() for n in range(61)]
+        response = self.create(days, end_date="2027-02-28", pattern="pick")
+        self.assertEqual(response.status_code, 400)
+        self.assertContains(response, "A batch can be up to 60 services; untick some first.", status_code=400)
+        self.assertContains(response, ">Create 61 services</button>", status_code=400)
+        self.assertFalse(Service.objects.exists())
+        self.create(days[:60], end_date="2027-02-28", pattern="pick")
+        self.assertEqual(Service.objects.count(), 60)
+
+    def test_nothing_ticked_is_refused(self):
+        response = self.create([])
+        self.assertContains(response, "Tick at least one date.", status_code=400)
+
+    def test_if_one_fails_none_is_left(self):
+        calls = []
+
+        def apply_then_fail(template, service):
+            calls.append(service)
+            if len(calls) == 2:
+                raise RuntimeError("the second one fails")
+            return [], []
+
+        with patch.object(SlotTemplate, "apply_to", apply_then_fail), self.assertRaises(RuntimeError):
+            self.create(self.SUNDAYS)
+        self.assertFalse(Service.objects.exists())
+
+    def test_a_viewer_cant_create(self):
+        self.client.force_login(make_user("viewer", organisation=self.church))
+        self.assertEqual(self.create(self.SUNDAYS).status_code, 403)
+        self.assertFalse(Service.objects.exists())
+
+    def test_another_churchs_term_is_not_found(self):
+        theirs = make_term(organisation=make_organisation("St Elsewhere"))
+        response = self.client.post(f"/terms/{theirs.pk}/services/batch/", {**self.data(), "dates": self.SUNDAYS})
+        self.assertEqual(response.status_code, 404)
+
+    def test_without_javascript_step_by_step(self):
+        first = self.client.get(self.url)
+        self.assertContains(first, 'method="get"')
+        preview = self.step_one(pattern="sundays_and_solemnities")
+        ticked = [day for day, is_ticked, _, _ in self.boxes(preview) if is_ticked]
+        self.assertRedirects(self.create(ticked, pattern="sundays_and_solemnities"), self.term.get_absolute_url())
+        self.assertEqual(Service.objects.get(date=date(2026, 12, 8)).occasion.name,
+                         "The Immaculate Conception of the Blessed Virgin Mary")

@@ -8,6 +8,7 @@ from django.db import transaction
 from django.db.models import Prefetch
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.defaultfilters import pluralize
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -227,37 +228,84 @@ class ServiceCreateView(PlanningRequiredMixin, CreateView):
 def service_batch(request, term_pk):
     """
     Add several services to a term at once. Step one asks for the
-    template, type, range and pattern by GET, as it creates nothing; the
-    term is this church's, or not found.
+    template, type, range and pattern by GET, and step two shows the dates
+    they give, also by GET, as neither makes anything. Only the POST from
+    step two creates the services, for the dates still ticked. The term is
+    this church's, or not found.
     """
     term = get_object_or_404(own(Term, request), pk=term_pk)
-    form = ServiceBatchForm(request.GET or None, term=term)
+    form = ServiceBatchForm((request.POST if request.method == "POST" else request.GET) or None, term=term)
     if "change" in request.GET or not form.is_valid():
         return render(request, "planning/service_batch.html", {"term": term, "form": form})
-    return render(request, "planning/service_batch_preview.html", batch_preview(term, form.cleaned_data))
+    if request.method != "POST":
+        return render(request, "planning/service_batch_preview.html", batch_preview(term, form.cleaned_data))
+    sent = set(request.POST.getlist("dates"))
+    chosen = [(day, occasion) for day, occasion in batch_candidates(term, form.cleaned_data) if day.isoformat() in sent]
+    if not chosen or len(chosen) > BATCH_LIMIT:
+        messages.error(request, "Tick at least one date." if not chosen else
+                       f"A batch can be up to {BATCH_LIMIT} services; untick some first.")
+        context = batch_preview(term, form.cleaned_data, ticked={day for day, _ in chosen})
+        return render(request, "planning/service_batch_preview.html", context, status=400)
+    made, skipped = create_services(term, form.cleaned_data, chosen)
+    message = f"Created {made} service{pluralize(made)}"
+    if skipped:
+        message += f"; skipped {skipped} that already exist{pluralize(skipped, 's,')}"
+    messages.success(request, message + ".")
+    return redirect(term.get_absolute_url())
+
+
+def batch_candidates(term, choices):
+    """The dates the choices offer, each with its celebration."""
+    return candidates(choices["start_date"], choices["end_date"], choices["pattern"], term.calendar_use,
+                      SiteConfig.national_calendar_of(term.organisation_id))
+
+
+def taken_dates(term, service_type):
+    """The term's dates that already have a service of this type, whatever its capitals."""
+    return {day for day, kind in term.services.values_list("date", "service_type")
+            if kind.casefold() == service_type.casefold()}
+
+
+def create_services(term, choices, chosen):
+    """
+    Make a service for each date chosen, with its celebration as the
+    occasion, the type and the template, and the template's slots in it;
+    a date that already has a service of this type is skipped, so running
+    it twice adds nothing. All in one transaction: if one fails, none is
+    left. The calendar is left blank, so each follows the term's.
+    """
+    template, service_type = choices["template"], choices["service_type"]
+    made = skipped = 0
+    with transaction.atomic():
+        taken = taken_dates(term, service_type)
+        for day, occasion in chosen:
+            if day in taken:
+                skipped += 1
+                continue
+            service = Service.objects.create(term=term, date=day, service_type=service_type, occasion=occasion,
+                                             slot_template=template)
+            template.apply_to(service)
+            made += 1
+    return made, skipped
 
 
 BATCH_LIMIT = 60
 
 
-def batch_preview(term, choices):
+def batch_preview(term, choices, ticked=None):
     """
     Step two: the candidate dates for the choices, by month, each with
-    its celebration, ticked unless the conductor is picking, and shown
-    but not offered where the term already has a service of this type.
-    Nothing is made here.
+    its celebration, ticked unless the conductor is picking (or as they
+    were sent, when a batch comes back refused), and shown but not
+    offered where the term already has a service of this type. Nothing
+    is made here.
     """
-    taken = {
-        day for day, kind in term.services.values_list("date", "service_type")
-        if kind.casefold() == choices["service_type"].casefold()
-    }
-    national = SiteConfig.national_calendar_of(term.organisation_id)
+    taken = taken_dates(term, choices["service_type"])
     months = {}
-    for day, occasion in candidates(choices["start_date"], choices["end_date"], choices["pattern"],
-                                    term.calendar_use, national):
+    for day, occasion in batch_candidates(term, choices):
+        wanted = day in ticked if ticked is not None else choices["pattern"] != PICK
         months.setdefault(day.replace(day=1), []).append({
-            "date": day, "occasion": occasion, "taken": day in taken,
-            "ticked": choices["pattern"] != PICK and day not in taken,
+            "date": day, "occasion": occasion, "taken": day in taken, "ticked": wanted and day not in taken,
         })
     ticked = sum(row["ticked"] for rows in months.values() for row in rows)
     return {
