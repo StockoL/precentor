@@ -17,11 +17,33 @@ need it.
 
 This is the third design the feature has been through. I've kept the
 earlier ones below, marked as superseded, in the same spirit as the
-README's out-of-scope list: it's useful to record why I didn't do
+README's [out-of-scope list](../README.md#8-out-of-scope): it's useful to record why I didn't do
 something. The feature turned out more complex than it first looked,
 and I'd rather show that than pretend the design arrived finished.
 
 ---
+
+## Contents
+
+- [1. Problem statement](#1-problem-statement)
+- [2. Current design](#2-current-design)
+  - [2.1 Why the rows have to be saved](#21-why-the-rows-have-to-be-saved)
+  - [2.2 The staging model](#22-the-staging-model)
+  - [2.3 The list view](#23-the-list-view)
+  - [2.4 Reusing the existing score forms](#24-reusing-the-existing-score-forms)
+  - [2.5 The "belongs to a compilation" checkbox](#25-the-belongs-to-a-compilation-checkbox)
+- [3. Compilations](#3-compilations)
+- [4. Decisions in brief](#4-decisions-in-brief)
+- [5. Superseded designs (kept for the record)](#5-superseded-designs-kept-for-the-record)
+  - [5.1 Reviewing every row on one page with a formset (second design)](#51-reviewing-every-row-on-one-page-with-a-formset-second-design)
+  - [5.2 A progress bar driven by a `fetch()` loop (first design)](#52-a-progress-bar-driven-by-a-fetch-loop-first-design)
+- [6. Other considerations](#6-other-considerations)
+  - [What a raw row passes to a new compilation stub](#what-a-raw-row-passes-to-a-new-compilation-stub)
+  - [Compilations are part of the library, with their own pages](#compilations-are-part-of-the-library-with-their-own-pages)
+  - [Duplicates: a note, never a block, and real duplicates allowed](#duplicates-a-note-never-a-block-and-real-duplicates-allowed)
+  - [Uploading the same file again](#uploading-the-same-file-again)
+  - [Grouping rows into batches](#grouping-rows-into-batches)
+  - [A template CSV to download](#a-template-csv-to-download)
 
 ## 1. Problem statement
 
@@ -42,6 +64,8 @@ no breakdown of its contents. That breakdown is manual work the tool
 can speed up but never fully automate.
 
 ---
+
+[↑ Back to contents](#contents)
 
 ## 2. Current design
 
@@ -126,6 +150,8 @@ aren't separate mechanisms.
 
 ---
 
+[↑ Back to contents](#contents)
+
 ## 3. Compilations
 
 - **A piece in a compilation is a `Score`, not a separate model.** A
@@ -158,6 +184,8 @@ aren't separate mechanisms.
 
 ---
 
+[↑ Back to contents](#contents)
+
 ## 4. Decisions in brief
 
 - A row that fails validation never fails the whole import. It stays
@@ -170,6 +198,8 @@ aren't separate mechanisms.
 - Compilation rows leave the main list and go on a separate
   Compilations to catalogue list.
 - Lists sort by status first: red, then amber, then green.
+
+[↑ Back to contents](#contents)
 
 ## 5. Superseded designs (kept for the record)
 
@@ -196,6 +226,8 @@ place validation happens, the column-mapping step based on synonyms,
 and staging the upload for the first CSV parse.
 
 ---
+
+[↑ Back to contents](#contents)
 
 ## 6. Other considerations
 
@@ -293,3 +325,5 @@ A static file (columns: Title, Composer Surname, Composer Other Names,
 Arranger, Editor, Voicing, Language, Copies Owned, Filing Location,
 Duration; one example row), linked from the upload instructions. No
 design questions remain here.
+
+[↑ Back to contents](#contents)

@@ -5,6 +5,36 @@ a field-level model plan. I wrote it before scaffolding the project and
 have kept it up to date since. See the main [README](../README.md) for
 the reasoning behind each domain concept.
 
+## Contents
+
+- [App breakdown](#app-breakdown)
+- [Labels and interface words](#labels-and-interface-words)
+- [Model field plan](#model-field-plan)
+  - [`accounts.Organisation` and `accounts.User`](#accountsorganisation-and-accountsuser)
+  - [Members and invitations](#members-and-invitations)
+  - [Making a church](#making-a-church)
+  - [Leaving](#leaving)
+  - [Caching, cookies and limits](#caching-cookies-and-limits)
+  - [Every church's data carries its organisation](#every-churchs-data-carries-its-organisation)
+  - [Each church sees only its own](#each-church-sees-only-its-own)
+  - [`library.Score`](#libraryscore)
+  - [`library.ScoreImport`](#libraryscoreimport)
+  - [Hymns: `library.Hymnal`, `Hymn`, `HymnEntry` and `Tune`](#hymns-libraryhymnal-hymn-hymnentry-and-tune)
+  - [`library.HymnImport`](#libraryhymnimport)
+  - [`ordo.LiturgicalOccasion`](#ordoliturgicaloccasion)
+  - [`ordo.ProperChant`](#ordoproperchant)
+  - [`planning.Term`](#planningterm)
+  - [`planning.Service`](#planningservice)
+  - [`planning.TermMarker`](#planningtermmarker)
+  - [`planning.ServiceRole`](#planningservicerole)
+  - [`planning.SlotTemplate`](#planningslottemplate)
+  - [Suggestions (`planning/suggestions.py`)](#suggestions-planningsuggestionspy)
+  - [`planning.RolePiece`](#planningrolepiece)
+  - [`comments.Comment`](#commentscomment)
+  - [`core.SiteConfig`](#coresiteconfig)
+- [Template organisation](#template-organisation)
+- [Decisions worth remembering when writing the code](#decisions-worth-remembering-when-writing-the-code)
+
 ## App breakdown
 
 | App        | Owns                                                                      | Rationale                                                                                    |
@@ -26,6 +56,8 @@ calendar from `core`'s settings for their occasion menus; `ordo` reads
 nothing from `core` (the suggestion endpoint is told the calendar by
 the page), so `core` can import `ordo`'s choices without a cycle.
 
+[↑ Back to contents](#contents)
+
 ## Labels and interface words
 
 Every field the forms show has an explicit `verbose_name` wherever the
@@ -39,11 +71,13 @@ out to stay readable; `models.py` has the full set.
 Two models keep names that differ from the words people see:
 `ServiceRole` appears as a **slot** and `TermMarker` as a **notice**.
 I chose those words in October 2026 (the reasons are in
-[`overhaul_plan.md`](overhaul_plan.md), section 8). The model and
+[`overhaul_plan.md`, section 8](overhaul_plan.md#8-decisions)). The model and
 field names stay, since renaming them would rename database tables
 for no benefit to anyone using the app; `verbose_name` carries the
 interface word instead. Every one of these label changes produced a
 migration that records the new label and runs no SQL.
+
+[↑ Back to contents](#contents)
 
 ## Model field plan
 
@@ -996,8 +1030,8 @@ class TermMarker(models.Model):
 
 Shown in the interface as a **notice**. It lets a conductor put a
 one-off line of text at a date in a term (half-term, a retreat,
-anything that isn't a service) for the public music list (see README
-§4). The music list view merges `Term.services` and `Term.markers`
+anything that isn't a service) for the public music list (see [README
+§4](../README.md#4-the-public-music-list)). The music list view merges `Term.services` and `Term.markers`
 into one sequence ordered by date, tagging each item with its type so
 the template knows how to render it. Nothing else in the codebase
 merged two querysets like this, so I wrote it from scratch.
@@ -1020,7 +1054,7 @@ class ServiceRole(models.Model):
 ```
 
 Shown in the interface as a **slot**. Slot names are free text; see
-the README (§3.2) for why. `position` holds the order the conductor
+the README ([§3.2](../README.md#32-term-service-and-slots)) for why. `position` holds the order the conductor
 gives the slots. Moves renumber the service's slots from 1, and the
 migration that added it (`planning/0011`) numbered existing slots in
 the order they were made, which was the order shown before. A drag
@@ -1319,6 +1353,8 @@ login, and a new image gets a new address, so browsers can keep it
 without ever showing an old one. `SiteConfig.crest_url` builds the
 address and `crest_layout` tells the music list which layout to use.
 
+[↑ Back to contents](#contents)
+
 ## Template organisation
 
 Templates are kept **per app** (for example
@@ -1328,13 +1364,15 @@ travel with it, in line with the one-way dependencies above. The one
 exception is `templates/base.html` at the project root, which every
 app shares.
 
+[↑ Back to contents](#contents)
+
 ## Decisions worth remembering when writing the code
 
 - `RolePiece.score` uses `on_delete=models.PROTECT`: a Score can't be
   deleted while planning history still refers to it, since "last
   sung" depends on that history.
 - `Service.status` is a `@property`, computed on the fly, not stored.
-  It stays derived, as the README sets out (§3.3), and a stored field
+  It stays derived, as the README sets out ([§3.3](../README.md#33-proposing-and-confirming)), and a stored field
   can't go stale.
 - `ServiceRole.is_not_applicable` being `True` counts as a decision
   (the same as a confirmation) for `Service.status`, not as missing
@@ -1380,3 +1418,5 @@ app shares.
   Draft mode always shows the plain single-column list, since draft
   is for a conductor to scan what's still TBC, not to preview the
   printed layout.
+
+[↑ Back to contents](#contents)

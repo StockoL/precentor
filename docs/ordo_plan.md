@@ -20,10 +20,22 @@ leaving them as correct machinery that hardly anything calls.
 > `effective_tradition()`, and `occasion_for_date()` now takes only a
 > date and a calendar use. `calendar_use` stays, relabelled as the
 > Ordinary Form and the 1962 Extraordinary Form. The reasoning is in
-> the README's out-of-scope list. The code samples below show the
+> the README's [out-of-scope list](../README.md#8-out-of-scope). The code samples below show the
 > current shape; the reasoning around them is unchanged.
 
 ---
+
+## Contents
+
+- [1. Problem statement](#1-problem-statement)
+- [2. Feature 1: occasion suggestions](#2-feature-1-occasion-suggestions)
+  - [Settled](#settled)
+  - [Calendar use: term default, service override](#calendar-use-term-default-service-override)
+  - [Multiple matching occasions: offered as choices](#multiple-matching-occasions-offered-as-choices)
+  - [Mechanism: a live suggestion in JavaScript](#mechanism-a-live-suggestion-in-javascript)
+- [3. Feature 2: suitability tagging on scores](#3-feature-2-suitability-tagging-on-scores)
+  - [Three tiers, not one generic tag](#three-tiers-not-one-generic-tag)
+  - [Untagged scores: ranking, not filtering](#untagged-scores-ranking-not-filtering)
 
 ## 1. Problem statement
 
@@ -42,6 +54,8 @@ implemented. Two features close both gaps:
    occasion, brought forward when proposing pieces.
 
 ---
+
+[↑ Back to contents](#contents)
 
 ## 2. Feature 1: occasion suggestions
 
@@ -137,7 +151,7 @@ would have meant revisiting and re-testing everything that reads
 Ordinary Form's three-year lectionary (Years A, B and C) don't make
 `ordo`'s job any harder. The lectionary cycle decides which _readings_
 belong to a Sunday that already has a name and a date, and `ordo`
-never models readings (see the README's scope boundary). The EF may
+never models readings (see the README's [scope boundary](../README.md#8-out-of-scope)). The EF may
 still be quicker to enter, for a different reason: it's long settled,
 with nothing new being added, whereas the Ordinary Form keeps gaining
 optional memorials. That's a smaller dataset, not a simpler structure.
@@ -149,6 +163,8 @@ changes, in keeping with the confirm and comment interactions already
 built, over a simpler version that reloads the page.
 
 ---
+
+[↑ Back to contents](#contents)
 
 ## 3. Feature 2: suitability tagging on scores
 
@@ -221,3 +237,5 @@ return self.annotate(
     is_suited=Case(*conditions, default=False, output_field=BooleanField())
 ).order_by("-is_suited", "title")
 ```
+
+[↑ Back to contents](#contents)

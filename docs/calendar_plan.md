@@ -6,6 +6,22 @@ celebration wins when two fall on the same day. I've written it before
 any code, because the decisions here shape the model, the data and
 the tests.
 
+## Contents
+
+- [1. What I decided before writing this (20 Oct 2026)](#1-what-i-decided-before-writing-this-20-oct-2026)
+- [2. Sources](#2-sources)
+- [3. The model](#3-the-model)
+- [4. The engine](#4-the-engine)
+  - [The Ordinary Form engine, as built](#the-ordinary-form-engine-as-built)
+  - [The 1962 engine, as built](#the-1962-engine-as-built)
+  - [England and Wales in 1962, as built](#england-and-wales-in-1962-as-built)
+- [5. What goes in](#5-what-goes-in)
+- [6. Getting the data in](#6-getting-the-data-in)
+  - [As built (Ordinary Form)](#as-built-ordinary-form)
+- [7. Testing](#7-testing)
+- [8. Order of work](#8-order-of-work)
+- [9. Questions settled (20 Oct 2026)](#9-questions-settled-20-oct-2026)
+
 ## 1. What I decided before writing this (20 Oct 2026)
 
 - **Both forms of the Roman Rite:** the Ordinary Form and the 1962
@@ -21,6 +37,8 @@ the tests.
 - **The national calendar is the user's choice:** the General Roman
   Calendar, England or Wales to begin with, with room for the United
   States and others later.
+
+[↑ Back to contents](#contents)
 
 ## 2. Sources
 
@@ -56,6 +74,8 @@ Canterbury, on 29 December, is first class in both. The Ordo is
 copyright, so I take only facts from it (which days, on which dates,
 of which class and colour) and never its wording. Feasts proper to a
 single diocese or church, which the Ordo also lists, are out of scope.
+
+[↑ Back to contents](#contents)
 
 ## 3. The model
 
@@ -97,6 +117,8 @@ national calendar. A term or service doesn't need its own.
 
 `COLOUR_CHOICES` gains **black**: 1962 uses it on Good Friday and at
 Requiem Masses. It needs a `liturgical-black` token in both themes.
+
+[↑ Back to contents](#contents)
 
 ## 4. The engine
 
@@ -282,7 +304,9 @@ Also:
 - **The rows are written by hand**, so unlike the romcal and
   Missalemeum data they have no export script; `manage.py
   load_calendar` loads them with the rest, and removes any row that has
-  gone from the files, unless a service or score uses it (section 6).
+  gone from the files, unless a service or score uses it ([section 6](#6-getting-the-data-in)).
+
+[↑ Back to contents](#contents)
 
 ## 5. What goes in
 
@@ -297,8 +321,10 @@ that falls in Lent for the day's celebration, when in Lent it's only
 commemorated.
 
 Third-class feasts are the nearest 1962 equivalent of obligatory
-memorials. Optional memorials are future development (section 1); the
+memorials. Optional memorials are future development ([section 1](#1-what-i-decided-before-writing-this-20-oct-2026)); the
 model doesn't need to change for them.
+
+[↑ Back to contents](#contents)
 
 ## 6. Getting the data in
 
@@ -349,6 +375,8 @@ output instead. The cost is that a deploy has to run it after
 `migrate`, which Phase 7 of [`overhaul_plan.md`](overhaul_plan.md) now
 says.
 
+[↑ Back to contents](#contents)
+
 ## 7. Testing
 
 - **Unit tests** for each date rule (the 5th Sunday of Ordinary Time,
@@ -366,6 +394,8 @@ says.
   class of each day's celebration in England and in Wales, taken from
   the Ordo, compared with the engine for that liturgical year.
 
+[↑ Back to contents](#contents)
+
 ## 8. Order of work
 
 Each step ends with the tests passing and the changes left for me to
@@ -376,7 +406,7 @@ review and commit. All eight steps were done on 20 and 21 October
 2. Ordinary Form date rules, with unit tests.
 3. Ordinary Form precedence, with unit tests.
 4. romcal export, data files and the loading (a `load_calendar`
-   command, not a data migration: see section 6) for General Roman,
+   command, not a data migration: see [section 6](#6-getting-the-data-in)) for General Roman,
    England and Wales, with reference tests.
 5. 1962 date rules and precedence, with unit tests.
 6. Missalemeum export, the England and Wales supplements from the
@@ -392,8 +422,12 @@ review and commit. All eight steps were done on 20 and 21 October
 Adding the United States later is then one more run of the export
 script and one more choice on Settings.
 
+[↑ Back to contents](#contents)
+
 ## 9. Questions settled (20 Oct 2026)
 
 - **Optional memorials:** left out, as future development.
 - **1962 in England and Wales:** taken from the Latin Mass Society's
-  Ordo (section 2), not left universal.
+  Ordo ([section 2](#2-sources)), not left universal.
+
+[↑ Back to contents](#contents)

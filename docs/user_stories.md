@@ -2,6 +2,14 @@
 
 These user stories drive the design and functionality of Precentor.
 
+## Contents
+
+- [Conductor](#conductor)
+- [Librarian / Music Administrator](#librarian--music-administrator)
+- [Viewer (a singer, a clergy colleague, an assistant)](#viewer-a-singer-a-clergy-colleague-an-assistant)
+- [Owner (whoever registered the church, or was handed it)](#owner-whoever-registered-the-church-or-was-handed-it)
+- [Site owner's goals (the church)](#site-owners-goals-the-church)
+
 ## Conductor
 
 - As a conductor, I want to see all open terms at a glance, sorted
@@ -100,6 +108,8 @@ These user stories drive the design and functionality of Precentor.
   and the calendar matches our liturgy.
   - Met by: Settings (`site_config_update`).
 
+[↑ Back to contents](#contents)
+
 ## Librarian / Music Administrator
 
 - As a librarian, I want to see the full repertoire plan (proposed and
@@ -149,6 +159,8 @@ These user stories drive the design and functionality of Precentor.
   kept.
   - Met by: The Text fieldset on the score form: text, translation and translation credit.
 
+[↑ Back to contents](#contents)
+
 ## Viewer (a singer, a clergy colleague, an assistant)
 
 - As a viewer, I want to see each term's services, their slots and the
@@ -163,6 +175,8 @@ These user stories drive the design and functionality of Precentor.
 - As a viewer, I want the pages to show me only what I can use, so I'm
   not offered buttons that would refuse me.
   - Met by: Buttons are hidden by role through `can`; a refused page says why (403).
+
+[↑ Back to contents](#contents)
 
 ## Owner (whoever registered the church, or was handed it)
 
@@ -198,6 +212,8 @@ These user stories drive the design and functionality of Precentor.
   or change our data, so I can trust the site with our plans.
   - Met by: Every page is limited to the person's own church; another church's address gives 404. The isolation test checks every route.
 
+[↑ Back to contents](#contents)
+
 ## Site owner's goals (the church)
 
 - The church wants an accurate, professionally formatted music list
@@ -210,4 +226,6 @@ These user stories drive the design and functionality of Precentor.
 - The church wants the conductor's and librarian's responsibilities
   kept appropriately separate, so physical library management and
   musical decision-making don't conflict.
-  - Met by: The Conductor and Librarian roles (README §2), enforced in `accounts/permissions.py`.
+  - Met by: The Conductor and Librarian roles ([README §2](../README.md#2-who-this-is-for)), enforced in `accounts/permissions.py`.
+
+[↑ Back to contents](#contents)

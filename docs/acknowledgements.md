@@ -11,6 +11,27 @@ something differently from a source, I say so and why.
 
 I'll add to this document whenever I draw on another source.
 
+## Contents
+
+- [The liturgical calendar (`ordo`)](#the-liturgical-calendar-ordo)
+  - [romcal](#romcal)
+  - [General Norms for the Liturgical Year and the Calendar](#general-norms-for-the-liturgical-year-and-the-calendar)
+  - [General Instruction of the Roman Missal, and a notification of 2018](#general-instruction-of-the-roman-missal-and-a-notification-of-2018)
+  - [Missalemeum](#missalemeum)
+  - [The Ordo, Latin Mass Society](#the-ordo-latin-mass-society)
+  - [Divinum Officium](#divinum-officium)
+  - [Propers of the Mass for the Church Year, Church Music Association of America](#propers-of-the-mass-for-the-church-year-church-music-association-of-america)
+  - [The date of Easter](#the-date-of-easter)
+- [Design and front end](#design-and-front-end)
+  - [CUBE CSS](#cube-css)
+  - [Every Layout](#every-layout)
+  - [The CSS reset](#the-css-reset)
+  - [Utopia](#utopia)
+  - [Font fallback metrics](#font-fallback-metrics)
+  - [Colour contrast](#colour-contrast)
+- [Typefaces](#typefaces)
+- [Software Precentor runs on](#software-precentor-runs-on)
+
 ## The liturgical calendar (`ordo`)
 
 ### romcal
@@ -57,7 +78,7 @@ How I used it:
   dates. Eight differed, all because of the transfer difference above.
   I then compared the whole resolved calendars for the same years;
   every difference is one of the cases listed in
-  [`calendar_plan.md`](calendar_plan.md), section 4.
+  [`calendar_plan.md`, section 4](calendar_plan.md#4-the-engine).
 - **The calendar data.** A one-off export script,
   [`tools/calendar_export/export_romcal.js`](../tools/calendar_export/export_romcal.js),
   takes each day's name, rank, precedence, date rule, transfers,
@@ -112,7 +133,7 @@ How I used it:
   and `rules.py`) and of its Table of Precedence, in its order. The
   rules test a day's class and kind as fields instead of matching
   patterns against IDs; the reasons, and the two days where the results
-  differ, are in [`calendar_plan.md`](calendar_plan.md), section 4.
+  differ, are in [`calendar_plan.md`, section 4](calendar_plan.md#4-the-engine).
 - **The calendar data.** A one-off script,
   [`tools/calendar_export/export_missalemeum.py`](../tools/calendar_export/export_missalemeum.py),
   takes every day's English name, class and colour, and the blocks of
@@ -152,8 +173,8 @@ How I used it:
   (St Augustine of Canterbury in 2026) shows up in another.
 - **Checking.** I compared Precentor's 1962 calendars for England and
   for Wales with the Ordo's, by class, for every day of all three
-  years. The details are in [`calendar_plan.md`](calendar_plan.md),
-  section 4, and the national days have tests of their own in
+  years. The details are in [`calendar_plan.md`,
+  section 4](calendar_plan.md#4-the-engine), and the national days have tests of their own in
   [`ordo/test_calendar_1962.py`](../ordo/test_calendar_1962.py).
 
 ### Divinum Officium
@@ -213,6 +234,8 @@ How I used it:
 Anonymous Gregorian algorithm, published by Jean Meeus in
 *Astronomical Algorithms* after earlier versions by Jones and Butcher.
 
+[↑ Back to contents](#contents)
+
 ## Design and front end
 
 ### CUBE CSS
@@ -263,6 +286,8 @@ theirs.
 I checked colour pairs with the contrast ratio formula from the W3C's
 [Web Content Accessibility Guidelines](https://www.w3.org/TR/WCAG22/).
 
+[↑ Back to contents](#contents)
+
 ## Typefaces
 
 Both are self-hosted, with their licence files beside them in
@@ -275,6 +300,8 @@ fine typefaces under an open licence.
 | --- | --- | --- |
 | [EB Garamond](https://github.com/octaviopardo/EBGaramond12) | 2017 The EB Garamond Project Authors | SIL Open Font License 1.1 |
 | [Inter](https://github.com/rsms/inter) | 2020 The Inter Project Authors | SIL Open Font License 1.1 |
+
+[↑ Back to contents](#contents)
 
 ## Software Precentor runs on
 
@@ -296,3 +323,5 @@ grateful to the maintainers of each of these packages.
 
 Django brings in asgiref and sqlparse (both BSD), tzdata (Apache-2.0)
 and packaging (Apache-2.0 or BSD-2-Clause).
+
+[↑ Back to contents](#contents)

@@ -1,12 +1,46 @@
 # Precentor: overhaul audit and plan
 
-Written 19 October 2026, after a gap of several months. This is the one place I track the overhaul: I tick items off as they land and record decisions in section 8 as I make them.
+Written 19 October 2026, after a gap of several months. This is the one place I track the overhaul: I tick items off as they land and record decisions in [section 8](#8-decisions) as I make them.
 
 > **Status: a record.** The overhaul is finished: Step 0 and Phases 0
 > to 6, item 1 ran from 19 to 21 October 2026, as the progress log in
-> section 9 shows. Its one open question, the CSV import, was settled
+> [section 9](#9-progress-log) shows. Its one open question, the CSV import, was settled
 > by building it after my first submission ([README §3.1](../README.md#31-score)).
 > The README describes the app as it is now.
+
+## Contents
+
+- [1. Where things stand](#1-where-things-stand)
+- [2. Typography: why it feels out of proportion](#2-typography-why-it-feels-out-of-proportion)
+  - [Proposed scale](#proposed-scale)
+- [3. Nomenclature](#3-nomenclature)
+  - [Wording that is wrong or inconsistent](#wording-that-is-wrong-or-inconsistent)
+  - [Terms still to decide (see section 8)](#terms-still-to-decide-see-section-8)
+- [4. Other findings, worst first](#4-other-findings-worst-first)
+  - [Broken or risky](#broken-or-risky)
+  - [Design and hierarchy](#design-and-hierarchy)
+  - [Housekeeping](#housekeeping)
+- [5. Step 0: the baseline](#5-step-0-the-baseline)
+- [6. The plan](#6-the-plan)
+  - [Phase 0: Catholic-only scope (about half a day, first)](#phase-0-catholic-only-scope-about-half-a-day-first)
+  - [Phase 1: foundations (about half a day)](#phase-1-foundations-about-half-a-day)
+  - [Phase 2: nomenclature (about two hours)](#phase-2-nomenclature-about-two-hours)
+  - [Phase 3: components (about a day)](#phase-3-components-about-a-day)
+  - [Phase 4: page-by-page pass (about half a day)](#phase-4-page-by-page-pass-about-half-a-day)
+  - [Phase 5: performance and robustness (about half a day)](#phase-5-performance-and-robustness-about-half-a-day)
+  - [Phase 6: seed data and features](#phase-6-seed-data-and-features)
+  - [Phase 7: deployment (about half a day)](#phase-7-deployment-about-half-a-day)
+  - [Phase 8: submission readiness (about a day)](#phase-8-submission-readiness-about-a-day)
+- [7. Page specs](#7-page-specs)
+  - [Global](#global)
+  - [Terms page](#terms-page)
+  - [Library page](#library-page)
+  - [Score detail page (repurposed)](#score-detail-page-repurposed)
+  - [Score form](#score-form)
+- [8. Decisions](#8-decisions)
+  - [Made](#made)
+  - [Open](#open)
+- [9. Progress log](#9-progress-log)
 
 ## 1. Where things stand
 
@@ -19,6 +53,8 @@ I went back through the live repo (templates, CSS, tokens, models, views, settin
 Section 5 records the baseline test run.
 
 The app is structurally sound. The weak part is the presentation layer: I assembled it from design-system primitives but never made firm decisions about hierarchy, scale or wording. That is why it feels unpolished, and it can be fixed in a focused sweep without a rebuild.
+
+[↑ Back to contents](#contents)
 
 ## 2. Typography: why it feels out of proportion
 
@@ -59,6 +95,8 @@ Inputs need an explicit `font-size: max(1rem, var(--typography-step--1))` so the
 
 The space scale moves to the same 16/18 base so padding doesn't outgrow the type.
 
+[↑ Back to contents](#contents)
+
 ## 3. Nomenclature
 
 ### Wording that is wrong or inconsistent
@@ -69,7 +107,7 @@ The space scale moves to the same 16/18 base so padding doesn't outgrow the type
 | Nav says "Score Library", page says "Scores" | nav, `score_list.html` | "Library" in both |
 | Nav says "Inbox", page says "Open comments" | nav, `inbox.html` | "Inbox" in both, with an open count in the nav |
 | "Site settings" | nav | "Settings", shown to the conductor only |
-| "Dark mode" / "Light mode" text button | nav | Appearance (System / Light / Dark) in the user menu (section 7) |
+| "Dark mode" / "Light mode" text button | nav | Appearance (System / Light / Dark) in the user menu ([section 7](#7-page-specs)) |
 | `19/10/2026` in lists, `Sunday 4th October 2026` on the music list | list rows vs music list | one format in the app UI ("Sun 4 Oct 2026"), with the long form kept only on the music list |
 | "Add a term", "Add a service", "Add a marker", "Add a score" | page actions | "New term", "New service", "New marker", "New score" |
 | "View music list", "View draft (internal)", "View public version" | term detail, music list | "Music list" and a Draft / Public toggle |
@@ -87,12 +125,14 @@ The space scale moves to the same 16/18 base so padding doesn't outgrow the type
 - **Term.** Correct for a collegiate or cathedral pattern, but a parish choir might say "season" or "period", and "season" collides with liturgical season. "Term" is defensible and matches the rest of my docs.
 - **Piece vs score.** The library holds scores; a service holds pieces (a score proposed in a slot). I want to keep that distinction and use each word consistently in the UI.
 
+[↑ Back to contents](#contents)
+
 ## 4. Other findings, worst first
 
 ### Broken or risky
 
 1. **No viewport meta tag in `base.html`.** On a phone the page renders at desktop width and scales down, so the fluid type and space scales and every `@media` and `clamp()` decision work against the wrong width. One line fixes it: `<meta name="viewport" content="width=device-width, initial-scale=1">`.
-2. **Media files on Heroku.** The crest image is saved to `media/`, and Heroku's filesystem is wiped on every restart and deploy, so the crest would vanish. The options were storing it in the database (a `BinaryField`, fine at about 3KB for a single crest), Cloudinary or S3, or committing a default crest as a static file. I've chosen the database (section 8).
+2. **Media files on Heroku.** The crest image is saved to `media/`, and Heroku's filesystem is wiped on every restart and deploy, so the crest would vanish. The options were storing it in the database (a `BinaryField`, fine at about 3KB for a single crest), Cloudinary or S3, or committing a default crest as a static file. I've chosen the database ([section 8](#8-decisions)).
 3. **Dark mode has holes.** Because `neutral-*` is not overridden:
    - `.badge--not_started` stays a light grey chip on a dark page.
    - `button:hover` goes to `neutral-800` (`#27272a`) on a `#1c1b1f` surface, so the hover is nearly invisible.
@@ -122,7 +162,9 @@ The space scale moves to the same 16/18 base so padding doesn't outgrow the type
 20. **The README status banner** is nearly right but out of date: the remaining work is the import feature, seed data, deployment and wrap-up, not only "deployment and documentation".
 21. **Docs naming drifted.** The repo has `ordo_plan.md` and `score_import_plan.md`, but `music_list_redesign_design.md` isn't in `docs/` at all even though the feature is built. I'll restore it (or fold it into `design_system.md`) so the docs match the code.
 22. **No `LiturgicalOccasion` data.** `ordo/migrations/0004` seeds use types and seasons only. A fresh clone has an empty occasion dropdown and a suggester with nothing to suggest. This is the biggest risk for the demo.
-23. **Locale and time zone** (see section 3) affect date display and the "today" boundary.
+23. **Locale and time zone** (see [section 3](#3-nomenclature)) affect date display and the "today" boundary.
+
+[↑ Back to contents](#contents)
 
 ## 5. Step 0: the baseline
 
@@ -144,6 +186,8 @@ git tag pre-overhaul
 Done 19 October 2026: `pre-overhaul` tags `94a7781`, and the work continues on `overhaul`. With the Phase 0 code changes in place, all 70 tests pass (the Playwright browser tests run as part of `manage.py test`) and `makemigrations --check` is clean. `check --deploy` is still to run; its warnings belong to Phase 7.
 
 Phase 1 doesn't start until the tests are green; otherwise I can't tell a regression from an old failure.
+
+[↑ Back to contents](#contents)
 
 ## 6. The plan
 
@@ -183,7 +227,7 @@ For seed data, romcal and missalemeum both cover the Roman calendar; romcal also
 
 1. [x] Add the viewport meta tag and a skip link.
 2. [x] Set `LANGUAGE_CODE = "en-gb"` and `TIME_ZONE = "Europe/London"`. This needed a `NativeDateInput` widget first: under `en-gb`, Django renders dates as DD/MM/YYYY, which `<input type="date">` rejects, so every edit form's dates would have opened blank.
-3. [x] Regenerate the type and space scales (section 2) in `precentor-tokens.JSON`, run `node build-tokens.js`, and remap headings by role in `global-styles.css`. Also: body text sized on `body` (it had no size, and must not go on `html`, where it would rescale every rem); buttons, inputs and nav at step--1 with inputs floored at 16px; badges and help text at step--2; a shared `--layout-control-height` of 2.5rem.
+3. [x] Regenerate the type and space scales ([section 2](#2-typography-why-it-feels-out-of-proportion)) in `precentor-tokens.JSON`, run `node build-tokens.js`, and remap headings by role in `global-styles.css`. Also: body text sized on `body` (it had no size, and must not go on `html`, where it would rescale every rem); buttons, inputs and nav at step--1 with inputs floored at 16px; badges and help text at step--2; a shared `--layout-control-height` of 2.5rem.
 4. [x] Fix dark mode: dark values for `action-primary` and the colours used by badges and hover states. Instead of overriding the raw `neutral-*` ramp, the blocks now use semantic tokens with their own dark values (`action-primary-hover`, and an `inactive-*` trio).
 5. [x] Fix the 60ch measure so it doesn't constrain `.list-row` items.
 
@@ -191,9 +235,9 @@ Done when every page is readable at 360px and 1280px, headings step down visibly
 
 ### Phase 2: nomenclature (about two hours)
 
-1. [x] Settle the glossary in section 8 (slot, notice, term).
+1. [x] Settle the glossary in [section 8](#8-decisions) (slot, notice, term).
 2. [x] Status labels via a model property or filter, keeping raw values for CSS classes. Done as `Service.STATUS_LABELS` and a `status_label` property; status is derived, so there is no `get_status_display()`.
-3. [x] Nav, page titles, headings and button wording per section 3. The nav's Settings link shows to the conductor only and Inbox carries an open count, both from a `nav` context processor in `precentor_project`.
+3. [x] Nav, page titles, headings and button wording per [section 3](#3-nomenclature). The nav's Settings link shows to the conductor only and Inbox carries an open count, both from a `nav` context processor in `precentor_project`.
 4. [x] Date format and `verbose_name` / `help_text` on the model fields. One format module (`precentor_project/formats/en_GB/formats.py`, via `FORMAT_MODULE_PATH`) sets "Sun 4 Oct 2026". The calendar choice labels were kept, since Phase 0 had just settled them; the help text now explains the term default and the service override instead.
 
 Done when no underscore or raw choice value is visible anywhere in the UI.
@@ -213,10 +257,10 @@ Terms, Term detail, Service detail (the screen I'll use most), Library, Score de
 
 Progress:
 
-- [x] **Library** (`909a90f` to `eec04d9`), built to the spec in section 7: `editor` and `last_sung_manual` fields; last sung derived by `with_last_sung()`; catalogue names and ordering; search, Language and Voicing filters (the old Voice part filter dropped, as decided); a sortable table with `aria-sort`; fifty to a page with the filters kept in the links. Found and fixed on the way: suitability ranking listed a score once per tag (it also affected the propose-piece picker), and a score with no language blanked the Language menu.
+- [x] **Library** (`909a90f` to `eec04d9`), built to the spec in [section 7](#7-page-specs): `editor` and `last_sung_manual` fields; last sung derived by `with_last_sung()`; catalogue names and ordering; search, Language and Voicing filters (the old Voice part filter dropped, as decided); a sortable table with `aria-sort`; fifty to a page with the filters kept in the links. Found and fixed on the way: suitability ranking listed a score once per tag (it also affected the propose-piece picker), and a score with no language blanked the Language menu.
 - [x] **Score page** (`85fd49f` to `a191936`): `background`, `notes` and four vocal ranges, the ranges checked by a validator and stored in one tidy form; a history state for each proposed piece (Sung, Scheduled or Proposed); and the page rebuilt as a summary, background, notes, ranges and a service history table.
 - [x] **Score form** (`f7a1396` to `7455901`): five fieldsets, a datalist of existing voicings, freehand use types created on save, and chip inputs over the three suitability selects. Found on the way: `hidden` didn't hide a select inside a form, because `form.css` sets its `display`; a `[hidden]` utility now fixes that everywhere.
-- [x] **Terms** (`e48afba` to `a7106c6`): full-width status cards built to the spec in section 7, current and upcoming first, past folded away. The view loads everything in a fixed number of queries, which also does Phase 5's first item for this page; a test checks the count doesn't grow with more terms. Found on the way: the open user menu was drawn behind the cards on a phone (a stacking context from the nav's view-transition-name).
+- [x] **Terms** (`e48afba` to `a7106c6`): full-width status cards built to the spec in [section 7](#7-page-specs), current and upcoming first, past folded away. The view loads everything in a fixed number of queries, which also does Phase 5's first item for this page; a test checks the count doesn't grow with more terms. Found on the way: the open user menu was drawn behind the cards on a phone (a stacking context from the nav's view-transition-name).
 - [x] **Term detail** (`ff3ecb6` to `fe5769f`): the same phase, timing and status bar as the term's card, through a shared `describe_term()` helper and `_term_status` partial; each service row shows its occasion and how many slots it still has to settle; a fixed number of queries however many services.
 - [x] **Service detail** (`5ae1fc4` to `045c532`): Previous and Next links to the neighbouring services in the term; checkboxes beside their labels; the comment thread spaced like the other sections (also on the term page).
 - [x] **Inbox** (`8ec25c3`): each comment's subject links to its page (a piece to its row on the service page), with the time and reply count; a fixed number of queries.
@@ -234,13 +278,13 @@ Progress:
 ### Phase 6: seed data and features
 
 1. [x] **Ordo seed data (first).** Generate occasions from romcal (MIT) or missalemeum (MIT) as a one-off, load them through a data migration or fixture, and register `LiturgicalOccasion` in the admin. The demo needs this whatever else happens. Done, and grown into real calendars with precedence (from `cfb6ded`): both forms, from romcal and Missalemeum, with England and Wales (the national calendar chosen on Settings), loaded by `manage.py load_calendar` instead of a data migration. The design and its checks are in [`calendar_plan.md`](calendar_plan.md).
-2. **CSV import.** Built per `docs/score_import_plan.md` (the persisted-row architecture; nothing superseded remains in the repo). It is a "should have"; see the decision in section 8.
+2. **CSV import.** Built per `docs/score_import_plan.md` (the persisted-row architecture; nothing superseded remains in the repo). It is a "should have"; see the decision in [section 8](#8-decisions).
 3. Any JS follow-ups from the existing JS audit.
 
 ### Phase 7: deployment (about half a day)
 
 1. `Procfile`, `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` from the environment, `SECURE_*` and secure cookie settings, `DEBUG` off.
-2. Crest stored in the database (section 4, item 2).
+2. Crest stored in the database ([section 4](#4-other-findings-worst-first), item 2).
 3. Heroku Postgres, `collectstatic`, migrations and seed data on deploy (`migrate`, then `load_calendar`), and `check --deploy` clean.
 4. A fresh deploy from scratch, with the steps written down.
 
@@ -250,9 +294,11 @@ Progress:
 2. A testing document: manual test table (feature, steps, expected, result), automated test summary, browser and device matrix.
 3. Validation evidence: W3C HTML and CSS validators, a JS linter, pycodestyle/flake8, Lighthouse (performance, accessibility, best practices).
 4. Reconcile `user_stories.md` against what's built, and mark anything descoped.
-5. LICENSE name; docs naming (section 4, item 21).
+5. LICENSE name; docs naming ([section 4](#4-other-findings-worst-first), item 21).
 
 Total: about six focused days, including Phase 0, the library table and the tag inputs; most of it is Phases 0 to 4.
+
+[↑ Back to contents](#contents)
 
 ## 7. Page specs
 
@@ -297,6 +343,8 @@ The table now carries the metadata, so this page holds what doesn't fit in a row
 - **What can be created freehand.** Use types are plain labels, so typing a new one creates it on save (trimmed, matched case-insensitively against existing ones). Seasons and occasions are calendar data: an occasion carries a date rule and a colour that drive the suggester and the liturgical accent, so a made-up one would have no date. Those two fields allow searching and picking, not inventing. The empty seed data is also why the occasions field looks uneditable at the moment: `LiturgicalOccasion` has no rows, so there is nothing to pick. Seeding it (Phase 6, step 1) fixes that.
 - **Layout.** Grouped fields: Identity (title, composer surname, other names, arranger, editor), Forces (voicing, four part counts), Library (language, copies, filing location, duration), Liturgical use (the three tag fields), Notes (background, notes, ranges).
 
+[↑ Back to contents](#contents)
+
 ## 8. Decisions
 
 ### Made
@@ -325,6 +373,8 @@ Model names stay as they are (`ServiceRole`, `TermMarker`); only the words shown
 |---|---|
 | CSV import in or out of this submission | Out of the first deploy; build it after Phases 1 to 5 if time allows, since the overhaul and seed data matter more to the assessment |
 
+[↑ Back to contents](#contents)
+
 ## 9. Progress log
 
 One line per phase as it completes, with the commit range.
@@ -337,3 +387,5 @@ One line per phase as it completes, with the commit range.
 - Phase 4 (20 Oct 2026): `909a90f` to `17b8700`. Every page checked in light and dark at 360px and 1280px, and the music list printed to PDF in both themes. Bugs found and fixed on the way: suitability ranking listed a score once per tag; a blank language blanked the Language menu; `hidden` didn't hide a select inside a form; the open user menu was drawn behind the term cards. Comments on a proposed piece had no place in the interface; decided (20 Oct 2026) that a question about a piece goes in its service's thread, so piece-level threads are descoped, while the model still allows them. 186 tests pass.
 - Phase 5 (20 Oct 2026): `db66830` to `f8f4f93`. The service page now sends the library once for every slot's search box, and without JavaScript each slot links to a propose page (decided 20 Oct 2026). Found on the way: the status badge reloaded every slot, so a service with three slots made 19 queries; it's now a fixed 12. Settings had no browser test for the crop tool, which moving scripts per page could have broken silently; it has one now. 211 tests pass.
 - Phase 6, item 1 (20 and 21 Oct 2026): from `cfb6ded`. Decided on 20 Oct: both forms, obligatory memorials but not optional ones, precedence worked out by Precentor itself, and the national calendar the church's choice. The Ordinary Form's date rules and precedence are ported from romcal, and the 1962 calendar's from Missalemeum; England's and Wales's 1962 days come from the Latin Mass Society's Ordo. Checked against romcal and Missalemeum for every day from 2020 to 2040, and against the Ordo for 2025-26 (England matches on all 363 days, Wales on all but Rogation Monday). Found on the way: two bugs in romcal (a transfer counted from the wrong day; a day that may share sorted above everything) and one in Missalemeum (two-letter colours missing its first-class pattern), all recorded with the days they affect; an impeded solemnity that romcal drops, which Precentor moves; and, with real data loaded, occasion menus of about 960 rows, now scoped to the church's calendar. Settled on 21 Oct: St Ubaldus and St Didacus stay commemorations (third class in the Ordo, but no bearing on planning music), and the Ordos for 2023-24 and 2024-25 added St Augustine of Canterbury, St Brigid and St Cadoc; every difference from the three Ordos is explained (St Ubaldus and St Didacus each year, one day my checking script misread, and a Welsh votive Mass). `load_calendar` also learnt to remove rows gone from the data, unless in use. 311 tests pass.
+
+[↑ Back to contents](#contents)

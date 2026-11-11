@@ -8,7 +8,7 @@ Everything here was run again on 10 November 2026, on a local copy of
 the site with the invented demo church. The manual tests were run
 between commits `61f3790` and `b500e3f`, with rows [M59](#m59) and [M60](#m60) added
 later the same day at `4746a58`, M61 to M64 at `59e3469`, and M65 at
-`b0fafbf`. The checks in sections 1 to 3, the widths and browsers, and
+`b0fafbf`. The checks in [sections 1 to 3](#1-checks-run-findings-and-how-each-was-resolved), the widths and browsers, and
 the contrast were all run again at `8908668`, with the checkers' own
 screenshots; the commits after it change only the documentation, the
 ESLint settings and a screenshot tool. The manual tests

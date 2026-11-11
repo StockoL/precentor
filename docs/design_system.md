@@ -6,6 +6,34 @@ main [README](../README.md) for domain and data decisions, and
 [`docs/blocks_backlog.md`](blocks_backlog.md) for how each Block was
 picked out from repetition I'd actually seen, not guessed at.
 
+## Contents
+
+- [Methodology: CUBE CSS](#methodology-cube-css)
+- [Cascade layers, not `@import`](#cascade-layers-not-import)
+- [Design tokens](#design-tokens)
+  - [Scales](#scales)
+  - [Colour](#colour)
+  - [Dark mode](#dark-mode)
+- [Fonts](#fonts)
+- [Liturgical accent](#liturgical-accent)
+- [Folder structure](#folder-structure)
+- [`music_list.html`: a different visual mode](#music_listhtml-a-different-visual-mode)
+  - [The pew sheet](#the-pew-sheet)
+- [Accessibility basics](#accessibility-basics)
+- [Buttons](#buttons)
+- [Forms](#forms)
+- [The Library table](#the-library-table)
+- [Term cards](#term-cards)
+- [Chip inputs](#chip-inputs)
+- [Occasion suggestions](#occasion-suggestions)
+- [Proposing a piece](#proposing-a-piece)
+- [Scripts per page](#scripts-per-page)
+- [Moving and removing slots](#moving-and-removing-slots)
+- [Pages for deleting, and 404](#pages-for-deleting-and-404)
+- [Confirmation dialog](#confirmation-dialog)
+- [Page transitions](#page-transitions)
+- [`crest-crop.js`: a hand-built image crop tool](#crest-cropjs-a-hand-built-image-crop-tool)
+
 ## Methodology: CUBE CSS
 
 CUBE CSS (Composition, Utility, Block, Exception, championed by Andy
@@ -23,6 +51,8 @@ I didn't build any Blocks until every page had been laid out with
 Compositions first. That way the Block list (see `blocks_backlog.md`)
 reflects patterns that really did repeat across the app, not
 components imagined before any page existed.
+
+[↑ Back to contents](#contents)
 
 ## Cascade layers, not `@import`
 
@@ -73,7 +103,9 @@ used), and the term and service pages, whose scripts import others,
 preload those with `<link rel="modulepreload">`. A test checks that
 every module a page's scripts import is on the page or preloaded, so
 the lists can't drift from the imports. Both were measured before they
-were kept; the figures are in `testing.md`, section 3.
+were kept; the figures are in [`testing.md`, section 3](testing.md#3-lighthouse-scores).
+
+[↑ Back to contents](#contents)
 
 ## Design tokens
 
@@ -182,6 +214,8 @@ indicators. The dark value, `#e8798a`, is 6.14:1. Because it's light,
 the same ratio, so button text stays readable. I checked each pair
 with the WCAG contrast formula, not by eye.
 
+[↑ Back to contents](#contents)
+
 ## Fonts
 
 Headings use **EB Garamond** and body text uses **Inter**. Both are
@@ -212,6 +246,8 @@ page barely shifts when the real typeface finishes loading and swaps
 in. `font-display: swap` on both real `@font-face` declarations keeps
 text visible while the fonts load, so there's no flash of invisible
 text.
+
+[↑ Back to contents](#contents)
 
 ## Liturgical accent
 
@@ -244,6 +280,8 @@ single dates, which is a substantial addition to a model layer I
 otherwise consider finished. The contextual version reuses data
 already in `Service.occasion` and cost nothing extra to build; the
 README notes it as the scope I chose.
+
+[↑ Back to contents](#contents)
 
 ## Folder structure
 
@@ -287,6 +325,8 @@ Cover, to centre `login.html`'s form vertically within the full page
 height. That's a different axis from
 `.center`, which only caps the width and centres horizontally, so the
 two are used together, not as alternatives.
+
+[↑ Back to contents](#contents)
 
 ## `music_list.html`: a different visual mode
 
@@ -370,6 +410,8 @@ accent, whose dark red was hard to read in dark mode. The options,
 texts and composers, are a plain GET form, so the choices are in the
 address and need no JavaScript.
 
+[↑ Back to contents](#contents)
+
 ## Accessibility basics
 
 - **Viewport:** `base.html` sets `width=device-width`. Without it,
@@ -398,6 +440,8 @@ address and need no JavaScript.
 - **Facts on detail pages** are `<dl>` lists, so each label and its
   value are announced as a pair (`detail-list.css`).
 
+[↑ Back to contents](#contents)
+
 ## Buttons
 
 There's one filled button per view at most, for the main action:
@@ -416,6 +460,8 @@ like one. Each variant has its own `:hover` rule, because
 `button:hover` (an element plus a pseudo-class) outranks a plain class
 and would otherwise turn a primary button grey. The small lift on
 hover is switched off for people who ask for reduced motion.
+
+[↑ Back to contents](#contents)
 
 ## Forms
 
@@ -470,6 +516,8 @@ Other form details:
 - Help text and the shared control height are described under
   "Accessibility basics" and "Scales" above.
 
+[↑ Back to contents](#contents)
+
 ## The Library table
 
 The Library is a dense, spreadsheet-style table (`data-table.css`)
@@ -495,6 +543,8 @@ under a row of filters (`toolbar.css`).
   vertically, and the header sticks inside it.
 - **Numbers** use tabular figures and line up on the right, headings
   included.
+
+[↑ Back to contents](#contents)
 
 ## Term cards
 
@@ -523,6 +573,8 @@ the nav, and the term cards, positioned for their stretched links,
 painted over the open menu on a phone. The nav itself now has
 `position: relative` and a `z-index`, and a browser test checks the
 menu is the topmost thing over a card.
+
+[↑ Back to contents](#contents)
 
 ## Chip inputs
 
@@ -562,6 +614,8 @@ Building this showed up a cascade problem worth recording. The
 it. A `[hidden] { display: none; }` rule in the utilities layer, the
 last layer, now makes `hidden` mean hidden everywhere.
 
+[↑ Back to contents](#contents)
+
 ## Occasion suggestions
 
 When a service's date is entered, `occasion-suggest.js` asks the server
@@ -586,6 +640,8 @@ calendar changes, then asks for suggestions again. A chosen occasion
 is never hidden, so a change of calendar can't silently drop it. The
 chip input skips disabled options when it searches, so Other occasions
 narrows too.
+
+[↑ Back to contents](#contents)
 
 ## Proposing a piece
 
@@ -612,6 +668,8 @@ link still works. I chose a link over keeping a `<select>` per slot
 because the fallback should cost the page nothing when JavaScript is
 on, and proposing a piece is one step whichever way it's done.
 
+[↑ Back to contents](#contents)
+
 ## Scripts per page
 
 `base.html` loads only the scripts every page needs: the theme choice,
@@ -629,6 +687,8 @@ There are no inline event handlers. The music list's Print button used
 The button is `hidden` in the HTML and the script shows it, since it
 does nothing without JavaScript; the browser's own Print command still
 prints the list with the same print styles.
+
+[↑ Back to contents](#contents)
 
 ## Moving and removing slots
 
@@ -657,6 +717,8 @@ After a removal, focus moves to the slot that took its place, or the
 one before, or the Add a slot box when none are left, so a keyboard
 user isn't sent back to the top of the page.
 
+[↑ Back to contents](#contents)
+
 ## Pages for deleting, and 404
 
 The delete pages (term, service, notice, template, score) are sent
@@ -666,6 +728,8 @@ page (or a second Confirm) goes to a sensible list with a message
 saying so, instead of a 404 (`DeletePageMixin` in
 `precentor_project/mixins.py`). A real 404 gets the site's own page,
 with a way back to the terms.
+
+[↑ Back to contents](#contents)
 
 ## Confirmation dialog
 
@@ -682,6 +746,8 @@ ghost and danger buttons, so it follows the theme like everything
 else. `confirmAction()` returns a promise, so any later "are you sure?"
 can use it in one line, as removing a slot and replacing a service's
 template now do.
+
+[↑ Back to contents](#contents)
 
 ## Page transitions
 
@@ -702,6 +768,8 @@ both pages to opt in, so a `@view-transition { navigation: none; }`
 rule on the login page makes logging in a plain page load. I
 checked the rest by hand in Chrome, where page-to-page transitions
 run smoothly.
+
+[↑ Back to contents](#contents)
 
 ## `crest-crop.js`: a hand-built image crop tool
 
@@ -730,3 +798,5 @@ comes from `core/imaging.py` through the page's `data-target-width` and
 On the music list a logo sits beside the written church name with an
 empty `alt`, since the name is right there, and a banner spans the list
 with the church's name as its `alt`, not written again.
+
+[↑ Back to contents](#contents)
