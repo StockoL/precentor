@@ -207,6 +207,7 @@ ADDRESSES = {
     "planning:reorder_slots": lambda a, b: [{"service_pk": b["service"].pk}],
     "planning:toggle_confirm": lambda a, b: [{"piece_pk": b["piece"].pk}],
     "planning:remove_piece": lambda a, b: [{"piece_pk": b["piece"].pk}],
+    "planning:propose_score": lambda a, b: [{"score_pk": b["score"].pk}],
     "comments:add_comment": lambda a, b: [
         {"content_type_id": content_type_id(b[name]), "object_id": b[name].pk} for name in ("term", "service", "piece")
     ],

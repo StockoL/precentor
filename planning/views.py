@@ -626,6 +626,38 @@ def remove_piece(request, piece_pk):
     return ajax_or_redirect(request, fragments, service.get_absolute_url())
 
 
+def upcoming_services(request, score):
+    """
+    This church's services from today on, soonest first, for proposing a
+    score from its own page: each with its status, and has_score when the
+    score is in it already. Both are read from the prefetched slots and
+    pieces, as on the Terms page, so a long list costs no more queries.
+    """
+    services = list(
+        own(Service, request).filter(date__gte=timezone.localdate())
+        .select_related("term").prefetch_related("roles__pieces").order_by("date", "pk")
+    )
+    for service in services:
+        service.has_score = any(
+            piece.score_id == score.pk for role in service.roles.all() for piece in role.pieces.all()
+        )
+    return services
+
+
+@role_required(can_plan)
+def propose_score(request, score_pk):
+    """
+    Propose a score from the library rather than from a service: first
+    the service, then the slot. Each step is a page of its own without
+    JavaScript. The score is this church's, or not found.
+    """
+    score = get_object_or_404(own(Score, request), pk=score_pk)
+    return render(request, "planning/propose_score.html", {
+        "score": score,
+        "services": upcoming_services(request, score),
+    })
+
+
 @role_required(can_plan)
 @require_POST
 def set_tune(request, piece_pk):

@@ -140,6 +140,7 @@ def addresses(rows, join_token):
         "planning:set_tune": [piece.pk],
         "planning:toggle_confirm": [piece.pk],
         "planning:remove_piece": [piece.pk],
+        "planning:propose_score": [rows["score"].pk],
         "comments:add_comment": [ContentType.objects.get_for_model(service).pk, service.pk],
         "comments:toggle_close": [rows["comment"].pk],
         "comments:delete_comment": [rows["comment"].pk],

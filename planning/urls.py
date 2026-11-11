@@ -67,6 +67,7 @@ urlpatterns = [
         name="slot_template_delete",
     ),
     path("roles/<int:role_pk>/pieces/add/", views.add_piece, name="add_piece"),
+    path("scores/<int:score_pk>/propose/", views.propose_score, name="propose_score"),
     path("roles/<int:role_pk>/move/", views.move_slot, name="move_slot"),
     path("roles/<int:role_pk>/kind/", views.change_kind, name="change_kind"),
     path("pieces/<int:piece_pk>/tune/", views.set_tune, name="set_tune"),

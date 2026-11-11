@@ -15,10 +15,13 @@
     {% endif %}
     <header class="page-header">
         <h1>{{ score }}</h1>
-        {% if can.edit_library %}
+        {% if can.plan or can.edit_library %}
         <div class="page-header__actions">
+            {% if can.plan %}<a class="btn" href="{% url 'planning:propose_score' score.pk %}">Propose</a>{% endif %}
+            {% if can.edit_library %}
             <a class="btn-ghost" href="{% url 'library:score_update' score.pk %}">Edit</a>
             <a class="btn-danger" href="{% url 'library:score_delete' score.pk %}">Delete</a>
+            {% endif %}
         </div>
         {% endif %}
     </header>

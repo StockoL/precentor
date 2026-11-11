@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Propose {{ score }} — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Propose {{ score }}</h1>
+    {% if services %}
+    {# Step one: the service. Without JavaScript, Show its slots opens step two as a page of its own. #}
+    <form method="get" action="{% url 'planning:propose_score' score.pk %}" id="propose-service-form" class="flow">
+        <p>
+            <label for="propose-service">Service</label>
+            <select id="propose-service" name="service" required>
+                <option value="">Choose a service</option>
+                {% for option in services %}
+                <option value="{{ option.pk }}"{% if option.has_score %} disabled{% endif %}>{{ option.date|date:"D j M Y" }}, {{ option.service_type }}: {{ option.term.name }} ({{ option.status_label }}){% if option.has_score %}, already proposed{% endif %}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <button type="submit">Show its slots</button>
+    </form>
+    {% else %}
+    <p>There are no services from today on to propose it for. Add one to a term first.</p>
+    {% endif %}
+    <p><a href="{{ score.get_absolute_url }}">Back to {{ score }}</a></p>
+</div>
+{% endblock %}
