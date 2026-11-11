@@ -183,6 +183,7 @@ ADDRESSES = {
     "planning:term_delete": lambda a, b: [{"pk": b["term"].pk}],
     "planning:term_detail": lambda a, b: [{"pk": b["term"].pk}],
     "planning:service_create": lambda a, b: [{"term_pk": b["term"].pk}],
+    "planning:service_batch": lambda a, b: [{"term_pk": b["term"].pk}],
     "planning:service_detail": lambda a, b: [{"pk": b["service"].pk}],
     "planning:service_update": lambda a, b: [{"pk": b["service"].pk}],
     "planning:service_pew_sheet": lambda a, b: [{"pk": b["service"].pk}],

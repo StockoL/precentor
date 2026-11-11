@@ -10,6 +10,7 @@ urlpatterns = [
     path("terms/<int:pk>/edit/", views.TermUpdateView.as_view(), name="term_update"),
     path("terms/<int:pk>/delete/", views.TermDeleteView.as_view(), name="term_delete"),
     path("terms/<int:pk>/", views.TermDetailView.as_view(), name="term_detail"),
+    path("terms/<int:term_pk>/services/batch/", views.service_batch, name="service_batch"),
     path(
         "terms/<int:term_pk>/services/add/",
         views.ServiceCreateView.as_view(),

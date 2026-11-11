@@ -10,6 +10,7 @@ from precentor_project.widgets import NativeDateInput
 from .models import (
     ONE_PIECE_MESSAGE, RolePiece, Service, ServiceRole, SlotTemplate, TemplateSlot, Term, TermMarker,
 )
+from .batch import EVERY_SUNDAY, pattern_choices
 from .slot_kinds import KIND_CHOICES, PROPER_PART_CHOICES
 from .suggestions import facts_for, grouped, slot_use_type
 
@@ -99,6 +100,47 @@ class ServiceForm(forms.ModelForm):
         if day and not term.start_date <= day <= term.end_date:
             self.add_error("date", f"{term} runs from {date_format(term.start_date)} to {date_format(term.end_date)}, "
                                    "so the service needs a date in between.")
+        return cleaned
+
+
+class ServiceBatchForm(forms.Form):
+    """
+    Step one of adding several services to a term: the template whose
+    slots each gets, the type (the template's name unless given), the
+    range, which starts as the term's own, and which dates to offer.
+    """
+
+    template = forms.ModelChoiceField(queryset=SlotTemplate.objects.none(), empty_label=None,
+                                      help_text="Its slots are added to each service.")
+    service_type = forms.CharField(label="Service type", max_length=50, required=False,
+                                   help_text="Leave blank to use the template's name.")
+    start_date = forms.DateField(label="From", widget=NativeDateInput())
+    end_date = forms.DateField(label="To", widget=NativeDateInput())
+    pattern = forms.ChoiceField(label="Dates", widget=forms.RadioSelect)
+
+    def __init__(self, *args, term, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.term = term
+        self.fields["template"].queryset = SlotTemplate.objects.for_organisation(term.organisation_id)
+        self.fields["pattern"].choices = pattern_choices(term.calendar_use)
+        self.fields["pattern"].initial = EVERY_SUNDAY
+        self.fields["start_date"].initial = term.start_date
+        self.fields["end_date"].initial = term.end_date
+
+    def clean(self):
+        """Both ends inside the term, worded as the service form words it,
+        and the type from the template when it's left blank."""
+        cleaned = super().clean()
+        term, start, end = self.term, cleaned.get("start_date"), cleaned.get("end_date")
+        outside = (f"{term} runs from {date_format(term.start_date)} to {date_format(term.end_date)}, "
+                   "so the dates need to be in between.")
+        for name, day in (("start_date", start), ("end_date", end)):
+            if day and not term.start_date <= day <= term.end_date:
+                self.add_error(name, outside)
+        if start and end and end < start and not self.errors:
+            self.add_error("end_date", "The range can't end before it starts.")
+        if not cleaned.get("service_type") and cleaned.get("template"):
+            cleaned["service_type"] = cleaned["template"].name
         return cleaned
 
 

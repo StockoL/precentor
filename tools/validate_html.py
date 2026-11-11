@@ -120,6 +120,7 @@ def addresses(rows, join_token):
         "planning:term_update": [rows["term"].pk],
         "planning:term_delete": [rows["term"].pk],
         "planning:service_create": [rows["term"].pk],
+        "planning:service_batch": [rows["term"].pk],
         "planning:term_music_list": [rows["term"].pk],
         "planning:marker_create": [rows["term"].pk],
         "planning:marker_update": [rows["marker"].pk],

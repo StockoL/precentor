@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Add several services to {{ term }} — Precentor{% endblock %}
+{% block content %}
+<div class="flow">
+    <h1>Add several services to {{ term }}</h1>
+    {# Step one only chooses, so it's a GET; the next page shows the dates before anything is made. #}
+    <form method="get" action="{% url 'planning:service_batch' term.pk %}" class="flow">
+        {{ form.as_div }}
+        <button type="submit" class="btn-primary">Show the dates</button>
+    </form>
+    <p><a href="{{ term.get_absolute_url }}">Back to {{ term }}</a></p>
+</div>
+{% endblock %}

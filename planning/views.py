@@ -34,6 +34,7 @@ from precentor_project.mixins import DeletePageMixin
 from precentor_project.utils import ajax_or_redirect, safe_next
 
 from .forms import (
+    ServiceBatchForm,
     RolePieceForm,
     ServiceForm,
     ServiceRoleForm,
@@ -219,6 +220,18 @@ class ServiceCreateView(PlanningRequiredMixin, CreateView):
         kwargs = super().get_form_kwargs()
         kwargs["instance"] = Service(term=get_object_or_404(own(Term, self.request), pk=self.kwargs["term_pk"]))
         return kwargs
+
+
+@role_required(can_plan)
+def service_batch(request, term_pk):
+    """
+    Add several services to a term at once. Step one asks for the
+    template, type, range and pattern by GET, as it creates nothing; the
+    term is this church's, or not found.
+    """
+    term = get_object_or_404(own(Term, request), pk=term_pk)
+    form = ServiceBatchForm(request.GET or None, term=term)
+    return render(request, "planning/service_batch.html", {"term": term, "form": form})
 
 
 class ServiceDetailView(LoginRequiredMixin, OrganisationScopedMixin, DetailView):
