@@ -679,6 +679,17 @@ def proposing_into(request, service_pk):
     )
 
 
+def new_slot_form(*args):
+    """ServiceRoleForm for a slot made on the way, with its name and kind."""
+    form = ServiceRoleForm(*args, prefix="new")
+    del form.fields["is_not_applicable"]
+    form.fields["role_name"].label = "Name"
+    # The browser mustn't insist on a name when an existing slot is chosen;
+    # the name is only checked, here on the server, for a new one.
+    form.use_required_attribute = False
+    return form
+
+
 @role_required(can_plan)
 def propose_score(request, score_pk):
     """
@@ -692,7 +703,7 @@ def propose_score(request, score_pk):
     if request.GET.get("service"):
         service = proposing_into(request, request.GET["service"])
         slots, chosen, why = slot_choice(service, score)
-        context.update(service=service, slots=slots, chosen=chosen, why=why)
+        context.update(service=service, slots=slots, chosen=chosen, why=why, new_slot_form=new_slot_form())
     return render(request, "planning/propose_score.html", context)
 
 

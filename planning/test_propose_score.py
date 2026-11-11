@@ -131,3 +131,5 @@ class ChooseASlotTests(ProposeFromLibraryTestCase):
         response = self.step_two()
         self.assertIsNone(response.context["chosen"])
         self.assertContains(response, '<option value="new" selected>New slot…</option>', html=True)
+        self.assertContains(response, 'name="new-kind"')
+        self.assertNotContains(response, 'name="new-role_name" required')

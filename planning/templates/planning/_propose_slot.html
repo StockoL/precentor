@@ -14,5 +14,9 @@
             </select>
         </p>
         <p id="propose-slot-why" class="list-row__meta">{{ why }}</p>
+        <fieldset id="propose-new-slot" class="flow">
+            <legend>New slot (only if you chose New slot…)</legend>
+            {{ new_slot_form.as_p }}
+        </fieldset>
     </form>
 </section>
