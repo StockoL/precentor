@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Add several services to {{ term }} — Precentor{% endblock %}
 {% block content %}
 <div class="flow">
@@ -33,4 +34,8 @@
     {% endif %}
     <p><a href="{{ term.get_absolute_url }}">Back to {{ term }}</a></p>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="module" src="{% static 'src/js/service-batch.js' %}"></script>
 {% endblock %}

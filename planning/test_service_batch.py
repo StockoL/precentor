@@ -9,6 +9,7 @@ from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
 
 from accounts.testing import make_organisation, make_user
+from precentor_project.test_browser import PlaywrightTestCase
 from precentor_project.testing import make_slot_template, make_term
 
 from .forms import ServiceBatchForm
@@ -227,3 +228,24 @@ class CreateTests(WithCalendarTestCase):
         self.assertRedirects(self.create(ticked, pattern="sundays_and_solemnities"), self.term.get_absolute_url())
         self.assertEqual(Service.objects.get(date=date(2026, 12, 8)).occasion.name,
                          "The Immaculate Conception of the Blessed Virgin Mary")
+
+
+class BatchBrowserTest(PlaywrightTestCase):
+    def test_select_all_none_and_the_count_follow_the_ticks(self):
+        call_command("load_calendar", stdout=StringIO())
+        self.login_as_conductor()
+        term = make_term(name="Advent 2026", start_date=date(2026, 11, 29), end_date=date(2026, 12, 24))
+        mass = make_slot_template(name="Mass", slots=("Introit", "Kyrie"))
+        Service.objects.create(term=term, date=date(2026, 12, 6), service_type="Mass")
+        self.page.goto(f"/terms/{term.pk}/services/batch/?template={mass.pk}&service_type=&start_date=2026-11-29"
+                       "&end_date=2026-12-24&pattern=sundays")
+        button = "#batch-create"
+        assert self.page.inner_text(button) == "Create 3 services"
+        self.page.click("text=Select none")
+        assert self.page.inner_text(button) == "Create 0 services"
+        self.page.check("#batch-date-2026-12-13")
+        assert self.page.inner_text(button) == "Create 1 service"
+        self.page.click("text=Select all")
+        assert self.page.inner_text(button) == "Create 3 services"
+        # The date that already has a Mass stays as it was.
+        assert self.page.is_disabled("#batch-date-2026-12-06") and not self.page.is_checked("#batch-date-2026-12-06")
