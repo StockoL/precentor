@@ -51,7 +51,7 @@
  *   blocks/service-context.css
  *   utilities/utilities.css
  *
- * Fingerprint: 922dd814234a702bddfd3a0cfbf09c95086396c0368002f730816b08dd1c55b9
+ * Fingerprint: 79657f2b732bfdc60729891e0ad421f594ca607549c3e5e78f0b397863098fe9
  */
 
 /* ---- global/layers.css ---- */
@@ -2378,8 +2378,8 @@
   }
 
   /* Each service's heading sits in an 18rem column, where the app's
-     usual h2 size wrapped "Sunday 20th September 2026 — Choral
-     Evensong" onto four lines. */
+     usual h2 size wrapped a heading such as "Sunday 20th September
+     2026 — Solemn Vespers and Benediction" onto four lines. */
   .music-list h2 {
     font-size: var(--typography-step-1);
     border-block-end: 1px solid var(--colors-border-subtle);

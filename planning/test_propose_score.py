@@ -48,7 +48,7 @@ class ChooseAServiceTests(ProposeFromLibraryTestCase):
 
     def test_services_from_today_on_soonest_first_with_term_and_status(self):
         self.service(-7, "Past Mass")
-        later = self.service(14, "Evensong")
+        later = self.service(14, "Vespers")
         today = self.service(0)
         options = self.client.get(self.url).context["services"]
         self.assertEqual(options, [today, later])

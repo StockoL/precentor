@@ -88,8 +88,8 @@
   }
 
   /* Each service's heading sits in an 18rem column, where the app's
-     usual h2 size wrapped "Sunday 20th September 2026 — Choral
-     Evensong" onto four lines. */
+     usual h2 size wrapped a heading such as "Sunday 20th September
+     2026 — Solemn Vespers and Benediction" onto four lines. */
   .music-list h2 {
     font-size: var(--typography-step-1);
     border-block-end: 1px solid var(--colors-border-subtle);

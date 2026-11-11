@@ -557,7 +557,7 @@ class MusicListLayoutBrowserTest(PlaywrightTestCase):
         )
         for day in (4, 11, 18):
             service = Service.objects.create(
-                term=self.term, date=date(2026, 1, day), service_type="Choral Evensong",
+                term=self.term, date=date(2026, 1, day), service_type="Solemn Vespers",
             )
             role = ServiceRole.objects.create(service=service, role_name="Setting")
             score = make_score(
