@@ -56,6 +56,9 @@ days.
 - **Design:** [`docs/design_system.md`](docs/design_system.md) covers
   the CSS method, the cascade layers, the tokens, the type and the
   liturgical accent.
+- **Early sketches:** [Early design sketches](#early-design-sketches)
+  has the two pages I drew on paper while planning, and what became of
+  each part in the finished app.
 - **Data model:** [`docs/models_plan.md`](docs/models_plan.md) has each
   app's models field by field, and [`docs/erd.mmd`](docs/erd.mmd) is the
   diagram, which GitHub draws.
@@ -100,6 +103,7 @@ The other documents are listed in [§9](#9-supporting-documents).
 - [15. Features and CRUD](#15-features-and-crud)
   - [Validation and feedback](#validation-and-feedback)
 - [16. Design decisions that depart from convention](#16-design-decisions-that-depart-from-convention)
+  - [Early design sketches](#early-design-sketches)
 - [17. Security](#17-security)
 - [18. Running it locally](#18-running-it-locally)
   - [Making the screenshots](#making-the-screenshots)
