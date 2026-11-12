@@ -78,7 +78,7 @@ function buildCombobox(container) {
   const listboxId = `${form.id}-listbox`;
 
   const input = document.createElement("input");
-  input.type = "text";
+  input.type = "search";
   input.className = "score-combobox__input";
   input.setAttribute("aria-label", container.dataset.label);
   input.setAttribute("role", "combobox");
@@ -215,6 +215,10 @@ function buildCombobox(container) {
         choose(filtered[activeIndex]);
       }
     } else if (event.key === "Escape") {
+      // A search box clears its text on Escape by default, which would
+      // empty the chosen score and open the list again; here Escape only
+      // closes the list.
+      event.preventDefault();
       closeList();
     }
   });

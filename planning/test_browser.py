@@ -426,12 +426,17 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
         assert self.page.eval_on_selector(value_sel, "el => el.value") == str(self.score_b.pk)
         self.page.wait_for_function(f"!({open_js})")
 
-        # Escape closes the list without altering the selection.
+        # Escape closes the list without altering the selection. The box
+        # is a search box, so iOS offers no AutoFill bar over the list,
+        # and a browser clears a search box on Escape unless told not to:
+        # the chosen title must stay in it too.
+        assert self.page.eval_on_selector(input_sel, "el => el.type") == "search"
         self.page.click(input_sel)
         self.page.wait_for_function(f"{open_js} && {count_js} === 2")
         self.page.keyboard.press("Escape")
         self.page.wait_for_function(f"!({open_js})")
         assert self.page.eval_on_selector(value_sel, "el => el.value") == str(self.score_b.pk)
+        assert self.page.input_value(input_sel) == f"{self.score_b.title} ({self.score_b.composer})"
 
         # Clicking outside the combobox also closes it.
         self.page.click(input_sel)
