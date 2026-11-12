@@ -763,6 +763,41 @@ which deletes everything in it and every member's account. A privacy
 page, linked from every page's footer, says what's kept and how to have
 it deleted.
 
+**Handing on ownership.** An owner who is leaving or being replaced,
+and can still sign in, opens Members and chooses Make owner beside a
+current Conductor or Librarian. The swap happens in one transaction,
+and the database allows only one owner per church, so there's never
+none or two. The old owner stays on in their own role: the new owner
+can then remove them from Members, which switches their account off and
+keeps their comments, or they can delete their own account, which is
+allowed once they're no longer the owner. A successor who isn't a
+member yet takes two steps: the owner invites them as a Conductor or
+Librarian, they join through the link, and then the owner hands over.
+Ownership can't go straight to an invitation, and a Viewer can't be an
+owner.
+
+**If the owner can't act.** An owner who has left, been dismissed or
+died, or who has lost their password, can't hand over, and nobody else
+in the church can do it for them: only the owner manages members, the
+owner can't be removed or demoted, and with no email nobody can send
+them a reset link. That's the cost of a single owner, and the way back
+is a person rather than a feature. The church writes to me, as the
+site's administrator, from someone with authority over it (the parish
+priest or the chair of the committee, say), naming who should take
+over. I check the request with the church, then run, from my own
+computer against the live database:
+
+```powershell
+python manage.py transfer_ownership --church <id> --to <email>
+```
+
+It uses the same swap as Members, refuses anyone who couldn't be an
+owner, works even if the old owner's account is switched off, and
+prints who held ownership before and after. Then I tell both people.
+The admin pages could do the same in two saves, clearing the old owner
+and then ticking the new one, but the command does it in one step and
+checks the successor first.
+
 **Keeping churches apart.** Every church's scores, terms, services,
 templates, use types, comments and settings carry their organisation,
 and every page looks only within the signed-in person's own. Someone
@@ -1738,6 +1773,12 @@ usual checklists ask for. Each one is deliberate, and this is why.
   would take their comments' authorship with it. A removed member can't
   sign in, but their name stays on what they wrote, and the owner can
   bring them back from the Members page.
+- **A church has exactly one owner, and it's recovered by hand.** More
+  than one would need rules for when owners disagree and for the last
+  one leaving; one keeps "the owner" meaning one person. The cost is
+  that a church whose owner can't act needs the site's administrator,
+  on a written request, as [§5](#5-roles-and-permissions-revisited)
+  describes.
 - **There's no email.** Invitations and reset links are made by the
   owner and passed on by hand, and nobody can reset their own password.
   Precentor has no mail provider, so the usual "Forgot your password?"
