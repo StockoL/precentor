@@ -98,6 +98,30 @@ class ControlHeightBrowserTest(PlaywrightTestCase):
         assert input_height == button_height == 40, (input_height, button_height)
 
 
+class DateInputBrowserTest(PlaywrightTestCase):
+    """A date field keeps to its column like the fields around it, on a
+    phone and under the same measure on a laptop. iOS's own date control,
+    which ran wider and centred its value, can't be drawn here, so that
+    part is checked by hand on an iPhone (testing record, row M70)."""
+
+    MEASURE = """() => {
+        const name = document.querySelector('#id_name').getBoundingClientRect();
+        return [...document.querySelectorAll('input[type=date]')].map(d => {
+            const box = d.getBoundingClientRect();
+            return [Math.round(box.left) - Math.round(name.left), Math.round(box.width) - Math.round(name.width)];
+        });
+    }"""
+
+    def test_a_date_lines_up_with_the_other_fields_on_a_phone_and_a_laptop(self):
+        self.login_as_conductor()
+        for width in (320, 1280):
+            with self.subTest(width=width):
+                self.page.set_viewport_size({"width": width, "height": 800})
+                self.page.goto("/terms/add/")
+                self.page.wait_for_selector("input[type=date]")
+                self.assertEqual(self.page.evaluate(self.MEASURE), [[0, 0], [0, 0]])
+
+
 class CheckboxBrowserTest(PlaywrightTestCase):
     def test_checkbox_keeps_its_natural_size(self):
         from datetime import date

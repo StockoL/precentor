@@ -51,7 +51,7 @@
  *   blocks/service-context.css
  *   utilities/utilities.css
  *
- * Fingerprint: 79657f2b732bfdc60729891e0ad421f594ca607549c3e5e78f0b397863098fe9
+ * Fingerprint: f6eb7c42a5105e352fe48cd2d85167217e0e7d6f698ccc3673b1c5f5ea070bf4
  */
 
 /* ---- global/layers.css ---- */
@@ -1174,6 +1174,22 @@
     /* A step below body text, like buttons, but never under 16px:
        iOS zooms the page into any form control with smaller text. */
     font-size: max(1rem, var(--typography-step--1));
+  }
+
+  /* iOS draws a date input as its own control, with a minimum width of
+     its own and its value centred, so it ran wider than the fields
+     around it. Letting it shrink, capping it at the column and the
+     usual measure, and starting its text at the start (inside the
+     control, where iOS centres it) keeps a date in line with them. */
+  form input[type="date"] {
+    min-inline-size: 0;
+    max-inline-size: min(100%, var(--layout-measure, 60ch));
+    box-sizing: border-box;
+    text-align: start;
+  }
+
+  form input[type="date"]::-webkit-date-and-time-value {
+    text-align: start;
   }
 
   /* Single-line controls share the button height, so a field and its

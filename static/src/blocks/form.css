@@ -68,6 +68,22 @@
     font-size: max(1rem, var(--typography-step--1));
   }
 
+  /* iOS draws a date input as its own control, with a minimum width of
+     its own and its value centred, so it ran wider than the fields
+     around it. Letting it shrink, capping it at the column and the
+     usual measure, and starting its text at the start (inside the
+     control, where iOS centres it) keeps a date in line with them. */
+  form input[type="date"] {
+    min-inline-size: 0;
+    max-inline-size: min(100%, var(--layout-measure, 60ch));
+    box-sizing: border-box;
+    text-align: start;
+  }
+
+  form input[type="date"]::-webkit-date-and-time-value {
+    text-align: start;
+  }
+
   /* Single-line controls share the button height, so a field and its
      submit button line up. Textareas, checkboxes and radios keep their
      natural size. */
