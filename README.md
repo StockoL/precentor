@@ -1770,6 +1770,18 @@ usual checklists ask for. Each one is deliberate, and this is why.
   rest of the site uses. `@view-transition` can't be limited to some
   pages, so it can't live in the shared file, and without it Chromium
   held the page after signing in frozen for several seconds.
+- **Some of the CSS is newer than the validator.** At the CSS level 3
+  profile, the W3C CSS Validator reports eight errors, each a feature
+  current browsers support but it doesn't know yet: `@container` and
+  `container-type`, so a music list entry lays itself out by its own
+  column's width rather than the window's; `@view-transition`, its two
+  pseudo-elements and `view-transition-name`, for the cross-fade
+  between pages with the navigation held still; and `pointer-events`,
+  which stops a disabled button reacting to the pointer and sits
+  outside the level 3 profile. Its warnings are for vendor prefixes
+  kept on purpose, custom properties it can't check, and `clip` in the
+  usual pattern for text only screen readers read. Each is listed in
+  [`docs/testing.md`](docs/testing.md#2-html-and-css-validation).
 
 ### Early design sketches
 
