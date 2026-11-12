@@ -4,7 +4,9 @@ This document covers the visual design system: how it's structured,
 why it follows CUBE CSS, and the reasoning behind each layer. See the
 main [README](../README.md) for domain and data decisions, and
 [`docs/blocks_backlog.md`](blocks_backlog.md) for how each Block was
-picked out from repetition I'd actually seen, not guessed at.
+picked out from repetition I'd actually seen, not guessed at. The two
+pages I sketched on paper before any of it was built are in the README's
+[Early design sketches](../README.md#early-design-sketches).
 
 ## Contents
 
