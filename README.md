@@ -2069,16 +2069,16 @@ each change before it was committed.
 tests were run on 10 November 2026, and every check again the same day
 at `8908668`, each with the checker's own screenshots. In short:
 
-- **[1,014 automated tests](docs/testing.md#4-automated-tests)** cover the models, views, forms, permissions,
+- **[1,015 automated tests](docs/testing.md#4-automated-tests)** cover the models, views, forms, permissions,
   each church's own data, the import and export, and the liturgical
-  calendar and its chants. 72 of them are browser tests, which start a
+  calendar and its chants. 73 of them are browser tests, which start a
   real server and drive Chromium through Playwright, so the JavaScript
   is tested too.
-- **[Manual tests](docs/testing.md#5-manual-tests):** 70 rows covering every
+- **[Manual tests](docs/testing.md#5-manual-tests):** 71 rows covering every
   feature, grouped by feature. I carried out 69 in Google Chrome, with
   their results and screenshots beside them. Six failed and were fixed,
-  each with its commit. The 70th, date fields on an iPhone, waits for
-  the phone.
+  each with its commit. The last two, date fields and the score search
+  on an iPhone, wait for the phone.
 - **[Widths and browsers](docs/testing.md#6-responsiveness-usability-and-the-keyboard):** 25 pages at 320, 375, 768, 1024 and 1280
   pixels in Chromium, Firefox and WebKit, with nothing wider than the
   window and no console errors; the keyboard alone; dark mode, with
