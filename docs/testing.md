@@ -4,15 +4,23 @@ This covers the automated tests, the checks I ran on the code, the
 manual tests, and the bugs found along the way. Each check says what I
 used, what it found and whether that's resolved.
 
-Everything here was run again on 10 November 2026, on a local copy of
-the site with the invented demo church. The manual tests were run
-between commits `61f3790` and `b500e3f`, with rows [M59](#m59) and [M60](#m60) added
-later the same day at `4746a58`, M61 to M64 at `59e3469`, M65 at
-`b0fafbf`, M66 at `823ebe2`, M67 and M68 at `89d33a9`, M69 at `3ed02e7`, and M70 and M71 on my iPhone on 12 November. The checks in [sections 1 to 3](#1-checks-run-findings-and-how-each-was-resolved), the widths and browsers, and
-the contrast were all run again at `8908668`, with the checkers' own
-screenshots; the commits after it change only the documentation, the
-ESLint settings and a screenshot tool. The manual tests
-were carried out in Google Chrome 157 on Windows 11, driven by
+Everything here was run on a local copy of the site with the invented
+demo church. The manual tests were run on 10 and 11 November 2026: on
+10 November between commits `61f3790` and `b500e3f`, with rows [M59](#m59) and
+[M60](#m60) added later that day at `4746a58`, M61 to M64 at `59e3469` and M65
+at `b0fafbf`; on 11 November M66 at `823ebe2`, M67 and M68 at `89d33a9`
+and M69 at `3ed02e7`. M70 and M71 were run on my iPhone on 12 November.
+The checks in [sections 1 to 3](#1-checks-run-findings-and-how-each-was-resolved), the widths and browsers, and the
+contrast were all run at `8908668` on 10 November, with the checkers'
+own screenshots. The code has changed since (adding several services,
+proposing from the library, the iPhone fixes and a command for
+handing on ownership), so I ran the checks again on 12 November: the
+HTML checker on every page, the CSS validator and ESLint at `04fd132`,
+and the tests, flake8 and the deployment, migration, debugging and
+tracked-file checks at `46dbe45`, which added the command and changed
+no page, stylesheet or script; [section 1](#1-checks-run-findings-and-how-each-was-resolved) gives both results where they
+differ. Lighthouse, the widths and the contrast weren't run again. The
+manual tests were carried out in Google Chrome 157 on Windows 11, driven by
 Playwright and checked by me row by row, or by the automated test
 named. Playwright's own Chromium 149 hangs on cross-document page
 transitions, which real Chrome and Edge don't, so it was used only for
@@ -48,17 +56,17 @@ the automated browser tests, where every page is opened by its address.
 
 ## 1. Checks run, findings and how each was resolved
 
-| Check | What I used | What it found on 10 November | Resolved? |
+| Check | What I used | What it found on 10 November, and on 12 November | Resolved? |
 | ----- | ----------- | ---------------------------- | --------- |
-| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 1,015 tests, all passing, at `54f2288`; 944 at `7fd2e74`, after the ten that tested copying the old columns went with them ([section 4](#4-automated-tests)); 954 at `8908668`, the run in my own terminal ([Check figure 1](#check-figure-1)) | Nothing to resolve. There were 553 at submission |
-| Deployment settings | `python manage.py check --deploy` with `DEBUG` off and the host name Render sets | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for ([Check figure 2](#check-figure-2)) | Nothing to resolve |
-| Migrations | `python manage.py makemigrations --check --dry-run`, and a rehearsal of the merge on a copy of the live database ([`merge_record.md`](merge_record.md)) | No missing migrations ([Check figure 2](#check-figure-2)). On the copy, all 28 new migrations ran, `check_copied_data` found everything copied, and all 177 pages opened for every church | Nothing to resolve |
-| Python style | flake8 7.4.1 with the settings in `.flake8` (line length 120, `venv` and migrations left out) | No findings ([Check figure 2](#check-figure-2)) | At submission: two unused imports, a blank line and an escape, fixed in `1f2e618`; more in `722ffc4`; the 16 long lines, the variable `l` and the lambda left then were cleared in `86ad9e8` |
-| Leftover debugging | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app. The scripts in `tools/` print what they've done, on purpose | Nothing to resolve |
-| Files that shouldn't be tracked | `git ls-files`, searched for `.env`, database files, keys, `venv` and uploaded media; `git grep` for literal secret keys and passwords | None tracked. The only passwords in the code are test values and the demo church's, used for screenshots | `*.sqlite3` added to `.gitignore` in `442ef09` |
-| HTML validation | The W3C's Nu HTML Checker 26.11.9 on my computer through [`tools/validate_html.py`](../tools/validate_html.py), every page; then the 25 main pages on the W3C's online checker, 26.11.10 ([section 2](#2-html-and-css-validation)) | 75 pages, no errors. 30 warnings, all `role="list"`. Online, no errors on any of the 25, and 27 warnings, all `role="list"` | The `role="list"` is deliberate ([README §16](../README.md#16-design-decisions-that-depart-from-convention)). Errors fixed earlier: the Settings colour picker (`7abd14c`) and a form inside a `<span>` on the service page (`5866886`) |
-| CSS validation | [W3C CSS Validator](https://jigsaw.w3.org/css-validator/), CSS level 3 profile, on the two stylesheets the site serves, which hold all 47 source files in `static/src/` ([section 2](#2-html-and-css-validation)) | 8 errors, all CSS the validator doesn't know yet: `@container` and `container-type` (music list), `@view-transition` and its pseudo-elements (global styles and the sign-in pages' stylesheet), `view-transition-name` (navigation), and `pointer-events`, which is outside the CSS3 profile. 13 warnings, on vendor prefixes, custom properties it doesn't check, and `clip` | Nothing to fix: each is supported by current browsers, and the warnings are explained in [section 2](#2-html-and-css-validation) |
-| JavaScript | [ESLint](https://eslint.org/) 8.57 with its recommended rules, for browser ES modules (the settings in `.eslintrc.json`), over all 14 files in `static/src/js/` | No errors and no warnings ([Check figure 2](#check-figure-2)) | Nothing to resolve. The JavaScript is also exercised by the browser tests |
+| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 1,020 tests, all passing, at `46dbe45`, the last change to the code; 944 at `7fd2e74`, after the ten that tested copying the old columns went with them ([section 4](#4-automated-tests)); 954 at `8908668`, the run in my own terminal ([Check figure 1](#check-figure-1)) | Nothing to resolve. There were 553 at submission |
+| Deployment settings | `python manage.py check --deploy` with `DEBUG` off and the host name Render sets | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for ([Check figure 2](#check-figure-2)). The same on 12 November | Nothing to resolve |
+| Migrations | `python manage.py makemigrations --check --dry-run`, and a rehearsal of the merge on a copy of the live database ([`merge_record.md`](merge_record.md)) | No missing migrations ([Check figure 2](#check-figure-2)), and none on 12 November. On the copy, all 28 new migrations ran, `check_copied_data` found everything copied, and all 177 pages opened for every church | Nothing to resolve |
+| Python style | flake8 7.4.1 with the settings in `.flake8` (line length 120, `venv` and migrations left out) | No findings ([Check figure 2](#check-figure-2)), and none on 12 November | At submission: two unused imports, a blank line and an escape, fixed in `1f2e618`; more in `722ffc4`; the 16 long lines, the variable `l` and the lambda left then were cleared in `86ad9e8` |
+| Leftover debugging | `git grep` for `print(`, `breakpoint(`, `TODO`, `FIXME` and commented-out code, outside `venv` and migrations | None in the app, on both dates. The scripts in `tools/` and the three Node build scripts print what they've done, on purpose | Nothing to resolve |
+| Files that shouldn't be tracked | `git ls-files`, searched for `.env`, database files, keys, `venv` and uploaded media; `git grep` for literal secret keys and passwords | None tracked, on both dates. The only passwords in the code are test values and the demo church's, used for screenshots | `*.sqlite3` added to `.gitignore` in `442ef09` |
+| HTML validation | The W3C's Nu HTML Checker 26.11.9 on my computer through [`tools/validate_html.py`](../tools/validate_html.py), every page; then the 25 main pages on the W3C's online checker, 26.11.10 ([section 2](#2-html-and-css-validation)) | 75 pages, no errors. 30 warnings, all `role="list"`. Online, no errors on any of the 25, and 27 warnings, all `role="list"`. On 12 November, on my computer: 77 pages, still no errors, and the same 30 warnings | The `role="list"` is deliberate ([README §16](../README.md#16-design-decisions-that-depart-from-convention)). Errors fixed earlier: the Settings colour picker (`7abd14c`) and a form inside a `<span>` on the service page (`5866886`) |
+| CSS validation | [W3C CSS Validator](https://jigsaw.w3.org/css-validator/), CSS level 3 profile, on the two stylesheets the site serves, which hold all 47 source files in `static/src/` ([section 2](#2-html-and-css-validation)) | 8 errors, all CSS the validator doesn't know yet: `@container` and `container-type` (music list), `@view-transition` and its pseudo-elements (global styles and the sign-in pages' stylesheet), `view-transition-name` (navigation), and `pointer-events`, which is outside the CSS3 profile. 13 warnings, on vendor prefixes, custom properties it doesn't check, and `clip`. On 12 November `precentor.css` again: the same 7 errors, and 14 warnings, the new one the date fields' `::-webkit-date-and-time-value` | Nothing to fix: each is supported by current browsers, and the warnings are explained in [section 2](#2-html-and-css-validation) |
+| JavaScript | [ESLint](https://eslint.org/) 8.57 with its recommended rules, for browser ES modules (the settings in `.eslintrc.json`), over all the files in `static/src/js/` | No errors and no warnings in the 14 files ([Check figure 2](#check-figure-2)), nor in the 16 on 12 November | Nothing to resolve. The JavaScript is also exercised by the browser tests |
 | Lighthouse | Lighthouse 12.2.1 in Chrome 157, nine pages, desktop and mobile ([section 3](#3-lighthouse-scores)) | Accessibility, best practices and SEO 100 on every page; performance 100 on desktop, 94 to 99 on mobile | At submission a missing favicon and meta description cost points: fixed in `0b642e4` and `7b6fab4`. Mobile speed improved in `49ec234`, `e55fd08`, `094f805` and `791158d` |
 | Widths and browsers | [`tools/check_viewports.py`](../tools/check_viewports.py): 25 pages at 320, 375, 768, 1024 and 1280 pixels in Chromium, Firefox and WebKit ([section 6](#6-responsiveness-usability-and-the-keyboard)) | 375 page loads, nothing wider than the window, no console errors | At submission the score form was 3 pixels too wide at 320, fixed in `6bf1062` |
 | Text contrast | Every visible piece of text on the 25 pages, measured against its background in light and dark ([row R05](#r05)) | All 1,424 meet WCAG AA in both; the lowest ratios are 4.83 in light and 5.7 in dark | Nothing to resolve |
@@ -102,6 +110,10 @@ ten minutes. A new page is checked without being added to a list.
 75 pages, **no errors**. The 30 warnings are all the same: "the list role
 is unnecessary", on lists that keep `role="list"` on purpose (Safari stops
 announcing a list as a list once its bullets are removed; [README §16](../README.md#16-design-decisions-that-depart-from-convention)).
+On 12 November, at `04fd132`, I ran it again with the same checker after
+the pages added since: 77 pages, still no errors, and the same 30
+warnings on the same pages. Add several services and proposing a score
+from its page have none.
 Routes that aren't HTML pages weren't sent: the crest image, three CSV
 downloads, and six actions that only accept a form being posted.
 
@@ -263,6 +275,10 @@ doesn't know yet: `@view-transition` and its two pseudo-elements, which
 it can't parse, `view-transition-name`, `@container` and
 `container-type`, and `pointer-events`, which is outside the level 3
 profile. Seven are in `precentor.css`, one in `no-page-transition.css`.
+On 12 November, after the rule for date fields, I sent `precentor.css`
+again: the same seven errors, and one more warning, for
+`::-webkit-date-and-time-value`, which starts a date at the left in
+Safari like the text in the fields around it.
 
 The 13 warnings are about choices made on purpose. Two are the
 `text-size-adjust` prefixes that stop a phone enlarging text on its own,
@@ -391,7 +407,7 @@ _Check figure 7. The lowest score: a service on a simulated phone._
 
 ## 4. Automated tests
 
-The suite has 1,015 tests, run on 12 November 2026 at `54f2288`;
+The suite has 1,020 tests, run on 12 November 2026 at `46dbe45`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
@@ -399,6 +415,7 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | ----------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | `accounts/tests.py`                       | 141   | Users, the database rules on accounts, the roles table, sign-in, sign-up, invitations, the members page, roles, removing and restoring people, ownership, reset links, changing your own password, the limits on wrong passwords and on registering, deleting your own account and deleting the church |
 | `accounts/test_browser.py`                | 2     | The Copy link button, and what happens when the browser refuses the clipboard |
+| `accounts/test_transfer_ownership.py`     | 5     | The command that hands on ownership when the owner can't: the swap, a switched-off owner, a church with no owner, and each refusal |
 | `comments/tests.py`                       | 34    | Adding, replying to, closing and deleting comments; the Inbox; each church's own comments, and comments kept as "A former member" |
 | `comments/test_browser.py`                | 3     | Comment threads, deleting a comment, and closed threads as a Viewer sees them, in the browser |
 | `core/tests.py`                           | 34    | Settings, the crest upload and processing, the crest's address, the music list arrangement and the repeat window, each church's own settings |

@@ -2066,10 +2066,12 @@ each change before it was committed.
 ## 22. Testing
 
 [`docs/testing.md`](docs/testing.md) has the full record. The manual
-tests were run on 10 November 2026, and every check again the same day
-at `8908668`, each with the checker's own screenshots. In short:
+tests were run on 10 and 11 November 2026, and the last two on my
+iPhone on 12 November. Every check was run again on 10 November at
+`8908668`, each with the checker's own screenshots, and the checks on
+the code once more on 12 November, at `04fd132` and `46dbe45`. In short:
 
-- **[1,015 automated tests](docs/testing.md#4-automated-tests)** cover the models, views, forms, permissions,
+- **[1,020 automated tests](docs/testing.md#4-automated-tests)** cover the models, views, forms, permissions,
   each church's own data, the import and export, and the liturgical
   calendar and its chants. 73 of them are browser tests, which start a
   real server and drive Chromium through Playwright, so the JavaScript
@@ -2087,7 +2089,7 @@ at `8908668`, each with the checker's own screenshots. In short:
   Pro in Safari and my PC in Chrome, on the live site on 12 November
   2026, with screenshots from each.
 - **[Validation](docs/testing.md#2-html-and-css-validation):** every page's HTML,
-  75 in all, with no errors, and the 25 main pages again on the W3C's
+  77 in all, with no errors, and the 25 main pages again on the W3C's
   online checker; the CSS, where the only errors are newer CSS the
   validator doesn't know yet; ESLint and flake8 with no findings.
 - **[Lighthouse](docs/testing.md#3-lighthouse-scores):** accessibility, best
