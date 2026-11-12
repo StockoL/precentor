@@ -2075,16 +2075,17 @@ at `8908668`, each with the checker's own screenshots. In short:
   real server and drive Chromium through Playwright, so the JavaScript
   is tested too.
 - **[Manual tests](docs/testing.md#5-manual-tests):** 71 rows covering every
-  feature, grouped by feature. I carried out 69 in Google Chrome, with
-  their results and screenshots beside them. Six failed and were fixed,
-  each with its commit. The last two, date fields and the score search
-  on an iPhone, wait for the phone.
+  feature, grouped by feature. I carried out 69 in Google Chrome and the
+  last two on my iPhone, with their results and screenshots beside
+  them. Six failed and were fixed, each with its commit; a seventh,
+  date fields on an iPhone, is kept as a cosmetic known bug.
 - **[Widths and browsers](docs/testing.md#6-responsiveness-usability-and-the-keyboard):** 25 pages at 320, 375, 768, 1024 and 1280
   pixels in Chromium, Firefox and WebKit, with nothing wider than the
   window and no console errors; the keyboard alone; dark mode, with
   every piece of text meeting WCAG AA contrast; and without JavaScript.
-- **[Real devices](docs/testing.md#real-devices):** my iPhone, iPad and PC, on
-  the live site.
+- **[Real devices](docs/testing.md#real-devices):** my iPhone 14 Pro and iPad
+  Pro in Safari and my PC in Chrome, on the live site on 12 November
+  2026, with screenshots from each.
 - **[Validation](docs/testing.md#2-html-and-css-validation):** every page's HTML,
   75 in all, with no errors, and the 25 main pages again on the W3C's
   online checker; the CSS, where the only errors are newer CSS the
@@ -2093,7 +2094,10 @@ at `8908668`, each with the checker's own screenshots. In short:
   practices and SEO 100 on every page checked, on desktop and mobile;
   performance 100 on desktop and 94 to 99 on a simulated phone.
 - **[Bugs found and fixed](docs/testing.md#7-bugs-found-and-fixed),** each with
-  its commit, and the three known issues, none in the app itself.
+  its commit, and the five known issues: three in a test and the testing
+  tools, and two on an iPhone, where date fields run wider than the
+  fields around them and the keyboard leaves the score search's list the
+  top half of the screen.
 
 ---
 

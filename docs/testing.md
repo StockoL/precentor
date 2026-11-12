@@ -8,7 +8,7 @@ Everything here was run again on 10 November 2026, on a local copy of
 the site with the invented demo church. The manual tests were run
 between commits `61f3790` and `b500e3f`, with rows [M59](#m59) and [M60](#m60) added
 later the same day at `4746a58`, M61 to M64 at `59e3469`, M65 at
-`b0fafbf`, M66 at `823ebe2`, M67 and M68 at `89d33a9`, M69 at `3ed02e7`, and M70 and M71, written at `5bfe255` and `54f2288`, are still to be run on an iPhone. The checks in [sections 1 to 3](#1-checks-run-findings-and-how-each-was-resolved), the widths and browsers, and
+`b0fafbf`, M66 at `823ebe2`, M67 and M68 at `89d33a9`, M69 at `3ed02e7`, and M70 and M71 on my iPhone on 12 November. The checks in [sections 1 to 3](#1-checks-run-findings-and-how-each-was-resolved), the widths and browsers, and
 the contrast were all run again at `8908668`, with the checkers' own
 screenshots; the commits after it change only the documentation, the
 ESLint settings and a screenshot tool. The manual tests
@@ -531,8 +531,8 @@ _Test figure 3. M33: what an import brought in, listed, and what it skipped._
 | <a id="m12"></a>M12  | Edit a service             | Edit service, change the type, save                                                                           | The new type on the service page                                                                | Pass: the heading changed from Sung Mass to Solemn Mass, with the date |
 | <a id="m63"></a>M63  | Term and service dates     | New term ending the day before it starts; a service on 25 December in Advent 2026 (29 November to 24 December); Advent to end on 23 December; then, with a service already dated 27 December, rename Advent and leave its dates | Each refused with a plain message beside the date; the rename saved | Pass, since `128c3a0`, `c56b704`, `a00e7b7` and `68721ad`: "A term can't end before it starts."; "Advent 2026 runs from Sun 29 Nov 2026 to Thu 24 Dec 2026, so the service needs a date in between."; "2 services would fall outside these dates, the first on Thu 24 Dec 2026. Move or delete them first."; the renamed term saved |
 | <a id="m69"></a>M69  | Several services at once | On Advent 2026, Add several services; try From 28 November; then Vespers, Solemn Vespers, Sundays and solemnities; in the preview untick 20 December, Select none, Select all, untick it again and create; send a second tab opened on the same preview; open one of the services made; on the 1962 term, look at the patterns and pick; without JavaScript, pick one date and create; as the Viewer, open the term and the page; both steps at 320 pixels | The range starts as the term's and is refused outside it; the preview lists the Sundays and the Immaculate Conception, ticked, with their names and the count; the count follows the ticks; each service made has its occasion and the template's slots; dates already made are skipped and said; 1962 names its second pattern for first-class days; picking ticks nothing; it works without JavaScript; the Viewer is refused; nothing wider than the screen | Pass, since `684e6ef` to `3ed02e7`: the range started 29 Nov to 24 Dec, and 28 November gave "Advent 2026 runs from Sun 29 Nov 2026 to Thu 24 Dec 2026, so the dates need to be in between."; five dates ticked, from "Sun 29 Nov: First Sunday of Advent" to "Tue 8 Dec: The Immaculate Conception of the Blessed Virgin Mary", "Create 5 services" ([Test figures 4 to 7](#test-figure-4)); the count went to 4, 0, 5 and 4; "Created 4 services."; the second tab gave "Created 1 service; skipped 4 that already exist."; the 29 November service had the occasion First Sunday of Advent and the slots Psalms, Hymn, Magnificat and Marian antiphon; the 1962 term offered "Sundays and first-class days", and picking listed 22 dates under November and December, none ticked; without JavaScript there was no Select all, and one date ticked gave "Created 1 service." (the button's count stays as served); the Viewer had no button and got 403; both steps fitted at 320. What the test made was deleted afterwards |
-| <a id="m70"></a>M70  | Date fields on an iPhone | On an iPhone in Safari, open Add several services, New term, Edit service, New notice and a score's Edit page | Each date field (From and To; the term's start and end; the service's and the notice's date; Last sung) as wide as the fields around it, inside its column, with its date at the left | Not yet run: it needs the phone, as Playwright's WebKit on Windows doesn't draw iOS's own date control. Before `5bfe255`, From and To on Add several services ran wider than the other fields on my iPhone, with their dates centred. In WebKit emulating an iPhone at 320 and 393 pixels, every date field lined up with the others both before and after the fix, and the browser test `test_a_date_lines_up_with_the_other_fields_on_a_phone_and_a_laptop` checks that at 320 and 1280 |
-| <a id="m71"></a>M71  | The score search on an iPhone | On an iPhone in Safari, open a service with a slot that takes a score, scroll until its search box is in the lower half of the screen, tap it and type a letter | No AutoFill bar above the keyboard; the list ends above the keyboard and scrolls inside itself, however many scores match; choosing a score fills the box and closes the list | Not yet run: it needs the phone. Before `7cbd632` and `54f2288`, the keyboard hid about half the list on my iPhone. The browser test `test_the_list_stops_at_the_bottom_of_what_can_be_seen` checks the list ends inside a short window and grows when the window does. If the box sits less than about two scores' height above the keyboard, the list keeps that height and still runs under it |
+| <a id="m70"></a>M70  | Date fields on an iPhone | On an iPhone in Safari, open Add several services, New term, Edit service, New notice and a score's Edit page | Each date field (From and To; the term's start and end; the service's and the notice's date; Last sung) as wide as the fields around it, inside its column, with its date at the left | Fail, accepted as cosmetic, on my iPhone on 12 November: From and To still ran past the right edge of the fields above them after `5bfe255`, though every date was readable, nothing was cut off and the date picker worked ([Test figure 40](#test-figure-40), [Known bugs](#known-bugs)). In WebKit emulating an iPhone at 320 and 393 pixels, every date field lined up with the others, and the browser test `test_a_date_lines_up_with_the_other_fields_on_a_phone_and_a_laptop` checks that at 320 and 1280 |
+| <a id="m71"></a>M71  | The score search on an iPhone | On an iPhone in Safari, open a service with a slot that takes a score, scroll until its search box is in the lower half of the screen, tap it and type a letter | No AutoFill bar above the keyboard; the list ends above the keyboard and scrolls inside itself, however many scores match; choosing a score fills the box and closes the list | Pass on my iPhone on 12 November, after `7cbd632` and `54f2288`: no AutoFill bar, only Safari's form bar, and the list stopped above the keyboard, showing four scores at a time and scrolling inside itself ([Test figure 34](#test-figure-34)). Before them, the keyboard hid about half the list. The browser test `test_the_list_stops_at_the_bottom_of_what_can_be_seen` checks the list ends inside a short window and grows when the window does. If the box sits less than about two scores' height above the keyboard, the list keeps that height and still runs under it |
 
 <a id="test-figure-4"></a>
 
@@ -839,38 +839,173 @@ _Test figure 31. R05: Settings in dark mode._
 
 ### Real devices
 
-These were checked by me on the live site after the deploy, on my own
-phone and tablet and on the PC I built Precentor on: signing in,
-Terms, a service, the library, the music list and the pew sheet.
+I checked these on the live site on 12 November 2026, on my own phone
+and tablet and on the PC I built Precentor on, after the deploy of
+`c785009`. The screenshots are from the devices themselves; names and
+email addresses are blurred. The iPhone and iPad were in dark mode, as
+the PC was for Members and Invite someone.
 
-| Device | Browser | Width | What was checked | Result | Screenshot |
-| ------ | ------- | ----- | ---------------- | ------ | ---------- |
-| iPhone 14 Pro, iOS 27.0.1 | Safari | 393 points | Signing in, Terms, a service, the library, the music list, the pew sheet | Pass | [Test figure 32](#test-figure-32) |
-| iPad Pro 12.9-inch (3rd generation), iPadOS 26.7.2 | Safari | 1024 points | The same | Pass | [Test figure 33](#test-figure-33) |
-| PC, Windows 11 Home 26H2 | Chrome | 1920 pixels | The same | Pass | [Test figure 34](#test-figure-34) |
-
-The screenshots aren't from the devices themselves. They show the demo
-church's Sung Mass at each device's size, taken with Playwright: in
-WebKit, the engine Safari uses, for the iPhone and the iPad, and in
-Chrome for the PC.
+| Device | Browser | Width | What was checked | Result | Screenshots |
+| ------ | ------- | ----- | ---------------- | ------ | ----------- |
+| iPhone 14 Pro, iOS 27.0.1 | Safari | 393 points | Terms, a service, the score search with the keyboard up, the library, the music list, the pew sheet, removing a slot, proposing from the library, adding several services | Pass on 12 November, with the two iPhone issues under [Known bugs](#known-bugs) | Test figures [32](#test-figure-32), [33](#test-figure-33), [34](#test-figure-34), [35](#test-figure-35), [36](#test-figure-36), [37](#test-figure-37), [38](#test-figure-38), [39](#test-figure-39), [40](#test-figure-40) |
+| 12.9-inch iPad Pro (3rd generation), iPadOS 26.7.2 | Safari | 1024 points | Signing in, Terms, a term, a service, adding several services and its dates | Pass on 12 November | Test figures [41](#test-figure-41), [42](#test-figure-42), [43](#test-figure-43), [44](#test-figure-44), [45](#test-figure-45), [46](#test-figure-46) |
+| PC, Windows 11 Home 26H2 | Chrome | 1920 pixels | Signing in, Terms, a term before and after adding several services, a service, the pew sheet, the library, a score, proposing from the library, Members, inviting someone | Pass on 12 November | Test figures [47](#test-figure-47), [48](#test-figure-48), [49](#test-figure-49), [50](#test-figure-50), [51](#test-figure-51), [52](#test-figure-52), [53](#test-figure-53), [54](#test-figure-54), [55](#test-figure-55), [56](#test-figure-56), [57](#test-figure-57) |
 
 <a id="test-figure-32"></a>
 
-![A service page at the iPhone 14 Pro's size: the menu, the Third Sunday of Advent, Sung Mass on Sun 13 Dec 2026 with its buttons stacked, its term, status and occasion, and the first slot starting](screenshots/testing/d09-iphone-14-pro.png)
+![Terms in dark colours on an iPhone: Michaelmas 2026, starting in 3 days, with its progress bar and next service, and Lent with no services yet](screenshots/testing/d09-iphone-14-pro-terms.png)
 
-_Test figure 32. D09: a service at the iPhone 14 Pro's size, 393 points wide._
+_Test figure 32. D09: Terms. iPhone 14 Pro, iOS 27.0.1, Safari, dark mode._
 
 <a id="test-figure-33"></a>
 
-![The same service page at the 12.9-inch iPad Pro's size, with the heading and its buttons on one line and the Introit, Kyrie and Gradual slots below](screenshots/testing/d09-ipad-pro-12-9.png)
+![A service's Introit slot on an iPhone: its kind, Move down, the kind menu and Change kind, the confirmed Adorate Deum, and the search box, reference box and two Propose buttons one under another](screenshots/testing/d09-iphone-14-pro-service.png)
 
-_Test figure 33. D09: the same at the 12.9-inch iPad Pro's size, 1024 points wide._
+_Test figure 33. D09: a service's first slot. iPhone 14 Pro, iOS 27.0.1, Safari._
 
 <a id="test-figure-34"></a>
 
-![The same service page on a 1920 by 1080 screen, the content centred with space either side](screenshots/testing/d09-pc-1920.png)
+![The score search open on an iPhone with the keyboard up: four scores under Other scores, the list ending above the keyboard and Safari's form bar](screenshots/testing/d09-iphone-14-pro-propose-search-keyboard.png)
 
-_Test figure 34. D09: the same on a 1920 by 1080 screen._
+_Test figure 34. D09: the score search with the keyboard up: the list stops above the keyboard and scrolls inside itself ([row M71](#m71)). iPhone 14 Pro, iOS 27.0.1, Safari._
+
+<a id="test-figure-35"></a>
+
+![The library on an iPhone: 21 scores, the table scrolled sideways inside its own frame to show the Title column](screenshots/testing/d09-iphone-14-pro-library.png)
+
+_Test figure 35. D09: the library, its table scrolled sideways inside its frame. iPhone 14 Pro, iOS 27.0.1, Safari._
+
+<a id="test-figure-36"></a>
+
+![Michaelmas 2026's music list on an iPhone, under the church's crest: the Mass of Sunday 15th November, slot by slot](screenshots/testing/d09-iphone-14-pro-music-list.png)
+
+_Test figure 36. D09: the music list. iPhone 14 Pro, iOS 27.0.1, Safari._
+
+<a id="test-figure-37"></a>
+
+![The pew sheet for Mass on Sunday 15 November on an iPhone: the crest, the celebration, and each slot's music under its heading](screenshots/testing/d09-iphone-14-pro-pew-sheet.png)
+
+_Test figure 37. D09: the pew sheet. iPhone 14 Pro, iOS 27.0.1, Safari._
+
+<a id="test-figure-38"></a>
+
+![The dialog for removing the Introit on an iPhone, saying its proposed piece and comments go with it, with Cancel focused](screenshots/testing/d09-iphone-14-pro-remove-dialog.png)
+
+_Test figure 38. D09: removing a slot: the confirmation dialog. iPhone 14 Pro, iOS 27.0.1, Safari._
+
+<a id="test-figure-39"></a>
+
+![Proposing Missa Pour ung plaisir from its own page on an iPhone: the Service menu, Show its slots and a link back to the score](screenshots/testing/d09-iphone-14-pro-propose-from-library.png)
+
+_Test figure 39. D09: proposing a score from its own page. iPhone 14 Pro, iOS 27.0.1, Safari._
+
+<a id="test-figure-40"></a>
+
+![Add several services to Lent on an iPhone: Template, Service type, From and To, the From and To boxes running further right than the two above, and the three date choices](screenshots/testing/d09-iphone-14-pro-add-several-services.png)
+
+_Test figure 40. D09: Add several services. From and To run past the right edge of the fields above them ([Known bugs](#known-bugs)). iPhone 14 Pro, iOS 27.0.1, Safari._
+
+<a id="test-figure-41"></a>
+
+![The sign-in page on an iPad with the keyboard up and Safari offering Passwords above it](screenshots/testing/d09-ipad-login.png)
+
+_Test figure 41. D09: signing in. 12.9-inch iPad Pro, iPadOS 26.7.2, Safari, dark mode._
+
+<a id="test-figure-42"></a>
+
+![Terms on an iPad: Michaelmas 2026 and Lent as cards, New term at the right](screenshots/testing/d09-ipad-terms.png)
+
+_Test figure 42. D09: Terms. 12.9-inch iPad Pro, iPadOS 26.7.2, Safari._
+
+<a id="test-figure-43"></a>
+
+![Michaelmas 2026 on an iPad: its six buttons on one line, two services with their status, the empty notices and the comment box](screenshots/testing/d09-ipad-term.png)
+
+_Test figure 43. D09: a term. 12.9-inch iPad Pro, iPadOS 26.7.2, Safari._
+
+<a id="test-figure-44"></a>
+
+![Mass on Sunday 22 November on an iPad: the Mass Setting, Introit and Gradual slots, each with its confirmed piece and the search box, reference box and Propose buttons on one line](screenshots/testing/d09-ipad-service.png)
+
+_Test figure 44. D09: a service. 12.9-inch iPad Pro, iPadOS 26.7.2, Safari._
+
+<a id="test-figure-45"></a>
+
+![Add several services to Lent on an iPad: Template, Service type, From and To, and Every Sunday chosen](screenshots/testing/d09-ipad-add-several-services.png)
+
+_Test figure 45. D09: Add several services. 12.9-inch iPad Pro, iPadOS 26.7.2, Safari._
+
+<a id="test-figure-46"></a>
+
+![The dates for Lent on an iPad, January to April 2027, each ticked with its celebration, under Select all and Select none, and Create 24 services](screenshots/testing/d09-ipad-add-several-services-dates.png)
+
+_Test figure 46. D09: the dates to create, all ticked. 12.9-inch iPad Pro, iPadOS 26.7.2, Safari._
+
+<a id="test-figure-47"></a>
+
+![The sign-in page in Chrome on a 1920-pixel screen, the email address blurred](screenshots/testing/d09-desktop-login.png)
+
+_Test figure 47. D09: signing in. PC, Windows 11 Home 26H2, Chrome, 1920 pixels wide._
+
+<a id="test-figure-48"></a>
+
+![Terms in Chrome: Michaelmas 2026 and Lent as cards](screenshots/testing/d09-desktop-terms.png)
+
+_Test figure 48. D09: Terms. PC, Windows 11 Home 26H2, Chrome._
+
+<a id="test-figure-49"></a>
+
+![Lent in Chrome before any services: its buttons, including Add several services, and the empty Services and Notices boxes](screenshots/testing/d09-desktop-term-empty.png)
+
+_Test figure 49. D09: a term with no services yet. PC, Windows 11 Home 26H2, Chrome._
+
+<a id="test-figure-50"></a>
+
+![Lent in Chrome after adding several services: 0 of 24 services complete, the first seven Sundays listed as Not started, and the message Created 24 services](screenshots/testing/d09-desktop-term-batch-created.png)
+
+_Test figure 50. D09: the same term once 24 services were created. PC, Windows 11 Home 26H2, Chrome._
+
+<a id="test-figure-51"></a>
+
+![Mass for the Baptism of the Lord in Chrome: the Mass Setting, Introit and Gradual slots, with Chrome's own list of earlier entries open under a reference box](screenshots/testing/d09-desktop-service-search.png)
+
+_Test figure 51. D09: a service. The list under the reference box is Chrome's own, of what had been typed there before. PC, Windows 11 Home 26H2, Chrome._
+
+<a id="test-figure-52"></a>
+
+![The pew sheet for Mass on Sunday 10 January 2027 in Chrome, with nothing confirmed yet, its two options, Update and Print](screenshots/testing/d09-desktop-pew-sheet.png)
+
+_Test figure 52. D09: the pew sheet of a service with nothing confirmed yet. PC, Windows 11 Home 26H2, Chrome._
+
+<a id="test-figure-53"></a>
+
+![The library in Chrome: Search, Language and Voicing, 21 scores in a table with their voicing, language, copies and last sung](screenshots/testing/d09-desktop-library.png)
+
+_Test figure 53. D09: the library. PC, Windows 11 Home 26H2, Chrome._
+
+<a id="test-figure-54"></a>
+
+![Missa L'hora passa in Chrome: Propose, Edit and Delete, its details and an empty service history](screenshots/testing/d09-desktop-score-detail.png)
+
+_Test figure 54. D09: a score. PC, Windows 11 Home 26H2, Chrome._
+
+<a id="test-figure-55"></a>
+
+![Proposing Missa L'hora passa in Chrome, the Service menu open on the coming services, each with its term and status](screenshots/testing/d09-desktop-propose-from-library.png)
+
+_Test figure 55. D09: proposing a score from its own page, the service menu open. PC, Windows 11 Home 26H2, Chrome._
+
+<a id="test-figure-56"></a>
+
+![Members in Chrome in dark colours: the owner, a Conductor, with the role menu and Change role, the name blurred, and no invitations waiting](screenshots/testing/d09-desktop-members.png)
+
+_Test figure 56. D09: Members. PC, Windows 11 Home 26H2, Chrome, dark mode._
+
+<a id="test-figure-57"></a>
+
+![Invite someone in Chrome in dark colours: three roles with Viewer chosen, Who it's for and Make the link](screenshots/testing/d09-desktop-invite.png)
+
+_Test figure 57. D09: inviting someone. PC, Windows 11 Home 26H2, Chrome, dark mode._
 
 [↑ Back to contents](#contents)
 
@@ -927,12 +1062,12 @@ testing, fixed, and covered by a test where it could be.
 | `a32478a`, `311edad`, `ae8ab69`, `12624d1`, `85fb3c8`, `89d33a9` | Planning started only from a service, so a conductor looking at a score had to find the service first, and the score page's service bar could only send them back there. A score can now be proposed from its own page into a coming service's slot or a new one, and the bar confirms or removes it (rows [M67](#m67) and [M68](#m68)); the tests are in the same commits |
 | `684e6ef`, `829cfc4`, `0038ea7`, `f02d0d3`, `3ed02e7` | A term's services were added one at a time, so a term of Sundays meant the same form a dozen times. Several can now be added at once, each with its celebration and the template's slots, after a preview of the dates ([row M69](#m69)); the tests are in the same commits |
 | `fc87a4e` | A test, a note in the stylesheet and one of my own tests used Choral Evensong, an Anglican service, in a Catholic app; Solemn Vespers and Vespers take its place |
-| `5bfe255` | On an iPhone the date fields ran wider than the fields around them and centred their dates, as iOS draws its own date control; I saw it on From and To in Add several services ([row M70](#m70)). Its layout test is in the same commit |
+| `5bfe255` | On an iPhone the date fields ran wider than the fields around them and centred their dates, as iOS draws its own date control; I saw it on From and To in Add several services ([row M70](#m70)). Its layout test is in the same commit. On the phone the fields are still wider, kept as a known bug ([Known bugs](#known-bugs)) |
 | `7cbd632`, `54f2288` | On an iPhone the keyboard hid about half the score search's list, as the keyboard covers the page without making the window smaller, and iOS can put its AutoFill bar above the keyboard for a text field. The box is now a search field, which keeps Escape from clearing it, and the list stops at the room left above the keyboard ([row M71](#m71)); the tests are in the same commits |
 
 The flake8 findings left at submission (16 long lines, a variable named
-`l` and a lambda) were cleared in `86ad9e8`. No fault found in the app is left unfixed;
-the three known issues below are in a test and in the testing tools.
+`l` and a lambda) were cleared in `86ad9e8`. Five known issues are listed below:
+three are in a test and in the testing tools, and two are cosmetic limits on an iPhone.
 
 ### Known bugs
 
@@ -941,6 +1076,8 @@ the three known issues below are in a test and in the testing tools.
 | The browser test for confirming a piece failed once in a full run of the planning tests on 30 October | None for people using the site; a test can fail without a real fault | Not reproduced: on 1 November it passed 20 runs on its own and 6 runs of all the planning browser tests, as it has in every full run since. It passed again in the full run of 10 November. If it fails again, the traceback names the line |
 | Playwright's own Chromium (149) stops drawing after any cross-document page transition, so a click from one page to the next leaves the old page on screen | None for people using the site: Chrome 157 and Edge 157 cross-fade and draw normally | A fault in the testing browser, not the site, so the manual tests were run in Google Chrome. The automated browser tests, which mostly work within one page, pass in it |
 | With JavaScript turned off in Playwright, its check before each click says any page reached by a click can't be clicked, as if the whole page were covering the button | None for people using the site: on the same pages a real mouse click works in Chrome 157, with or without a window | A fault in the testing tool, not the site, so [row M65](#m65)'s steps without JavaScript used real mouse clicks after the page had settled |
+| On an iPhone in Safari, date fields (From and To on Add several services) run past the right edge of the fields around them ([Test figure 40](#test-figure-40)) | Cosmetic: the layout stays usable, nothing is cut off, and the date picker works | WebKit on iOS draws `type="date"` as its own control. `5bfe255` let it shrink, capped it at its column and started its text at the left; on the phone the dates now sit at the left, but the fields are still wider. Accepted as it is |
+| On an iPhone, the keyboard takes the lower half of the screen, so the score search's list has only the room above it ([Test figure 34](#test-figure-34)) | The list shows about four scores at a time; it scrolls inside itself, and the page can still be scrolled | A limit of a search box with a list under it on a small screen. Since `54f2288` the list stops above the keyboard instead of running under it |
 
 [↑ Back to contents](#contents)
 
@@ -983,7 +1120,7 @@ a test church deleted afterwards.
 | [D06](#d06) | Build log not read; the new page answering from 23:30 shows the build finished, and this deploy had no migrations to apply |
 | [D07](#d07) | Not needed: nothing in this deploy touched the data's shape |
 | [D08](#d08) | Pass: the template editor with its slot rows and kinds, the Advent filter, the day's chant offered on the Introit, the pew sheet, a new hymnal and the completeness page |
-| [D09](#d09) | Not repeated on my own devices; the new pages were checked at 320 pixels in rows [M66](#m66) to [M69](#m69) |
+| [D09](#d09) | Pass on 12 November, after `c785009`: on my iPhone, iPad and PC, with the two iPhone issues under [Known bugs](#known-bugs) ([Real devices](#real-devices)) |
 | New | Pass: adding several services offered the term's four Sundays, "Create 4 services", and made them ("Created 4 services."); Rorate caeli proposed from its own page went into the first empty slot ("Proposed Rorate caeli (Plainchant) for the Introit."); its link on the service led to the score's page, whose bar read "Proposed for the Introit, Sunday 29 November (First Sunday of Advent)", and Confirm there came back reading "Confirmed" |
 
 [↑ Back to contents](#contents)
