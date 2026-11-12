@@ -1767,6 +1767,43 @@ usual checklists ask for. Each one is deliberate, and this is why.
   pages, so it can't live in the shared file, and without it Chromium
   held the page after signing in frozen for several seconds.
 
+### Early design sketches
+
+These two pages are hand-drawn sketches I made on paper during the
+early planning, before the build began and away from any editor. They
+are rough by design: they show what I thought the app needed before any
+code had a say. The table under them follows each part into the
+finished app, including where the build went another way.
+
+<a id="figure-33"></a>
+
+![A pencil sketch on lined notebook paper. At the top, the navigation: Precentor, then Terms (circled), Library, Inbox and Account. Below it, an Add new button and a term card with the term's name, its date range, a completeness percentage tracker and what's coming up next, with "Publish?" beside it. Further down, the Library: Add new, an import and export function for CSV, filtering with a search box, and a table with columns for name, piece, voices, language, filing information and other, its first row Mozart's Ave verum, SATB, Latin. A note at the foot asks how the table should work on a phone, and answers: just a simple scroll bar](docs/design/sketch-01-terms-and-library.jpg)
+
+_Figure 33. The first sketch: the Terms page and the Library._
+
+<a id="figure-34"></a>
+
+![A second pencil sketch. At the top, a piece in the library catalogue: its name, then its information (composer, arranger, language), then "meta" information that's good to know but not crucial. Below, a service: its type (Mass), its date and term, whether it's complete, and its slots (Introit, Gradual, Alleluia or Tract, Offertory, Communion, Mass setting, Motet, Hymns), with an arrow from "insert library piece here". To the right, "Export PDF?", and a comments thread whose two comments are each ticked off](docs/design/sketch-02-score-and-service.jpg)
+
+_Figure 34. The second sketch: a score's information and a service's slots._
+
+#### From sketch to build
+
+| In the sketch | In the app now | Where |
+| ------------- | -------------- | ----- |
+| Navigation: Terms, Library, Inbox, Account | Terms, Library and Inbox, which counts open comments. "Account" became a menu under the person's name, with Members, Settings, Change password, Appearance and Log out | Every page |
+| A term card: name, date range, a completeness percentage tracker, "coming up next" | Each term's card has its timing and dates, a status bar with "3 of 5 services complete", and the next service with what it still needs. The bar shows complete, in progress and not started in proportion, which says more than one percentage could | Terms page (`term_list`) |
+| "Publish?" | Nothing is published as such. The music list has a Public and a Draft view: the draft marks undecided slots TBC, and the public one shows only what's confirmed ([§4](#4-the-public-music-list)). The term card says "Ready to publish" once every service is complete. The list needs a sign-in, so a church prints it or passes it on; a link anyone could open is future work ([§20](#20-future-work)) | Music list (`term_music_list`) |
+| Import and export as CSV | As sketched, and a little more: a spreadsheet or a Google Sheets link comes in as a batch to keep or remove, and the library goes out in the same columns | Library (`score_import`, `export_library`) |
+| Filtering and a search box | One search box across title, composer, arranger and editor, and menus for language, voicing, season and use | Library (`score_list`) |
+| A table: name, piece, voices, language, filing information, other | Composer, Title, Voicing, Language, Duration, Copies, Filing location and Last sung, each column sortable. "Other" became the last three | Library |
+| "Just a simple scroll bar" for the table on a phone | As sketched. The table scrolls sideways inside its own region, which is labelled and can be reached with Tab, and the page itself never does | Library on a phone ([Figure 30](#figure-30)) |
+| A piece's name, then its information, then "meta" information | The score's page gives composer, voicing, language, duration, copies and last sung first; then background, interpretation notes, text and translation, and vocal ranges, each only when filled in; then where it's been planned and sung | Score page (`score_detail`) |
+| A service: its type, date and term, "complete?" | The heading gives the type and date; under it, the term, the status (Not started, In progress or Complete) and the occasion | Service page (`service_detail`) |
+| Slots, with "insert library piece here" | A template adds the slots, each with its kind. A piece is proposed from the slot's own search box, or from the library with Propose on a score's page. The starter Mass template lists the Ordinary's movements, Kyrie to Agnus Dei, in place of one "Mass setting", so each can hold its own piece; slot names are free text, so a church can still call one "Mass setting" ([§3.2](#32-term-service-and-slots)). Hymns have a template of their own, "Mass with hymns" | Service page; score page (`propose_score`) |
+| "Export PDF?" | No PDF is made on the server. The music list and the pew sheet have a Print button and print styles, so printing, or saving as a PDF from the browser's print dialog, gives a clean copy of that moment's list ([§4](#4-the-public-music-list)), with no PDF library added to the project | Music list, pew sheet (`service_pew_sheet`) |
+| A comments thread, each comment ticked off | A thread is closed or reopened as a whole rather than ticked comment by comment. Closing it takes it out of the Inbox, and only a closed thread can be deleted, so a discussion still under way stays as it was said ([§6](#6-comment-threads)) | Each term's and service's thread; Inbox (`inbox`) |
+
 [↑ Back to contents](#contents)
 
 ## 17. Security
