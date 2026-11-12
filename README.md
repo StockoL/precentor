@@ -1689,6 +1689,11 @@ the role column in [§2](#2-who-this-is-for) says who may use each one.
   its way, its button is disabled and marked busy, so a double-click
   sends it once. Confirm asks for a state rather than switching, so
   even two requests leave a piece as asked.
+- **A large import shows it's working.** Choosing a file shows its name
+  and size at once, and refuses one over 2 MB before it's sent. Once
+  Import is pressed the button reads "Importing…" and stays disabled
+  until the result page arrives, so a long upload can't be sent twice
+  or look as though nothing happened.
 - **Success and warning messages** appear after an action, such as
   "Ben Jonson is now a Librarian." or "That invitation has already been
   used or cancelled.", shown at the top of the next page.
