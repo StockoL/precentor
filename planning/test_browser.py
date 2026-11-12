@@ -382,6 +382,33 @@ class ScoreComboboxBrowserTest(PlaywrightTestCase):
         self.score_b = make_score(title="Locus Iste", composer_surname="Bruckner")
         self.role = ServiceRole.objects.create(service=self.service, role_name="Anthem")
 
+    def test_the_list_stops_at_the_bottom_of_what_can_be_seen(self):
+        """On a phone the keyboard hid the end of the list (row M71). The
+        list is capped at the room below the box, measured again when
+        the visible area changes, as it does when the keyboard opens or
+        closes; a shorter window stands in for the keyboard here."""
+        for number in range(12):
+            make_score(title=f"Anthem {number}", composer_surname="Tallis")
+        form = f"#add-piece-form-{self.role.pk}"
+        input_sel = f"{form} .score-combobox__input"
+        listbox_sel = f"{form} .score-combobox__listbox"
+        self.page.set_viewport_size({"width": 390, "height": 500})
+        self.page.goto(f"/services/{self.service.pk}/")
+        self.page.wait_for_selector(input_sel)
+        # The box's bottom 150 pixels above the bottom of the window.
+        self.page.eval_on_selector(
+            input_sel, "el => window.scrollBy(0, el.getBoundingClientRect().bottom - innerHeight + 150)"
+        )
+        self.page.click(input_sel)
+        self.page.wait_for_function(f"!document.querySelector('{listbox_sel}').hidden")
+        bottom = self.page.eval_on_selector(listbox_sel, "el => el.getBoundingClientRect().bottom")
+        assert bottom <= 500, bottom
+
+        # More room, as when the keyboard closes: the list grows into it.
+        short = self.page.eval_on_selector(listbox_sel, "el => el.offsetHeight")
+        self.page.set_viewport_size({"width": 390, "height": 800})
+        self.page.wait_for_function(f"document.querySelector('{listbox_sel}').offsetHeight > {short}")
+
     def test_combobox_filters_and_supports_keyboard_selection(self):
         form = f"#add-piece-form-{self.role.pk}"
         input_sel = f"{form} .score-combobox__input"

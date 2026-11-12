@@ -133,12 +133,29 @@ function buildCombobox(container) {
     });
   }
 
+  // The room between the box and the bottom of what can be seen. On a
+  // phone the keyboard covers the lower part of the page without making
+  // the window any smaller: only the visual viewport shrinks, so it's
+  // measured from that where the browser has it. The stylesheet caps the
+  // list's height at this, with a floor so it never shrinks to nothing.
+  const viewport = window.visualViewport;
+  function fitList() {
+    const bottom = viewport ? viewport.offsetTop + viewport.height : window.innerHeight;
+    const room = bottom - input.getBoundingClientRect().bottom - 8;
+    listbox.style.setProperty("--listbox-room", `${Math.round(room)}px`);
+  }
+
   function openList() {
     listbox.hidden = false;
     input.setAttribute("aria-expanded", "true");
+    fitList();
+    (viewport || window).addEventListener("resize", fitList);
+    (viewport || window).addEventListener("scroll", fitList);
   }
 
   function closeList() {
+    (viewport || window).removeEventListener("resize", fitList);
+    (viewport || window).removeEventListener("scroll", fitList);
     listbox.hidden = true;
     input.setAttribute("aria-expanded", "false");
     input.removeAttribute("aria-activedescendant");

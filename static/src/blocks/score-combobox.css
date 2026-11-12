@@ -12,7 +12,10 @@
   }
 
   /* Wider than the search box where there's room, as each score carries
-     its reasons; never wider than a phone's screen allows. */
+     its reasons; never wider than a phone's screen allows. Never taller
+     than the room left below the box (--listbox-room, set by
+     score-picker.js), so a phone's keyboard doesn't hide the end of the
+     list, but always tall enough for about two scores. */
   .score-combobox__listbox {
     position: absolute;
     inset-inline-start: 0;
@@ -20,7 +23,7 @@
     z-index: 10;
     margin-block-start: var(--spacing-3xs);
     margin-inline: 0;
-    max-height: 16rem;
+    max-height: min(16rem, max(6rem, var(--listbox-room, 16rem)));
     overflow-y: auto;
     list-style: none;
     padding: var(--spacing-3xs);

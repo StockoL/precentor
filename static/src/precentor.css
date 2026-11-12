@@ -51,7 +51,7 @@
  *   blocks/service-context.css
  *   utilities/utilities.css
  *
- * Fingerprint: f6eb7c42a5105e352fe48cd2d85167217e0e7d6f698ccc3673b1c5f5ea070bf4
+ * Fingerprint: 0771e185a0c5a7d527f6117e360c02e5877c5a82202e402b5d9b98f3ab037fae
  */
 
 /* ---- global/layers.css ---- */
@@ -2537,7 +2537,10 @@
   }
 
   /* Wider than the search box where there's room, as each score carries
-     its reasons; never wider than a phone's screen allows. */
+     its reasons; never wider than a phone's screen allows. Never taller
+     than the room left below the box (--listbox-room, set by
+     score-picker.js), so a phone's keyboard doesn't hide the end of the
+     list, but always tall enough for about two scores. */
   .score-combobox__listbox {
     position: absolute;
     inset-inline-start: 0;
@@ -2545,7 +2548,7 @@
     z-index: 10;
     margin-block-start: var(--spacing-3xs);
     margin-inline: 0;
-    max-height: 16rem;
+    max-height: min(16rem, max(6rem, var(--listbox-room, 16rem)));
     overflow-y: auto;
     list-style: none;
     padding: var(--spacing-3xs);
