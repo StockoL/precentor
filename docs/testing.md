@@ -8,7 +8,7 @@ Everything here was run again on 10 November 2026, on a local copy of
 the site with the invented demo church. The manual tests were run
 between commits `61f3790` and `b500e3f`, with rows [M59](#m59) and [M60](#m60) added
 later the same day at `4746a58`, M61 to M64 at `59e3469`, M65 at
-`b0fafbf`, M66 at `823ebe2`, M67 and M68 at `89d33a9`, and M69 at `3ed02e7`. The checks in [sections 1 to 3](#1-checks-run-findings-and-how-each-was-resolved), the widths and browsers, and
+`b0fafbf`, M66 at `823ebe2`, M67 and M68 at `89d33a9`, M69 at `3ed02e7`, and M70, written at `5bfe255`, is still to be run on an iPhone. The checks in [sections 1 to 3](#1-checks-run-findings-and-how-each-was-resolved), the widths and browsers, and
 the contrast were all run again at `8908668`, with the checkers' own
 screenshots; the commits after it change only the documentation, the
 ESLint settings and a screenshot tool. The manual tests
@@ -50,7 +50,7 @@ the automated browser tests, where every page is opened by its address.
 
 | Check | What I used | What it found on 10 November | Resolved? |
 | ----- | ----------- | ---------------------------- | --------- |
-| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 1,013 tests, all passing, at `3ed02e7`; 944 at `7fd2e74`, after the ten that tested copying the old columns went with them ([section 4](#4-automated-tests)); 954 at `8908668`, the run in my own terminal ([Check figure 1](#check-figure-1)) | Nothing to resolve. There were 553 at submission |
+| Automated tests | `python manage.py test` (Django's test runner, with Playwright driving Chromium for the browser tests) | 1,014 tests, all passing, at `5bfe255`; 944 at `7fd2e74`, after the ten that tested copying the old columns went with them ([section 4](#4-automated-tests)); 954 at `8908668`, the run in my own terminal ([Check figure 1](#check-figure-1)) | Nothing to resolve. There were 553 at submission |
 | Deployment settings | `python manage.py check --deploy` with `DEBUG` off and the host name Render sets | No issues. One warning is silenced on purpose: joining the browsers' HSTS preload list, which is for a domain's owner to apply for ([Check figure 2](#check-figure-2)) | Nothing to resolve |
 | Migrations | `python manage.py makemigrations --check --dry-run`, and a rehearsal of the merge on a copy of the live database ([`merge_record.md`](merge_record.md)) | No missing migrations ([Check figure 2](#check-figure-2)). On the copy, all 28 new migrations ran, `check_copied_data` found everything copied, and all 177 pages opened for every church | Nothing to resolve |
 | Python style | flake8 7.4.1 with the settings in `.flake8` (line length 120, `venv` and migrations left out) | No findings ([Check figure 2](#check-figure-2)) | At submission: two unused imports, a blank line and an escape, fixed in `1f2e618`; more in `722ffc4`; the 16 long lines, the variable `l` and the lambda left then were cleared in `86ad9e8` |
@@ -391,7 +391,7 @@ _Check figure 7. The lowest score: a service on a simulated phone._
 
 ## 4. Automated tests
 
-The suite has 1,013 tests, run on 11 November 2026 at `3ed02e7`;
+The suite has 1,014 tests, run on 12 November 2026 at `5bfe255`;
 all passed. The browser tests start a real server and use Playwright to
 drive Chromium, so they cover the JavaScript as well as the Python.
 
@@ -438,7 +438,7 @@ drive Chromium, so they cover the JavaScript as well as the Python.
 | `precentor_project/tests.py`              | 28    | The base template, the navigation and its wording, the Inbox count, the user menu, the 403 page, never storing signed-in pages, the 500 page, the privacy page and footer, and the check on return addresses |
 | `precentor_project/test_scripts.py`       | 2     | Every module a page's scripts import is on the page or preloaded |
 | `precentor_project/test_css.py`           | 6     | The one stylesheet: built from every CSS source as it is now, the layers declared first, and the only one pages link, and printing hiding the navigation, the controls and the footer |
-| `precentor_project/test_browser.py`       | 15    | Signing in, type and control sizes, checkboxes, Settings, the user menu, page transitions and the skip link, in the browser |
+| `precentor_project/test_browser.py`       | 16    | Signing in, type and control sizes, checkboxes, Settings, the user menu, page transitions, the skip link, and date fields lining up with the other fields, in the browser |
 | `precentor_project/test_delete_pages.py`  | 5     | Going Back to a delete page after deleting |
 | `precentor_project/test_isolation.py`     | 7     | Two complete churches: every address with an id tried as the other church, every page checked for the other church's text, and every model and route covered |
 | `precentor_project/test_settings.py`      | 11    | Production settings: the secret key check, hosts, HTTPS, the cookies and the cache |
@@ -531,6 +531,7 @@ _Test figure 3. M33: what an import brought in, listed, and what it skipped._
 | <a id="m12"></a>M12  | Edit a service             | Edit service, change the type, save                                                                           | The new type on the service page                                                                | Pass: the heading changed from Sung Mass to Solemn Mass, with the date |
 | <a id="m63"></a>M63  | Term and service dates     | New term ending the day before it starts; a service on 25 December in Advent 2026 (29 November to 24 December); Advent to end on 23 December; then, with a service already dated 27 December, rename Advent and leave its dates | Each refused with a plain message beside the date; the rename saved | Pass, since `128c3a0`, `c56b704`, `a00e7b7` and `68721ad`: "A term can't end before it starts."; "Advent 2026 runs from Sun 29 Nov 2026 to Thu 24 Dec 2026, so the service needs a date in between."; "2 services would fall outside these dates, the first on Thu 24 Dec 2026. Move or delete them first."; the renamed term saved |
 | <a id="m69"></a>M69  | Several services at once | On Advent 2026, Add several services; try From 28 November; then Vespers, Solemn Vespers, Sundays and solemnities; in the preview untick 20 December, Select none, Select all, untick it again and create; send a second tab opened on the same preview; open one of the services made; on the 1962 term, look at the patterns and pick; without JavaScript, pick one date and create; as the Viewer, open the term and the page; both steps at 320 pixels | The range starts as the term's and is refused outside it; the preview lists the Sundays and the Immaculate Conception, ticked, with their names and the count; the count follows the ticks; each service made has its occasion and the template's slots; dates already made are skipped and said; 1962 names its second pattern for first-class days; picking ticks nothing; it works without JavaScript; the Viewer is refused; nothing wider than the screen | Pass, since `684e6ef` to `3ed02e7`: the range started 29 Nov to 24 Dec, and 28 November gave "Advent 2026 runs from Sun 29 Nov 2026 to Thu 24 Dec 2026, so the dates need to be in between."; five dates ticked, from "Sun 29 Nov: First Sunday of Advent" to "Tue 8 Dec: The Immaculate Conception of the Blessed Virgin Mary", "Create 5 services" ([Test figures 4 to 7](#test-figure-4)); the count went to 4, 0, 5 and 4; "Created 4 services."; the second tab gave "Created 1 service; skipped 4 that already exist."; the 29 November service had the occasion First Sunday of Advent and the slots Psalms, Hymn, Magnificat and Marian antiphon; the 1962 term offered "Sundays and first-class days", and picking listed 22 dates under November and December, none ticked; without JavaScript there was no Select all, and one date ticked gave "Created 1 service." (the button's count stays as served); the Viewer had no button and got 403; both steps fitted at 320. What the test made was deleted afterwards |
+| <a id="m70"></a>M70  | Date fields on an iPhone | On an iPhone in Safari, open Add several services, New term, Edit service, New notice and a score's Edit page | Each date field (From and To; the term's start and end; the service's and the notice's date; Last sung) as wide as the fields around it, inside its column, with its date at the left | Not yet run: it needs the phone, as Playwright's WebKit on Windows doesn't draw iOS's own date control. Before `5bfe255`, From and To on Add several services ran wider than the other fields on my iPhone, with their dates centred. In WebKit emulating an iPhone at 320 and 393 pixels, every date field lined up with the others both before and after the fix, and the browser test `test_a_date_lines_up_with_the_other_fields_on_a_phone_and_a_laptop` checks that at 320 and 1280 |
 
 <a id="test-figure-4"></a>
 
@@ -925,6 +926,7 @@ testing, fixed, and covered by a test where it could be.
 | `a32478a`, `311edad`, `ae8ab69`, `12624d1`, `85fb3c8`, `89d33a9` | Planning started only from a service, so a conductor looking at a score had to find the service first, and the score page's service bar could only send them back there. A score can now be proposed from its own page into a coming service's slot or a new one, and the bar confirms or removes it (rows [M67](#m67) and [M68](#m68)); the tests are in the same commits |
 | `684e6ef`, `829cfc4`, `0038ea7`, `f02d0d3`, `3ed02e7` | A term's services were added one at a time, so a term of Sundays meant the same form a dozen times. Several can now be added at once, each with its celebration and the template's slots, after a preview of the dates ([row M69](#m69)); the tests are in the same commits |
 | `fc87a4e` | A test, a note in the stylesheet and one of my own tests used Choral Evensong, an Anglican service, in a Catholic app; Solemn Vespers and Vespers take its place |
+| `5bfe255` | On an iPhone the date fields ran wider than the fields around them and centred their dates, as iOS draws its own date control; I saw it on From and To in Add several services ([row M70](#m70)). Its layout test is in the same commit |
 
 The flake8 findings left at submission (16 long lines, a variable named
 `l` and a lambda) were cleared in `86ad9e8`. No fault found in the app is left unfixed;
