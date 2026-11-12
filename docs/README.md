@@ -27,3 +27,4 @@ building something, kept as a record of how the decisions were made.
 | [`overhaul_plan.md`](overhaul_plan.md) | The audit and overhaul of the whole app before deployment, phase by phase, with its log | The README, throughout |
 | [`ordo_plan.md`](ordo_plan.md) | The design of the occasion suggestions and the scores' "suitable for" tags, both built | README [§3.2](../README.md#32-term-service-and-slots) and [§3.4](../README.md#34-ordo-the-liturgical-calendar) |
 | [`score_import_plan.md`](score_import_plan.md) | Earlier designs for importing a library, superseded by a simpler import | README [§3.1](../README.md#31-score) |
+| [`design/`](design/) | Two sketches I drew on paper during the early planning, before the build began | README, [Early design sketches](../README.md#early-design-sketches), with what each part became |
