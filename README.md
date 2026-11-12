@@ -50,6 +50,12 @@ days.
 - **Testing:** [`docs/testing.md`](docs/testing.md) has every manual
   test and its result, the widths and browsers I checked, the automated
   tests, the validators, Lighthouse, and the bugs I fixed or left.
+- **Versions:** the release
+  [v1.0.0](https://github.com/StockoL/precentor/releases/tag/v1.0.0) is
+  Precentor as I first submitted it on 23 October 2026, and
+  [v2.0.0](https://github.com/StockoL/precentor/releases/tag/v2.0.0) as
+  I resubmitted it. [Comparing the two](https://github.com/StockoL/precentor/compare/v1.0.0...v2.0.0)
+  shows every change in between.
 - **Trying it:** open the [live site](https://precentor.onrender.com),
   choose Register and set up a church of your own. You're its owner,
   so every page is open to you, and nobody else's data is in reach.
